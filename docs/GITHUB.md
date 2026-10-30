@@ -32,9 +32,9 @@ Las escenas se guardan en JSON legible y los scripts se compilan en memoria con 
 y se ejecutan con el ciclo de vida `OnStart`/`OnUpdate`/`OnDestroy`, con recarga en
 caliente al guardar.
 
-El proyecto avanza por etapas documentadas y ya tiene cerrada la etapa 4: animación,
+Motor generalista para cualquier tipo de juego 2D: no impone género ni estilo. El proyecto avanza por etapas documentadas y ya tiene cerrada la etapa 4: animación,
 tilemaps con colisión por celda, física, audio, prefabs y herramientas de edición.
-La siguiente etapa es terror y supervivencia (luces, triggers, diálogos, IA).
+La siguiente etapa son las herramientas de juego 2D (luces, triggers, diálogos, inventario, IA).
 
 ## Topics sugeridos
 

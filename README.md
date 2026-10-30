@@ -47,15 +47,14 @@ darle a Reproducir**, sin salir de la misma ventana.
 
 ## Enfoque
 
-Ollin es un **motor personal**, pensado para que una sola persona pueda terminar
-proyectos pequeños:
+Ollin es un **motor 2D generalista**: sirve igual para plataformas, aventura, RPG,
+puzles, acción top-down, terror, prototipos o experimentos personales. No impone un
+género ni un estilo: la escena, los componentes y los scripts son las piezas con las
+que armas el juego que quieras.
 
-- **Juegos de terror lineales**: capítulos cortos, atmósfera, luz y sonido, ritmo guiado.
-- **Juegos de supervivencia**: ciclos de día y noche, recursos, crafteo e IA básica.
-
-No busca competir con motores AAA: prioriza herramientas cómodas, arranque rápido y
-alcance contenido. El plan completo está en [docs/ROADMAP.md](docs/ROADMAP.md) e incluye
-un puente 2.5D antes del 3D.
+El objetivo es que una sola persona pueda terminar proyectos pequeños y variados, con
+herramientas cómodas, arranque rápido y alcance contenido. El plan completo está en
+[docs/ROADMAP.md](docs/ROADMAP.md) e incluye un puente 2.5D antes del 3D.
 
 ## Estado del proyecto
 
@@ -66,7 +65,7 @@ un puente 2.5D antes del 3D.
 | 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
 | 4 | Animación, tilemaps, física, audio, prefabs, proyectos y herramientas | ✅ |
-| 5 | Terror y supervivencia: luces, triggers, diálogos, inventario, IA, día/noche | ⏳ siguiente |
+| 5 | Herramientas de juego 2D: luces, triggers, diálogos, inventario, IA, día/noche | ⏳ siguiente |
 | 6 | 2.5D: sprites en espacio 3D con cámara en primera persona | ⏳ |
 | 7 | 3D: mallas glTF, luces y sombras, física, navmesh, editor 3D | ⏳ |
 | 8 | Producto: build, guardado, opciones, perfilador, localización | ⏳ |

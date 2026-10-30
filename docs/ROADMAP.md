@@ -1,8 +1,9 @@
 # Roadmap de Ollin
 
-Desarrollo por etapas de un **motor personal** para proyectos pequeños: **juegos de terror
-lineales** y **juegos de supervivencia**. Nada de escala AAA: prioridad a que un
-desarrollador solo pueda terminar juegos cortos y atmosféricos.
+Desarrollo por etapas de un **motor 2D generalista**, pensado para que una sola persona
+pueda construir **cualquier tipo de juego**: plataformas, aventura, RPG, puzles, acción
+top-down, terror o prototipos. Nada de escala AAA: prioridad a herramientas cómodas y a
+que un desarrollador solo pueda terminar juegos pequeños y variados.
 
 Cada etapa entrega algo usable y verificable. Ninguna se cierra sin compilar, con las
 pruebas en verde y documentada aquí.
@@ -19,14 +20,13 @@ pruebas en verde y documentada aquí.
 - **Todo editable en el editor.** Si algo requiere tocar código para ajustar una escena,
   falta una herramienta.
 
-## Reglas de alcance para terror y supervivencia
+## Reglas de alcance
 
-| Género | Lo que necesita | Lo que **no** necesita |
+| Área | Lo que entra | Lo que queda fuera |
 | --- | --- | --- |
-| Terror lineal | Luz y sombra, audio, ritmo, triggers, diálogos, inventario simple, guardado por capítulo | Mundo abierto, cientos de NPCs, IA compleja |
-| Supervivencia | Ciclo día/noche, recursos, crafteo, IA básica, persistencia del mundo, HUD | Multijugador, generación infinita, simulación masiva |
-| Ambos | Rendimiento estable, carga rápida, guardado fiable | Gráficos de última generación, GI en tiempo real |
-
+| 2D general | Plataformas, aventura, RPG, puzles, acción, terror y prototipos | Mundos abiertos continuos o simulación masiva |
+| Herramientas | Editor, escenas, componentes, scripting, audio, prefabs y guardado | Marketplace, plugins de terceros, editor para equipos |
+| Rendimiento | Escenas 2D estables para un jugador | Multijugador, GI en tiempo real, gráficos de última generación |
 ## Estado actual
 
 | Etapa | Contenido | Estado |
@@ -35,8 +35,8 @@ pruebas en verde y documentada aquí.
 | 1 | Editor: escena, jerarquía, inspector, viewport, cámara, JSON | ✅ |
 | 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
-| 4 | Cerrar el 2D | ✅ parcial (faltan audio y prefabs) |
-| 5 | Herramientas de terror y supervivencia | ⏳ |
+| 4 | Cerrar el 2D | ✅ |
+| 5 | Herramientas de juego 2D (luces, narrativa, sistemas, HUD) | ⏳ |
 | 6 | 2.5D (puente) | ⏳ |
 | 7 | 3D | ⏳ |
 | 8 | Producto: build, guardado, opciones | ⏳ |
@@ -81,18 +81,22 @@ Queda para la etapa 4: temporizadores (`WaitForSeconds`) y dibujo de depuración
 - [x] Escenas múltiples con pestañas propias y estado independiente (cámara, selección, historial).
 - [x] Plantillas de proyecto (vacío, plataformas, terror).
 - [x] Copiar/pegar entidades (Ctrl+C / Ctrl+V).
-- [x] Buscador en la jerarquía.`n- [ ] Buscador de propiedades en el inspector.
+- [x] Buscador en la jerarquía.
+- [ ] Buscador de propiedades en el inspector.
 
 **Criterio de cierre:** un nivel 2D de 10 minutos con animación, colisiones, sonido y
 guardado de partida.
 
+Pendientes de pulido para la fase de mejoras: varias animaciones por entidad, capas de
+tilemap/*autotiling* y buscador de propiedades en el inspector.
+
 ---
 
-## Etapa 5 — Terror y supervivencia en 2D (esfuerzo: L)
+## Etapa 5 — Herramientas de juego 2D (esfuerzo: L)
 
-**Objetivo:** las herramientas que de verdad usan estos dos géneros.
+**Objetivo:** las herramientas que sirven a cualquier juego 2D, sin atarse a un género.
 
-### Atmósfera (terror)
+### Atmósfera y presentación
 - [ ] Luces 2D: puntuales y conos, con color, radio e intensidad.
 - [ ] Sombras por oclusión (shadow casting) para luces 2D.
 - [ ] Niebla, viñeta, grano de película y aberración cromática (post-proceso).
@@ -100,14 +104,14 @@ guardado de partida.
 - [ ] Cámaras fijas por habitación (estilo clásico) y cámara de seguimiento.
 - [ ] Linterna con cono de luz y parpadeo configurable.
 
-### Narrativa lineal
+### Narrativa e interacción
 - [ ] Triggers de zona (entrar, salir, interactuar).
 - [ ] Puertas, cerraduras, llaves y objetos interactuables.
 - [ ] Diálogos con retratos y subtítulos; notas y documentos legibles.
 - [ ] Secuencias guionizadas (timeline simple: mover cámara, esperar, sonido, texto).
 - [ ] Sistema de capítulos y checkpoints.
 
-### Supervivencia
+### Sistemas de juego
 - [ ] Inventario con pilas y crafteo por recetas.
 - [ ] Estadísticas: salud, hambre, sed, energía, cordura (configurables).
 - [ ] Ciclo día/noche con reloj y clima básico (lluvia, niebla).
@@ -122,8 +126,9 @@ guardado de partida.
 - [ ] Menús: pausa, opciones, guardar/cargar y muerte.
 - [ ] Fuentes bitmap y texto con riqueza mínima (color, tamaño, alineación).
 
-**Criterio de cierre:** un capítulo de terror de 10–15 minutos y un bucle de
-supervivencia de dos días in-game, ambos jugables de principio a fin.
+**Criterio de cierre:** un nivel de 10–15 minutos con luces, triggers, diálogos e
+inventario, y un bucle de juego con ciclo día/noche y guardado, ambos jugables de
+principio a fin.
 
 ---
 
@@ -138,7 +143,7 @@ supervivencia de dos días in-game, ambos jugables de principio a fin.
 - [ ] Iluminación por vértice o por objeto + niebla de distancia.
 - [ ] Audio posicional básico.
 
-**Por qué:** permite hacer terror estilo PS1/Doom con el renderer y el flujo actuales, y
+**Por qué:** permite hacer juegos con estética retro estilo PS1/Doom con el renderer y el flujo actuales, y
 descubrir los problemas de cámara, colisión y profundidad antes de invertir en 3D real.
 
 **Criterio de cierre:** un pasillo jugable en primera persona con enemigos sprite,
@@ -171,7 +176,7 @@ puertas y ambiente.
 - [ ] Guardado de escena 3D y de estado del mundo.
 
 **Criterio de cierre:** un nivel 3D de 5–10 minutos con exploración, un enemigo que
-persigue y ambiente de terror.
+persigue y ambiente de tensión.
 
 ### Notas técnicas para el 3D
 
