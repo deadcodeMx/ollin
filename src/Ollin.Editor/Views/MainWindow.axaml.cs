@@ -808,25 +808,26 @@ public partial class MainWindow : Window
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        if (ViewModel is null)
+        var vm = ViewModel;
+        if (vm is null)
         {
             base.OnKeyDown(e);
             return;
         }
 
         // Durante la reproducción el teclado pertenece al juego.
-        if (ViewModel.IsPlaying)
+        if (vm.IsPlaying)
         {
             if (e.Key == Key.F5)
             {
-                ViewModel.TogglePlay();
+                vm.TogglePlay();
                 e.Handled = true;
                 return;
             }
 
             if (e.Key == Key.F6)
             {
-                ViewModel.TogglePause();
+                vm.TogglePause();
                 e.Handled = true;
                 return;
             }
@@ -842,18 +843,18 @@ public partial class MainWindow : Window
         }
 
         // Autocompletar con Ctrl+Espacio dentro del editor de scripts.
-        if (e.Key == Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Control) && ViewModel?.IsScriptActive == true)
+        if (e.Key == Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Control) && vm.IsScriptActive)
         {
-            var entities = ViewModel.Scene.Entities.Select(entity => entity.Name);
-            ShowCompletion(CompletionCatalog.All(entities, ViewModel.ScriptClassNames), WordStartOffset());
+            var entities = vm.Scene.Entities.Select(entity => entity.Name);
+            ShowCompletion(CompletionCatalog.All(entities, vm.ScriptClassNames), WordStartOffset());
             e.Handled = true;
             return;
         }
 
         // Guardar script con Ctrl+S aunque el foco esté en el editor de texto.
-        if (e.Key == Key.S && e.KeyModifiers.HasFlag(KeyModifiers.Control) && ViewModel.IsScriptActive)
+        if (e.Key == Key.S && e.KeyModifiers.HasFlag(KeyModifiers.Control) && vm.IsScriptActive)
         {
-            ViewModel.SaveActiveScript();
+            vm.SaveActiveScript();
             e.Handled = true;
             return;
         }
@@ -868,19 +869,11 @@ public partial class MainWindow : Window
         switch (e.Key)
         {
             case Key.Z when control:
-                ViewModel.Undo();
+                vm.Undo();
                 e.Handled = true;
                 break;
             case Key.Y when control:
-                ViewModel.Redo();
-                e.Handled = true;
-                break;
-            case Key.N when control:
-                ViewModel.NewScene();
-                e.Handled = true;
-                break;
-            case Key.O when control:
-                OnOpenScene(this, new Avalonia.Interactivity.RoutedEventArgs());
+                vm.Redo();
                 e.Handled = true;
                 break;
             case Key.S when control:
@@ -888,38 +881,49 @@ public partial class MainWindow : Window
                 e.Handled = true;
                 break;
             case Key.C when control:
-                ViewModel.CopySelected();
+                vm.CopySelected();
                 e.Handled = true;
                 break;
             case Key.V when control:
-                ViewModel.PasteCopied();
+                vm.PasteCopied();
                 e.Handled = true;
                 break;
             case Key.Delete:
-                ViewModel.DeleteSelected();
+                vm.DeleteSelected();
                 e.Handled = true;
                 break;
             case Key.F:
-                ViewModel.FrameSelected();
+                vm.FrameSelected();
                 e.Handled = true;
                 break;
             case Key.Home:
-                ViewModel.ResetCamera();
+                vm.ResetCamera();
+                e.Handled = true;
+                break;
+            case Key.Escape:
+                vm.Selected = null;
+                e.Handled = true;
+                break;
+            case Key.O when control:
+                OnOpenScene(this, new Avalonia.Interactivity.RoutedEventArgs());
+                e.Handled = true;
+                break;
+            case Key.N when control:
+                vm.NewScene();
                 e.Handled = true;
                 break;
             case Key.F5:
-                ViewModel.TogglePlay();
+                vm.TogglePlay();
                 e.Handled = true;
                 break;
             case Key.F6:
-                ViewModel?.TogglePause();
+                vm.TogglePause();
                 e.Handled = true;
                 break;
         }
 
         base.OnKeyDown(e);
     }
-
     protected override void OnKeyUp(KeyEventArgs e)
     {
         if (ViewModel is { IsPlaying: true } && KeyMapping.ToKeyCode(e.Key) is { } playKey)
