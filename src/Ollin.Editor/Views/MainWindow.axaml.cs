@@ -799,6 +799,8 @@ public partial class MainWindow : Window
 
     private void OnAddAudio(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "audio");
 
+    private void OnAddLight(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "light");
+
     private void OnAddRotator(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "rotator");
 
     private void OnAddOscillator(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "oscillator");

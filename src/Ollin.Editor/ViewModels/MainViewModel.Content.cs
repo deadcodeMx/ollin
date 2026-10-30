@@ -255,6 +255,11 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new AudioSource { PlayOnStart = false });
                 break;
 
+            case "light":
+                if (entity.HasComponent<Light2D>()) { added = false; break; }
+                entity.AddComponent(new Light2D());
+                break;
+
             case "rotator":
                 if (entity.HasComponent<RotatorComponent>()) { added = false; break; }
                 entity.AddComponent(new RotatorComponent());

@@ -66,6 +66,9 @@ public sealed class Renderer2D : IDisposable
     private int _uniformTexture;
     private Texture2D? _whiteTexture;
     private Texture2D? _checkerTexture;
+    private Texture2D? _radialLight;
+    private Texture2D? _vignette;
+    private readonly Dictionary<int, Texture2D> _coneLights = new();
 
     public Renderer2D(GL gl)
     {
@@ -92,6 +95,7 @@ public sealed class Renderer2D : IDisposable
         _whiteTexture = Texture2D.CreateWhite(_gl);
         _checkerTexture = Texture2D.CreateChecker(_gl);
         _batch.Initialize(_program, _uniformMvp, _uniformTexture, _whiteTexture);
+        CreateLightTextures();
 
         _gl.Disable(EnableCap.DepthTest);
         _gl.Enable(EnableCap.Blend);
@@ -121,7 +125,7 @@ public sealed class Renderer2D : IDisposable
         }
 
         DrawTilemaps(scene);
-        DrawSprites(scene);
+        DrawSprites(scene, cameraPosition);
         DrawDebugDraw(camera, height);
 
         if (selectedEntityId is { } id && showHelpers)
@@ -130,9 +134,10 @@ public sealed class Renderer2D : IDisposable
         }
 
         _batch.End();
+        DrawLighting(scene, camera, cameraPosition, width, height, viewProjection);
     }
 
-    private void DrawSprites(Scene scene)
+    private void DrawSprites(Scene scene, Vector2 cameraPosition)
     {
         var drawables = new List<(Entity Entity, SpriteRenderer Sprite)>();
         foreach (var entity in scene.Entities)
@@ -158,6 +163,9 @@ public sealed class Renderer2D : IDisposable
         foreach (var (entity, sprite) in drawables)
         {
             var world = scene.GetWorldMatrix(entity);
+            var parallax = ParallaxOffset(cameraPosition, sprite.Parallax);
+            world.M41 += parallax.X;
+            world.M42 += parallax.Y;
             var texture = ResolveTexture(sprite.TexturePath);
             var corners = GetWorldCorners(world, sprite.Size, sprite.Origin);
 
@@ -378,6 +386,218 @@ public sealed class Renderer2D : IDisposable
     }
 
     /// <summary>Esquinas del sprite en mundo: TL, TR, BR, BL.</summary>
+    /// <summary>Desplazamiento de un sprite con paralaje respecto a la cámara.</summary>
+    public static Vector2 ParallaxOffset(Vector2 cameraPosition, float parallax) =>
+        cameraPosition * (1f - Math.Clamp(parallax, 0f, 1f));
+
+    // ---------- Iluminación ----------
+
+    private static readonly int[] ConeAngles = { 30, 45, 60, 90, 120 };
+
+    private void CreateLightTextures()
+    {
+        _radialLight = CreateRadialTexture(128);
+        foreach (var angle in ConeAngles)
+        {
+            _coneLights[angle] = CreateConeTexture(128, angle);
+        }
+
+        _vignette = CreateVignetteTexture(128);
+    }
+
+    private Texture2D CreateRadialTexture(int size)
+    {
+        var pixels = new byte[size * size * 4];
+
+        for (var y = 0; y < size; y++)
+        {
+            for (var x = 0; x < size; x++)
+            {
+                var dx = (x + 0.5f) / size * 2f - 1f;
+                var dy = (y + 0.5f) / size * 2f - 1f;
+                var distance = MathF.Sqrt(dx * dx + dy * dy);
+                var alpha = distance >= 1f ? 0f : MathF.Pow(1f - distance, 2f);
+                var index = (y * size + x) * 4;
+                pixels[index] = 255;
+                pixels[index + 1] = 255;
+                pixels[index + 2] = 255;
+                pixels[index + 3] = (byte)(alpha * 255f);
+            }
+        }
+
+        return Texture2D.FromPixels(_gl, pixels, size, size);
+    }
+
+    private Texture2D CreateConeTexture(int size, float degrees)
+    {
+        var pixels = new byte[size * size * 4];
+        var halfAngle = degrees * MathF.PI / 360f;
+
+        for (var y = 0; y < size; y++)
+        {
+            for (var x = 0; x < size; x++)
+            {
+                var dx = (x + 0.5f) / size * 2f - 1f;
+                var dy = (y + 0.5f) / size * 2f - 1f;
+                var distance = MathF.Sqrt(dx * dx + dy * dy);
+                var index = (y * size + x) * 4;
+
+                if (distance >= 1f)
+                {
+                    continue;
+                }
+
+                // El cono apunta hacia arriba en la textura.
+                var angle = MathF.Abs(MathF.Atan2(dx, -dy));
+                if (angle > halfAngle)
+                {
+                    continue;
+                }
+
+                var edge = Math.Clamp((halfAngle - angle) / MathF.Max(0.0001f, halfAngle * 0.18f), 0f, 1f);
+                var falloff = MathF.Pow(1f - distance, 2f);
+                var alpha = falloff * edge;
+
+                pixels[index] = 255;
+                pixels[index + 1] = 255;
+                pixels[index + 2] = 255;
+                pixels[index + 3] = (byte)(alpha * 255f);
+            }
+        }
+
+        return Texture2D.FromPixels(_gl, pixels, size, size);
+    }
+
+    private Texture2D CreateVignetteTexture(int size)
+    {
+        var pixels = new byte[size * size * 4];
+
+        for (var y = 0; y < size; y++)
+        {
+            for (var x = 0; x < size; x++)
+            {
+                var dx = (x + 0.5f) / size * 2f - 1f;
+                var dy = (y + 0.5f) / size * 2f - 1f;
+                var distance = MathF.Sqrt(dx * dx + dy * dy);
+                var alpha = Math.Clamp((distance - 0.55f) / 0.55f, 0f, 1f);
+                alpha = MathF.Pow(alpha, 1.6f) * 0.9f;
+                var index = (y * size + x) * 4;
+                pixels[index] = 0;
+                pixels[index + 1] = 0;
+                pixels[index + 2] = 0;
+                pixels[index + 3] = (byte)(alpha * 255f);
+            }
+        }
+
+        return Texture2D.FromPixels(_gl, pixels, size, size);
+    }
+
+    private Texture2D? ConeTexture(float degrees)
+    {
+        var closest = ConeAngles[0];
+        var best = float.MaxValue;
+        foreach (var candidate in ConeAngles)
+        {
+            var difference = MathF.Abs(candidate - degrees);
+            if (difference < best)
+            {
+                best = difference;
+                closest = candidate;
+            }
+        }
+
+        return _coneLights.TryGetValue(closest, out var texture) ? texture : null;
+    }
+
+    private void DrawLighting(Scene scene, Camera2D camera, Vector2 cameraPosition, int width, int height,
+        Matrix4x4 viewProjection)
+    {
+        var lights = new List<(Entity Entity, Light2D Light)>();
+        foreach (var entity in scene.Entities)
+        {
+            if (entity.Active && entity.GetComponent<Light2D>() is { Enabled: true } light && light.Radius > 0f)
+            {
+                lights.Add((entity, light));
+            }
+        }
+
+        var ambient = camera.Ambient;
+        var hasAmbient = ambient.X < 0.999f || ambient.Y < 0.999f || ambient.Z < 0.999f;
+
+        if (lights.Count == 0 && !hasAmbient)
+        {
+            return;
+        }
+
+        var halfHeight = camera.OrthographicSize / MathF.Max(0.01f, camera.Zoom);
+        var halfWidth = halfHeight * width / MathF.Max(1, height);
+        var extents = new Vector2(halfWidth + 1f, halfHeight + 1f);
+
+        if (hasAmbient)
+        {
+            _gl.BlendFunc(BlendingFactor.DstColor, BlendingFactor.Zero);
+            _batch.Begin(viewProjection);
+            DrawViewQuad(cameraPosition, extents, new Vector4(ambient.X, ambient.Y, ambient.Z, 1f), null);
+            _batch.End();
+        }
+
+        if (lights.Count > 0)
+        {
+            _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
+            _batch.Begin(viewProjection);
+
+            foreach (var (entity, light) in lights)
+            {
+                var intensity = light.CurrentIntensity > 0f ? light.CurrentIntensity : light.Intensity;
+                if (intensity <= 0f)
+                {
+                    continue;
+                }
+
+                var texture = light.Kind == LightKind.Cone ? ConeTexture(light.ConeAngle) : _radialLight;
+                if (texture is null)
+                {
+                    continue;
+                }
+
+                var world = scene.GetWorldMatrix(entity);
+                var corners = GetWorldCorners(world, new Vector2(light.Radius * 2f, light.Radius * 2f), new Vector2(0.5f, 0.5f));
+                var tint = new Vector4(
+                    light.Color.X * intensity,
+                    light.Color.Y * intensity,
+                    light.Color.Z * intensity,
+                    System.Math.Clamp(intensity, 0f, 1f));
+
+                _batch.DrawQuad(texture, corners[0], corners[1], corners[2], corners[3],
+                    new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f), tint);
+            }
+
+            _batch.End();
+        }
+
+        if (_vignette is not null)
+        {
+            _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            _batch.Begin(viewProjection);
+            DrawViewQuad(cameraPosition, extents, new Vector4(1f, 1f, 1f, 1f), _vignette);
+            _batch.End();
+        }
+
+        _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+    }
+
+    /// <summary>Dibuja un cuadro que cubre todo el viewport (ambiente, viñeta).</summary>
+    private void DrawViewQuad(Vector2 cameraPosition, Vector2 extents, Vector4 color, Texture2D? texture)
+    {
+        var topLeft = cameraPosition + new Vector2(-extents.X, extents.Y);
+        var topRight = cameraPosition + new Vector2(extents.X, extents.Y);
+        var bottomRight = cameraPosition + new Vector2(extents.X, -extents.Y);
+        var bottomLeft = cameraPosition + new Vector2(-extents.X, -extents.Y);
+
+        _batch.DrawQuad(texture, topLeft, topRight, bottomRight, bottomLeft,
+            new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f), color);
+    }
+
     public static Vector2[] GetWorldCorners(Matrix4x4 world, Vector2 size, Vector2 origin)
     {
         var left = -size.X * origin.X;
@@ -522,6 +742,14 @@ public sealed class Renderer2D : IDisposable
         ClearTextureCache();
         _whiteTexture?.Dispose();
         _checkerTexture?.Dispose();
+        _radialLight?.Dispose();
+        foreach (var cone in _coneLights.Values)
+        {
+            cone.Dispose();
+        }
+
+        _coneLights.Clear();
+        _vignette?.Dispose();
         _batch.Dispose();
 
         if (_program != 0)

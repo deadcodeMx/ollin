@@ -34,6 +34,9 @@ public sealed class SpriteRenderer : Component
 
     public bool Visible { get; set; } = true;
 
+    /// <summary>1 = mundo normal; 0 = fijo a la cámara (fondos con paralaje).</summary>
+    public float Parallax { get; set; } = 1f;
+
     public override Component CloneFor(Entity newOwner) => new SpriteRenderer
     {
         Enabled = Enabled,
@@ -46,6 +49,7 @@ public sealed class SpriteRenderer : Component
         FlipX = FlipX,
         FlipY = FlipY,
         Visible = Visible,
+        Parallax = Parallax,
         Owner = newOwner,
     };
 }

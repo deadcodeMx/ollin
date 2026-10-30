@@ -77,6 +77,47 @@ public sealed class SceneRuntime
         Log.Info("Reproducción iniciada", "Runtime");
     }
 
+    /// <summary>Mueve las cámaras con FollowTag hacia su objetivo.</summary>
+    private void UpdateCameraFollow(float dt)
+    {
+        if (_scene is null)
+        {
+            return;
+        }
+
+        foreach (var entity in _scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<Camera2D>() is not { Enabled: true } camera ||
+                string.IsNullOrWhiteSpace(camera.FollowTag))
+            {
+                continue;
+            }
+
+            Entity? target = null;
+            foreach (var candidate in _scene.Entities)
+            {
+                if (candidate.Active &&
+                    candidate.Tags.Any(tag => tag.Equals(camera.FollowTag, StringComparison.OrdinalIgnoreCase)))
+                {
+                    target = candidate;
+                    break;
+                }
+            }
+
+            if (target is null)
+            {
+                continue;
+            }
+
+            var targetPosition = _scene.GetWorldPosition(target);
+            var current = _scene.GetWorldPosition(entity);
+            var smoothing = MathF.Max(0.1f, camera.FollowSmoothing);
+            var t = 1f - MathF.Exp(-smoothing * dt);
+            var next = Vector2.Lerp(current, targetPosition, t);
+            entity.Transform.Position += next - current;
+        }
+    }
+
     private bool PlayDialogue(string id)
     {
         var file = Dialogues?.Get(id);
@@ -323,6 +364,7 @@ public sealed class SceneRuntime
         DrainCoroutines();
         _physics.Step(_scene, _scripts, dt);
         UpdateCoroutines(dt);
+        UpdateCameraFollow(dt);
         UpdateInteractions();
 
         // Cierra el cuadro de entrada: calcula flancos y delta del ratón.

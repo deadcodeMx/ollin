@@ -338,6 +338,7 @@
                             <MenuItem Header="Animación" Click="OnAddAnimator" />
                             <MenuItem Header="Tilemap" Click="OnAddTilemap" />
                             <MenuItem Header="Audio" Click="OnAddAudio" />
+                            <MenuItem Header="Luz 2D" Click="OnAddLight" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                             <MenuItem Header="Script" Click="OnAddScriptComponent" />
@@ -411,6 +412,10 @@
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.SortingOrder, Mode=TwoWay}" Increment="1" FormatString="0" />
                     </Grid>
                     <CheckBox Content="Voltear horizontalmente" IsChecked="{Binding Selected.FlipX, Mode=TwoWay}" FontSize="11.5" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Paralaje" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Parallax, Mode=TwoWay}" Increment="0.1" Minimum="0" Maximum="1" FormatString="0.##" />
+                    </Grid>
 
                     <StackPanel IsVisible="{Binding Selected.HasAnimator}" Spacing="5">
                       <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,4" />
@@ -569,6 +574,37 @@
                 </ScrollViewer>
               </TabItem>
 
+              <TabItem Header="Luz" IsVisible="{Binding Selected.HasLight}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="LUZ 2D" />
+                    <CheckBox Content="Cono (linterna)" IsChecked="{Binding Selected.LightIsCone, Mode=TwoWay}" FontSize="11.5" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Color" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.LightColorHex, Mode=TwoWay}" Watermark="#FFE0B0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.LightRadius, Mode=TwoWay}" Increment="0.5" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Intensidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.LightIntensity, Mode=TwoWay}" Increment="0.1" Minimum="0" Maximum="2.5" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Ángulo cono" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.LightConeAngle, Mode=TwoWay}" Increment="5" Minimum="10" Maximum="170" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Parpadeo" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.LightFlicker, Mode=TwoWay}" Increment="0.05" Minimum="0" Maximum="1" FormatString="0.##" />
+                    </Grid>
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="La luz se dibuja aditiva sobre la escena. El ambiente de la cámara oscurece lo que no está iluminado." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
               <TabItem Header="Cámara" IsVisible="{Binding Selected.HasCamera}">
                 <ScrollViewer>
                   <StackPanel Margin="8" Spacing="5">
@@ -580,6 +616,18 @@
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Zoom" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraZoom, Mode=TwoWay}" Increment="0.1" Minimum="0.05" FormatString="0.###" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Ambiente" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.AmbientHex, Mode=TwoWay}" Watermark="#RRGGBB (blanco = sin oscurecer)" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Seguir" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.FollowTag, Mode=TwoWay}" Watermark="player (vacío = fija)" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Suavizado" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.FollowSmoothing, Mode=TwoWay}" Increment="0.5" Minimum="0.1" FormatString="0.#" />
                     </Grid>
                   </StackPanel>
                 </ScrollViewer>

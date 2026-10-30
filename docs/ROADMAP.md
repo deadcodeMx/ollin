@@ -97,12 +97,12 @@ tilemap/*autotiling* y buscador de propiedades en el inspector.
 **Objetivo:** las herramientas que sirven a cualquier juego 2D, sin atarse a un género.
 
 ### Atmósfera y presentación
-- [ ] Luces 2D: puntuales y conos, con color, radio e intensidad.
+- [x] Luces 2D: puntuales y conos, con color, radio, intensidad y parpadeo.
 - [ ] Sombras por oclusión (shadow casting) para luces 2D.
 - [ ] Niebla, viñeta, grano de película y aberración cromática (post-proceso).
-- [ ] Capas de paralaje para fondos.
-- [ ] Cámaras fijas por habitación (estilo clásico) y cámara de seguimiento.
-- [ ] Linterna con cono de luz y parpadeo configurable.
+- [x] Capas de paralaje para fondos (factor por sprite).
+- [x] Cámara de seguimiento con etiqueta y suavizado.`n- [ ] Cámaras fijas por habitación (estilo clásico).
+- [x] Linterna con cono de luz y parpadeo configurable.
 
 ### Narrativa e interacción
 - [x] Triggers de zona (entrar, salir, interactuar) y aviso de interacción con E.

@@ -17,6 +17,15 @@ public sealed class Camera2D : Component
 
     public bool IsMain { get; set; } = true;
 
+    /// <summary>Luz ambiente de la escena (blanco = sin oscurecer).</summary>
+    public Vector4 Ambient { get; set; } = Vector4.One;
+
+    /// <summary>Etiqueta de la entidad a la que sigue la cámara (vacío = fija).</summary>
+    public string? FollowTag { get; set; }
+
+    /// <summary>Velocidad de seguimiento (mayor = más pegada).</summary>
+    public float FollowSmoothing { get; set; } = 6f;
+
     public override Component CloneFor(Entity newOwner) => new Camera2D
     {
         Enabled = Enabled,
@@ -24,6 +33,9 @@ public sealed class Camera2D : Component
         Zoom = Zoom,
         Background = Background,
         IsMain = IsMain,
+        Ambient = Ambient,
+        FollowTag = FollowTag,
+        FollowSmoothing = FollowSmoothing,
         Owner = newOwner,
     };
 }

@@ -1,18 +1,17 @@
-## Ollin 0.10.0 beta — diálogos e interacción
+## Ollin 0.11.0 beta — luces y atmósfera
 
 ### Incluye
 
-- Diálogos en `dialogs/<id>.json` con hablante y líneas.
-- Componente **Interactable**: aviso, radio, diálogo y uso único.
-- Etiquetas de entidad (`player`, `enemy`, …) para identificar objetos.
-- Interfaz de diálogo sobre el viewport durante la reproducción.
-- API de scripting `Dialogue.Play(id)` y callback `OnInteract`.
-- Nota interactiva de ejemplo en las plantillas y en la escena de ejemplo.
-- 83 pruebas automatizadas.
+- Componente **Light2D**: luces puntuales y conos con color, radio, intensidad,
+  ángulo y parpadeo.
+- Luz **ambiente** por cámara, viñeta y capas de **paralaje**.
+- **Cámara con seguimiento** por etiqueta y con suavizado.
+- Nota interactiva con diálogo y linterna de ejemplo en la plantilla Terror.
+- 88 pruebas automatizadas.
 
 ### Instalación
 
-1. Descarga `Ollin-Setup-0.10.0-beta.exe`.
+1. Descarga `Ollin-Setup-0.11.0-beta.exe`.
 2. Ejecútalo (Windows puede avisar por no estar firmado).
 3. Abre **Ollin** desde el acceso directo.
 

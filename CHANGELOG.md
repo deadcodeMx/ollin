@@ -17,6 +17,23 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.11.0] — 2026-10-30
+
+### Añadido
+
+- **Luces 2D**: componente `Light2D` puntual o en cono, con color, radio, intensidad,
+  ángulo y parpadeo. Se dibujan de forma aditiva sobre la escena.
+- **Luz ambiente** por cámara: oscurece lo que no está iluminado.
+- **Viñeta** sutil en el viewport para dar profundidad.
+- **Cámara con seguimiento**: `FollowTag` y suavizado (por defecto sigue a `player`).
+- **Paralaje** en sprites: factor 0 (fijo a la cámara) a 1 (mundo).
+- Luces de ejemplo en la escena de demostración y en las plantillas (linterna en Terror).
+- 5 pruebas nuevas: 88 en total.
+
+### Pendiente
+
+- Sombras por oclusión y post-proceso (niebla, grano, aberración cromática).
+
 ## [0.10.0] — 2026-10-30
 
 ### Añadido

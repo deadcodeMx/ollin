@@ -11,7 +11,14 @@ public static class DefaultScene
         var scene = new Scene { Name = "Escena de ejemplo" };
 
         var camera = scene.Create("Cámara principal", new Vector2(0.9f, -1.2f));
-        camera.AddComponent(new Camera2D { OrthographicSize = 6f, Zoom = 1f });
+        camera.AddComponent(new Camera2D
+        {
+            OrthographicSize = 6f,
+            Zoom = 1f,
+            Ambient = new Vector4(0.34f, 0.36f, 0.44f, 1f),
+            FollowTag = "player",
+            FollowSmoothing = 5f,
+        });
 
         var ground = scene.Create("Terreno", new Vector2(-10f, -2.5f));
         var tilemap = new Tilemap
@@ -36,6 +43,12 @@ public static class DefaultScene
 
         var player = scene.Create("Jugador", new Vector2(0f, -1.6f));
         player.Tags.Add("player");
+        player.AddComponent(new Light2D
+        {
+            Radius = 5.5f,
+            Intensity = 0.85f,
+            Color = new Vector4(1f, 0.92f, 0.78f, 1f),
+        });
         player.AddComponent(new SpriteRenderer
         {
             TexturePath = "assets/sprites/hero-walk.png",
@@ -80,6 +93,13 @@ public static class DefaultScene
             SortingOrder = 20,
         });
         coin.AddComponent(new RotatorComponent { DegreesPerSecond = 120f });
+        coin.AddComponent(new Light2D
+        {
+            Radius = 2.2f,
+            Intensity = 0.7f,
+            Color = new Vector4(1f, 0.82f, 0.35f, 1f),
+            FlickerAmplitude = 0.08f,
+        });
 
         var tilted = scene.Create("Caja girada", new Vector2(-2.8f, -1.8f));
         tilted.Transform.Rotation = 0.35f;

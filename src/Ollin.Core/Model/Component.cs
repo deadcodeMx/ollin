@@ -18,6 +18,7 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.Rigidbody2D), "rigidbody")]
 [JsonDerivedType(typeof(Components.AudioSource), "audio")]
 [JsonDerivedType(typeof(Components.Interactable), "interactable")]
+[JsonDerivedType(typeof(Components.Light2D), "light")]
 public abstract class Component
 {
     /// <summary>Entidad propietaria (no se serializa).</summary>

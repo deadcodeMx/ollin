@@ -235,7 +235,22 @@ var activo = Dialogue.IsActive;
 También puedes implementar `OnInteract(Entity other)` en el script de la entidad
 interactuable para hacer algo además del diálogo.
 
-## 9. Audio
+## 9. Luces y atmósfera
+
+- **Añadir una luz**: inspector → *+ Añadir componente* → **Luz 2D**.
+- Propiedades: **Color**, **Radio**, **Intensidad**, tipo **cono** (linterna),
+  **Ángulo** del cono y **Parpadeo** (0 = fija).
+- La **luz ambiente** se configura en la cámara (pestaña *Cámara* → *Ambiente*).
+  Blanco = sin oscurecer; valores bajos oscurecen la escena.
+- **Viñeta**: se aplica automáticamente cuando hay ambiente o luces.
+- **Paralaje**: en el sprite, *Paralaje* 1 = mundo normal, 0 = fijo a la cámara,
+  0.5 = se mueve a mitad de velocidad (fondos).
+- **Cámara con seguimiento**: en la cámara, *Seguir* = etiqueta del objetivo
+  (`player`) y *Suavizado*. Funciona durante la reproducción.
+
+> Las sombras por oclusión y el post-proceso (niebla, grano) todavía no están.
+
+## 10. Audio
 
 Añade un **AudioSource** a una entidad:
 
@@ -249,7 +264,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 10. Prefabs, copiar y pegar
+## 11. Prefabs, copiar y pegar
 
 - **Guardar como prefab**: clic derecho sobre la entidad → *Guardar como prefab…*.
   Se guarda en `prefabs/nombre.prefab.json`.
@@ -260,7 +275,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 11. Reproducir y depurar
+## 12. Reproducir y depurar
 
 | Acción | Cómo |
 | --- | --- |
@@ -273,7 +288,7 @@ los mensajes de `Debug`, errores de scripts y avisos de audio.
 
 ---
 
-## 12. Archivos del proyecto
+## 13. Archivos del proyecto
 
 Desde la pestaña **Archivos** del dock inferior:
 
@@ -287,7 +302,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 13. Atajos de teclado
+## 14. Atajos de teclado
 
 | Atajo | Acción |
 | --- | --- |
@@ -308,7 +323,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 14. Problemas comunes
+## 15. Problemas comunes
 
 | Síntoma | Causa y solución |
 | --- | --- |
@@ -321,7 +336,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 15. Flujo recomendado para un prototipo
+## 16. Flujo recomendado para un prototipo
 
 1. Crea un proyecto con la plantilla **Plataformas**.
 2. Abre `scenes/inicio.ollin.json` (pestaña **Escena**).

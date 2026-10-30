@@ -1017,4 +1017,181 @@ public sealed class EntityNode : ObservableObject
             _owner.MarkDirty();
         }
     }
+
+    public bool HasLight => Entity.GetComponent<Light2D>() is not null;
+
+    public Light2D? Light => Entity.GetComponent<Light2D>();
+
+    public bool LightIsCone
+    {
+        get => Light?.Kind == LightKind.Cone;
+        set
+        {
+            if (Light is null)
+            {
+                return;
+            }
+
+            var kind = value ? LightKind.Cone : LightKind.Point;
+            if (Light.Kind == kind)
+            {
+                return;
+            }
+
+            Light.Kind = kind;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public string LightColorHex
+    {
+        get => ColorUtil.ToHex(Light?.Color ?? Vector4.One);
+        set
+        {
+            if (Light is null)
+            {
+                return;
+            }
+
+            Light.Color = ColorUtil.FromHex(value, Light.Color);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal LightRadius
+    {
+        get => (decimal)(Light?.Radius ?? 4.5f);
+        set
+        {
+            if (Light is null || MathF.Abs(Light.Radius - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Light.Radius = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal LightIntensity
+    {
+        get => (decimal)(Light?.Intensity ?? 1f);
+        set
+        {
+            if (Light is null || MathF.Abs(Light.Intensity - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Light.Intensity = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal LightConeAngle
+    {
+        get => (decimal)(Light?.ConeAngle ?? 60f);
+        set
+        {
+            if (Light is null || MathF.Abs(Light.ConeAngle - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Light.ConeAngle = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal LightFlicker
+    {
+        get => (decimal)(Light?.FlickerAmplitude ?? 0f);
+        set
+        {
+            if (Light is null || MathF.Abs(Light.FlickerAmplitude - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Light.FlickerAmplitude = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal Parallax
+    {
+        get => (decimal)(Sprite?.Parallax ?? 1f);
+        set
+        {
+            if (Sprite is null || MathF.Abs(Sprite.Parallax - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Sprite.Parallax = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public string AmbientHex
+    {
+        get => ColorUtil.ToHex(Camera?.Ambient ?? Vector4.One);
+        set
+        {
+            if (Camera is null)
+            {
+                return;
+            }
+
+            Camera.Ambient = ColorUtil.FromHex(value, Camera.Ambient);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public string FollowTag
+    {
+        get => Camera?.FollowTag ?? string.Empty;
+        set
+        {
+            if (Camera is null || (Camera.FollowTag ?? string.Empty) == value)
+            {
+                return;
+            }
+
+            Camera.FollowTag = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal FollowSmoothing
+    {
+        get => (decimal)(Camera?.FollowSmoothing ?? 6f);
+        set
+        {
+            if (Camera is null || MathF.Abs(Camera.FollowSmoothing - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Camera.FollowSmoothing = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
 }

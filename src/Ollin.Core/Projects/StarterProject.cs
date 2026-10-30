@@ -1,3 +1,4 @@
+using Ollin.Core.Model;
 using System.Numerics;
 using Ollin.Core.Model.Components;
 using Ollin.Core.Scenes;
@@ -34,7 +35,14 @@ public static class StarterProject
         var scene = new Scene { Name = "Inicio" };
 
         var camera = scene.Create("Cámara principal", new Vector2(0f, -0.5f));
-        camera.AddComponent(new Camera2D { OrthographicSize = 6f, Zoom = 1f });
+        camera.AddComponent(new Camera2D
+        {
+            OrthographicSize = 6f,
+            Zoom = 1f,
+            Ambient = new Vector4(0.55f, 0.57f, 0.65f, 1f),
+            FollowTag = "player",
+            FollowSmoothing = 6f,
+        });
 
         var ground = scene.Create("Suelo", new Vector2(0f, -2.5f));
         ground.AddComponent(new SpriteRenderer
@@ -46,6 +54,7 @@ public static class StarterProject
 
         var player = scene.Create("Jugador", new Vector2(0f, -1.6f));
         player.Tags.Add("player");
+        AddLight(player);
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(1f, 1f),
@@ -65,7 +74,14 @@ public static class StarterProject
         var scene = new Scene { Name = "Nivel 1" };
 
         var camera = scene.Create("Cámara principal", new Vector2(0f, 0f));
-        camera.AddComponent(new Camera2D { OrthographicSize = 7f, Zoom = 1f });
+        camera.AddComponent(new Camera2D
+        {
+            OrthographicSize = 7f,
+            Zoom = 1f,
+            Ambient = new Vector4(0.5f, 0.52f, 0.6f, 1f),
+            FollowTag = "player",
+            FollowSmoothing = 5f,
+        });
 
         var ground = scene.Create("Suelo", new Vector2(-12f, -4f));
         var tilemap = ground.AddComponent(new Tilemap
@@ -88,6 +104,7 @@ public static class StarterProject
 
         var player = scene.Create("Jugador", new Vector2(-10f, -2.2f));
         player.Tags.Add("player");
+        AddLight(player);
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(0.9f, 1f),
@@ -131,7 +148,14 @@ public static class StarterProject
         var scene = new Scene { Name = "Pasillo" };
 
         var camera = scene.Create("Cámara principal", new Vector2(-6f, -1f));
-        camera.AddComponent(new Camera2D { OrthographicSize = 5.5f, Zoom = 1f });
+        camera.AddComponent(new Camera2D
+        {
+            OrthographicSize = 5.5f,
+            Zoom = 1f,
+            Ambient = new Vector4(0.08f, 0.09f, 0.12f, 1f),
+            FollowTag = "player",
+            FollowSmoothing = 4f,
+        });
 
         var floor = scene.Create("Suelo", new Vector2(-8f, -2.5f));
         var tiles = floor.AddComponent(new Tilemap
@@ -173,6 +197,7 @@ public static class StarterProject
 
         var player = scene.Create("Jugador", new Vector2(-7f, -1.6f));
         player.Tags.Add("player");
+        AddLight(player, cone: true);
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(0.8f, 1f),
@@ -204,6 +229,19 @@ public static class StarterProject
 
         AddNote(scene, new Vector2(-2.2f, -1.2f));
         return scene;
+    }
+
+    private static void AddLight(Entity entity, bool cone = false)
+    {
+        entity.AddComponent(new Light2D
+        {
+            Kind = cone ? LightKind.Cone : LightKind.Point,
+            Radius = cone ? 8f : 5f,
+            Intensity = cone ? 0.9f : 0.75f,
+            ConeAngle = 55f,
+            FlickerAmplitude = cone ? 0.12f : 0f,
+            Color = new Vector4(1f, 0.93f, 0.8f, 1f),
+        });
     }
 
     private static void AddNote(Scene scene, Vector2 position)
