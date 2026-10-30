@@ -11,9 +11,9 @@ ollin
 
 ## Descripción corta (campo *About*)
 
-> Motor de juego 2D con editor propio en C#/.NET 8: viewport OpenGL, gizmos, historial,
-> escenas JSON y scripts en C# compilados con Roslyn. «Ollin» significa movimiento en
-> náhuatl.
+> Motor de juego 2D con editor propio en C#/.NET 8: proyectos independientes, escenas
+> múltiples, viewport OpenGL, audio, prefabs, autocompletado y scripts en C# con
+> recarga en caliente. «Ollin» significa movimiento en náhuatl.
 
 Versión de una línea (para redes o pie de página):
 
@@ -25,15 +25,16 @@ Ollin es un motor de juego 2D con editor integrado, escrito desde cero en C#/.NE
 No envuelve otro motor: el renderizado, el modelo de escena, el bucle de juego, el
 historial y el compilador de scripts son código propio.
 
-El editor (Avalonia) incluye viewport OpenGL ES 3.0, jerarquía de escena, inspector en
-vivo, gizmos de mover/rotar/escalar, deshacer/rehacer, panel de assets con miniaturas y
-consola. Las escenas se guardan en JSON legible y los scripts se escriben en C#, se
-compilan en memoria con Roslyn y se ejecutan con el ciclo de vida
-`OnStart`/`OnUpdate`/`OnDestroy`.
+El editor (Avalonia) incluye proyectos independientes, escenas múltiples en pestañas,
+viewport OpenGL ES 3.0, inspector por pestañas, gizmos, deshacer/rehacer, panel de
+assets con miniaturas, explorador de archivos, audio 2D, prefabs y autocompletado de C#.
+Las escenas se guardan en JSON legible y los scripts se compilan en memoria con Roslyn
+y se ejecutan con el ciclo de vida `OnStart`/`OnUpdate`/`OnDestroy`, con recarga en
+caliente al guardar.
 
-El proyecto avanza por etapas documentadas: editor y render (1), runtime, assets y
-gizmos (2), scripting (3); después animación, tilemaps, física y audio (4), build del
-jugador (5) y multiplataforma (6).
+El proyecto avanza por etapas documentadas y ya tiene cerrada la etapa 4: animación,
+tilemaps con colisión por celda, física, audio, prefabs y herramientas de edición.
+La siguiente etapa es terror y supervivencia (luces, triggers, diálogos, IA).
 
 ## Topics sugeridos
 
@@ -54,31 +55,44 @@ editor, engine, silk-net, sprite-batch, mexico, nahuatl, gamedev
 | Discussions | Activadas si quieres ideas abiertas |
 | Wiki / Projects | Desactivados al principio |
 | Actions | Activadas (la CI compila y prueba en Windows) |
-| Social preview | `docs/images/editor.png` (ideal 1280×640) |
+| Social preview | `docs/images/logo.png` (o `docs/images/editor.png`) |
 
-## Primer *release*: v0.3.0
+## Releases: cómo se distribuyen las actualizaciones
 
-Título: **Ollin v0.3.0 — scripting en C#**
+Cada versión del motor se publica como un **release** con su instalador adjunto. La
+página de descargas del README apunta siempre a
+[Releases](https://github.com/deadcodeMx/ollin/releases), de modo que el usuario
+siempre descarga la última beta.
+
+Título y notas sugeridas para la versión actual (0.9.0):
 
 ```markdown
-Primer corte público: editor 2D funcional con scripting en C#.
+## Ollin 0.9.0 beta — editor completo y etapa 4 cerrada
 
 ### Incluye
-- Editor Avalonia con jerarquía, inspector, consola y viewport OpenGL ES 3.0
-- Escenas JSON, assets con miniaturas, gizmos de mover/rotar/escalar y deshacer/rehacer
-- Modo Reproducir/Pausar/Detener con restauración exacta de la escena
-- Scripts C# compilados en memoria con Roslyn (`OnStart` / `OnUpdate` / `OnDestroy`)
-- 41 pruebas automatizadas
+- Proyectos independientes con plantillas (vacío, plataformas, terror)
+- Escenas múltiples en pestañas con estado propio
+- Editor de scripts con resaltado, autocompletado y recarga en caliente
+- Audio 2D, prefabs, copiar/pegar, buscador y menús contextuales
+- Colisión por celda en tilemaps y cuerpos cinemáticos
+- Arrastrar scripts y prefabs a entidades
 
-### Cómo probarlo
-    git clone https://github.com/deadcodeMx/ollin.git
-    cd ollin
-    dotnet run --project src/Ollin.Editor
+### Instalación
+1. Descarga `Ollin-Setup-0.9.0-beta.exe`.
+2. Ejecútalo (Windows puede avisar por no estar firmado).
+3. Abre Ollin desde el acceso directo.
 
-### Requisitos
-Windows 10/11, .NET 8 SDK y una GPU con OpenGL ES 3.0.
+Requiere .NET 8 Desktop Runtime.
 ```
 
+Para generar el instalador y (si tienes `gh`) publicar el release:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/release.ps1
+```
+
+Sin `gh`, el script deja el instalador en `dist/installer/` y muestra los pasos para
+subirlo a mano desde *Releases → Draft a new release*.
 ## Cómo publicarlo
 
 ### Opción A — GitHub CLI

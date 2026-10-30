@@ -14,7 +14,7 @@ internal sealed class SetupForm : Form
     {
         var installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Ollin");
 
-        Text = "Ollin 0.4.0 beta — Instalador";
+        Text = $"{SetupInfo.DisplayName} — Instalador";
         ClientSize = new Size(520, 250);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -23,6 +23,7 @@ internal sealed class SetupForm : Form
         BackColor = Color.FromArgb(21, 25, 34);
         ForeColor = Color.FromArgb(231, 234, 240);
         Font = new Font("Segoe UI", 10f);
+        Icon = LoadIcon();
 
         var title = new Label
         {
@@ -35,7 +36,7 @@ internal sealed class SetupForm : Form
 
         var subtitle = new Label
         {
-            Text = "Motor de juego 2D · versión 0.4.0 beta",
+            Text = $"Motor de juego 2D · versión {SetupInfo.Version} beta",
             ForeColor = Color.FromArgb(139, 148, 167),
             AutoSize = true,
             Location = new Point(30, 68),
@@ -100,5 +101,10 @@ internal sealed class SetupForm : Form
                 Close();
             });
         });
+    }
+    private static Icon? LoadIcon()
+    {
+        using var stream = typeof(SetupForm).Assembly.GetManifestResourceStream("Ollin.Setup.icon.ico");
+        return stream is null ? null : new Icon(stream);
     }
 }

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/logo.png" alt="Ollin" width="520">
+</p>
+
 # Ollin
 
 **Motor de juego 2D con editor propio y scripting en C#.**
@@ -10,10 +14,20 @@
 ![Avalonia](https://img.shields.io/badge/Avalonia-11.3-8B44AC)
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
 ![Roslyn](https://img.shields.io/badge/Roslyn-4.11-2E7D32)
-![Pruebas](https://img.shields.io/badge/pruebas-41%2F41-47B8A8)
-![Etapa](https://img.shields.io/badge/etapa-3%20de%206-E9A23B)
+![Pruebas](https://img.shields.io/badge/pruebas-76%2F76-47B8A8)
+![Etapa](https://img.shields.io/badge/etapa-4%20de%208%20completada-47B8A8)
 
 ![Editor de Ollin](docs/images/editor.png)
+
+## Descargas
+
+- **Última beta**: [Ollin-Setup-0.9.0-beta.exe](https://github.com/deadcodeMx/ollin/releases/latest)
+- **Todas las versiones**: [Releases del proyecto](https://github.com/deadcodeMx/ollin/releases)
+- **Guía completa de uso**: [docs/GUIA.md](docs/GUIA.md)
+
+Cada versión del motor se publica como *release* con su instalador y sus notas. El
+instalador copia el motor en `%LOCALAPPDATA%\Ollin`, crea accesos directos y añade
+un desinstalador. Requiere **.NET 8 Desktop Runtime**.
 
 ## ¿Qué es Ollin?
 
@@ -51,8 +65,8 @@ un puente 2.5D antes del 3D.
 | 1 | Editor: escena, jerarquía, inspector, viewport, cámara, JSON | ✅ |
 | 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
-| 4 | Animación, tilemaps, física, rutinas y depuración | ✅ (parcial: faltan audio y prefabs) |
-| 5 | Terror y supervivencia: luces, triggers, diálogos, inventario, IA, día/noche | ⏳ |
+| 4 | Animación, tilemaps, física, audio, prefabs, proyectos y herramientas | ✅ |
+| 5 | Terror y supervivencia: luces, triggers, diálogos, inventario, IA, día/noche | ⏳ siguiente |
 | 6 | 2.5D: sprites en espacio 3D con cámara en primera persona | ⏳ |
 | 7 | 3D: mallas glTF, luces y sombras, física, navmesh, editor 3D | ⏳ |
 | 8 | Producto: build, guardado, opciones, perfilador, localización | ⏳ |

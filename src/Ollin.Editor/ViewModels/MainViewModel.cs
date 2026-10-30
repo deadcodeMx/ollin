@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Reflection;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Numerics;
@@ -67,7 +68,10 @@ public sealed partial class MainViewModel : ObservableObject
         ReloadScripts();
         StartScriptWatcher();
         InitializeProject();
-        Log.Info("Ollin 0.7 — editor listo", "Editor");
+        var version = typeof(MainViewModel).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion?
+            .Split('+')[0] ?? "0.0.0";
+        Log.Info($"Ollin {version} — editor listo", "Editor");
         Log.Info("Clic para seleccionar · Rueda para zoom · Alt+arrastrar para mover la cámara", "Editor");
     }
 

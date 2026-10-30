@@ -17,6 +17,27 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.9.0] — 2026-10-30
+
+### Añadido
+
+- Logo del motor: icono de la aplicación, del instalador y de la ventana, y logo en
+  el diálogo «Acerca de» y en el README.
+- Guía de uso completa en `docs/GUIA.md`: interfaz, componentes, scripts, audio,
+  prefabs, atajos, problemas comunes y flujo recomendado.
+- Sección de descargas en el README y notas de versión para GitHub Releases.
+- Script `tools/release.ps1` que compila el instalador y publica el release (con `gh`).
+- Iconos generados a partir del logo en `docs/images/` y `src/Ollin.Editor/Assets/`.
+
+### Corregido
+
+- El instalador mostraba la versión 0.4.0: ahora la lee del ensamblado, igual que el
+  diálogo «Acerca de» y las notas del registro de Windows.
+- El diálogo de proyecto nuevo tiene desplazamiento y altura mínima; sus botones ya no
+  se pierden en pantallas pequeñas.
+- El mismo diálogo ya no se cierra al fallar la validación y evita un bloqueo al
+  envolver su contenido.
+
 ## [0.8.0] — 2026-10-30
 
 ### Añadido

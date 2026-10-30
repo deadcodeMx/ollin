@@ -8,8 +8,8 @@ namespace Ollin.Setup;
 internal static class Program
 {
     private const string AppName = "Ollin";
-    private const string DisplayName = "Ollin 0.4.0 beta";
-    private const string Version = "0.4.0";
+    private static string DisplayName => SetupInfo.DisplayName;
+    private static string Version => SetupInfo.Version;
 
     [STAThread]
     private static int Main(string[] args)

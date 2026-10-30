@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.Reflection;
 using System.Xml;
 using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.CodeCompletion;
@@ -9,6 +10,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Ollin.Core.Assets;
 using Ollin.Core.Input;
@@ -361,13 +364,27 @@ public partial class MainWindow : Window
         {
             Title = "Acerca de Ollin",
             Width = 460,
-            Height = 280,
+            Height = 400,
             CanResize = false,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             Background = new SolidColorBrush(Color.Parse("#151922")),
         };
 
-        about.Content = new StackPanel
+        var version = typeof(MainWindow).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion?
+            .Split('+')[0] ?? "0.0.0";
+
+        Bitmap? logo = null;
+        try
+        {
+            logo = new Bitmap(AssetLoader.Open(new Uri("avares://Ollin.Editor/Assets/ollin.ico")));
+        }
+        catch
+        {
+            // Sin logo el diálogo sigue funcionando.
+        }
+
+        var aboutPanel = new StackPanel
         {
             Margin = new Thickness(26),
             Spacing = 10,
@@ -382,7 +399,7 @@ public partial class MainWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Motor de juego 2D · versión 0.8.0 beta",
+                    Text = $"Motor de juego 2D · versión {version} beta",
                     FontSize = 12,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
@@ -403,6 +420,18 @@ public partial class MainWindow : Window
             },
         };
 
+        if (logo is not null)
+        {
+            aboutPanel.Children.Insert(0, new Image
+            {
+                Source = logo,
+                Width = 72,
+                Height = 72,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left,
+            });
+        }
+
+        about.Content = aboutPanel;
         about.ShowDialog(this);
     }
 

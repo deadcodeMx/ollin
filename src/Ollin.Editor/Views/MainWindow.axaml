@@ -10,6 +10,7 @@
         Width="1500" Height="940"
         MinWidth="1100" MinHeight="680"
         WindowStartupLocation="CenterScreen"
+        Icon="/Assets/ollin.ico"
         Background="{DynamicResource Ollin.Bg}">
 
   <Grid RowDefinitions="Auto,Auto,*,Auto">

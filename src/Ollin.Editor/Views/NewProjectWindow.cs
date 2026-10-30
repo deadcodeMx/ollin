@@ -25,8 +25,9 @@ public sealed class NewProjectWindow : Window
 
         Title = "Nuevo proyecto";
         Width = 560;
-        Height = 300;
-        CanResize = false;
+        Height = 460;
+        MinHeight = 320;
+        CanResize = true;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         Background = new SolidColorBrush(Color.Parse("#151922"));
         Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
@@ -118,6 +119,16 @@ public sealed class NewProjectWindow : Window
                     Children = { cancel, create },
                 },
             },
+        };
+
+        // Con ventanas pequeñas o pantallas escaladas, todo el contenido debe poder desplazarse.
+        var panel = Content as Control;
+        Content = null;
+        Content = new ScrollViewer
+        {
+            Content = panel,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
         };
     }
 
