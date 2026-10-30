@@ -275,6 +275,11 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new DayNightCycle());
                 break;
 
+            case "ai":
+                if (entity.HasComponent<AiAgent>()) { added = false; break; }
+                entity.AddComponent(new AiAgent());
+                break;
+
             case "rotator":
                 if (entity.HasComponent<RotatorComponent>()) { added = false; break; }
                 entity.AddComponent(new RotatorComponent());

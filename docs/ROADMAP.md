@@ -117,9 +117,9 @@ tilemap/*autotiling* y buscador de propiedades en el inspector.
 - [x] Ciclo día/noche con reloj y ambiente interpolado.`n- [ ] Clima básico (lluvia, niebla).
 - [ ] Recolección de recursos y estaciones de trabajo.
 - [ ] Construcción simple por celdas (muros, puertas, mobiliario).
-- [ ] IA básica: patrulla, persecución, pérdida de rastro, visión y oído.
-- [ ] Pathfinding en rejilla (A*) con costes por terreno.
-- [ ] Guardado persistente del mundo (posición, inventario, estado de puertas y enemigos).
+- [x] IA básica: patrulla, persecución y visión por etiqueta.`n- [ ] Pérdida de rastro y oído.
+- [x] Pathfinding en rejilla (A*) sobre tilemaps.`n- [ ] Costes por terreno.
+- [x] Guardado de partida: escena completa (posiciones, inventario, estadísticas y componentes).`n- [ ] Guardado de variables internas de scripts.
 
 ### Interfaz de juego
 - [x] HUD para scripts (barras, etiquetas y mensajes temporales).

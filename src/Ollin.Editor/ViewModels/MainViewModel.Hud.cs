@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Numerics;
 using Avalonia.Media;
+using Ollin.Core.Diagnostics;
 using Ollin.Core.Hud;
+using Ollin.Core.Saves;
 
 namespace Ollin.Editor.ViewModels;
 
@@ -211,6 +213,63 @@ public sealed partial class MainViewModel
 
     /// <summary>Detiene la reproducción desde un menú.</summary>
     public void StopFromMenu() => StopPlay();
+
+    /// <summary>Guarda la partida actual (posición, componentes y estado).</summary>
+    public void SaveGame()
+    {
+        if (!IsPlaying)
+        {
+            StatusMessage = "Reproduce la escena para guardar la partida";
+            return;
+        }
+
+        try
+        {
+            var root = Project?.RootPath ?? ProjectRoot;
+            var path = SaveService.DefaultPath(root);
+            SaveService.Save(Scene, path, ScenePath);
+            StatusMessage = "Partida guardada";
+            Log.Info($"Partida guardada: {path}", "Guardado");
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"No se pudo guardar la partida: {exception.Message}", "Guardado");
+            StatusMessage = "Error al guardar la partida";
+        }
+    }
+
+    /// <summary>Carga la última partida guardada y continúa jugando.</summary>
+    public void LoadGame()
+    {
+        try
+        {
+            var root = Project?.RootPath ?? ProjectRoot;
+            var path = SaveService.DefaultPath(root);
+
+            if (!File.Exists(path))
+            {
+                StatusMessage = "No hay ninguna partida guardada";
+                return;
+            }
+
+            var save = SaveService.Load(path);
+
+            if (IsPlaying)
+            {
+                StopPlay();
+            }
+
+            LoadScene(save.Scene!, save.ScenePath);
+            StartPlay();
+            StatusMessage = "Partida cargada";
+            Log.Info($"Partida cargada: {path}", "Guardado");
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"No se pudo cargar la partida: {exception.Message}", "Guardado");
+            StatusMessage = "Error al cargar la partida";
+        }
+    }
 
     private void ResetHudState()
     {

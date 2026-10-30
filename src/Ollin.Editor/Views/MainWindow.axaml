@@ -51,6 +51,9 @@
         <MenuItem Header="Reproducir / detener" InputGesture="F5" Click="OnPlay" />
         <MenuItem Header="Pausar / reanudar" InputGesture="F6" Click="OnPause" />
         <MenuItem Header="Detener y restaurar" Click="OnStopPlay" />
+        <Separator />
+        <MenuItem Header="Guardar partida" Click="OnSaveGame" />
+        <MenuItem Header="Cargar partida" Click="OnLoadGame" />
       </MenuItem>
       <MenuItem Header="Ayuda">
         <MenuItem Header="Acerca de Ollin" Click="OnAbout" />
@@ -308,6 +311,8 @@
                       <Button Classes="accent" Content="Continuar" Click="OnResumeMenu" HorizontalAlignment="Stretch" />
                       <Button Content="Reiniciar escena" Click="OnRestartScene" HorizontalAlignment="Stretch" />
                       <Button Content="Detener" Click="OnStopFromMenu" HorizontalAlignment="Stretch" />
+                      <Button Content="Guardar partida" Click="OnSaveGame" HorizontalAlignment="Stretch" />
+                      <Button Content="Cargar partida" Click="OnLoadGame" HorizontalAlignment="Stretch" />
                       <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,4" />
                       <TextBlock Text="Volumen maestro" FontSize="11"
                                  Foreground="{DynamicResource Ollin.TextDim}" />
@@ -413,6 +418,7 @@
                             <MenuItem Header="Inventario" Click="OnAddInventory" />
                             <MenuItem Header="Estadísticas" Click="OnAddStats" />
                             <MenuItem Header="Día/Noche" Click="OnAddDayNight" />
+                            <MenuItem Header="IA (agente)" Click="OnAddAi" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                             <MenuItem Header="Script" Click="OnAddScriptComponent" />
@@ -629,6 +635,38 @@
                     <CheckBox Content="Pausar el ciclo" IsChecked="{Binding Selected.DayPaused, Mode=TwoWay}" FontSize="11.5" />
                     <TextBlock Classes="hint" TextWrapping="Wrap"
                                Text="El runtime aplica el ambiente resultante a las cámaras de la escena." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="IA" IsVisible="{Binding Selected.HasAi}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="AGENTE" />
+                    <TextBlock Text="{Binding Selected.AiStatus}" FontSize="12"
+                               Foreground="{DynamicResource Ollin.Accent}" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Objetivo" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.AiTargetTag, Mode=TwoWay}" Watermark="player" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.AiSpeed, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Visión" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.AiVision, Mode=TwoWay}" Increment="0.5" Minimum="0.5" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Patrulla" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.AiPatrolRadius, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Repetir ruta" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.AiRefresh, Mode=TwoWay}" Increment="0.05" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="Patrulla alrededor de su posición inicial y persigue al objetivo al verlo. Usa A* si hay un tilemap con 'Colisiona'." />
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>

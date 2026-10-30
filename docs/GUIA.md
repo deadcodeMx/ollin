@@ -303,7 +303,26 @@ En el inspector, pestaña **Estadísticas**, escribe `vida=80`, `hambre+10` o `e
 - **Luz de día / Luz de noche**: colores que se interpolan.
 - El runtime aplica el ambiente resultante a las cámaras.
 
-## 12. Audio
+## 12. IA y guardado
+
+**IA** (`AiAgent`): añade el componente a un enemigo y configura:
+
+- **Objetivo**: etiqueta a perseguir (`player`).
+- **Velocidad**, **Visión** y **Patrulla** (radio alrededor de su posición inicial).
+- El agente patrulla y, cuando ve al objetivo, lo persigue. Si hay un **tilemap con
+  “Colisiona”**, calcula la ruta con **A\***; si no, va en línea recta.
+- En el inspector, pestaña **IA**, se ve el estado actual (patrullando/persiguiendo).
+
+**Guardado de partida**:
+
+- `Escena → Guardar partida` o el botón del menú de pausa.
+- `Escena → Cargar partida` (también en pausa) restaura la escena y reanuda el juego.
+- Se guarda en `saves/partida.json` con la escena completa: posiciones, inventario,
+  estadísticas, luces y demás componentes.
+- **No** se guardan las variables internas de los scripts; para eso, escribe tu propio
+  guardado con `System.IO`.
+
+## 13. Audio
 
 Añade un **AudioSource** a una entidad:
 
@@ -317,7 +336,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 13. Prefabs, copiar y pegar
+## 14. Prefabs, copiar y pegar
 
 - **Guardar como prefab**: clic derecho sobre la entidad → *Guardar como prefab…*.
   Se guarda en `prefabs/nombre.prefab.json`.
@@ -328,7 +347,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 14. Reproducir y depurar
+## 15. Reproducir y depurar
 
 | Acción | Cómo |
 | --- | --- |
@@ -341,7 +360,7 @@ los mensajes de `Debug`, errores de scripts y avisos de audio.
 
 ---
 
-## 15. Archivos del proyecto
+## 16. Archivos del proyecto
 
 Desde la pestaña **Archivos** del dock inferior:
 
@@ -355,7 +374,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 16. Atajos de teclado
+## 17. Atajos de teclado
 
 | Atajo | Acción |
 | --- | --- |
@@ -376,7 +395,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 17. Problemas comunes
+## 18. Problemas comunes
 
 | Síntoma | Causa y solución |
 | --- | --- |
@@ -389,7 +408,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 18. Flujo recomendado para un prototipo
+## 19. Flujo recomendado para un prototipo
 
 1. Crea un proyecto con la plantilla **Plataformas**.
 2. Abre `scenes/inicio.ollin.json` (pestaña **Escena**).

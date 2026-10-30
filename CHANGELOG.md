@@ -17,6 +17,22 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.15.0] — 2026-10-30
+
+### Añadido
+
+- **IA**: componente `AiAgent` con patrulla, visión por etiqueta y persecución.
+- **Pathfinding A*** sobre tilemaps sólidos, sin cortar esquinas.
+- **Guardado y carga de partida** desde el menú Escena y el menú de pausa
+  (`saves/partida.json` con la escena completa).
+- Enemigo de ejemplo («Merodeador») en la escena de demostración.
+- Pestaña del inspector para la IA.
+- 6 pruebas nuevas: 111 en total.
+
+### Pendiente
+
+- Crafteo, clima y guardado de variables internas de scripts.
+
 ## [0.14.0] — 2026-10-30
 
 ### Añadido

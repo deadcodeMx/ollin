@@ -1471,4 +1471,91 @@ public sealed class EntityNode : ObservableObject
             _owner.MarkDirty();
         }
     }
+
+    public bool HasAi => Entity.GetComponent<AiAgent>() is not null;
+
+    public AiAgent? Ai => Entity.GetComponent<AiAgent>();
+
+    public string AiTargetTag
+    {
+        get => Ai?.TargetTag ?? string.Empty;
+        set
+        {
+            if (Ai is null || Ai.TargetTag == value)
+            {
+                return;
+            }
+
+            Ai.TargetTag = string.IsNullOrWhiteSpace(value) ? "player" : value.Trim();
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal AiSpeed
+    {
+        get => (decimal)(Ai?.Speed ?? 2.5f);
+        set
+        {
+            if (Ai is null || MathF.Abs(Ai.Speed - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Ai.Speed = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal AiVision
+    {
+        get => (decimal)(Ai?.VisionRadius ?? 6f);
+        set
+        {
+            if (Ai is null || MathF.Abs(Ai.VisionRadius - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Ai.VisionRadius = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal AiPatrolRadius
+    {
+        get => (decimal)(Ai?.PatrolRadius ?? 3f);
+        set
+        {
+            if (Ai is null || MathF.Abs(Ai.PatrolRadius - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Ai.PatrolRadius = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal AiRefresh
+    {
+        get => (decimal)(Ai?.PathRefreshSeconds ?? 0.45f);
+        set
+        {
+            if (Ai is null || MathF.Abs(Ai.PathRefreshSeconds - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Ai.PathRefreshSeconds = (float)value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string AiStatus => Ai is null ? string.Empty : Ai.IsChasing ? "Persiguiendo" : "Patrullando";
+
+    public void RefreshAiStatus() => OnPropertyChanged(nameof(AiStatus));
 }

@@ -818,6 +818,12 @@ public partial class MainWindow : Window
 
     private void OnAddDayNight(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "daynight");
 
+    private void OnAddAi(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "ai");
+
+    private void OnSaveGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveGame();
+
+    private void OnLoadGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.LoadGame();
+
     private void OnAddItem(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.AddItemFromText();
 
     private void OnRemoveItem(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.RemoveItemFromText();

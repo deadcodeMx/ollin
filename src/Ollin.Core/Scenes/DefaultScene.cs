@@ -153,6 +153,22 @@ public static class DefaultScene
             Radius = 2.2f,
         });
 
+        var stalker = scene.Create("Merodeador", new Vector2(-4.5f, -1.6f));
+        stalker.AddComponent(new SpriteRenderer
+        {
+            TexturePath = "assets/sprites/crate.png",
+            Size = new Vector2(0.9f, 0.9f),
+            Tint = new Vector4(0.45f, 0.4f, 0.55f, 1f),
+            SortingOrder = 8,
+        });
+        stalker.AddComponent(new AiAgent
+        {
+            TargetTag = "player",
+            Speed = 1.8f,
+            VisionRadius = 5f,
+            PatrolRadius = 2f,
+        });
+
         var music = scene.Create("Música", new Vector2(0f, 0f));
         music.AddComponent(new AudioSource
         {
