@@ -5,6 +5,7 @@
 > *Ollin* significa **movimiento** en náhuatl. El *Nahui Ollin* es el símbolo mexica del
 > movimiento y el cambio.
 
+[![CI](https://github.com/deadcodeMx/ollin/actions/workflows/ci.yml/badge.svg)](https://github.com/deadcodeMx/ollin/actions/workflows/ci.yml)
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![Avalonia](https://img.shields.io/badge/Avalonia-11.3-8B44AC)
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
@@ -79,7 +80,7 @@ Detalle completo en [docs/ROADMAP.md](docs/ROADMAP.md).
 ### Ejecutar el editor
 
 ```powershell
-git clone https://github.com/TU_USUARIO/ollin.git
+git clone https://github.com/deadcodeMx/ollin.git
 cd ollin
 dotnet run --project src/Ollin.Editor
 ```

@@ -71,7 +71,7 @@ Primer corte público: editor 2D funcional con scripting en C#.
 - 41 pruebas automatizadas
 
 ### Cómo probarlo
-    git clone https://github.com/TU_USUARIO/ollin.git
+    git clone https://github.com/deadcodeMx/ollin.git
     cd ollin
     dotnet run --project src/Ollin.Editor
 
@@ -96,7 +96,7 @@ gh repo create ollin --public --source . --remote origin --push `
 
 ```powershell
 git branch -M main
-git remote add origin https://github.com/TU_USUARIO/ollin.git
+git remote add origin https://github.com/deadcodeMx/ollin.git
 git push -u origin main
 ```
 
@@ -105,10 +105,9 @@ git push -u origin main
 
 ## Después de publicar
 
+- [x] Enlaces con el usuario real (`deadcodeMx`) en el README, las plantillas y esta guía.
 - [ ] Verificar que la pestaña **Actions** ejecuta la CI en verde.
 - [ ] Comprobar que la licencia MIT aparece detectada.
-- [ ] Reemplazar `TU_USUARIO` en `README.md`, `.github/ISSUE_TEMPLATE/config.yml` y en
-      este documento por tu usuario real.
 - [ ] Añadir la imagen social (Settings → General → Social preview).
 - [ ] Etiquetar el primer release y fijar la descripción del repositorio.
 

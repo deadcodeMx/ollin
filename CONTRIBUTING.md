@@ -6,7 +6,7 @@ enviar cambios sin fricción.
 ## Preparar el entorno
 
 ```powershell
-git clone https://github.com/TU_USUARIO/ollin.git
+git clone https://github.com/deadcodeMx/ollin.git
 cd ollin
 dotnet build Ollin.sln
 dotnet run --project src/Ollin.Editor
