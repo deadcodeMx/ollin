@@ -5,6 +5,7 @@ using Ollin.Core.Diagnostics;
 using Ollin.Core.Input;
 using Ollin.Core.Audio;
 using Ollin.Core.Dialogue;
+using Ollin.Core.Hud;
 using Ollin.Core.Interaction;
 using GameAudio = Ollin.Core.Audio.Audio;
 using Ollin.Core.Model;
@@ -28,6 +29,7 @@ public sealed class SceneRuntime
     private readonly List<CoroutineEntry> _coroutines = new();
     private readonly PhysicsSystem _physics = new();
     private readonly DialogueRunner _dialogue = new();
+    private readonly HudModel _hud = new();
     private bool _skipDialogueAdvance;
     private Scene? _scene;
     private ScriptWorkspace? _scriptsWorkspace;
@@ -43,6 +45,9 @@ public sealed class SceneRuntime
 
     /// <summary>Diálogo en curso, o inactivo.</summary>
     public DialogueRunner Dialogue => _dialogue;
+
+    /// <summary>HUD de la partida (barras, etiquetas, mensajes y fin de partida).</summary>
+    public HudModel Hud => _hud;
 
     public bool IsPaused { get; private set; }
 
@@ -66,14 +71,23 @@ public sealed class SceneRuntime
         _coroutines.Clear();
         _physics.Reset();
         CoroutineHost.Drain();
-        StartScripts();
-        StartAudio(scene);
         _dialogue.Stop();
         _skipDialogueAdvance = false;
         InteractionState.Reset();
+        _hud.Clear();
+
+        // Los manejadores deben existir antes de OnStart: los scripts ya usan Hud y Dialogue.
+        HudHost.BarHandler = _hud.SetBar;
+        HudHost.LabelHandler = _hud.SetLabel;
+        HudHost.MessageHandler = _hud.ShowMessage;
+        HudHost.GameOverHandler = _hud.GameOver;
+        HudHost.ClearHandler = _hud.Clear;
         DialogueHost.PlayHandler = PlayDialogue;
         DialogueHost.IsActiveHandler = () => _dialogue.IsActive;
         DialogueHost.AdvanceHandler = _dialogue.Advance;
+
+        StartScripts();
+        StartAudio(scene);
         Log.Info("Reproducción iniciada", "Runtime");
     }
 
@@ -334,6 +348,7 @@ public sealed class SceneRuntime
         TimeState.Advance(dt);
         Elapsed += dt;
         UpdateCount++;
+        _hud.Update(dt);
 
         // Copia de la lista: un componente podría añadir o quitar componentes.
         var entities = _scene.Entities.ToArray();

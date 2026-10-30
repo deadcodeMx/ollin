@@ -285,6 +285,8 @@ public static class StarterProject
             public override void OnStart()
             {
                 Debug("Juego listo: A/D para moverte, espacio para saltar");
+                Hud.SetBar("Vida", 100f, 100f);
+                Hud.Message("A/D para moverte, espacio para saltar", 3f);
             }
 
             public override void OnUpdate(float deltaTime)
@@ -331,6 +333,9 @@ public static class StarterProject
             public override void OnStart()
             {
                 Debug("Plataformas: A/D para correr, espacio para saltar");
+                Hud.SetBar("Vida", 100f, 100f);
+                Hud.SetLabel("Monedas", "0");
+                Hud.Message("Recoge las monedas", 3f);
             }
 
             public override void OnUpdate(float deltaTime)
@@ -387,6 +392,8 @@ public static class StarterProject
             {
                 Debug("Pasillo: muévete con A/D y busca la nota");
                 Audio.Music("assets/audio/ambient.wav", 0.3f);
+                Hud.SetBar("Cordura", 100f, 100f, new System.Numerics.Vector4(0.6f, 0.4f, 0.9f, 1f));
+                Hud.Message("Encuentra la nota", 3f);
             }
 
             public override void OnUpdate(float deltaTime)

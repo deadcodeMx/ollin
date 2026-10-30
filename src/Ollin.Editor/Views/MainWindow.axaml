@@ -259,6 +259,77 @@
                                Foreground="{DynamicResource Ollin.TextDim}" HorizontalAlignment="Right" />
                   </StackPanel>
                 </Border>
+
+                <!-- HUD de la partida -->
+                <StackPanel IsVisible="{Binding IsHudVisible}" HorizontalAlignment="Left" VerticalAlignment="Top"
+                            Margin="16,50,0,0" Spacing="8" Width="230" IsHitTestVisible="False">
+                  <ItemsControl ItemsSource="{Binding HudBars}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <StackPanel Spacing="2" Margin="0,0,0,4">
+                          <TextBlock Text="{Binding Name}" FontSize="10.5" Foreground="#E7EAF0" />
+                          <ProgressBar Minimum="0" Maximum="1" Value="{Binding Fraction}" Height="9"
+                                       Foreground="{Binding Brush}" Background="#5510131A" />
+                          <TextBlock Text="{Binding ValueText}" FontSize="9.5" Foreground="#AAB4C4"
+                                     HorizontalAlignment="Right" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                  <ItemsControl ItemsSource="{Binding HudLabels}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Display}" FontSize="12" Foreground="#E7EAF0" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+
+                <ItemsControl IsVisible="{Binding IsHudVisible}" ItemsSource="{Binding HudMessages}"
+                              HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,64,0,0"
+                              IsHitTestVisible="False">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Border Background="#CC10131A" CornerRadius="4" Padding="10,5" Margin="0,2">
+                        <TextBlock Text="{Binding Text}" FontSize="13" Foreground="#F2F5FA" />
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Menú de pausa -->
+                <Border IsVisible="{Binding IsPauseMenuVisible}" Background="#B305070B">
+                  <Border Background="{DynamicResource Ollin.Panel}" BorderBrush="{DynamicResource Ollin.Border}"
+                          BorderThickness="1" CornerRadius="10" Padding="26" Width="330"
+                          HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel Spacing="10">
+                      <TextBlock Text="Pausa" FontSize="24" FontWeight="Bold"
+                                 Foreground="{DynamicResource Ollin.Accent}" />
+                      <Button Classes="accent" Content="Continuar" Click="OnResumeMenu" HorizontalAlignment="Stretch" />
+                      <Button Content="Reiniciar escena" Click="OnRestartScene" HorizontalAlignment="Stretch" />
+                      <Button Content="Detener" Click="OnStopFromMenu" HorizontalAlignment="Stretch" />
+                      <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,4" />
+                      <TextBlock Text="Volumen maestro" FontSize="11"
+                                 Foreground="{DynamicResource Ollin.TextDim}" />
+                      <Slider Value="{Binding MasterVolume, Mode=TwoWay}" Minimum="0" Maximum="1" />
+                    </StackPanel>
+                  </Border>
+                </Border>
+
+                <!-- Fin de partida -->
+                <Border IsVisible="{Binding IsGameOverVisible}" Background="#D905070B">
+                  <Border Background="{DynamicResource Ollin.Panel}" BorderBrush="{DynamicResource Ollin.Danger}"
+                          BorderThickness="1" CornerRadius="10" Padding="26" Width="380"
+                          HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel Spacing="12">
+                      <TextBlock Text="Fin de la partida" FontSize="22" FontWeight="Bold"
+                                 Foreground="{DynamicResource Ollin.Danger}" />
+                      <TextBlock Text="{Binding GameOverText}" TextWrapping="Wrap" FontSize="13" />
+                      <Button Classes="accent" Content="Reintentar" Click="OnRestartScene" HorizontalAlignment="Stretch" />
+                      <Button Content="Detener" Click="OnStopFromMenu" HorizontalAlignment="Stretch" />
+                    </StackPanel>
+                  </Border>
+                </Border>
                 <Border IsVisible="{Binding #ViewportHost.Viewport.HasError}"
                         HorizontalAlignment="Center" VerticalAlignment="Center"
                         Background="#E6212026" BorderBrush="{DynamicResource Ollin.Danger}"

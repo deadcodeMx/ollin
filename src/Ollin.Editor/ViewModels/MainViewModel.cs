@@ -397,6 +397,15 @@ public sealed partial class MainViewModel : ObservableObject
         NotifyPlayState();
     }
 
+    /// <summary>Inicia la reproducción desde la línea de comandos (`--play`).</summary>
+    public void StartPlayback()
+    {
+        if (!IsPlaying)
+        {
+            StartPlay();
+        }
+    }
+
     private void StartPlay()
     {
         _cameraBeforePlay = CameraPosition;
@@ -405,6 +414,7 @@ public sealed partial class MainViewModel : ObservableObject
         _selectedBeforePlay = Selected?.Id;
 
         ReloadScripts();
+        ResetHudState();
         _runtime.Dialogues = new Ollin.Core.Dialogue.DialogueDatabase(ProjectRoot);
         _runtime.Play(Scene, _scripts);
         _playClock.Restart();
@@ -424,6 +434,7 @@ public sealed partial class MainViewModel : ObservableObject
         DialogueSpeaker = string.Empty;
         DialogueText = string.Empty;
         InteractionPrompt = string.Empty;
+        ResetHudState();
 
         var restored = _runtime.Stop();
         if (restored is null)
@@ -458,6 +469,7 @@ public sealed partial class MainViewModel : ObservableObject
             _playClock.Restart();
             _runtime.Tick(delta);
             UpdateRuntimeOverlay();
+            RefreshHud();
             OnPropertyChanged(nameof(ElapsedText));
             RequestRedraw();
         };

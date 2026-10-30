@@ -17,6 +17,21 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.13.0] — 2026-10-30
+
+### Añadido
+
+- **HUD para scripts**: `Hud.SetBar`, `Hud.SetLabel`, `Hud.Message`, `Hud.GameOver` y
+  `Hud.Clear`, dibujado sobre el viewport durante la reproducción.
+- **Menú de pausa** con Escape: continuar, reiniciar escena, detener y volumen maestro.
+- **Pantalla de fin de partida** con reintentar o detener.
+- Bandera `--play` para abrir el proyecto y empezar a reproducir.
+- 5 pruebas nuevas del HUD: 96 en total.
+
+### Pendiente
+
+- Guardar/cargar desde el menú y fuentes bitmap propias.
+
 ## [0.12.0] — 2026-10-30
 
 ### Añadido

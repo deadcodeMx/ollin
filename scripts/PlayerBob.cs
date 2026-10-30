@@ -16,6 +16,9 @@ public sealed class PlayerBob : OllinScript
     public override void OnStart()
     {
         _origin = Entity.Transform.Position;
+        Hud.SetBar("Vida", 100f, 100f);
+        Hud.SetLabel("Monedas", "0");
+        Hud.Message("Busca la nota y pulsa E", 4f);
         Debug("PlayerBob: mueve al jugador con A/D; flota mientras se reproduce");
     }
 

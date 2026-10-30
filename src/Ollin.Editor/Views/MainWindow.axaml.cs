@@ -169,6 +169,11 @@ public partial class MainWindow : Window
 
         // El proyecto puede haberse abierto antes de crear la ventana (por ejemplo con --script).
         LoadActiveScriptText();
+
+        if (Environment.GetCommandLineArgs().Any(arg => arg.Equals("--play", StringComparison.OrdinalIgnoreCase)))
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(vm.StartPlayback, Avalonia.Threading.DispatcherPriority.Background);
+        }
         vm.TexturesReloadRequested += () => ViewportHost.Viewport.RequestTextureReload();
     }
 
@@ -524,6 +529,12 @@ public partial class MainWindow : Window
     private void OnOpenSelectedScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewModel?.OpenSelectedScript();
 
+    private void OnResumeMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ResumeFromMenu();
+
+    private void OnRestartScene(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.RestartPlay();
+
+    private void OnStopFromMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.StopFromMenu();
+
     private void OnCopyEntity(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.CopySelected();
 
     private void OnPasteEntity(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.PasteCopied();
@@ -874,6 +885,13 @@ public partial class MainWindow : Window
         }
 
         // Autocompletar con Ctrl+Espacio dentro del editor de scripts.
+        if (e.Key == Key.Escape)
+        {
+            vm.TogglePauseMenu();
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key == Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Control) && vm.IsScriptActive)
         {
             var entities = vm.Scene.Entities.Select(entity => entity.Name);

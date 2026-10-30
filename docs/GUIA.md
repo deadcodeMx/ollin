@@ -252,7 +252,26 @@ interactuable para hacer algo además del diálogo.
 > silueta de los colliders. Está desactivada por defecto y aún es tosca; el post-proceso
 > (niebla, grano) tampoco está.
 
-## 10. Audio
+## 10. HUD y menús
+
+Desde cualquier script:
+
+```csharp
+Hud.SetBar("Vida", 75f, 100f);          // barra con nombre, valor y máximo
+Hud.SetLabel("Monedas", "3");           // etiqueta de texto
+Hud.Message("¡Bienvenido!", 3f);        // mensaje temporal
+Hud.GameOver("Has caído");              // pantalla de fin de partida
+Hud.Clear();
+```
+
+- Las barras y etiquetas se dibujan arriba a la izquierda; los mensajes, arriba al centro.
+- **Escape** durante la reproducción abre el **menú de pausa**: Continuar, Reiniciar la
+  escena, Detener y **volumen maestro**.
+- La pantalla de **fin de partida** aparece cuando un script llama a `Hud.GameOver` y
+  ofrece Reintentar o Detener.
+- Guardar y cargar partida llegarán con el sistema de guardado.
+
+## 11. Audio
 
 Añade un **AudioSource** a una entidad:
 
@@ -266,7 +285,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 11. Prefabs, copiar y pegar
+## 12. Prefabs, copiar y pegar
 
 - **Guardar como prefab**: clic derecho sobre la entidad → *Guardar como prefab…*.
   Se guarda en `prefabs/nombre.prefab.json`.
@@ -277,7 +296,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 12. Reproducir y depurar
+## 13. Reproducir y depurar
 
 | Acción | Cómo |
 | --- | --- |
@@ -290,7 +309,7 @@ los mensajes de `Debug`, errores de scripts y avisos de audio.
 
 ---
 
-## 13. Archivos del proyecto
+## 14. Archivos del proyecto
 
 Desde la pestaña **Archivos** del dock inferior:
 
@@ -304,7 +323,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 14. Atajos de teclado
+## 15. Atajos de teclado
 
 | Atajo | Acción |
 | --- | --- |
@@ -325,7 +344,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 15. Problemas comunes
+## 16. Problemas comunes
 
 | Síntoma | Causa y solución |
 | --- | --- |
@@ -338,7 +357,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 16. Flujo recomendado para un prototipo
+## 17. Flujo recomendado para un prototipo
 
 1. Crea un proyecto con la plantilla **Plataformas**.
 2. Abre `scenes/inicio.ollin.json` (pestaña **Escena**).

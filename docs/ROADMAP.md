@@ -122,8 +122,8 @@ tilemap/*autotiling* y buscador de propiedades en el inspector.
 - [ ] Guardado persistente del mundo (posición, inventario, estado de puertas y enemigos).
 
 ### Interfaz de juego
-- [ ] HUD configurable desde escena (barras, iconos, mensajes).
-- [ ] Menús: pausa, opciones, guardar/cargar y muerte.
+- [x] HUD para scripts (barras, etiquetas y mensajes temporales).
+- [x] Menús de pausa (continuar/reiniciar/detener y volumen) y fin de partida.`n- [ ] Guardar/cargar desde el menú y opciones avanzadas.
 - [ ] Fuentes bitmap y texto con riqueza mínima (color, tamaño, alineación).
 
 **Criterio de cierre:** un nivel de 10–15 minutos con luces, triggers, diálogos e
