@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="..\payload.zip" Link="payload.zip" />
+    <EmbeddedResource Include="icon.ico" LogicalName="Ollin.Setup.icon.ico" />
   </ItemGroup>
 
 </Project>
