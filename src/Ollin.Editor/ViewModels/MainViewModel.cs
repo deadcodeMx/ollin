@@ -46,6 +46,8 @@ public sealed class MainViewModel : ObservableObject
     private float _zoomBeforePlay;
     private bool _dirtyBeforePlay;
     private string _scriptStatus = "Scripts: —";
+    private FileSystemWatcher? _scriptWatcher;
+    private DispatcherTimer? _scriptReloadTimer;
     private Guid? _selectedBeforePlay;
     private AssetItem? _selectedAsset;
 
@@ -61,6 +63,7 @@ public sealed class MainViewModel : ObservableObject
         LoadScene(DefaultScene.Create(), null);
         RefreshAssets(logToConsole: false);
         ReloadScripts();
+        StartScriptWatcher();
         Log.Info("Ollin 0.1 — editor 2D listo", "Editor");
         Log.Info("Clic para seleccionar · Rueda para zoom · Alt+arrastrar para mover la cámara", "Editor");
     }
@@ -351,6 +354,7 @@ public sealed class MainViewModel : ObservableObject
             _scripts.Dispose();
             _scripts = new ScriptWorkspace(ProjectRoot);
             ReloadScripts();
+            StartScriptWatcher();
         }
         IsDirty = false;
         RebuildTree();
@@ -508,6 +512,16 @@ public sealed class MainViewModel : ObservableObject
     /// <summary>Recompila los scripts del proyecto y refleja el resultado en consola y barra de estado.</summary>
     public void ReloadScripts()
     {
+        if (IsPlaying)
+        {
+            var hot = _runtime.HotReload(_scripts);
+            ScriptStatusText = hot > 0 ? $"Scripts: {hot} en caliente" : "Scripts: recarga fallida";
+            StatusMessage = hot > 0
+                ? $"Recarga en caliente: {hot} script(s) con estado conservado"
+                : "No se pudieron recargar los scripts (ver consola)";
+            return;
+        }
+
         var result = _scripts.Reload();
         var errors = result.Diagnostics.Count(d => d.IsError);
 
@@ -576,23 +590,90 @@ public sealed class MainViewModel : ObservableObject
     private static string ScriptTemplate(string className, string entityName) => $$"""
         using System;
         using System.Numerics;
+        using Ollin.Core.Input;
         using Ollin.Scripting;
 
         /// <summary>Script de {{entityName}}.</summary>
         public sealed class {{className}} : OllinScript
         {
+            private Vector2 _origin;
+
             public override void OnStart()
             {
+                _origin = Entity.Transform.Position;
                 Debug("{{className}} iniciado en " + Entity.Name);
             }
 
             public override void OnUpdate(float deltaTime)
             {
-                // Ejemplo: girar la entidad poco a poco.
-                // Entity.Transform.Rotation += deltaTime;
+                // Movimiento con WASD; cambia o borra este ejemplo.
+                var direction = Vector2.Zero;
+                if (Input.GetKey(KeyCode.A)) direction.X -= 1f;
+                if (Input.GetKey(KeyCode.D)) direction.X += 1f;
+                if (Input.GetKey(KeyCode.W)) direction.Y += 1f;
+                if (Input.GetKey(KeyCode.S)) direction.Y -= 1f;
+
+                if (direction != Vector2.Zero)
+                {
+                    Entity.Transform.Position += Vector2.Normalize(direction) * 3f * Time.DeltaTime;
+                }
             }
         }
         """;
+
+    /// <summary>
+    /// Vigila la carpeta de scripts: al guardar un `.cs` recompila y, si se está
+    /// reproduciendo, aplica recarga en caliente conservando el estado.
+    /// </summary>
+    private void StartScriptWatcher()
+    {
+        _scriptWatcher?.Dispose();
+        _scriptWatcher = null;
+
+        try
+        {
+            var folder = _scripts.ScriptsFolder;
+            Directory.CreateDirectory(folder);
+
+            _scriptWatcher = new FileSystemWatcher(folder, "*.cs")
+            {
+                IncludeSubdirectories = true,
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size,
+                EnableRaisingEvents = true,
+            };
+
+            _scriptWatcher.Changed += OnScriptFileChanged;
+            _scriptWatcher.Created += OnScriptFileChanged;
+            _scriptWatcher.Deleted += OnScriptFileChanged;
+            _scriptWatcher.Renamed += OnScriptFileChanged;
+
+            _scriptReloadTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(600) };
+            _scriptReloadTimer.Tick += (_, _) =>
+            {
+                _scriptReloadTimer?.Stop();
+                ReloadScripts();
+            };
+        }
+        catch (Exception exception)
+        {
+            Log.Warn($"No se pudo vigilar la carpeta de scripts: {exception.Message}", "Scripts");
+        }
+    }
+
+    private void OnScriptFileChanged(object sender, FileSystemEventArgs e)
+    {
+        // El evento llega en un hilo del sistema de archivos; se agrupa y se pasa a la UI.
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (_scriptReloadTimer is null)
+            {
+                return;
+            }
+
+            _scriptReloadTimer.Stop();
+            _scriptReloadTimer.Start();
+        });
+    }
 
     // ---------- Assets ----------
 

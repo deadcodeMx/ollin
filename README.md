@@ -50,7 +50,7 @@ un puente 2.5D antes del 3D.
 | 0 | Cimientos: stack, entorno, solución | ✅ |
 | 1 | Editor: escena, jerarquía, inspector, viewport, cámara, JSON | ✅ |
 | 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
-| 3 | Scripting en C# con Roslyn, ciclo de vida y errores en consola | ✅ (falta recarga en vivo) |
+| 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
 | 4 | Cerrar el 2D: recarga en vivo, animación, tilemaps, física, audio, prefabs | ⏳ |
 | 5 | Terror y supervivencia: luces, triggers, diálogos, inventario, IA, día/noche | ⏳ |
 | 6 | 2.5D: sprites en espacio 3D con cámara en primera persona | ⏳ |
@@ -70,7 +70,7 @@ Detalle completo en [docs/ROADMAP.md](docs/ROADMAP.md).
 | Historial | Deshacer/rehacer con agrupación de ediciones continuas (60 pasos) |
 | Assets | Lista con miniaturas, importar PNG/JPG/BMP y asignar al sprite |
 | Juego | Reproducir, pausar y detener restaurando la escena exactamente |
-| Scripts | Compilación en memoria, ciclo de vida y errores con archivo y línea |
+| Scripts | Compilación en memoria, ciclo de vida, `Input`/`Time`, recarga en caliente y errores con línea |
 | Consola | Mensajes del motor con niveles (info, aviso, error) |
 
 ## Stack
@@ -126,6 +126,7 @@ dotnet run --project tests/Ollin.Tests
 | Rueda | Zoom anclado al cursor |
 | `Alt` + arrastrar, o botón central | Mover la cámara |
 | `F5` / `F6` | Reproducir-detener / pausar |
+| Teclado durante Play | Lo recibe el juego (`Input`), no el editor |
 | `Ctrl + Z` / `Ctrl + Y` | Deshacer / rehacer |
 | `Ctrl + N` / `Ctrl + O` / `Ctrl + S` | Nueva / abrir / guardar escena |
 | `Supr` | Eliminar entidad |
@@ -150,35 +151,55 @@ docs/                Arquitectura, roadmap y guía de publicación en GitHub
 ## Scripts en C#
 
 Los scripts viven en `scripts/` y se compilan **en memoria con Roslyn** al abrir el
-proyecto y al pulsar Reproducir (o el botón `⟳ Scripts`).
+proyecto y al guardar cualquier `.cs`. Si se guardan **mientras se reproduce**, se aplica
+una **recarga en caliente**: la partida no se detiene y se conserva el estado de los
+campos compatibles.
 
 ```csharp
 using System;
 using System.Numerics;
+using Ollin.Core.Input;
 using Ollin.Scripting;
 
 public sealed class PlayerBob : OllinScript
 {
     private Vector2 _origin;
     private float _time;
+    private float _horizontal;
 
     public override void OnStart() => _origin = Entity.Transform.Position;
 
     public override void OnUpdate(float deltaTime)
     {
         _time += deltaTime;
-        Entity.Transform.Position = _origin + new Vector2(0f, MathF.Sin(_time * 2.2f) * 0.28f);
+
+        var direction = 0f;
+        if (Input.GetKey(KeyCode.A)) direction -= 1f;
+        if (Input.GetKey(KeyCode.D)) direction += 1f;
+
+        _horizontal += direction * 2.5f * Time.DeltaTime;
+
+        Entity.Transform.Position = _origin + new Vector2(_horizontal, MathF.Sin(_time * 2.2f) * 0.28f);
     }
 
     public override void OnDestroy() => Entity.Transform.Position = _origin;
 }
 ```
 
-- **Ciclo de vida:** `OnStart`, `OnUpdate(deltaTime)` y `OnDestroy`.
-- **API:** `Entity` (con `Transform`), `Scene` y `Debug("mensaje")` hacia la consola.
+- **Ciclo de vida:** `OnStart`, `OnUpdate(deltaTime)`, `OnReload` (tras una recarga en
+  caliente) y `OnDestroy`.
+- **Entrada:** `Input.GetKey`, `GetKeyDown`, `GetKeyUp`, botones del ratón,
+  `MousePosition` (mundo) y `MouseScreenPosition` (píxeles).
+- **Tiempo:** `Time.DeltaTime`, `Time.Elapsed` y `Time.Frame`.
+- **API:** `Entity` (con `Transform`), `Scene`, `Debug`/`Warn`/`Error` hacia la consola.
 - **Enlazar:** en el inspector, sección *SCRIPT* (archivo + clase) o el botón
   *Crear script para esta entidad*, que genera la plantilla.
 - **Errores:** aparecen en la consola con archivo, línea y código (`CS0029`…).
+
+**Recarga en caliente.** Al guardar un script durante la reproducción, el runtime crea
+las nuevas instancias, copia los campos compatibles (números, cadenas, vectores,
+enumeraciones) y llama a `OnReload`. Las referencias a tipos definidos por el propio
+script no se conservan porque el ensamblado se recompila.
 
 ## Formato de escena
 

@@ -34,7 +34,7 @@ pruebas en verde y documentada aquí.
 | 0 | Cimientos: stack, entorno, solución | ✅ |
 | 1 | Editor: escena, jerarquía, inspector, viewport, cámara, JSON | ✅ |
 | 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
-| 3 | Scripting en C# con Roslyn, ciclo de vida y errores en consola | ✅ (falta recarga en vivo) |
+| 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
 | 4 | Cerrar el 2D | ⏳ siguiente |
 | 5 | Herramientas de terror y supervivencia | ⏳ |
 | 6 | 2.5D (puente) | ⏳ |
@@ -43,15 +43,29 @@ pruebas en verde y documentada aquí.
 
 ---
 
+## Etapa 3 — Scripting en C# (completada)
+
+- [x] Compilación en memoria con **Roslyn** y ensamblado recargable (`AssemblyLoadContext`).
+- [x] Ciclo de vida: `OnStart`, `OnUpdate(dt)`, `OnReload`, `OnDestroy`.
+- [x] API: `Entity`/`Transform`, `Scene`, `Input` (teclado y ratón), `Time`
+      (`DeltaTime`, `Elapsed`, `Frame`) y `Debug`/`Warn`/`Error`.
+- [x] Errores de compilación en la consola con archivo, línea y código.
+- [x] `ScriptComponent` enlazado desde el inspector y plantillas generadas por el editor.
+- [x] Recarga en caliente al guardar un `.cs`, **sin detener** la partida y conservando
+      los campos compatibles.
+- [x] 12 pruebas de scripting (47 en total).
+
+Queda para la etapa 4: temporizadores (`WaitForSeconds`) y dibujo de depuración.
+
+---
+
 ## Etapa 4 — Cerrar el 2D (esfuerzo: M)
 
 **Objetivo:** que un prototipo 2D de 10 minutos sea cómodo de construir y jugar.
 
-### Scripting
-- [ ] Recarga en caliente **sin detener** la reproducción, conservando estado.
-- [ ] API de entrada: `Input.GetKey`, `Input.GetMouseButton`, `Input.MousePosition`.
-- [ ] API de tiempo: `Time.DeltaTime`, `Time.Time`, temporizadores y `WaitForSeconds`.
-- [ ] `Debug.Log/Warn/Error` y dibujo de depuración (líneas y cajas).
+### Scripting (resto)
+- [ ] Temporizadores: `WaitForSeconds` y *coroutines* ligeras.
+- [ ] Dibujo de depuración en el viewport: líneas, cajas y texto.
 
 ### Contenido
 - [ ] Animación por sprites: clips, FPS, bucle, eventos de frame.

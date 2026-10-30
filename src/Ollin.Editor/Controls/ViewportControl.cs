@@ -6,6 +6,7 @@ using Avalonia.OpenGL;
 using Avalonia.OpenGL.Controls;
 using Avalonia.Threading;
 using Ollin.Core.Diagnostics;
+using Ollin.Core.Input;
 using Ollin.Core.Math;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
@@ -290,6 +291,30 @@ public sealed class ViewportControl : OpenGlControlBase
         Diag($"hit={(hit?.Name ?? "nada")} order={bestOrder}");
         _viewModel.Select(hit);
         RequestNextFrameRendering();
+    }
+
+    /// <summary>Alimenta la posición del ratón para los scripts (solo durante la reproducción).</summary>
+    public void UpdatePointerInput(Point position)
+    {
+        if (_viewModel?.IsPlaying != true)
+        {
+            return;
+        }
+
+        var (width, height, scaling) = GetPixelSizeWithScaling();
+        var camera = _viewModel.ActiveCamera;
+        var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
+        var world = CameraMath.ScreenToWorld(_viewModel.CameraPosition, camera.OrthographicSize, camera.Zoom, width, height, screen);
+        InputState.SetMousePosition(screen, world);
+    }
+
+    /// <summary>Alimenta el estado de un botón del ratón para los scripts.</summary>
+    public void UpdateMouseButton(int button, bool down)
+    {
+        if (_viewModel?.IsPlaying == true)
+        {
+            InputState.SetMouseButton(button, down);
+        }
     }
 
     /// <summary>Detecta qué parte del gizmo hay bajo el puntero (mover, rotar o escalar).</summary>

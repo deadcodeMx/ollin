@@ -1,4 +1,6 @@
+using Ollin.Core;
 using Ollin.Core.Diagnostics;
+using Ollin.Core.Input;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
 using Ollin.Scripting;
@@ -42,6 +44,8 @@ public sealed class SceneRuntime
         IsPaused = false;
         Elapsed = 0f;
         UpdateCount = 0;
+        TimeState.Reset();
+        InputState.Reset();
         StartScripts();
         Log.Info("Reproducción iniciada", "Runtime");
     }
@@ -76,6 +80,8 @@ public sealed class SceneRuntime
         IsPlaying = false;
         IsPaused = false;
         Elapsed = 0f;
+        TimeState.Reset();
+        InputState.Reset();
         _scene = null;
         _snapshot = null;
         _scriptsWorkspace = null;
@@ -93,6 +99,7 @@ public sealed class SceneRuntime
         }
 
         var dt = Math.Clamp(deltaTime, 0f, MaxDeltaTime);
+        TimeState.Advance(dt);
         Elapsed += dt;
         UpdateCount++;
 
@@ -122,8 +129,78 @@ public sealed class SceneRuntime
         }
 
         UpdateScripts(dt);
+
+        // Cierra el cuadro de entrada: calcula flancos y delta del ratón.
+        InputState.Update();
     }
 
+    /// <summary>
+    /// Recompila los scripts sin detener la reproducción: conserva las entidades y
+    /// copia el estado de los campos compatibles a las nuevas instancias.
+    /// </summary>
+    public int HotReload(ScriptWorkspace workspace)
+    {
+        if (!IsPlaying || _scene is null)
+        {
+            return 0;
+        }
+
+        var snapshots = new List<(string ClassName, Entity Entity, Dictionary<string, object?> State)>();
+        foreach (var script in _scripts)
+        {
+            var entity = script.Entity;
+            if (entity is null)
+            {
+                continue;
+            }
+
+            var className = entity.GetComponent<ScriptComponent>()?.ClassName;
+            if (string.IsNullOrWhiteSpace(className))
+            {
+                className = script.GetType().Name;
+            }
+
+            snapshots.Add((className!, entity, ScriptState.Capture(script)));
+        }
+
+        // Se sueltan las instancias del ensamblado anterior para poder descargarlo.
+        _scripts.Clear();
+        _scriptsWorkspace = workspace;
+
+        var result = workspace.Reload();
+        if (!result.Success)
+        {
+            Log.Error("La recarga en caliente falló: los scripts se detuvieron (ver consola)", "Runtime");
+            return 0;
+        }
+
+        foreach (var snapshot in snapshots)
+        {
+            var instance = workspace.CreateInstance(snapshot.ClassName);
+            if (instance is null)
+            {
+                continue;
+            }
+
+            instance.Attach(snapshot.Entity);
+            var restored = ScriptState.Restore(instance, snapshot.State);
+
+            try
+            {
+                instance.OnReload();
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"Error en OnReload de {snapshot.ClassName}: {exception.Message}", "Runtime");
+            }
+
+            _scripts.Add(instance);
+            Log.Info($"Script recargado: {snapshot.ClassName} en '{snapshot.Entity.Name}' ({restored} campos)", "Runtime");
+        }
+
+        Log.Info($"Recarga en caliente completada: {_scripts.Count} script(s) activos", "Runtime");
+        return _scripts.Count;
+    }
     private void StartScripts()
     {
         if (_scene is null || _scriptsWorkspace is null)

@@ -36,6 +36,17 @@ public sealed class ViewportSurface : Border
 
         var point = e.GetCurrentPoint(this);
         var position = point.Position;
+
+        if (Viewport.ViewModel is { IsPlaying: true })
+        {
+            Viewport.UpdatePointerInput(position);
+            Viewport.UpdateMouseButton(0, point.Properties.IsLeftButtonPressed);
+            Viewport.UpdateMouseButton(1, point.Properties.IsRightButtonPressed);
+            Viewport.UpdateMouseButton(2, point.Properties.IsMiddleButtonPressed);
+            e.Handled = true;
+            return;
+        }
+
         var wantsPan = point.Properties.IsMiddleButtonPressed ||
                        (point.Properties.IsLeftButtonPressed && e.KeyModifiers.HasFlag(KeyModifiers.Alt));
 
@@ -70,6 +81,17 @@ public sealed class ViewportSurface : Border
     {
         base.OnPointerMoved(e);
 
+        if (Viewport.ViewModel is { IsPlaying: true })
+        {
+            var current = e.GetCurrentPoint(this);
+            Viewport.UpdatePointerInput(current.Position);
+            Viewport.UpdateMouseButton(0, current.Properties.IsLeftButtonPressed);
+            Viewport.UpdateMouseButton(1, current.Properties.IsRightButtonPressed);
+            Viewport.UpdateMouseButton(2, current.Properties.IsMiddleButtonPressed);
+            e.Handled = true;
+            return;
+        }
+
         if (_gizmoDragging)
         {
             var snap = e.KeyModifiers.HasFlag(KeyModifiers.Control);
@@ -93,6 +115,15 @@ public sealed class ViewportSurface : Border
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
+
+        if (Viewport.ViewModel is { IsPlaying: true })
+        {
+            Viewport.UpdateMouseButton(0, false);
+            Viewport.UpdateMouseButton(1, false);
+            Viewport.UpdateMouseButton(2, false);
+            e.Handled = true;
+            return;
+        }
 
         if (_gizmoDragging)
         {
@@ -118,6 +149,13 @@ public sealed class ViewportSurface : Border
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         base.OnPointerWheelChanged(e);
+
+        if (Viewport.ViewModel is { IsPlaying: true })
+        {
+            e.Handled = true;
+            return;
+        }
+
         Viewport.ZoomAtPoint(e.GetPosition(this), e.Delta.Y);
         e.Handled = true;
     }

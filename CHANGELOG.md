@@ -12,9 +12,9 @@ versionado [SemVer](https://semver.org/lang/es/).
 
 ### Planeado
 
-- Recarga en caliente de scripts sin detener la reproducción.
-- API de entrada y tiempo para scripts (`Input`, `Time`).
 - Animación por sprites, tilemaps, física 2D y audio.
+- Luces 2D, triggers y diálogos para terror.
+- Puente 2.5D y 3D.
 - Exportación del juego a un ejecutable de Windows.
 
 ## [0.3.0] — 2026-10-30
@@ -24,11 +24,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Proyecto `Ollin.Scripting` con compilación en memoria mediante Roslyn.
 - Clase base `OllinScript` con `OnStart`, `OnUpdate` y `OnDestroy`.
 - `ScriptWorkspace` con `AssemblyLoadContext` recolectable para recargar scripts.
+- Recarga en caliente al guardar un script **sin detener** la reproducción, conservando
+  los campos compatibles y llamando a `OnReload`.
+- Vigilancia automática de la carpeta `scripts/` para recompilar al guardar.
+- API de scripts `Input` (teclado y ratón) y `Time` (`DeltaTime`, `Elapsed`, `Frame`).
+- `Warn` y `Error` en la API de depuración de scripts.
 - Sección de script en el inspector y creación de plantillas desde el editor.
 - Ciclo de vida de scripts en `SceneRuntime`, con aislamiento de errores.
 - Errores de compilación en la consola con archivo, línea y código (por ejemplo `CS0029`).
 - Script de ejemplo `PlayerBob` enlazado al jugador de la escena por defecto.
-- Seis pruebas nuevas del compilador y del workspace.
+- Seis pruebas del compilador y del workspace, más seis de entrada, tiempo y recarga en caliente (47 en total).
 
 ### Corregido
 

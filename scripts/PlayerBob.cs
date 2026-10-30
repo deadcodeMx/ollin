@@ -1,26 +1,42 @@
 using System;
 using System.Numerics;
+using Ollin.Core.Input;
 using Ollin.Scripting;
 
 /// <summary>
-/// Script de ejemplo: hace flotar al jugador alrededor de su posición inicial.
-/// Se recarga al pulsar Reproducir o el botón «Recargar scripts».
+/// Script de ejemplo: hace flotar al jugador y lo mueve con A/D.
+/// Se recarga solo al guardar el archivo, sin detener la reproducción.
 /// </summary>
 public sealed class PlayerBob : OllinScript
 {
     private Vector2 _origin;
     private float _time;
+    private float _horizontal;
 
     public override void OnStart()
     {
         _origin = Entity.Transform.Position;
-        Debug("PlayerBob: el jugador flota mientras se reproduce");
+        Debug("PlayerBob: mueve al jugador con A/D; flota mientras se reproduce");
     }
 
     public override void OnUpdate(float deltaTime)
     {
         _time += deltaTime;
-        Entity.Transform.Position = _origin + new Vector2(0f, MathF.Sin(_time * 2.2f) * 0.28f);
+
+        var direction = 0f;
+        if (Input.GetKey(KeyCode.A))
+        {
+            direction -= 1f;
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            direction += 1f;
+        }
+
+        _horizontal += direction * 2.5f * Time.DeltaTime;
+
+        Entity.Transform.Position = _origin + new Vector2(_horizontal, MathF.Sin(_time * 2.2f) * 0.28f);
     }
 
     public override void OnDestroy()

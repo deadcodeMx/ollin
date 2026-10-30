@@ -5,6 +5,8 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Ollin.Core.Input;
+using Ollin.Editor.Controls;
 using Ollin.Editor.ViewModels;
 
 namespace Ollin.Editor.Views;
@@ -251,14 +253,14 @@ public partial class MainWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Motor de juego 2D · versión 0.1 (etapa 1)",
+                    Text = "Motor de juego 2D · versión 0.3 (etapa 3 completada)",
                     FontSize = 12,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
                 new TextBlock
                 {
-                    Text = "Editor construido con Avalonia y renderizado 2D con OpenGL (Silk.NET). " +
-                           "La escritura de scripts en C# llegará en la etapa 3.",
+                    Text = "Editor con Avalonia y renderizado 2D con OpenGL (Silk.NET). " +
+                           "Scripts en C# compilados con Roslyn y recarga en caliente.",
                     FontSize = 12,
                     TextWrapping = TextWrapping.Wrap,
                     Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")),
@@ -279,7 +281,40 @@ public partial class MainWindow : Window
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        if (ViewModel is null || IsTextInputFocused())
+        if (ViewModel is null)
+        {
+            base.OnKeyDown(e);
+            return;
+        }
+
+        // Durante la reproducción el teclado pertenece al juego.
+        if (ViewModel.IsPlaying)
+        {
+            if (e.Key == Key.F5)
+            {
+                ViewModel.TogglePlay();
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.F6)
+            {
+                ViewModel.TogglePause();
+                e.Handled = true;
+                return;
+            }
+
+            if (KeyMapping.ToKeyCode(e.Key) is { } playKey)
+            {
+                InputState.SetKey(playKey, true);
+                e.Handled = true;
+            }
+
+            base.OnKeyDown(e);
+            return;
+        }
+
+        if (IsTextInputFocused())
         {
             base.OnKeyDown(e);
             return;
@@ -331,6 +366,17 @@ public partial class MainWindow : Window
         }
 
         base.OnKeyDown(e);
+    }
+
+    protected override void OnKeyUp(KeyEventArgs e)
+    {
+        if (ViewModel is { IsPlaying: true } && KeyMapping.ToKeyCode(e.Key) is { } playKey)
+        {
+            InputState.SetKey(playKey, false);
+            e.Handled = true;
+        }
+
+        base.OnKeyUp(e);
     }
 
     private bool IsTextInputFocused() =>

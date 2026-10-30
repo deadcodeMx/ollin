@@ -33,6 +33,20 @@ public abstract class OllinScript
     {
     }
 
-    /// <summary>Mensaje de depuración que aparece en la consola del editor.</summary>
+    /// <summary>
+    /// Se ejecuta después de una recarga en caliente, cuando el estado de los campos
+    /// ya se restauró. Úsalo para reenganchar referencias externas.
+    /// </summary>
+    public virtual void OnReload()
+    {
+    }
+
+    /// <summary>Mensaje informativo en la consola del editor.</summary>
     protected static void Debug(string message) => Core.Diagnostics.Log.Info(message, "Script");
+
+    /// <summary>Aviso en la consola del editor.</summary>
+    protected static void Warn(string message) => Core.Diagnostics.Log.Warn(message, "Script");
+
+    /// <summary>Error en la consola del editor.</summary>
+    protected static void Error(string message) => Core.Diagnostics.Log.Error(message, "Script");
 }
