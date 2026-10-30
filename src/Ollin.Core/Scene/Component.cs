@@ -10,6 +10,8 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.SpriteRenderer), "sprite")]
 [JsonDerivedType(typeof(Components.Camera2D), "camera")]
 [JsonDerivedType(typeof(Components.ScriptComponent), "script")]
+[JsonDerivedType(typeof(Components.RotatorComponent), "rotator")]
+[JsonDerivedType(typeof(Components.OscillatorComponent), "oscillator")]
 public abstract class Component
 {
     /// <summary>Entidad propietaria (no se serializa).</summary>

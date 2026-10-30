@@ -33,6 +33,11 @@
         <MenuItem Header="Enfocar selección" InputGesture="F" Click="OnFrameSelected" />
         <MenuItem Header="Mostrar cuadrícula" ToggleType="CheckBox" IsChecked="{Binding ShowGrid}" />
       </MenuItem>
+      <MenuItem Header="Escena">
+        <MenuItem Header="Reproducir / detener" InputGesture="F5" Click="OnPlay" />
+        <MenuItem Header="Pausar / reanudar" InputGesture="F6" Click="OnPause" />
+        <MenuItem Header="Detener y restaurar" Click="OnStopPlay" />
+      </MenuItem>
       <MenuItem Header="Ayuda">
         <MenuItem Header="Acerca de Ollin" Click="OnAbout" />
       </MenuItem>
@@ -55,8 +60,12 @@
           <Button Classes="tool" Content="Centrar" Click="OnResetCamera" />
           <Button Classes="tool" Content="Enfocar" Click="OnFrameSelected" />
           <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
-          <Button Classes="tool accent" Content="▶  Reproducir" IsEnabled="False"
-                  ToolTip.Tip="El modo juego llega en la etapa 2" />
+          <Button Classes="tool accent" Content="▶  Reproducir" Click="OnPlay"
+                  IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
+          <Button Classes="tool" Content="⏸  Pausa" Click="OnPause"
+                  IsEnabled="{Binding IsPlaying}" ToolTip.Tip="Pausar o reanudar (F6)" />
+          <Button Classes="tool" Content="⏹  Detener" Click="OnStopPlay"
+                  IsEnabled="{Binding IsPlaying}" ToolTip.Tip="Detener y restaurar la escena" />
         </StackPanel>
       </Grid>
     </Border>
@@ -65,7 +74,7 @@
     <Grid Grid.Row="2" ColumnDefinitions="286,4,*,4,332" Margin="8,8,8,6">
 
       <!-- Jerarquía -->
-      <Border Grid.Column="0" Classes="card">
+      <Border Grid.Column="0" Classes="card" IsEnabled="{Binding CanEdit}">
         <Grid RowDefinitions="Auto,*,Auto">
           <StackPanel Margin="12,10,12,4">
             <TextBlock Classes="section" Text="JERARQUÍA" />
@@ -164,7 +173,7 @@
       <GridSplitter Grid.Column="3" ResizeDirection="Columns" Background="Transparent" />
 
       <!-- Inspector -->
-      <Border Grid.Column="4" Classes="card">
+      <Border Grid.Column="4" Classes="card" IsEnabled="{Binding CanEdit}">
         <ScrollViewer>
           <StackPanel Margin="14" Spacing="10">
             <TextBlock Classes="section" Text="INSPECTOR" />
@@ -250,6 +259,31 @@
                           FontSize="11.5" />
               </StackPanel>
 
+              <StackPanel IsVisible="{Binding Selected.HasRotator}" Spacing="5">
+                <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
+                <TextBlock Classes="section" Text="ROTADOR" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Grados/s" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.RotationSpeed, Mode=TwoWay}"
+                                 Increment="15" FormatString="0.#" />
+                </Grid>
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding Selected.HasOscillator}" Spacing="5">
+                <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
+                <TextBlock Classes="section" Text="OSCILADOR" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Amplitud" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.OscillationAmplitude, Mode=TwoWay}"
+                                 Increment="0.05" Minimum="0" FormatString="0.###" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Frecuencia" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.OscillationFrequency, Mode=TwoWay}"
+                                 Increment="0.1" Minimum="0.01" FormatString="0.###" />
+                </Grid>
+              </StackPanel>
+
               <StackPanel IsVisible="{Binding Selected.HasCamera}" Spacing="5">
                 <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
                 <TextBlock Classes="section" Text="CÁMARA" />
@@ -280,6 +314,10 @@
                      Foreground="{DynamicResource Ollin.TextDim}" />
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+          <TextBlock Text="{Binding PlayStateText}" FontSize="11"
+                     Foreground="{DynamicResource Ollin.Jade}" />
+          <TextBlock Text="{Binding ElapsedText}" FontSize="11"
+                     Foreground="{DynamicResource Ollin.TextDim}" />
           <TextBlock Text="{Binding SelectionText}" FontSize="11"
                      Foreground="{DynamicResource Ollin.Accent}" />
           <TextBlock Text="{Binding ZoomText}" FontSize="11" Foreground="{DynamicResource Ollin.TextDim}" />

@@ -9,7 +9,7 @@ Motor de juego **2D** con editor gráfico propio y scripting en **C#**, construi
 
 ![Editor de Ollin](docs/images/editor.png)
 
-## Estado actual — Etapa 1 completada
+## Estado actual — Etapa 1 completada · Etapa 2 en curso
 
 | Área | Estado |
 | --- | --- |
@@ -21,8 +21,9 @@ Motor de juego **2D** con editor gráfico propio y scripting en **C#**, construi
 | Selección por clic en el viewport (hit-test rotado) | ✅ |
 | Guardar / abrir escena en JSON | ✅ |
 | Consola de mensajes del motor | ✅ |
-| Pruebas automatizadas del núcleo | ✅ 17/17 |
-| Modo *Play*, scripting C#, físicas, audio | ⏳ etapas 2–4 |
+| Modo Play: reproducir, pausar y detener con restauración | ✅ |
+| Pruebas automatizadas | ✅ 24/24 |
+| Gizmos, assets, scripting C#, físicas, audio | ⏳ etapas 2–4 |
 
 Consulta el [roadmap por etapas](docs/ROADMAP.md) y la
 [arquitectura](docs/ARQUITECTURA.md).
@@ -50,7 +51,9 @@ La primera vez se abre una escena de ejemplo con cámara, jugador, cajas y una m
 | `Ctrl + S` | Guardar |
 | `Supr` | Eliminar entidad seleccionada |
 | `F` | Enfocar la entidad seleccionada |
-| `Inicio` | Centrar la cámara |
+| Inicio | Centrar la cámara |
+| F5 | Reproducir / detener la escena |
+| F6 | Pausar / reanudar |
 | Clic | Seleccionar sprite |
 | Rueda | Zoom anclado al cursor |
 | `Alt` + arrastrar, o botón central | Mover la cámara |
@@ -61,9 +64,10 @@ La primera vez se abre una escena de ejemplo con cámara, jugador, cajas y una m
 src/
   Ollin.Core/        Modelo de escena, componentes, cámara, serialización, log
   Ollin.Rendering/   Renderer 2D sobre OpenGL ES (sprite batch, cuadrícula, hit-test)
+  Ollin.Runtime/     Bucle de juego: reproducción, pausa, delta time y restauración
   Ollin.Editor/      Aplicación Avalonia: GUI, viewport, inspector, consola
 tests/
-  Ollin.Tests/       Pruebas del núcleo (xUnit)
+  Ollin.Tests/       Pruebas del núcleo y del runtime (xUnit)
 docs/
   ARQUITECTURA.md    Cómo está construido y por qué
   ROADMAP.md         Etapas de desarrollo

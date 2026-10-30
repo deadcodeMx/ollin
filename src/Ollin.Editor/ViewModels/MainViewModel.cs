@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Numerics;
 using Avalonia.Threading;
 using Ollin.Core.Diagnostics;
@@ -7,6 +8,7 @@ using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
 using Ollin.Core.Scenes;
 using Ollin.Core.Serialization;
+using Ollin.Runtime;
 
 namespace Ollin.Editor.ViewModels;
 
@@ -26,6 +28,14 @@ public sealed class MainViewModel : ObservableObject
     private string _projectRoot = Environment.CurrentDirectory;
     private Vector2 _homeCameraPosition;
     private float _homeZoom = 1f;
+
+    private readonly SceneRuntime _runtime = new();
+    private readonly Stopwatch _playClock = new();
+    private DispatcherTimer? _playTimer;
+    private Vector2 _cameraBeforePlay;
+    private float _zoomBeforePlay;
+    private bool _dirtyBeforePlay;
+    private Guid? _selectedBeforePlay;
 
     public MainViewModel()
     {
@@ -165,10 +175,123 @@ public sealed class MainViewModel : ObservableObject
         }
     }
 
+    // ---------- Modo juego (etapa 2) ----------
+
+    public bool IsPlaying => _runtime.IsPlaying;
+
+    public bool IsPaused => _runtime.IsPaused;
+
+    /// <summary>Mientras se reproduce no se edita la escena.</summary>
+    public bool CanEdit => !_runtime.IsPlaying;
+
+    public string PlayStateText => !IsPlaying ? "Detenido" : IsPaused ? "Pausado" : "Reproduciendo";
+
+    public string ElapsedText => TimeSpan.FromSeconds(_runtime.Elapsed).ToString(@"mm\:ss\.f");
+
+    /// <summary>Reproduce o detiene según el estado actual (F5).</summary>
+    public void TogglePlay()
+    {
+        if (IsPlaying)
+        {
+            StopPlay();
+        }
+        else
+        {
+            StartPlay();
+        }
+    }
+
+    public void TogglePause()
+    {
+        if (!IsPlaying)
+        {
+            return;
+        }
+
+        _runtime.TogglePause();
+        StatusMessage = IsPaused ? "Reproducción en pausa" : "Reproduciendo la escena";
+        NotifyPlayState();
+    }
+
+    private void StartPlay()
+    {
+        _cameraBeforePlay = CameraPosition;
+        _zoomBeforePlay = ActiveCamera.Zoom;
+        _dirtyBeforePlay = IsDirty;
+        _selectedBeforePlay = Selected?.Id;
+
+        _runtime.Play(Scene);
+        _playClock.Restart();
+        _playTimer ??= CreatePlayTimer();
+        _playTimer.Start();
+
+        StatusMessage = "Reproduciendo la escena";
+        NotifyPlayState();
+        RequestRedraw();
+    }
+
+    private void StopPlay()
+    {
+        _playTimer?.Stop();
+        _playClock.Stop();
+
+        var restored = _runtime.Stop();
+        if (restored is null)
+        {
+            NotifyPlayState();
+            return;
+        }
+
+        LoadScene(restored, ScenePath);
+        IsDirty = _dirtyBeforePlay;
+        MoveCamera(_cameraBeforePlay);
+        ActiveCamera.Zoom = _zoomBeforePlay;
+        _homeZoom = _zoomBeforePlay;
+
+        if (_selectedBeforePlay is { } id)
+        {
+            Select(Scene.Find(id));
+        }
+
+        StatusMessage = "Detenido; escena restaurada";
+        OnPropertyChanged(nameof(ZoomText));
+        NotifyPlayState();
+        RequestRedraw();
+    }
+
+    private DispatcherTimer CreatePlayTimer()
+    {
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+        timer.Tick += (_, _) =>
+        {
+            var delta = (float)_playClock.Elapsed.TotalSeconds;
+            _playClock.Restart();
+            _runtime.Tick(delta);
+            OnPropertyChanged(nameof(ElapsedText));
+            RequestRedraw();
+        };
+        return timer;
+    }
+
+    private void NotifyPlayState()
+    {
+        OnPropertyChanged(nameof(IsPlaying));
+        OnPropertyChanged(nameof(IsPaused));
+        OnPropertyChanged(nameof(CanEdit));
+        OnPropertyChanged(nameof(PlayStateText));
+        OnPropertyChanged(nameof(ElapsedText));
+    }
     public void RequestRedraw() => RedrawRequested?.Invoke();
 
     public void LoadScene(Scene scene, string? path)
     {
+        if (_runtime.IsPlaying)
+        {
+            _playTimer?.Stop();
+            _runtime.Stop();
+            NotifyPlayState();
+        }
+
         Scene = scene;
         ScenePath = path;
         ProjectRoot = path is null ? Environment.CurrentDirectory : System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(path)) ?? Environment.CurrentDirectory;
@@ -227,6 +350,11 @@ public sealed class MainViewModel : ObservableObject
 
     public void AddEntity(bool withSprite)
     {
+        if (IsPlaying)
+        {
+            return;
+        }
+
         var entity = Scene.Create("Entidad", CameraPosition);
         if (withSprite)
         {
@@ -247,7 +375,7 @@ public sealed class MainViewModel : ObservableObject
 
     public void DeleteSelected()
     {
-        if (Selected is null)
+        if (IsPlaying || Selected is null)
         {
             return;
         }
@@ -270,7 +398,7 @@ public sealed class MainViewModel : ObservableObject
 
     public void DuplicateSelected()
     {
-        if (Selected is null)
+        if (IsPlaying || Selected is null)
         {
             return;
         }

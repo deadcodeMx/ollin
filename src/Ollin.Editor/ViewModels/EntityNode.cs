@@ -103,6 +103,62 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasCamera => Entity.GetComponent<Camera2D>() is not null;
 
+    public bool HasRotator => Entity.GetComponent<RotatorComponent>() is not null;
+
+    public bool HasOscillator => Entity.GetComponent<OscillatorComponent>() is not null;
+
+    public RotatorComponent? Rotator => Entity.GetComponent<RotatorComponent>();
+
+    public OscillatorComponent? Oscillator => Entity.GetComponent<OscillatorComponent>();
+
+    public decimal RotationSpeed
+    {
+        get => (decimal)(Rotator?.DegreesPerSecond ?? 0f);
+        set
+        {
+            if (Rotator is null)
+            {
+                return;
+            }
+
+            Rotator.DegreesPerSecond = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal OscillationAmplitude
+    {
+        get => (decimal)(Oscillator?.Amplitude ?? 0f);
+        set
+        {
+            if (Oscillator is null)
+            {
+                return;
+            }
+
+            Oscillator.Amplitude = MathF.Max(0f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal OscillationFrequency
+    {
+        get => (decimal)(Oscillator?.Frequency ?? 0f);
+        set
+        {
+            if (Oscillator is null)
+            {
+                return;
+            }
+
+            Oscillator.Frequency = MathF.Max(0.01f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
     public SpriteRenderer? Sprite => Entity.GetComponent<SpriteRenderer>();
 
     public Camera2D? Camera => Entity.GetComponent<Camera2D>();
@@ -294,5 +350,8 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(OrthographicSize));
         OnPropertyChanged(nameof(CameraZoom));
         OnPropertyChanged(nameof(ComponentsSummary));
+        OnPropertyChanged(nameof(RotationSpeed));
+        OnPropertyChanged(nameof(OscillationAmplitude));
+        OnPropertyChanged(nameof(OscillationFrequency));
     }
 }

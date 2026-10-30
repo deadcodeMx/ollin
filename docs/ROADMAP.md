@@ -32,16 +32,22 @@ tiene algo que ejecutar.
 texturas de ejemplo (los sprites sin textura se dibujan con color sólido), sin
 deshacer/rehacer.
 
-## Etapa 2 — Runtime y edición directa
+## Etapa 2 — Runtime y edición directa (en curso)
 
 **Objetivo:** que la escena "viva" y se pueda manipular con el ratón.
 
-- [ ] Bucle de juego separado del editor (`Ollin.Runtime`): tiempo, pausa, paso a paso.
-- [ ] Botón **Reproducir / Pausar / Detener** y vista previa en el mismo viewport.
+- [x] Bucle de juego separado (`Ollin.Runtime`): reloj, delta recortado, pausa.
+- [x] Botón **Reproducir / Pausar / Detener** (F5 / F6) en el mismo viewport.
+- [x] Restauración exacta del estado de la escena al detener (instantánea JSON).
+- [x] Componentes animables de ejemplo: `RotatorComponent` y `OscillatorComponent`, editables en el inspector.
+- [x] Bloqueo de la edición mientras se reproduce.
 - [ ] Gizmos arrastrables: mover, rotar, escalar desde el viewport (snap con `Ctrl`).
 - [ ] Deshacer/rehacer (pila de comandos sobre la escena).
 - [ ] Panel de assets: importar PNG, arrastrar textura al sprite, vista de miniaturas.
 - [ ] Exportación del juego a carpeta ejecutable (Windows).
+
+> Nota de diseño: `ITickable` es el contrato que en la etapa 3 implementarán los
+> scripts de usuario compilados con Roslyn, sin tocar el runtime.
 
 ## Etapa 3 — Scripting en C#
 

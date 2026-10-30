@@ -124,6 +124,20 @@ public partial class MainWindow : Window
 
     private void OnClearConsole(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Logs.Clear();
 
+    // ---------- Modo juego ----------
+
+    private void OnPlay(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.TogglePlay();
+
+    private void OnPause(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.TogglePause();
+
+    private void OnStopPlay(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is { IsPlaying: true })
+        {
+            ViewModel.TogglePlay();
+        }
+    }
+
     // ---------- Ver ----------
 
     private void OnResetCamera(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ResetCamera();
@@ -218,6 +232,14 @@ public partial class MainWindow : Window
                 break;
             case Key.Home:
                 ViewModel.ResetCamera();
+                e.Handled = true;
+                break;
+            case Key.F5:
+                ViewModel.TogglePlay();
+                e.Handled = true;
+                break;
+            case Key.F6:
+                ViewModel.TogglePause();
                 e.Handled = true;
                 break;
         }

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Ollin.Runtime</RootNamespace>
+    <AssemblyName>Ollin.Runtime</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ollin.Core\Ollin.Core.csproj" />
+  </ItemGroup>
+</Project>

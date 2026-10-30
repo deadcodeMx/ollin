@@ -33,8 +33,9 @@ Dependencias entre proyectos (sin ciclos):
 
 ```
 Ollin.Editor ──▶ Ollin.Rendering ──▶ Ollin.Core
-     └──────────────────────────────────┘
-Ollin.Tests ──▶ Ollin.Rendering, Ollin.Core
+     │                                  ▲
+     └────────▶ Ollin.Runtime ──────────┘
+Ollin.Tests ──▶ Ollin.Runtime, Ollin.Rendering, Ollin.Core
 ```
 
 ## 2. Por qué este stack
@@ -85,6 +86,19 @@ con VAO y buffers dinámicos.
 - Cámara: `OrthographicSize` = mitad de la altura visible en unidades; `Zoom` multiplica.
 - Píxeles por unidad: `altura_px / (2 · OrthographicSize) · Zoom`.
 
+### Ollin.Runtime — bucle de juego
+
+- `SceneRuntime`: `Play(scene)` guarda una **instantánea JSON** del estado, arranca el
+  reloj y distribuye `OnUpdate(dt)` a los componentes que implementan `ITickable`.
+- `Pause/Reanudar` congela el tiempo; `Stop()` deserializa la instantánea y devuelve la
+  escena exactamente como estaba, de modo que reproducir nunca ensucia el documento.
+- El delta se recorta a 0.1 s por cuadro para evitar saltos tras una pausa larga.
+- Los errores de un componente se registran y no detienen el bucle.
+
+Componentes con comportamiento incorporados: `RotatorComponent` (grados/s) y
+`OscillatorComponent` (amplitud, frecuencia, eje y fase). En la etapa 3 los scripts de
+usuario implementarán el mismo `ITickable`.
+
 ### Ollin.Editor — aplicación
 
 - `Program` / `App`: arranque de Avalonia, tema Fluent oscuro y estilos propios.
@@ -118,7 +132,14 @@ con VAO y buffers dinámicos.
    ```csharp
    [JsonDerivedType(typeof(Components.MiComponente), "mi-componente")]
    ```
-4. (Editor) Exponer sus campos en `EntityNode` y dibujar la sección en el inspector.
+4. Si debe animarse, implementar también `ITickable`:
+   ```csharp
+   public sealed class MiComponente : Component, ITickable
+   {
+       public void OnUpdate(float deltaTime) { /* ... */ }
+   }
+   ```
+5. (Editor) Exponer sus campos en `EntityNode` y dibujar la sección en el inspector.
 
 ### Añadir un tipo de panel
 

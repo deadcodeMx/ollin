@@ -36,6 +36,12 @@ public static class DefaultScene
             Tint = new Vector4(0.25f, 0.71f, 0.66f, 1f),
             SortingOrder = 5,
         });
+        crate.AddComponent(new OscillatorComponent
+        {
+            Axis = new Vector2(0f, 1f),
+            Amplitude = 0.22f,
+            Frequency = 0.9f,
+        });
 
         var coin = scene.Create("Moneda", new Vector2(4.4f, -1.6f));
         coin.AddComponent(new SpriteRenderer
@@ -44,6 +50,7 @@ public static class DefaultScene
             Tint = new Vector4(0.96f, 0.84f, 0.32f, 1f),
             SortingOrder = 20,
         });
+        coin.AddComponent(new RotatorComponent { DegreesPerSecond = 120f });
 
         var tilted = scene.Create("Caja girada", new Vector2(-2.8f, -1.8f));
         tilted.Transform.Rotation = 0.35f;
