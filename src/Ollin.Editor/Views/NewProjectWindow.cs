@@ -149,7 +149,7 @@ public sealed class NewProjectWindow : Window
             _ => ProjectTemplate.Empty,
         };
 
-        Close(new NewProjectResult(name, folder, template));
+        Close(new NewProjectResult(name!, folder!, template));
     }
 
     private void ShowError(string message)
