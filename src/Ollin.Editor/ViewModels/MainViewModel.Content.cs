@@ -260,6 +260,21 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new Light2D());
                 break;
 
+            case "inventory":
+                if (entity.HasComponent<Inventory>()) { added = false; break; }
+                entity.AddComponent(new Inventory());
+                break;
+
+            case "stats":
+                if (entity.HasComponent<Stats>()) { added = false; break; }
+                entity.AddComponent(new Stats());
+                break;
+
+            case "daynight":
+                if (entity.HasComponent<DayNightCycle>()) { added = false; break; }
+                entity.AddComponent(new DayNightCycle());
+                break;
+
             case "rotator":
                 if (entity.HasComponent<RotatorComponent>()) { added = false; break; }
                 entity.AddComponent(new RotatorComponent());

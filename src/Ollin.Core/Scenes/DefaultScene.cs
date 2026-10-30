@@ -20,6 +20,14 @@ public static class DefaultScene
             FollowSmoothing = 5f,
         });
 
+        camera.AddComponent(new DayNightCycle
+        {
+            DayLengthSeconds = 180f,
+            TimeOfDay = 0.2f,
+            DayAmbient = new Vector4(1f, 0.97f, 0.9f, 1f),
+            NightAmbient = new Vector4(0.12f, 0.14f, 0.22f, 1f),
+        });
+
         var ground = scene.Create("Terreno", new Vector2(-10f, -2.5f));
         var tilemap = new Tilemap
         {
@@ -44,6 +52,23 @@ public static class DefaultScene
 
         var player = scene.Create("Jugador", new Vector2(0f, -1.6f));
         player.Tags.Add("player");
+        player.AddComponent(new Stats
+        {
+            Entries =
+            {
+                new StatEntry { Name = "Vida", Value = 100f, Max = 100f },
+                new StatEntry { Name = "Hambre", Value = 100f, Max = 100f, DecayPerSecond = 0.4f },
+            },
+        });
+        player.AddComponent(new Inventory
+        {
+            Capacity = 8,
+            Slots =
+            {
+                new InventorySlot { ItemId = "pocion", Quantity = 2 },
+                new InventorySlot { ItemId = "moneda", Quantity = 1 },
+            },
+        });
         player.AddComponent(new Light2D
         {
             Radius = 5.5f,

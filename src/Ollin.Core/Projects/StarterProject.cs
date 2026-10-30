@@ -43,6 +43,7 @@ public static class StarterProject
             FollowTag = "player",
             FollowSmoothing = 6f,
         });
+        camera.AddComponent(new DayNightCycle { DayLengthSeconds = 150f, TimeOfDay = 0.35f });
 
         var ground = scene.Create("Suelo", new Vector2(0f, -2.5f));
         ground.AddComponent(new SpriteRenderer
@@ -55,6 +56,7 @@ public static class StarterProject
         var player = scene.Create("Jugador", new Vector2(0f, -1.6f));
         player.Tags.Add("player");
         AddLight(player);
+        AddSystems(player);
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(1f, 1f),
@@ -82,6 +84,7 @@ public static class StarterProject
             FollowTag = "player",
             FollowSmoothing = 5f,
         });
+        camera.AddComponent(new DayNightCycle { DayLengthSeconds = 150f, TimeOfDay = 0.4f });
 
         var ground = scene.Create("Suelo", new Vector2(-12f, -4f));
         var tilemap = ground.AddComponent(new Tilemap
@@ -105,6 +108,7 @@ public static class StarterProject
         var player = scene.Create("Jugador", new Vector2(-10f, -2.2f));
         player.Tags.Add("player");
         AddLight(player);
+        AddSystems(player);
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(0.9f, 1f),
@@ -198,6 +202,7 @@ public static class StarterProject
         var player = scene.Create("Jugador", new Vector2(-7f, -1.6f));
         player.Tags.Add("player");
         AddLight(player, cone: true);
+        AddSystems(player);
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(0.8f, 1f),
@@ -231,6 +236,26 @@ public static class StarterProject
         return scene;
     }
 
+    private static void AddSystems(Entity player)
+    {
+        player.AddComponent(new Stats
+        {
+            Entries =
+            {
+                new StatEntry { Name = "Vida", Value = 100f, Max = 100f },
+            },
+        });
+
+        player.AddComponent(new Inventory
+        {
+            Capacity = 8,
+            Slots =
+            {
+                new InventorySlot { ItemId = "pocion", Quantity = 2 },
+            },
+        });
+    }
+
     private static void AddLight(Entity entity, bool cone = false)
     {
         entity.AddComponent(new Light2D
@@ -260,6 +285,14 @@ public static class StarterProject
             Radius = 2.2f,
         });
     }
+
+    public const string PotionItem = """
+        { "id": "pocion", "name": "Poción", "description": "Recupera 25 de vida.", "maxStack": 5 }
+        """;
+
+    public const string CoinItem = """
+        { "id": "moneda", "name": "Moneda", "description": "Moneda de cambio.", "maxStack": 99 }
+        """;
 
     public const string WelcomeDialogue = """
         {

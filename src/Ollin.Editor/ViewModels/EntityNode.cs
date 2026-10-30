@@ -1211,4 +1211,264 @@ public sealed class EntityNode : ObservableObject
             _owner.MarkDirty();
         }
     }
+
+    public bool HasInventory => Entity.GetComponent<Inventory>() is not null;
+
+    public Inventory? Inventory => Entity.GetComponent<Inventory>();
+
+    public decimal InventoryCapacity
+    {
+        get => Inventory?.Capacity ?? 12;
+        set
+        {
+            if (Inventory is null || Inventory.Capacity == (int)value)
+            {
+                return;
+            }
+
+            Inventory.Capacity = System.Math.Max(1, (int)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public string InventorySummary =>
+        Inventory is null || Inventory.Slots.Count == 0
+            ? "(vacío)"
+            : string.Join(", ", Inventory.Slots.Select(slot => $"{slot.ItemId} x{slot.Quantity}"));
+
+    /// <summary>Texto temporal del inspector para añadir o quitar objetos.</summary>
+    public string NewItemText { get; set; } = string.Empty;
+
+    public void AddItemFromText()
+    {
+        if (Inventory is null || !TryParseItem(NewItemText, out var id, out var quantity))
+        {
+            return;
+        }
+
+        Inventory.Add(id, quantity);
+        NewItemText = string.Empty;
+        OnPropertyChanged(nameof(NewItemText));
+        OnPropertyChanged(nameof(InventorySummary));
+        _owner.MarkDirty();
+    }
+
+    public void RemoveItemFromText()
+    {
+        if (Inventory is null || !TryParseItem(NewItemText, out var id, out var quantity))
+        {
+            return;
+        }
+
+        Inventory.Remove(id, quantity);
+        NewItemText = string.Empty;
+        OnPropertyChanged(nameof(NewItemText));
+        OnPropertyChanged(nameof(InventorySummary));
+        _owner.MarkDirty();
+    }
+
+    public void ClearInventory()
+    {
+        if (Inventory is null || Inventory.Slots.Count == 0)
+        {
+            return;
+        }
+
+        Inventory.Clear();
+        OnPropertyChanged(nameof(InventorySummary));
+        _owner.MarkDirty();
+    }
+
+    private static bool TryParseItem(string? text, out string id, out int quantity)
+    {
+        id = string.Empty;
+        quantity = 1;
+
+        var parts = (text ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0)
+        {
+            return false;
+        }
+
+        id = parts[0];
+
+        if (parts.Length > 1)
+        {
+            var amount = parts[1].TrimStart('x', 'X');
+            int.TryParse(amount, out quantity);
+        }
+
+        quantity = System.Math.Max(1, quantity);
+        return id.Length > 0;
+    }
+
+    public bool HasStats => Entity.GetComponent<Stats>() is not null;
+
+    public Stats? Stats => Entity.GetComponent<Stats>();
+
+    public string StatsSummary =>
+        Stats is null || Stats.Entries.Count == 0
+            ? "(vacío)"
+            : string.Join(", ", Stats.Entries.Select(entry =>
+                $"{entry.Name} {System.Math.Round(entry.Value)}/{System.Math.Round(entry.Max)}"));
+
+    public string NewStatText { get; set; } = string.Empty;
+
+    public void ApplyStatFromText()
+    {
+        if (Stats is null || string.IsNullOrWhiteSpace(NewStatText))
+        {
+            return;
+        }
+
+        var text = NewStatText.Trim();
+        var name = text;
+        var mode = '=';
+        var value = 0f;
+        var index = text.IndexOfAny(new[] { '=', '+', '-' });
+
+        if (index > 0)
+        {
+            name = text[..index].Trim();
+            mode = text[index];
+            float.TryParse(text[(index + 1)..].Replace(',', '.'), System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
+        }
+
+        switch (mode)
+        {
+            case '+':
+                Stats.Add(name, value);
+                break;
+            case '-':
+                Stats.Add(name, -value);
+                break;
+            case '=':
+                Stats.Set(name, value);
+                break;
+            default:
+                Stats.Ensure(name);
+                break;
+        }
+
+        NewStatText = string.Empty;
+        OnPropertyChanged(nameof(NewStatText));
+        OnPropertyChanged(nameof(StatsSummary));
+        _owner.MarkDirty();
+    }
+
+    public void ClearStats()
+    {
+        if (Stats is null || Stats.Entries.Count == 0)
+        {
+            return;
+        }
+
+        Stats.Entries.Clear();
+        OnPropertyChanged(nameof(StatsSummary));
+        _owner.MarkDirty();
+    }
+
+    public bool HasDayNight => Entity.GetComponent<DayNightCycle>() is not null;
+
+    public DayNightCycle? DayNight => Entity.GetComponent<DayNightCycle>();
+
+    public decimal DayLength
+    {
+        get => (decimal)(DayNight?.DayLengthSeconds ?? 120f);
+        set
+        {
+            if (DayNight is null || MathF.Abs(DayNight.DayLengthSeconds - (float)value) < 0.01f)
+            {
+                return;
+            }
+
+            DayNight.DayLengthSeconds = System.Math.Max(1f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal TimeOfDay
+    {
+        get => (decimal)(DayNight?.TimeOfDay ?? 0f);
+        set
+        {
+            if (DayNight is null || MathF.Abs(DayNight.TimeOfDay - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            DayNight.TimeOfDay = System.Math.Clamp((float)value, 0f, 0.999f);
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ClockText));
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public string ClockText
+    {
+        get
+        {
+            if (DayNight is null)
+            {
+                return string.Empty;
+            }
+
+            var totalMinutes = (int)(DayNight.TimeOfDay * 24f * 60f);
+            return $"{totalMinutes / 60:00}:{totalMinutes % 60:00} · {(DayNight.DayFactor > 0.5f ? "día" : "noche")}";
+        }
+    }
+
+    public string DayAmbientHex
+    {
+        get => ColorUtil.ToHex(DayNight?.DayAmbient ?? Vector4.One);
+        set
+        {
+            if (DayNight is null)
+            {
+                return;
+            }
+
+            DayNight.DayAmbient = ColorUtil.FromHex(value, DayNight.DayAmbient);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public string NightAmbientHex
+    {
+        get => ColorUtil.ToHex(DayNight?.NightAmbient ?? Vector4.One);
+        set
+        {
+            if (DayNight is null)
+            {
+                return;
+            }
+
+            DayNight.NightAmbient = ColorUtil.FromHex(value, DayNight.NightAmbient);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public bool DayPaused
+    {
+        get => DayNight?.Paused ?? false;
+        set
+        {
+            if (DayNight is null || DayNight.Paused == value)
+            {
+                return;
+            }
+
+            DayNight.Paused = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
 }

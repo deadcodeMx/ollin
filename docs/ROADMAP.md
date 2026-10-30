@@ -112,9 +112,9 @@ tilemap/*autotiling* y buscador de propiedades en el inspector.
 - [ ] Sistema de capítulos y checkpoints.
 
 ### Sistemas de juego
-- [ ] Inventario con pilas y crafteo por recetas.
-- [ ] Estadísticas: salud, hambre, sed, energía, cordura (configurables).
-- [ ] Ciclo día/noche con reloj y clima básico (lluvia, niebla).
+- [x] Inventario con pilas y capacidad.`n- [ ] Crafteo por recetas y estaciones de trabajo.
+- [x] Estadísticas configurables con desgaste por segundo (salud, hambre...).
+- [x] Ciclo día/noche con reloj y ambiente interpolado.`n- [ ] Clima básico (lluvia, niebla).
 - [ ] Recolección de recursos y estaciones de trabajo.
 - [ ] Construcción simple por celdas (muros, puertas, mobiliario).
 - [ ] IA básica: patrulla, persecución, pérdida de rastro, visión y oído.

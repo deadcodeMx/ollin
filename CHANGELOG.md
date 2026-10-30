@@ -17,6 +17,21 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.14.0] — 2026-10-30
+
+### Añadido
+
+- **Inventario** con capacidad, pilas, añadir/quitar y definiciones en `items/*.json`.
+- **Estadísticas** configurables con máximo y desgaste por segundo.
+- **Ciclo día/noche** con duración, hora, colores de día y noche aplicados al ambiente.
+- Pestañas del inspector para Inventario, Estadísticas y Día/Noche.
+- El script de ejemplo sincroniza vida y monedas con el HUD.
+- 9 pruebas nuevas: 105 en total.
+
+### Pendiente
+
+- Crafteo, clima, IA con pathfinding y guardado persistente.
+
 ## [0.13.0] — 2026-10-30
 
 ### Añadido

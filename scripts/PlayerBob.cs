@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Ollin.Core.Input;
+using Ollin.Core.Model.Components;
 using Ollin.Scripting;
 
 /// <summary>
@@ -25,6 +26,18 @@ public sealed class PlayerBob : OllinScript
     public override void OnUpdate(float deltaTime)
     {
         _time += deltaTime;
+
+        var stats = Entity.GetComponent<Stats>();
+        if (stats is not null)
+        {
+            Hud.SetBar("Vida", stats.Get("Vida"), 100f);
+        }
+
+        var bag = Entity.GetComponent<Inventory>();
+        if (bag is not null)
+        {
+            Hud.SetLabel("Monedas", bag.Count("moneda").ToString());
+        }
 
         var direction = 0f;
         if (Input.GetKey(KeyCode.A))

@@ -812,6 +812,22 @@ public partial class MainWindow : Window
 
     private void OnAddLight(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "light");
 
+    private void OnAddInventory(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "inventory");
+
+    private void OnAddStats(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "stats");
+
+    private void OnAddDayNight(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "daynight");
+
+    private void OnAddItem(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.AddItemFromText();
+
+    private void OnRemoveItem(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.RemoveItemFromText();
+
+    private void OnClearInventory(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.ClearInventory();
+
+    private void OnApplyStat(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.ApplyStatFromText();
+
+    private void OnClearStats(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.ClearStats();
+
     private void OnAddRotator(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "rotator");
 
     private void OnAddOscillator(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "oscillator");

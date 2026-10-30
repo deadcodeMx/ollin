@@ -271,7 +271,39 @@ Hud.Clear();
   ofrece Reintentar o Detener.
 - Guardar y cargar partida llegarán con el sistema de guardado.
 
-## 11. Audio
+## 11. Inventario, estadísticas y día/noche
+
+**Inventario** (`Inventory`): capacidad y pilas de objetos.
+
+```csharp
+var bag = Entity.GetComponent<Inventory>();
+bag?.Add("pocion", 2);            // hasta el máximo de la pila
+bag?.Remove("moneda", 1);
+if (bag?.Has("pocion", 1) == true) { /* usar poción */ }
+```
+
+Los objetos se definen en `items/*.json` (`id`, `name`, `maxStack`). Desde el inspector,
+pestaña **Inventario**, puedes ajustar la capacidad y añadir o quitar objetos con
+`pocion x3`.
+
+**Estadísticas** (`Stats`): valores con máximo y desgaste por segundo.
+
+```csharp
+var stats = Entity.GetComponent<Stats>();
+stats?.Add("Vida", -10f);
+var vida = stats?.Get("Vida") ?? 0f;
+```
+
+En el inspector, pestaña **Estadísticas**, escribe `vida=80`, `hambre+10` o `energía-5`.
+
+**Día y noche** (`DayNightCycle`): añádelo a la entidad de la cámara.
+
+- **Duración (s)**: lo que tarda un día completo.
+- **Hora**: 0 = medianoche, 0.5 = mediodía.
+- **Luz de día / Luz de noche**: colores que se interpolan.
+- El runtime aplica el ambiente resultante a las cámaras.
+
+## 12. Audio
 
 Añade un **AudioSource** a una entidad:
 
@@ -285,7 +317,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 12. Prefabs, copiar y pegar
+## 13. Prefabs, copiar y pegar
 
 - **Guardar como prefab**: clic derecho sobre la entidad → *Guardar como prefab…*.
   Se guarda en `prefabs/nombre.prefab.json`.
@@ -296,7 +328,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 13. Reproducir y depurar
+## 14. Reproducir y depurar
 
 | Acción | Cómo |
 | --- | --- |
@@ -309,7 +341,7 @@ los mensajes de `Debug`, errores de scripts y avisos de audio.
 
 ---
 
-## 14. Archivos del proyecto
+## 15. Archivos del proyecto
 
 Desde la pestaña **Archivos** del dock inferior:
 
@@ -323,7 +355,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 15. Atajos de teclado
+## 16. Atajos de teclado
 
 | Atajo | Acción |
 | --- | --- |
@@ -344,7 +376,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 16. Problemas comunes
+## 17. Problemas comunes
 
 | Síntoma | Causa y solución |
 | --- | --- |
@@ -357,7 +389,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 17. Flujo recomendado para un prototipo
+## 18. Flujo recomendado para un prototipo
 
 1. Crea un proyecto con la plantilla **Plataformas**.
 2. Abre `scenes/inicio.ollin.json` (pestaña **Escena**).

@@ -132,6 +132,39 @@ public sealed class SceneRuntime
         }
     }
 
+    /// <summary>Aplica la luz ambiente del ciclo de día/noche a las cámaras.</summary>
+    private void ApplyDayNight()
+    {
+        if (_scene is null)
+        {
+            return;
+        }
+
+        DayNightCycle? cycle = null;
+        foreach (var entity in _scene.Entities)
+        {
+            if (entity.Active && entity.GetComponent<DayNightCycle>() is { Enabled: true } candidate)
+            {
+                cycle = candidate;
+                break;
+            }
+        }
+
+        if (cycle is null)
+        {
+            return;
+        }
+
+        var ambient = cycle.AmbientNow;
+        foreach (var entity in _scene.Entities)
+        {
+            if (entity.Active && entity.GetComponent<Camera2D>() is { Enabled: true } camera)
+            {
+                camera.Ambient = ambient;
+            }
+        }
+    }
+
     private bool PlayDialogue(string id)
     {
         var file = Dialogues?.Get(id);
@@ -380,6 +413,7 @@ public sealed class SceneRuntime
         _physics.Step(_scene, _scripts, dt);
         UpdateCoroutines(dt);
         UpdateCameraFollow(dt);
+        ApplyDayNight();
         UpdateInteractions();
 
         // Cierra el cuadro de entrada: calcula flancos y delta del ratón.

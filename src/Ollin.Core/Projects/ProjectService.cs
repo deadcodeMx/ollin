@@ -62,6 +62,7 @@ public static class ProjectService
         Directory.CreateDirectory(Path.Combine(root, "scenes"));
         Directory.CreateDirectory(Path.Combine(root, "prefabs"));
         Directory.CreateDirectory(Path.Combine(root, "dialogs"));
+        Directory.CreateDirectory(Path.Combine(root, "items"));
 
         var project = new ProjectInfo
         {
@@ -81,7 +82,11 @@ public static class ProjectService
         var (scriptFile, scriptSource) = StarterProject.ScriptFor(template);
         File.WriteAllText(Path.Combine(root, "scripts", scriptFile), scriptSource);
         Directory.CreateDirectory(Path.Combine(root, "dialogs"));
+        Directory.CreateDirectory(Path.Combine(root, "items"));
         File.WriteAllText(Path.Combine(root, "dialogs", "bienvenida.json"), StarterProject.WelcomeDialogue);
+        Directory.CreateDirectory(Path.Combine(root, "items"));
+        File.WriteAllText(Path.Combine(root, "items", "pocion.json"), StarterProject.PotionItem);
+        File.WriteAllText(Path.Combine(root, "items", "moneda.json"), StarterProject.CoinItem);
 
         Save(project);
         return project;

@@ -410,6 +410,9 @@
                             <MenuItem Header="Tilemap" Click="OnAddTilemap" />
                             <MenuItem Header="Audio" Click="OnAddAudio" />
                             <MenuItem Header="Luz 2D" Click="OnAddLight" />
+                            <MenuItem Header="Inventario" Click="OnAddInventory" />
+                            <MenuItem Header="Estadísticas" Click="OnAddStats" />
+                            <MenuItem Header="Día/Noche" Click="OnAddDayNight" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                             <MenuItem Header="Script" Click="OnAddScriptComponent" />
@@ -561,6 +564,71 @@
                     <CheckBox Content="Solo una vez" IsChecked="{Binding Selected.InteractOnce, Mode=TwoWay}" FontSize="11.5" />
                     <TextBlock Classes="hint" TextWrapping="Wrap"
                                Text="El jugador debe tener la etiqueta 'player'. El diálogo se busca en dialogs/&lt;id&gt;.json." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Inventario" IsVisible="{Binding Selected.HasInventory}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="6">
+                    <TextBlock Classes="section" Text="INVENTARIO" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Capacidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.InventoryCapacity, Mode=TwoWay}" Increment="1" Minimum="1" FormatString="0" />
+                    </Grid>
+                    <TextBlock Text="{Binding Selected.InventorySummary}" TextWrapping="Wrap" Classes="hint" />
+                    <TextBox Text="{Binding Selected.NewItemText, Mode=TwoWay}" Watermark="pocion x3" />
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <Button Classes="tool accent" Content="Añadir" Click="OnAddItem" />
+                      <Button Classes="tool" Content="Quitar" Click="OnRemoveItem" />
+                      <Button Classes="tool" Content="Vaciar" Click="OnClearInventory" />
+                    </StackPanel>
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="Formato: id o id xCantidad. Las definiciones viven en items/*.json." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Estadísticas" IsVisible="{Binding Selected.HasStats}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="6">
+                    <TextBlock Classes="section" Text="ESTADÍSTICAS" />
+                    <TextBlock Text="{Binding Selected.StatsSummary}" TextWrapping="Wrap" Classes="hint" />
+                    <TextBox Text="{Binding Selected.NewStatText, Mode=TwoWay}" Watermark="vida=80, hambre+10, energía-5" />
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <Button Classes="tool accent" Content="Aplicar" Click="OnApplyStat" />
+                      <Button Classes="tool" Content="Vaciar" Click="OnClearStats" />
+                    </StackPanel>
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="Sintaxis: nombre=valor, nombre+valor o nombre-valor. El desgaste por segundo se ajusta en el JSON." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Día/Noche" IsVisible="{Binding Selected.HasDayNight}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="6">
+                    <TextBlock Classes="section" Text="CICLO DÍA/NOCHE" />
+                    <TextBlock Text="{Binding Selected.ClockText}" FontSize="12" Foreground="{DynamicResource Ollin.Accent}" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Duración (s)" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.DayLength, Mode=TwoWay}" Increment="10" Minimum="5" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Hora" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.TimeOfDay, Mode=TwoWay}" Increment="0.05" Minimum="0" Maximum="0.99" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Luz de día" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.DayAmbientHex, Mode=TwoWay}" Watermark="#FFF8EB" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Luz de noche" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.NightAmbientHex, Mode=TwoWay}" Watermark="#262E47" />
+                    </Grid>
+                    <CheckBox Content="Pausar el ciclo" IsChecked="{Binding Selected.DayPaused, Mode=TwoWay}" FontSize="11.5" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="El runtime aplica el ambiente resultante a las cámaras de la escena." />
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>
