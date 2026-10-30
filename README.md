@@ -17,7 +17,7 @@
 
 ## ¿Qué es Ollin?
 
-Ollin es un motor de juego 2D escrito desde cero en **C#/.NET 8**, con su propio editor
+Ollin es un motor de juego escrito desde cero en **C#/.NET 8**, con su propio editor
 gráfico. No envuelve otro motor: el renderizado, la escena, el bucle de juego, el
 historial y el compilador de scripts son código propio del proyecto.
 
@@ -25,22 +25,37 @@ La idea es sencilla: **abrir el editor, montar una escena, escribir un script en
 darle a Reproducir**, sin salir de la misma ventana.
 
 - Editor con tema oscuro propio (jade + ámbar) construido con **Avalonia**.
-- Viewport 2D con **OpenGL ES 3.0** real (sprite batching, cuadrícula, gizmos).
+- Viewport con **OpenGL ES 3.0** real (sprite batching, cuadrícula, gizmos).
 - Escenas guardadas en **JSON legible** y versionables.
 - Assets con rutas relativas: el proyecto se puede mover de carpeta.
 - Deshacer/rehacer con historial de estados.
 - Scripts en **C# compilados con Roslyn** en memoria, con recarga desde el editor.
 
+## Enfoque
+
+Ollin es un **motor personal**, pensado para que una sola persona pueda terminar
+proyectos pequeños:
+
+- **Juegos de terror lineales**: capítulos cortos, atmósfera, luz y sonido, ritmo guiado.
+- **Juegos de supervivencia**: ciclos de día y noche, recursos, crafteo e IA básica.
+
+No busca competir con motores AAA: prioriza herramientas cómodas, arranque rápido y
+alcance contenido. El plan completo está en [docs/ROADMAP.md](docs/ROADMAP.md) e incluye
+un puente 2.5D antes del 3D.
+
 ## Estado del proyecto
 
 | Etapa | Contenido | Estado |
 | --- | --- | --- |
-| 1 | Editor: jerarquía, inspector, viewport, cámara, escenas JSON | ✅ |
-| 2 | Modo Play, assets, gizmos de transformación, deshacer/rehacer | ✅ |
-| 3 | Scripting en C# con Roslyn y errores en consola | ✅ (sin recarga en vivo) |
-| 4 | Animación, tilemaps, física 2D, audio, UI de juego | ⏳ |
-| 5 | Prefabs, build del jugador, perfilador | ⏳ |
-| 6 | Multiplataforma y ecosistema | ⏳ |
+| 0 | Cimientos: stack, entorno, solución | ✅ |
+| 1 | Editor: escena, jerarquía, inspector, viewport, cámara, JSON | ✅ |
+| 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
+| 3 | Scripting en C# con Roslyn, ciclo de vida y errores en consola | ✅ (falta recarga en vivo) |
+| 4 | Cerrar el 2D: recarga en vivo, animación, tilemaps, física, audio, prefabs | ⏳ |
+| 5 | Terror y supervivencia: luces, triggers, diálogos, inventario, IA, día/noche | ⏳ |
+| 6 | 2.5D: sprites en espacio 3D con cámara en primera persona | ⏳ |
+| 7 | 3D: mallas glTF, luces y sombras, física, navmesh, editor 3D | ⏳ |
+| 8 | Producto: build, guardado, opciones, perfilador, localización | ⏳ |
 
 Detalle completo en [docs/ROADMAP.md](docs/ROADMAP.md).
 
@@ -207,8 +222,10 @@ Más detalle (capas, coordenadas, flujo de un cuadro, cómo añadir componentes)
 
 ## Contribuir
 
-Lee [CONTRIBUTING.md](CONTRIBUTING.md). Las ideas, reportes de errores y *pull requests*
-son bienvenidos.
+Ollin es un **proyecto personal**: no se buscan contribuciones externas ni se mantiene
+como motor para terceros. Si algo te sirve o quieres comentar una idea, abre un *issue*;
+las sugerencias son bienvenidas, pero el rumbo lo marca el desarrollo de mis propios
+juegos. Las normas de convivencia están en [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Licencia
 

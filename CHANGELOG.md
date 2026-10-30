@@ -5,6 +5,11 @@ versionado [SemVer](https://semver.org/lang/es/).
 
 ## [No publicado]
 
+### Cambiado
+
+- Roadmap reorientado a un motor personal para terror lineal y supervivencia, con
+  puente 2.5D antes del 3D y etapas reordenadas (4–8).
+
 ### Planeado
 
 - Recarga en caliente de scripts sin detener la reproducción.

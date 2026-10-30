@@ -1,93 +1,207 @@
 # Roadmap de Ollin
 
-Desarrollo por etapas: cada una entrega algo usable y verificable, sin dejar el editor
-a medias. El orden está pensado para que el scripting en C# llegue cuando el motor ya
-tiene algo que ejecutar.
+Desarrollo por etapas de un **motor personal** para proyectos pequeños: **juegos de terror
+lineales** y **juegos de supervivencia**. Nada de escala AAA: prioridad a que un
+desarrollador solo pueda terminar juegos cortos y atmosféricos.
 
-## Etapa 0 — Cimientos (completada)
+Cada etapa entrega algo usable y verificable. Ninguna se cierra sin compilar, con las
+pruebas en verde y documentada aquí.
 
-- Elección de stack: Avalonia (GUI) + OpenGL/Silk.NET (render) + .NET 8.
-- Verificación del entorno: SDK, NuGet, contexto OpenGL ES 3.0 (ANGLE).
-- Estructura de solución, `Directory.Build.props`, `.gitignore`.
+## Principios del proyecto
 
-## Etapa 1 — Editor funcional (completada)
+- **Uso personal.** No hay objetivos de marketplace, plugins de terceros ni editor para
+  otros equipos. Las decisiones priorizan mi velocidad, no la extensibilidad.
+- **Alcance pequeño.** Escenas de minutos, no mundos abiertos gigantes; recursos
+  artesanales antes que procedurales; rendimiento suficiente, no máximo.
+- **2D primero, 3D después.** El 2D debe quedar redondo antes de abrir el 3D.
+- **Puente 2.5D.** Antes del 3D completo, un paso intermedio barato: mundo con
+  profundidad y sprites, cámara en primera persona.
+- **Todo editable en el editor.** Si algo requiere tocar código para ajustar una escena,
+  falta una herramienta.
 
-**Objetivo:** poder crear y guardar una escena 2D viéndola en el viewport.
+## Reglas de alcance para terror y supervivencia
 
-- [x] Ventana del editor con menú, barra de herramientas, paneles y barra de estado.
-- [x] Tema oscuro propio (jade + ámbar) sobre Fluent.
-- [x] Modelo de escena: `Scene`, `Entity`, `Component`, `Transform2D` con jerarquía.
-- [x] Componentes `SpriteRenderer` y `Camera2D`.
-- [x] Viewport OpenGL embebido con contexto propio y bucle de dibujo.
-- [x] Sprite batch con tint, rotación, escala, origen y orden de dibujo.
-- [x] Cuadrícula con ejes, líneas menores y mayores.
-- [x] Cámara ortográfica: paneo, zoom anclado al cursor, encuadre.
-- [x] Selección por árbol y por clic en el viewport, con contorno de selección.
-- [x] Inspector con edición en vivo (transformación, sprite, cámara).
-- [x] Guardar/abrir escena en JSON, marca de cambios sin guardar.
-- [x] Consola de mensajes con niveles.
-- [x] 17 pruebas del núcleo.
+| Género | Lo que necesita | Lo que **no** necesita |
+| --- | --- | --- |
+| Terror lineal | Luz y sombra, audio, ritmo, triggers, diálogos, inventario simple, guardado por capítulo | Mundo abierto, cientos de NPCs, IA compleja |
+| Supervivencia | Ciclo día/noche, recursos, crafteo, IA básica, persistencia del mundo, HUD | Multijugador, generación infinita, simulación masiva |
+| Ambos | Rendimiento estable, carga rápida, guardado fiable | Gráficos de última generación, GI en tiempo real |
 
-**Limitaciones conocidas:** sin modo Play, sin arrastre de gizmos en el viewport, sin
-texturas de ejemplo (los sprites sin textura se dibujan con color sólido), sin
-deshacer/rehacer.
+## Estado actual
 
-## Etapa 2 — Runtime y edición directa (en curso)
+| Etapa | Contenido | Estado |
+| --- | --- | --- |
+| 0 | Cimientos: stack, entorno, solución | ✅ |
+| 1 | Editor: escena, jerarquía, inspector, viewport, cámara, JSON | ✅ |
+| 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
+| 3 | Scripting en C# con Roslyn, ciclo de vida y errores en consola | ✅ (falta recarga en vivo) |
+| 4 | Cerrar el 2D | ⏳ siguiente |
+| 5 | Herramientas de terror y supervivencia | ⏳ |
+| 6 | 2.5D (puente) | ⏳ |
+| 7 | 3D | ⏳ |
+| 8 | Producto: build, guardado, opciones | ⏳ |
 
-**Objetivo:** que la escena "viva" y se pueda manipular con el ratón.
+---
 
-- [x] Bucle de juego separado (`Ollin.Runtime`): reloj, delta recortado, pausa.
-- [x] Botón **Reproducir / Pausar / Detener** (F5 / F6) en el mismo viewport.
-- [x] Restauración exacta del estado de la escena al detener (instantánea JSON).
-- [x] Componentes animables de ejemplo: `RotatorComponent` y `OscillatorComponent`, editables en el inspector.
-- [x] Bloqueo de la edición mientras se reproduce.
-- [x] Gizmos arrastrables: mover, rotar y escalar desde el viewport, con ajuste manteniendo `Ctrl`.
-- [x] Deshacer/rehacer con historial de instantáneas y agrupación de ediciones continuas.
-- [x] Panel de assets: miniaturas, importación y asignación de textura al sprite seleccionado.
-- [ ] Arrastrar una textura del panel al viewport (drag & drop).
-- [ ] Exportación del juego a carpeta ejecutable (Windows).
+## Etapa 4 — Cerrar el 2D (esfuerzo: M)
 
-> Nota de diseño: `ITickable` es el contrato que en la etapa 3 implementarán los
-> scripts de usuario compilados con Roslyn, sin tocar el runtime.
+**Objetivo:** que un prototipo 2D de 10 minutos sea cómodo de construir y jugar.
 
-## Etapa 3 — Scripting en C# (en curso)
-
-**Objetivo:** escribir comportamiento en C# con recarga en caliente.
-
-- [x] Compilación en memoria con **Roslyn** (`Microsoft.CodeAnalysis.CSharp`) y ensamblado recargable.
-- [x] Ciclo de vida: `OnStart`, `OnUpdate(dt)`, `OnDestroy`.
-- [x] API base: `Entity`, `Transform`, `Scene`, `Debug` hacia la consola.
-- [x] Errores de compilación en la consola, con archivo, línea y código.
-- [x] `ScriptComponent` que enlaza la entidad con su script.
-- [x] Plantillas al crear un script desde el editor.
-- [x] Recompilación al reproducir y botón `⟳ Scripts`.
+### Scripting
 - [ ] Recarga en caliente **sin detener** la reproducción, conservando estado.
-- [ ] API de entrada y tiempo: `Input` (teclado/ratón), `Time`, `Coroutine`/temporizadores.
+- [ ] API de entrada: `Input.GetKey`, `Input.GetMouseButton`, `Input.MousePosition`.
+- [ ] API de tiempo: `Time.DeltaTime`, `Time.Time`, temporizadores y `WaitForSeconds`.
+- [ ] `Debug.Log/Warn/Error` y dibujo de depuración (líneas y cajas).
 
-## Etapa 4 — 2D completo
+### Contenido
+- [ ] Animación por sprites: clips, FPS, bucle, eventos de frame.
+- [ ] Tilemap con capas, colisión por celda y *autotiling* básico.
+- [ ] Física 2D: cuerpos estáticos/cinemáticos, colisiones AABB y triggers.
+- [ ] Audio 2D: efectos, música, canales con volumen y *fade*.
+- [ ] Prefabs: entidad plantilla + instancias con overrides.
 
-- [ ] Animación por sprites (secuencias, FPS, eventos de frame).
-- [ ] Tilemaps con editor de capas y *autotiling* básico.
-- [ ] Física 2D (cuerpos rígidos, colisiones, triggers) — Box2D o solver propio.
-- [ ] Audio 2D (efectos y música) con mezcla por canales.
-- [ ] UI de juego (texto, botones, barras) y fuentes bitmap.
-- [ ] Escenas múltiples y transiciones.
+### Herramientas
+- [ ] Panel de proyecto con escenas múltiples y carpetas.
+- [ ] Copiar/pegar entidades y componentes.
+- [ ] Buscador en jerarquía e inspector.
 
-## Etapa 5 — Juego real de punta a punta
+**Criterio de cierre:** un nivel 2D de 10 minutos con animación, colisiones, sonido y
+guardado de partida.
 
-- [ ] Prefabs y herencia de escena.
-- [ ] Build de jugador con escenas embebidas y scripts compilados AOT/IL.
-- [ ] Perfilador básico (FPS, draw calls, memoria, tiempo de scripts).
-- [ ] Depuración de scripts con puntos de interrupción básicos.
+---
 
-## Etapa 6 — Multiplataforma y ecosistema
+## Etapa 5 — Terror y supervivencia en 2D (esfuerzo: L)
 
-- [ ] Compilación y pruebas en Linux y macOS.
-- [ ] Editor de extensiones/plugins.
-- [ ] Documentación de API y tutoriales.
-- [ ] Plantilla de proyecto de juego (`dotnet new ollin-game`).
+**Objetivo:** las herramientas que de verdad usan estos dos géneros.
 
-## Criterio de "etapa terminada"
+### Atmósfera (terror)
+- [ ] Luces 2D: puntuales y conos, con color, radio e intensidad.
+- [ ] Sombras por oclusión (shadow casting) para luces 2D.
+- [ ] Niebla, viñeta, grano de película y aberración cromática (post-proceso).
+- [ ] Capas de paralaje para fondos.
+- [ ] Cámaras fijas por habitación (estilo clásico) y cámara de seguimiento.
+- [ ] Linterna con cono de luz y parpadeo configurable.
 
-Una etapa se cierra cuando: compila sin errores, las pruebas pasan, la funcionalidad se
-verificó ejecutando el editor y quedó documentada en este roadmap.
+### Narrativa lineal
+- [ ] Triggers de zona (entrar, salir, interactuar).
+- [ ] Puertas, cerraduras, llaves y objetos interactuables.
+- [ ] Diálogos con retratos y subtítulos; notas y documentos legibles.
+- [ ] Secuencias guionizadas (timeline simple: mover cámara, esperar, sonido, texto).
+- [ ] Sistema de capítulos y checkpoints.
+
+### Supervivencia
+- [ ] Inventario con pilas y crafteo por recetas.
+- [ ] Estadísticas: salud, hambre, sed, energía, cordura (configurables).
+- [ ] Ciclo día/noche con reloj y clima básico (lluvia, niebla).
+- [ ] Recolección de recursos y estaciones de trabajo.
+- [ ] Construcción simple por celdas (muros, puertas, mobiliario).
+- [ ] IA básica: patrulla, persecución, pérdida de rastro, visión y oído.
+- [ ] Pathfinding en rejilla (A*) con costes por terreno.
+- [ ] Guardado persistente del mundo (posición, inventario, estado de puertas y enemigos).
+
+### Interfaz de juego
+- [ ] HUD configurable desde escena (barras, iconos, mensajes).
+- [ ] Menús: pausa, opciones, guardar/cargar y muerte.
+- [ ] Fuentes bitmap y texto con riqueza mínima (color, tamaño, alineación).
+
+**Criterio de cierre:** un capítulo de terror de 10–15 minutos y un bucle de
+supervivencia de dos días in-game, ambos jugables de principio a fin.
+
+---
+
+## Etapa 6 — 2.5D: el puente (esfuerzo: M)
+
+**Objetivo:** probar el lenguaje del 3D sin reescribir el motor.
+
+- [ ] Escena con profundidad: sprites y billboards colocados en un espacio 3D.
+- [ ] Cámara en primera persona con mirada y movimiento.
+- [ ] Colisiones 3D simples (cajas y cilindros) para paredes y puertas.
+- [ ] Profundidad y orden correcto de billboards.
+- [ ] Iluminación por vértice o por objeto + niebla de distancia.
+- [ ] Audio posicional básico.
+
+**Por qué:** permite hacer terror estilo PS1/Doom con el renderer y el flujo actuales, y
+descubrir los problemas de cámara, colisión y profundidad antes de invertir en 3D real.
+
+**Criterio de cierre:** un pasillo jugable en primera persona con enemigos sprite,
+puertas y ambiente.
+
+---
+
+## Etapa 7 — 3D (esfuerzo: XL, por fases)
+
+**Objetivo:** un 3D contenido: geometría simple, iluminación efectiva y primera persona.
+
+### 7.1 Núcleo
+- [ ] `Transform3D` con cuaterniones y jerarquía; convivencia con el 2D.
+- [ ] Renderer con búfer de profundidad, culling y shaders con iluminación.
+- [ ] Cámara en perspectiva y controlador en primera persona.
+- [ ] Carga de mallas **glTF** (SharpGLTF) y OBJ; materiales con textura y color.
+- [ ] Editor: viewport 3D, gizmos de traslación/rotación/escala, importador de modelos.
+
+### 7.2 Atmósfera
+- [ ] Luz direccional + varias puntuales; sombras con *shadow map*.
+- [ ] Skybox, niebla exponencial y *fog* por zonas.
+- [ ] Iluminación horneada simple (lightmap por vértice) para escenas estáticas.
+- [ ] Post-proceso: viñeta, grano, *bloom* suave y corrección de color.
+
+### 7.3 Sistemas
+- [ ] Física 3D (BepuPhysics2) o controlador propio con colisiones de cápsula.
+- [ ] *Navmesh* o rejilla 3D para IA; enemigos que patrullan y persiguen.
+- [ ] Audio 3D con atenuación por distancia y oclusión básica.
+- [ ] Puertas, escaleras, escaleras de mano y ascensores.
+- [ ] Guardado de escena 3D y de estado del mundo.
+
+**Criterio de cierre:** un nivel 3D de 5–10 minutos con exploración, un enemigo que
+persigue y ambiente de terror.
+
+### Notas técnicas para el 3D
+
+| Tema | Decisión propuesta |
+| --- | --- |
+| Transformaciones | Añadir `Transform3D` sin romper `Transform2D`; el formato de escena sube a `formatVersion: 2` con migración |
+| Render | Interfaz `IRenderer` con implementaciones 2D (sprite batch) y 3D (mallas, profundidad) |
+| Mallas | glTF como formato principal; sin editor de modelado propio |
+| Iluminación | Tiempo real simple + lightmaps horneados; **sin** GI en tiempo real |
+| Física | BepuPhysics2 para 3D y Box2D para 2D (o solver propio en 2D si alcanza) |
+| IA | Rejilla + A* primero; navmesh solo si hace falta |
+| Escala | Niveles pequeños, interiores y pasillos; evitar terrenos gigantes |
+
+---
+
+## Etapa 8 — Producto (esfuerzo: M)
+
+- [ ] Build del jugador a carpeta autocontenida (escenas y assets embebidos o copiados).
+- [ ] Scripts compilados en el build (sin Roslyn en el jugador).
+- [ ] Perfilador: FPS, draw calls, memoria, tiempo de scripts y física.
+- [ ] Guardado con ranuras, autoguardado y captura de pantalla.
+- [ ] Opciones: resolución, pantalla completa, volumen, sensibilidad, rebind de teclas.
+- [ ] Localización de textos (español/inglés) y fuentes.
+- [ ] Pantallas de carga y transiciones.
+- [ ] Registro de errores a archivo para probar builds.
+
+**Criterio de cierre:** un juego corto empaquetado que otra persona pueda abrir y jugar
+sin instalar .NET.
+
+---
+
+## Backlog aparcado (no prioritario)
+
+Ideas buenas para otro momento; no entran en el plan salvo que un juego concreto las pida.
+
+- Multijugador o cooperativo.
+- Editor de *scripts* por nodos (visual scripting).
+- Marketplace o sistema de plugins de terceros.
+- Exportación a móvil, web o consolas.
+- VR/AR.
+- Iluminación global en tiempo real y *ray tracing*.
+- Terrenos enormes, *streaming* de mundo y LOD automático.
+- Animación esqueletal compleja y *motion matching*.
+- Editor de materiales por nodos.
+
+## Cómo se elige la siguiente etapa
+
+1. Terminar la etapa en curso hasta su criterio de cierre.
+2. Si un juego concreto necesita algo del backlog, se adelanta **solo** esa pieza.
+3. Cualquier funcionalidad nueva entra con pruebas y documentación.
+4. Si una etapa se vuelve más grande de lo previsto, se parte en dos antes de seguir.

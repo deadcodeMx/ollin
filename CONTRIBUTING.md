@@ -1,7 +1,10 @@
 # Cómo contribuir a Ollin
 
-¡Gracias por el interés! Este documento resume lo necesario para compilar, probar y
-enviar cambios sin fricción.
+> **Nota:** Ollin es un proyecto personal de un solo desarrollador. Este documento
+> describe el flujo interno (compilar, probar, estilo) por si alguien quiere enviar un
+> parche o entender el código; no hay compromiso de revisar contribuciones externas.
+
+Este documento resume lo necesario para compilar, probar y enviar cambios sin fricción.
 
 ## Preparar el entorno
 
