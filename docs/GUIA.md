@@ -465,7 +465,7 @@ Al ejecutar `<Juego>.exe` aparece la **pantalla de inicio con el logo de Ollin**
 durante el juego, una marca de agua «Hecho con Ollin». Ambas se pueden desactivar en el
 diálogo de exportación.
 
-**Controles**: `F11` pantalla completa, `Esc` salir (o salir de pantalla completa).
+**Controles**: `F11` pantalla completa, `Esc` salir (o salir de pantalla completa). El juego muestra el **HUD y los diálogos**; avanza el diálogo con **Enter/E/Espacio**.
 
 **Requisitos**: .NET 8 Desktop Runtime (el reproductor no es autocontenido). El editor
 necesita la carpeta `player/` junto al ejecutable; el instalador ya la incluye.

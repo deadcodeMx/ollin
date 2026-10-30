@@ -52,6 +52,7 @@ public sealed class PlayerWindow : Window
 
         var content = new Grid();
         content.Children.Add(_surface);
+        content.Children.Add(new PlayerHud { DataContext = _viewModel });
 
         if (manifest.Watermark)
         {

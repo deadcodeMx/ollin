@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Ollin.Player.PlayerHud"
+             IsHitTestVisible="False">
+  <Grid>
+    <!-- HUD: barras y etiquetas -->
+    <StackPanel IsVisible="{Binding IsHudVisible}" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="18,18,0,0" Spacing="8" Width="240">
+      <ItemsControl ItemsSource="{Binding HudBars}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Spacing="2" Margin="0,0,0,4">
+              <TextBlock Text="{Binding Name}" FontSize="11" Foreground="#E7EAF0" />
+              <ProgressBar Minimum="0" Maximum="1" Value="{Binding Fraction}" Height="9"
+                           Foreground="{Binding Brush}" Background="#5510131A" />
+              <TextBlock Text="{Binding ValueText}" FontSize="10" Foreground="#AAB4C4"
+                         HorizontalAlignment="Right" />
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <ItemsControl ItemsSource="{Binding HudLabels}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Display}" FontSize="12" Foreground="#E7EAF0" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+
+    <!-- Mensajes temporales -->
+    <ItemsControl IsVisible="{Binding IsHudVisible}" ItemsSource="{Binding HudMessages}"
+                  HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,40,0,0">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Border Background="#CC10131A" CornerRadius="5" Padding="11,6" Margin="0,2">
+            <TextBlock Text="{Binding Text}" FontSize="13" Foreground="#F2F5FA" />
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <!-- Diálogo -->
+    <Border IsVisible="{Binding IsDialogueActive}" VerticalAlignment="Bottom"
+            HorizontalAlignment="Stretch" Margin="70,0,70,20"
+            Background="#F0141822" BorderBrush="#E9A23B"
+            BorderThickness="1" CornerRadius="8" Padding="18,13">
+      <StackPanel Spacing="7">
+        <TextBlock Text="{Binding DialogueSpeaker}" Foreground="#E9A23B"
+                   FontWeight="SemiBold" FontSize="12.5" />
+        <TextBlock Text="{Binding DialogueText}" TextWrapping="Wrap" FontSize="14" Foreground="#F2F5FA" />
+        <TextBlock Text="E / Espacio: continuar" FontSize="10" Foreground="#8B94A7"
+                   HorizontalAlignment="Right" />
+      </StackPanel>
+    </Border>
+
+    <!-- Fin de partida -->
+    <Border IsVisible="{Binding IsGameOverVisible}" Background="#CC05070B">
+      <Border Background="#151922" BorderBrush="#E05B5B" BorderThickness="1"
+              CornerRadius="10" Padding="28" Width="340"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel Spacing="10">
+          <TextBlock Text="Fin del juego" FontSize="22" FontWeight="Bold" Foreground="#E05B5B" />
+          <TextBlock Text="{Binding GameOverText}" TextWrapping="Wrap" Foreground="#E7EAF0" />
+          <TextBlock Text="Cierra con Esc" FontSize="10" Foreground="#8B94A7" />
+        </StackPanel>
+      </Border>
+    </Border>
+  </Grid>
+</UserControl>

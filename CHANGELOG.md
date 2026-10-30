@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.21.0] — 2026-10-30
+
+### Añadido
+
+- **HUD y diálogos en el juego exportado**: barras, etiquetas, mensajes, diálogo con
+  retrato y pantalla de fin de partida. Antes solo se veía el viewport.
+- Esto corrige que el diálogo inicial quedara activo pero invisible y bloqueara el
+  movimiento: ahora se ve y se avanza con Enter/E/Espacio.
+
 ## [0.20.3] — 2026-10-30
 
 ### Corregido

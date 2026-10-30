@@ -1,25 +1,22 @@
-## Ollin 0.20.3 beta — el instalador actualiza de verdad
+## Ollin 0.21.0 beta — HUD y diálogos en el juego exportado
+
+### Añadido
+
+- El reproductor muestra el **HUD** (barras, etiquetas y mensajes), los **diálogos** y la
+  pantalla de **fin de partida**, igual que el editor.
 
 ### Corregido
 
-- El instalador **cierra Ollin.Editor y Ollin.Player** antes de copiar los archivos.
-  Antes podían quedar bloqueados y la instalación seguía usando la versión vieja.
-- Esto explica que tras instalar 0.20.x se siguieran exportando juegos con el
-  reproductor antiguo.
+- El diálogo inicial de un juego se ejecutaba pero no se veía; como muchos scripts
+  bloquean el movimiento durante el diálogo, parecía que los controles no funcionaban.
+  Ahora se puede leer y avanzar con **Enter / E / Espacio**, y después moverse.
 
-### Importante
+### Cómo probarlo
 
-1. Instala 0.20.3 (el instalador cerrará el editor solo).
-2. Abre tu proyecto y **vuelve a exportar** el juego.
-3. Ejecuta el nuevo `<Juego>.exe`.
+1. Instala 0.21.0 y **vuelve a exportar**.
+2. Al empezar la partida verás el diálogo abajo; avánzalo con Enter.
+3. Después podrás moverte con A/D.
 
-### Diagnóstico
+### Instalación
 
-Junto al `.exe` se genera `player.log`. Debe contener:
-
-```
-Backend de audio: activo
-Scripts precargados: N (...)
-Script iniciado: ...
-Audio 'assets/audio/...' → id 1
-```
+Descarga `Ollin-Setup-0.21.0-beta.exe`.
