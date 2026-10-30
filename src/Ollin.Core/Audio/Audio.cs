@@ -37,6 +37,9 @@ public static class Audio
 
     public static bool Enabled => _backend is not null;
 
+    /// <summary>Registra cada reproducción (diagnóstico del reproductor).</summary>
+    public static bool VerboseLogging { get; set; }
+
     public static float MasterVolume
     {
         get => _masterVolume;
@@ -74,8 +77,14 @@ public static class Audio
     /// <summary>Reproduce un archivo (wav/mp3). Devuelve un identificador o -1.</summary>
     public static int Play(string clip, float volume = 1f, bool loop = false, AudioChannel channel = AudioChannel.Effect)
     {
-        if (_backend is null || string.IsNullOrWhiteSpace(clip))
+        if (string.IsNullOrWhiteSpace(clip))
         {
+            return -1;
+        }
+
+        if (_backend is null)
+        {
+            Log.Warn($"Audio no inicializado: {clip}", "Audio");
             return -1;
         }
 
@@ -88,7 +97,14 @@ public static class Audio
 
         try
         {
-            return _backend.Play(fullPath, System.Math.Clamp(volume, 0f, 1f), loop, channel);
+            var handle = _backend.Play(fullPath, System.Math.Clamp(volume, 0f, 1f), loop, channel);
+
+            if (VerboseLogging)
+            {
+                Log.Info($"Audio '{clip}' → id {handle}", "Audio");
+            }
+
+            return handle;
         }
         catch (Exception exception)
         {

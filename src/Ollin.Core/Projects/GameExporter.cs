@@ -60,6 +60,14 @@ public static class GameExporter
         };
 
         var package = GamePackage.Create(project, manifest, scriptsImage);
+        var missing = GamePackage.Verify(package, manifest, scriptsImage is { Length: > 0 });
+
+        if (missing.Count > 0)
+        {
+            throw new InvalidOperationException(
+                "El paquete quedó incompleto; faltan: " + string.Join(", ", missing));
+        }
+
         File.WriteAllBytes(Path.Combine(target, "game.pak"), package);
 
         CopyPlayer(playerTemplate, target, SafeName(project.Name) + ".exe");

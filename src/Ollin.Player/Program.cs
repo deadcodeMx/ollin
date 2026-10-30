@@ -14,9 +14,16 @@ public sealed class PlayerApp : Application
     public override void Initialize()
     {
         Styles.Add(new FluentTheme());
-        Audio.Initialize(new NAudioBackend());
+        var logPath = Path.Combine(AppContext.BaseDirectory, "player.log");
 
-        var logPath = Path.Combine(Path.GetTempPath(), "OllinPlayer.log");
+        try
+        {
+            File.AppendAllText(logPath, $"--- Ollin Player {DateTime.Now:HH:mm:ss} ---{Environment.NewLine}");
+        }
+        catch
+        {
+            logPath = Path.Combine(Path.GetTempPath(), "OllinPlayer.log");
+        }
         Log.Written += entry =>
         {
             try
@@ -28,6 +35,10 @@ public sealed class PlayerApp : Application
                 // El registro nunca debe tumbar el juego.
             }
         };
+
+        Audio.Initialize(new NAudioBackend());
+        Audio.VerboseLogging = true;
+        Log.Info($"Backend de audio: {(Audio.Enabled ? "activo" : "inactivo")}", "Player");
     }
 
     public override void OnFrameworkInitializationCompleted()

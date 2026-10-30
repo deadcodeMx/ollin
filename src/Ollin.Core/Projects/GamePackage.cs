@@ -100,6 +100,36 @@ public static class GamePackage
         return (manifest, scripts);
     }
 
+    /// <summary>Comprueba que el paquete contiene lo necesario para jugar.</summary>
+    public static IReadOnlyList<string> Verify(byte[] package, GameManifest manifest, bool expectsScripts)
+    {
+        var missing = new List<string>();
+        var zipBytes = Decrypt(package);
+
+        using var buffer = new MemoryStream(zipBytes);
+        using var archive = new ZipArchive(buffer, ZipArchiveMode.Read);
+        var names = archive.Entries.Select(entry => entry.FullName.Replace('\\', '/')).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        void Require(string name)
+        {
+            if (!names.Contains(name))
+            {
+                missing.Add(name);
+            }
+        }
+
+        Require("game.json");
+        Require(ProjectService.FileName);
+        Require(manifest.StartScene.Replace('\\', '/'));
+
+        if (expectsScripts)
+        {
+            Require("game.dll");
+        }
+
+        return missing;
+    }
+
     public static bool IsPackage(byte[] bytes) =>
         bytes.Length > Magic.Length + 12 + 16 &&
         bytes.AsSpan(0, Magic.Length).SequenceEqual(Magic);

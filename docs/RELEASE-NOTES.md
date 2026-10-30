@@ -1,17 +1,21 @@
-## Ollin 0.20.0 beta — arreglo de scripts y audio al exportar
+## Ollin 0.20.1 beta — entrada y diagnóstico del juego exportado
 
 ### Corregido
 
-- Los juegos exportados vuelven a ejecutar sus scripts (menús, botones, IA...).
-- El reproductor inicializa el audio y encuentra los sonidos dentro del paquete.
+- El juego exportado captura el teclado y el ratón a nivel de ventana (aunque el foco
+  esté en otro control) y se activa al quitar la pantalla de inicio.
+- La exportación verifica el paquete y avisa si falta la escena, el manifiesto o los
+  scripts compilados.
+- El reproductor genera `player.log` junto al ejecutable con la versión, los scripts
+  cargados y cada sonido reproducido.
 
-### Incluye
+### Importante
 
-- Exportación a un único `.exe` + `game.pak` cifrado con scripts compilados.
-- Pantalla de inicio con el logo y marca de agua opcionales.
+Hay que **volver a exportar** el juego con esta versión; los `.exe` exportados antes
+llevan dentro el reproductor antiguo.
 
 ### Instalación
 
-1. Descarga `Ollin-Setup-0.20.0-beta.exe`.
-2. Vuelve a exportar tu juego (los paquetes antiguos no cambian).
-3. Ejecuta el nuevo `<Juego>.exe`; ya deben sonar los menús y responder los botones.
+1. Descarga `Ollin-Setup-0.20.1-beta.exe`.
+2. Reexporta tu juego y ejecútalo.
+3. Si algo falla, envía el `player.log` que aparece junto al `.exe`.

@@ -17,6 +17,18 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.20.1] — 2026-10-30
+
+### Corregido
+
+- El juego exportado no siempre recibía el teclado: ahora la entrada se captura a
+  nivel de ventana y la ventana se activa al terminar la pantalla de inicio.
+- Los clics y el movimiento del ratón se reenvían explícitamente al juego.
+- La exportación **verifica el paquete** (escena inicial, `game.json`, `project.ollin`
+  y `game.dll`) y falla con un mensaje claro si falta algo.
+- El reproductor escribe `player.log` junto al ejecutable con versión, scripts y audio
+  para poder diagnosticar.
+
 ## [0.20.0] — 2026-10-30
 
 ### Corregido

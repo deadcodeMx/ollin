@@ -62,9 +62,18 @@ public sealed class PlayerWindow : Window
         content.Children.Add(_splash);
         Content = content;
 
-        Opened += (_, _) => _surface.Focus();
-        KeyDown += OnPlayerKeyDown;
-        KeyUp += OnPlayerKeyUp;
+        Opened += (_, _) =>
+        {
+            Activate();
+            _surface.Focus();
+        };
+
+        // Entrada a nivel de ventana: funciona aunque el foco esté en otro control.
+        AddHandler(KeyDownEvent, OnPlayerKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+        AddHandler(KeyUpEvent, OnPlayerKeyUp, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+        PointerMoved += OnPlayerPointerMoved;
+        PointerPressed += OnPlayerPointerPressed;
+        PointerReleased += OnPlayerPointerReleased;
 
         if (manifest.Splash)
         {
@@ -120,6 +129,15 @@ public sealed class PlayerWindow : Window
 
         stack.Children.Add(new TextBlock
         {
+            Text = $"Ollin {typeof(MainViewModel).Assembly.GetName().Version?.ToString(3) ?? "0.0.0"}",
+            FontSize = 11,
+            Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Margin = new Thickness(0, 6, 0, 0),
+        });
+
+        stack.Children.Add(new TextBlock
+        {
             Text = "Hecho con Ollin",
             FontSize = 11,
             Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
@@ -153,6 +171,7 @@ public sealed class PlayerWindow : Window
         _started = true;
         _splash.IsVisible = false;
         _viewModel.StartPlayback();
+        Activate();
         _surface.Focus();
     }
 
@@ -184,6 +203,38 @@ public sealed class PlayerWindow : Window
         {
             InputState.SetKey(code, true);
             e.Handled = true;
+        }
+    }
+
+    private void OnPlayerPointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_started)
+        {
+            _surface.Viewport.UpdatePointerInput(e.GetPosition(_surface));
+        }
+    }
+
+    private void OnPlayerPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!_started)
+        {
+            return;
+        }
+
+        var point = e.GetCurrentPoint(_surface);
+        _surface.Viewport.UpdatePointerInput(point.Position);
+        _surface.Viewport.UpdateMouseButton(0, point.Properties.IsLeftButtonPressed);
+        _surface.Viewport.UpdateMouseButton(1, point.Properties.IsRightButtonPressed);
+        _surface.Viewport.UpdateMouseButton(2, point.Properties.IsMiddleButtonPressed);
+    }
+
+    private void OnPlayerPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (_started)
+        {
+            _surface.Viewport.UpdateMouseButton(0, false);
+            _surface.Viewport.UpdateMouseButton(1, false);
+            _surface.Viewport.UpdateMouseButton(2, false);
         }
     }
 
