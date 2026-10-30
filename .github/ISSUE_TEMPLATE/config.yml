@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentación
+    url: https://github.com/TU_USUARIO/ollin/blob/main/docs/ARQUITECTURA.md
+    about: Cómo está construido el motor antes de abrir un issue.
+  - name: Roadmap
+    url: https://github.com/TU_USUARIO/ollin/blob/main/docs/ROADMAP.md
+    about: Etapas planificadas y estado actual.

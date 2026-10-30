@@ -1,0 +1,39 @@
+name: Propuesta de mejora
+description: Una idea para Ollin
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: ¿Qué problema resuelve?
+      description: Contexto de por qué hace falta.
+    validations:
+      required: true
+
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Propuesta
+      description: Cómo te imaginas la funcionalidad.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas consideradas
+    validations:
+      required: false
+
+  - type: dropdown
+    id: etapa
+    attributes:
+      label: ¿A qué etapa corresponde?
+      options:
+        - Etapa 3 — scripting
+        - Etapa 4 — animación, tilemaps, física, audio
+        - Etapa 5 — prefabs, build, perfilador
+        - Etapa 6 — multiplataforma
+        - No lo sé
+    validations:
+      required: false
