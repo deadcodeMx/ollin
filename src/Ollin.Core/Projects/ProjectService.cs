@@ -61,6 +61,7 @@ public static class ProjectService
         Directory.CreateDirectory(Path.Combine(root, "scripts"));
         Directory.CreateDirectory(Path.Combine(root, "scenes"));
         Directory.CreateDirectory(Path.Combine(root, "prefabs"));
+        Directory.CreateDirectory(Path.Combine(root, "dialogs"));
 
         var project = new ProjectInfo
         {
@@ -79,6 +80,8 @@ public static class ProjectService
 
         var (scriptFile, scriptSource) = StarterProject.ScriptFor(template);
         File.WriteAllText(Path.Combine(root, "scripts", scriptFile), scriptSource);
+        Directory.CreateDirectory(Path.Combine(root, "dialogs"));
+        File.WriteAllText(Path.Combine(root, "dialogs", "bienvenida.json"), StarterProject.WelcomeDialogue);
 
         Save(project);
         return project;

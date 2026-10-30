@@ -239,6 +239,26 @@
                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="14,0,0,12"
                            Classes="hint" IsHitTestVisible="False"
                            Text="Clic: seleccionar  ·  Rueda: zoom  ·  Alt + arrastrar: mover cámara" />
+
+                <Border IsVisible="{Binding HasInteractionPrompt}" HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom" Margin="0,0,0,78"
+                        Background="#E610131A" BorderBrush="{DynamicResource Ollin.Border}"
+                        BorderThickness="1" CornerRadius="6" Padding="10,6" IsHitTestVisible="False">
+                  <TextBlock Text="{Binding InteractionPrompt}" FontSize="12" />
+                </Border>
+
+                <Border IsVisible="{Binding IsDialogueActive}" VerticalAlignment="Bottom"
+                        HorizontalAlignment="Stretch" Margin="70,0,70,18"
+                        Background="#F0141822" BorderBrush="{DynamicResource Ollin.Accent}"
+                        BorderThickness="1" CornerRadius="8" Padding="16,12" IsHitTestVisible="False">
+                  <StackPanel Spacing="6">
+                    <TextBlock Text="{Binding DialogueSpeaker}" Foreground="{DynamicResource Ollin.Accent}"
+                               FontWeight="SemiBold" FontSize="12.5" />
+                    <TextBlock Text="{Binding DialogueText}" TextWrapping="Wrap" FontSize="14" />
+                    <TextBlock Text="E / Espacio: continuar" FontSize="10"
+                               Foreground="{DynamicResource Ollin.TextDim}" HorizontalAlignment="Right" />
+                  </StackPanel>
+                </Border>
                 <Border IsVisible="{Binding #ViewportHost.Viewport.HasError}"
                         HorizontalAlignment="Center" VerticalAlignment="Center"
                         Background="#E6212026" BorderBrush="{DynamicResource Ollin.Danger}"
@@ -304,6 +324,10 @@
                       <TextBlock Classes="section" Text="NOMBRE" />
                       <TextBox Text="{Binding Selected.Name, Mode=TwoWay}" />
                       <TextBlock Classes="hint" Text="{Binding Selected.ComponentsSummary}" />
+                      <Grid ColumnDefinitions="86,*" Margin="0,1">
+                        <TextBlock Text="Etiquetas" VerticalAlignment="Center" Classes="hint" />
+                        <TextBox Grid.Column="1" Text="{Binding Selected.TagsText, Mode=TwoWay}" Watermark="player, enemy" />
+                      </Grid>
                       <Button Classes="tool accent" Content="+ Añadir componente" HorizontalAlignment="Stretch" Margin="0,6,0,0">
                         <Button.Flyout>
                           <MenuFlyout>
@@ -438,6 +462,29 @@
                     <CheckBox Content="Canal de música" IsChecked="{Binding Selected.AudioMusic, Mode=TwoWay}" FontSize="11.5" />
                     <TextBlock Classes="hint" TextWrapping="Wrap"
                                Text="Los scripts también pueden llamar a Audio.Play(&quot;assets/audio/x.wav&quot;)." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Interacción" IsVisible="{Binding Selected.HasInteractable}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="INTERACCIÓN" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Aviso" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.InteractionPrompt, Mode=TwoWay}" Watermark="E para interactuar" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.InteractionRadius, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.###" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Diálogo" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.DialogueId, Mode=TwoWay}" Watermark="nota (dialogs/nota.json)" />
+                    </Grid>
+                    <CheckBox Content="Solo una vez" IsChecked="{Binding Selected.InteractOnce, Mode=TwoWay}" FontSize="11.5" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="El jugador debe tener la etiqueta 'player'. El diálogo se busca en dialogs/&lt;id&gt;.json." />
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>

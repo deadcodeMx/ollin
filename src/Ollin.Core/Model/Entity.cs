@@ -18,6 +18,9 @@ public sealed class Entity
 
     public bool Active { get; set; } = true;
 
+    /// <summary>Etiquetas libres para identificar entidades ("player", "enemy"...).</summary>
+    public List<string> Tags { get; set; } = new();
+
     public Transform2D Transform { get; set; } = new();
 
     public List<Component> Components { get; set; } = new();
@@ -78,6 +81,7 @@ public sealed class Entity
             ParentId = ParentId,
             Active = Active,
             Transform = Transform.Clone(),
+            Tags = new List<string>(Tags),
         };
 
         foreach (var component in Components)

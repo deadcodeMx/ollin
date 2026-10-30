@@ -61,6 +61,11 @@ public abstract class OllinScript
     }
 
     /// <summary>Salida de una zona de disparo.</summary>
+    /// <summary>Se llama al interactuar con esta entidad (tecla E estando cerca).</summary>
+    public virtual void OnInteract(Entity other)
+    {
+    }
+
     public virtual void OnTriggerExit(Entity other)
     {
     }

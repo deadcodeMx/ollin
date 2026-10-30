@@ -45,6 +45,7 @@ public static class StarterProject
         });
 
         var player = scene.Create("Jugador", new Vector2(0f, -1.6f));
+        player.Tags.Add("player");
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(1f, 1f),
@@ -54,6 +55,7 @@ public static class StarterProject
         player.AddComponent(new BoxCollider { Size = new Vector2(1f, 1f) });
         player.AddComponent(new Rigidbody2D());
         player.AddComponent(new ScriptComponent { ScriptPath = "scripts/Juego.cs", ClassName = "Juego" });
+        AddNote(scene, new Vector2(-1.2f, -1.5f));
 
         return scene;
     }
@@ -85,6 +87,7 @@ public static class StarterProject
         }
 
         var player = scene.Create("Jugador", new Vector2(-10f, -2.2f));
+        player.Tags.Add("player");
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(0.9f, 1f),
@@ -119,6 +122,7 @@ public static class StarterProject
             coin.AddComponent(new AudioSource { Clip = "assets/audio/coin.wav", PlayOnStart = false });
         }
 
+        AddNote(scene, new Vector2(-3.2f, -1.4f));
         return scene;
     }
 
@@ -168,6 +172,7 @@ public static class StarterProject
         rightWall.AddComponent(new Rigidbody2D { IsStatic = true });
 
         var player = scene.Create("Jugador", new Vector2(-7f, -1.6f));
+        player.Tags.Add("player");
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(0.8f, 1f),
@@ -197,8 +202,37 @@ public static class StarterProject
             PlayOnStart = true,
         });
 
+        AddNote(scene, new Vector2(-2.2f, -1.2f));
         return scene;
     }
+
+    private static void AddNote(Scene scene, Vector2 position)
+    {
+        var note = scene.Create("Nota", position);
+        note.AddComponent(new SpriteRenderer
+        {
+            Size = new Vector2(0.45f, 0.55f),
+            Tint = new Vector4(0.93f, 0.89f, 0.72f, 1f),
+            SortingOrder = 22,
+        });
+        note.AddComponent(new Interactable
+        {
+            Prompt = "E: leer la nota",
+            DialogueId = "bienvenida",
+            Radius = 2.2f,
+        });
+    }
+
+    public const string WelcomeDialogue = """
+        {
+          "id": "bienvenida",
+          "speaker": "Nota",
+          "lines": [
+            { "text": "Bienvenido a tu nuevo proyecto de Ollin." },
+            { "text": "A/D para moverte, espacio para saltar y E para interactuar." }
+          ]
+        }
+        """;
 
     public const string ScriptSource = """
         using System.Numerics;

@@ -1,8 +1,11 @@
 using System.Collections;
+using System.Numerics;
 using Ollin.Core;
 using Ollin.Core.Diagnostics;
 using Ollin.Core.Input;
 using Ollin.Core.Audio;
+using Ollin.Core.Dialogue;
+using Ollin.Core.Interaction;
 using GameAudio = Ollin.Core.Audio.Audio;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
@@ -24,6 +27,8 @@ public sealed class SceneRuntime
     private readonly List<OllinScript> _scripts = new();
     private readonly List<CoroutineEntry> _coroutines = new();
     private readonly PhysicsSystem _physics = new();
+    private readonly DialogueRunner _dialogue = new();
+    private bool _skipDialogueAdvance;
     private Scene? _scene;
     private ScriptWorkspace? _scriptsWorkspace;
     private string? _snapshot;
@@ -32,6 +37,12 @@ public sealed class SceneRuntime
     public int ScriptCount => _scripts.Count;
 
     public bool IsPlaying { get; private set; }
+
+    /// <summary>Diálogos del proyecto (los carga el editor antes de reproducir).</summary>
+    public DialogueDatabase? Dialogues { get; set; }
+
+    /// <summary>Diálogo en curso, o inactivo.</summary>
+    public DialogueRunner Dialogue => _dialogue;
 
     public bool IsPaused { get; private set; }
 
@@ -57,9 +68,147 @@ public sealed class SceneRuntime
         CoroutineHost.Drain();
         StartScripts();
         StartAudio(scene);
+        _dialogue.Stop();
+        _skipDialogueAdvance = false;
+        InteractionState.Reset();
+        DialogueHost.PlayHandler = PlayDialogue;
+        DialogueHost.IsActiveHandler = () => _dialogue.IsActive;
+        DialogueHost.AdvanceHandler = _dialogue.Advance;
         Log.Info("Reproducción iniciada", "Runtime");
     }
 
+    private bool PlayDialogue(string id)
+    {
+        var file = Dialogues?.Get(id);
+        if (file is null)
+        {
+            Log.Warn($"No existe el diálogo '{id}' (carpeta dialogs)", "Diálogo");
+            return false;
+        }
+
+        var started = _dialogue.Start(file);
+        if (started)
+        {
+            _skipDialogueAdvance = true;
+        }
+
+        return started;
+    }
+
+    /// <summary>Interacción con E y avance de diálogos.</summary>
+    private void UpdateInteractions()
+    {
+        if (_scene is null)
+        {
+            return;
+        }
+
+        if (_dialogue.IsActive)
+        {
+            InteractionState.Reset();
+
+            if (_skipDialogueAdvance)
+            {
+                _skipDialogueAdvance = false;
+                return;
+            }
+
+            if (InputState.WasKeyPressed(KeyCode.E) ||
+                InputState.WasKeyPressed(KeyCode.Space) ||
+                InputState.WasKeyPressed(KeyCode.Enter))
+            {
+                _dialogue.Advance();
+            }
+
+            return;
+        }
+
+        InteractionState.Reset();
+
+        Entity? player = null;
+        foreach (var entity in _scene.Entities)
+        {
+            if (entity.Active && entity.Tags.Any(tag => tag.Equals("player", StringComparison.OrdinalIgnoreCase)))
+            {
+                player = entity;
+                break;
+            }
+        }
+
+        if (player is null)
+        {
+            return;
+        }
+
+        Interactable? best = null;
+        Entity? bestEntity = null;
+        var bestDistance = float.MaxValue;
+
+        foreach (var entity in _scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<Interactable>() is not { Enabled: true } interactable)
+            {
+                continue;
+            }
+
+            if (interactable.Once && interactable.Used)
+            {
+                continue;
+            }
+
+            var distance = Vector2.Distance(entity.Transform.Position, player.Transform.Position);
+            if (distance <= interactable.Radius && distance < bestDistance)
+            {
+                best = interactable;
+                bestEntity = entity;
+                bestDistance = distance;
+            }
+        }
+
+        if (best is null || bestEntity is null)
+        {
+            return;
+        }
+
+        InteractionState.Set(best.Prompt, bestEntity.Id);
+
+        if (!InputState.WasKeyPressed(KeyCode.E))
+        {
+            return;
+        }
+
+        if (best.Once)
+        {
+            best.Used = true;
+        }
+
+        NotifyInteract(bestEntity, player);
+
+        if (!string.IsNullOrWhiteSpace(best.DialogueId))
+        {
+            PlayDialogue(best.DialogueId!);
+        }
+    }
+
+    private void NotifyInteract(Entity target, Entity player)
+    {
+        foreach (var script in _scripts)
+        {
+            if (script.Entity != target)
+            {
+                continue;
+            }
+
+            try
+            {
+                script.OnInteract(player);
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"Error en OnInteract de {script.GetType().Name}: {exception.Message}", "Runtime");
+            }
+        }
+    }
     private static void StartAudio(Scene scene)
     {
         foreach (var entity in scene.Entities)
@@ -174,6 +323,7 @@ public sealed class SceneRuntime
         DrainCoroutines();
         _physics.Step(_scene, _scripts, dt);
         UpdateCoroutines(dt);
+        UpdateInteractions();
 
         // Cierra el cuadro de entrada: calcula flancos y delta del ratón.
         InputState.Update();

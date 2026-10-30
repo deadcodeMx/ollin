@@ -1,0 +1,9 @@
+{
+  "id": "bienvenida",
+  "speaker": "Nota",
+  "lines": [
+    { "text": "Bienvenido a Ollin, un motor 2D generalista." },
+    { "text": "Muévete con A y D, salta con espacio y usa E para interactuar." },
+    { "text": "Puedes crear tus propios diálogos en dialogs/<id>.json." }
+  ]
+}

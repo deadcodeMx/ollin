@@ -344,6 +344,10 @@ public sealed partial class MainViewModel
                 OpenScript(node.FullPath);
                 break;
 
+            case ".json" when node.FullPath.Contains("dialogs", StringComparison.OrdinalIgnoreCase):
+                OpenScript(node.FullPath);
+                break;
+
             case ".json" when node.FullPath.Contains("scenes", StringComparison.OrdinalIgnoreCase):
                 if (IsDirty)
                 {

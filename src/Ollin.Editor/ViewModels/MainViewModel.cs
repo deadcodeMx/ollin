@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Ollin.Core.Interaction;
 using System.Reflection;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -310,6 +311,58 @@ public sealed partial class MainViewModel : ObservableObject
 
     public bool IsPlaying => _runtime.IsPlaying;
 
+    private bool _isDialogueActive;
+    private string _dialogueSpeaker = string.Empty;
+    private string _dialogueText = string.Empty;
+    private string _interactionPrompt = string.Empty;
+
+    public bool IsDialogueActive
+    {
+        get => _isDialogueActive;
+        private set
+        {
+            if (_isDialogueActive == value) return;
+            _isDialogueActive = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string DialogueSpeaker
+    {
+        get => _dialogueSpeaker;
+        private set
+        {
+            if (_dialogueSpeaker == value) return;
+            _dialogueSpeaker = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string DialogueText
+    {
+        get => _dialogueText;
+        private set
+        {
+            if (_dialogueText == value) return;
+            _dialogueText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string InteractionPrompt
+    {
+        get => _interactionPrompt;
+        private set
+        {
+            if (_interactionPrompt == value) return;
+            _interactionPrompt = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(HasInteractionPrompt));
+        }
+    }
+
+    public bool HasInteractionPrompt => !string.IsNullOrWhiteSpace(InteractionPrompt);
+
     public bool IsPaused => _runtime.IsPaused;
 
     /// <summary>Mientras se reproduce no se edita la escena.</summary>
@@ -352,6 +405,7 @@ public sealed partial class MainViewModel : ObservableObject
         _selectedBeforePlay = Selected?.Id;
 
         ReloadScripts();
+        _runtime.Dialogues = new Ollin.Core.Dialogue.DialogueDatabase(ProjectRoot);
         _runtime.Play(Scene, _scripts);
         _playClock.Restart();
         _playTimer ??= CreatePlayTimer();
@@ -366,6 +420,10 @@ public sealed partial class MainViewModel : ObservableObject
     {
         _playTimer?.Stop();
         _playClock.Stop();
+        IsDialogueActive = false;
+        DialogueSpeaker = string.Empty;
+        DialogueText = string.Empty;
+        InteractionPrompt = string.Empty;
 
         var restored = _runtime.Stop();
         if (restored is null)
@@ -399,10 +457,21 @@ public sealed partial class MainViewModel : ObservableObject
             var delta = (float)_playClock.Elapsed.TotalSeconds;
             _playClock.Restart();
             _runtime.Tick(delta);
+            UpdateRuntimeOverlay();
             OnPropertyChanged(nameof(ElapsedText));
             RequestRedraw();
         };
         return timer;
+    }
+
+    /// <summary>Refleja en la interfaz el diálogo y el aviso de interacción.</summary>
+    private void UpdateRuntimeOverlay()
+    {
+        var dialogue = _runtime.Dialogue;
+        IsDialogueActive = dialogue.IsActive;
+        DialogueSpeaker = dialogue.Speaker;
+        DialogueText = dialogue.Text;
+        InteractionPrompt = InteractionState.Prompt ?? string.Empty;
     }
 
     private void NotifyPlayState()

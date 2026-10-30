@@ -202,7 +202,40 @@ Callbacks: `OnStart`, `OnUpdate`, `OnReload`, `OnDestroy`, `OnCollisionEnter`,
 
 ---
 
-## 8. Audio
+## 8. Diálogos e interacción
+
+Los diálogos son archivos JSON en `dialogs/`:
+
+```json
+{
+  "id": "nota",
+  "speaker": "Nota",
+  "lines": [
+    { "text": "Primera línea." },
+    { "speaker": "Otro", "text": "Segunda línea con otro hablante." }
+  ]
+}
+```
+
+Para usarlos:
+
+1. Añade el componente **Interactable** a una entidad (inspector → *Añadir componente*).
+2. Configura **Aviso** («E: leer la nota»), **Radio**, **Diálogo** (`nota`) y *Solo una vez*.
+3. La entidad del jugador debe tener la etiqueta **`player`** (inspector → *Etiquetas*).
+4. Pulsa **Reproducir**: al acercarte aparece el aviso; con **E** se abre el diálogo y
+   con **E**, **Espacio** o **Intro** avanzas.
+
+Desde un script:
+
+```csharp
+Dialogue.Play("nota");
+var activo = Dialogue.IsActive;
+```
+
+También puedes implementar `OnInteract(Entity other)` en el script de la entidad
+interactuable para hacer algo además del diálogo.
+
+## 9. Audio
 
 Añade un **AudioSource** a una entidad:
 
@@ -216,7 +249,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 9. Prefabs, copiar y pegar
+## 10. Prefabs, copiar y pegar
 
 - **Guardar como prefab**: clic derecho sobre la entidad → *Guardar como prefab…*.
   Se guarda en `prefabs/nombre.prefab.json`.
@@ -227,7 +260,7 @@ incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---
 
-## 10. Reproducir y depurar
+## 11. Reproducir y depurar
 
 | Acción | Cómo |
 | --- | --- |
@@ -240,7 +273,7 @@ los mensajes de `Debug`, errores de scripts y avisos de audio.
 
 ---
 
-## 11. Archivos del proyecto
+## 12. Archivos del proyecto
 
 Desde la pestaña **Archivos** del dock inferior:
 
@@ -254,7 +287,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 12. Atajos de teclado
+## 13. Atajos de teclado
 
 | Atajo | Acción |
 | --- | --- |
@@ -275,7 +308,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 13. Problemas comunes
+## 14. Problemas comunes
 
 | Síntoma | Causa y solución |
 | --- | --- |
@@ -288,7 +321,7 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ---
 
-## 14. Flujo recomendado para un prototipo
+## 15. Flujo recomendado para un prototipo
 
 1. Crea un proyecto con la plantilla **Plataformas**.
 2. Abre `scenes/inicio.ollin.json` (pestaña **Escena**).

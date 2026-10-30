@@ -17,6 +17,21 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.10.0] — 2026-10-30
+
+### Añadido
+
+- **Sistema de diálogos**: archivos `dialogs/<id>.json`, base de datos por proyecto,
+  reproductor línea a línea y API `Dialogue.Play(id)` para scripts.
+- **Interacción con E**: componente `Interactable` con aviso, radio, diálogo y uso
+  único; el runtime busca al jugador por la etiqueta `player`.
+- **Etiquetas de entidad** para identificar jugador, enemigos y objetos.
+- **Interfaz de diálogo** en el viewport durante la reproducción (hablante, texto y
+  aviso de continuación).
+- **Callback `OnInteract`** para scripts y notas interactivas en las plantillas.
+- Carpeta `dialogs/` en los proyectos nuevos con un diálogo de bienvenida.
+- 11 pruebas nuevas: 83 en total.
+
 ## [0.9.0] — 2026-10-30
 
 ### Añadido

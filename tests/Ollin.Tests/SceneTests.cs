@@ -75,12 +75,12 @@ public class SceneTests
     }
 
     [Fact]
-    public void LaEscenaPorDefectoTieneSieteEntidades()
+    public void LaEscenaPorDefectoTieneOchoEntidades()
     {
         var scene = DefaultScene.Create();
 
-        Assert.Equal(7, scene.Entities.Count);
+        Assert.Equal(8, scene.Entities.Count);
         Assert.NotNull(scene.GetMainCamera());
-        Assert.Equal(4, scene.Entities.Count(e => e.GetComponent<SpriteRenderer>() is not null));
+        Assert.Equal(5, scene.Entities.Count(e => e.GetComponent<SpriteRenderer>() is not null));
     }
 }

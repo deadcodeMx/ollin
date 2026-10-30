@@ -36,7 +36,7 @@ pruebas en verde y documentada aquí.
 | 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
 | 4 | Cerrar el 2D | ✅ |
-| 5 | Herramientas de juego 2D (luces, narrativa, sistemas, HUD) | ⏳ |
+| 5 | Herramientas de juego 2D (luces, narrativa, sistemas, HUD) | 🚧 |
 | 6 | 2.5D (puente) | ⏳ |
 | 7 | 3D | ⏳ |
 | 8 | Producto: build, guardado, opciones | ⏳ |
@@ -105,9 +105,9 @@ tilemap/*autotiling* y buscador de propiedades en el inspector.
 - [ ] Linterna con cono de luz y parpadeo configurable.
 
 ### Narrativa e interacción
-- [ ] Triggers de zona (entrar, salir, interactuar).
+- [x] Triggers de zona (entrar, salir, interactuar) y aviso de interacción con E.
 - [ ] Puertas, cerraduras, llaves y objetos interactuables.
-- [ ] Diálogos con retratos y subtítulos; notas y documentos legibles.
+- [x] Diálogos con hablante y texto; notas y documentos legibles.`n- [ ] Retratos en los diálogos y elecciones de respuesta.
 - [ ] Secuencias guionizadas (timeline simple: mover cámara, esperar, sonido, texto).
 - [ ] Sistema de capítulos y checkpoints.
 

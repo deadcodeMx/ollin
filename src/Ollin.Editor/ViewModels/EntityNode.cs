@@ -928,4 +928,93 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(ScriptPath));
         OnPropertyChanged(nameof(ScriptClass));
     }
+
+    public string TagsText
+    {
+        get => string.Join(", ", Entity.Tags);
+        set
+        {
+            var tags = (value ?? string.Empty)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(tag => tag.Length > 0)
+                .ToList();
+
+            if (tags.SequenceEqual(Entity.Tags))
+            {
+                return;
+            }
+
+            Entity.Tags = tags;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool HasInteractable => Entity.GetComponent<Interactable>() is not null;
+
+    public Interactable? Interaction => Entity.GetComponent<Interactable>();
+
+    public string InteractionPrompt
+    {
+        get => Interaction?.Prompt ?? string.Empty;
+        set
+        {
+            if (Interaction is null || Interaction.Prompt == value)
+            {
+                return;
+            }
+
+            Interaction.Prompt = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal InteractionRadius
+    {
+        get => (decimal)(Interaction?.Radius ?? 1.8f);
+        set
+        {
+            if (Interaction is null || MathF.Abs(Interaction.Radius - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Interaction.Radius = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public string DialogueId
+    {
+        get => Interaction?.DialogueId ?? string.Empty;
+        set
+        {
+            if (Interaction is null || Interaction.DialogueId == value)
+            {
+                return;
+            }
+
+            Interaction.DialogueId = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool InteractOnce
+    {
+        get => Interaction?.Once ?? true;
+        set
+        {
+            if (Interaction is null || Interaction.Once == value)
+            {
+                return;
+            }
+
+            Interaction.Once = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
 }

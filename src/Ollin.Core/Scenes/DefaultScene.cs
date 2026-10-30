@@ -35,6 +35,7 @@ public static class DefaultScene
         ground.AddComponent(tilemap);
 
         var player = scene.Create("Jugador", new Vector2(0f, -1.6f));
+        player.Tags.Add("player");
         player.AddComponent(new SpriteRenderer
         {
             TexturePath = "assets/sprites/hero-walk.png",
@@ -88,6 +89,20 @@ public static class DefaultScene
             Size = new Vector2(1f, 0.6f),
             Tint = new Vector4(1f, 0.82f, 0.78f, 1f),
             SortingOrder = 6,
+        });
+
+        var note = scene.Create("Nota", new Vector2(-1.4f, -1.25f));
+        note.AddComponent(new SpriteRenderer
+        {
+            Size = new Vector2(0.45f, 0.55f),
+            Tint = new Vector4(0.93f, 0.89f, 0.72f, 1f),
+            SortingOrder = 22,
+        });
+        note.AddComponent(new Interactable
+        {
+            Prompt = "E: leer la nota",
+            DialogueId = "bienvenida",
+            Radius = 2.2f,
         });
 
         var music = scene.Create("Música", new Vector2(0f, 0f));
