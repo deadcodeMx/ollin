@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Ollin.Core</RootNamespace>
+    <AssemblyName>Ollin.Core</AssemblyName>
+  </PropertyGroup>
+</Project>

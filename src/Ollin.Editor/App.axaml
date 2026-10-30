@@ -1,0 +1,25 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Ollin.Editor.App"
+             RequestedThemeVariant="Dark">
+  <Application.Resources>
+    <ResourceDictionary>
+      <SolidColorBrush x:Key="Ollin.Bg" Color="#0E1015" />
+      <SolidColorBrush x:Key="Ollin.Panel" Color="#151922" />
+      <SolidColorBrush x:Key="Ollin.PanelAlt" Color="#1B202B" />
+      <SolidColorBrush x:Key="Ollin.Border" Color="#252B39" />
+      <SolidColorBrush x:Key="Ollin.Text" Color="#E7EAF0" />
+      <SolidColorBrush x:Key="Ollin.TextDim" Color="#8B94A7" />
+      <SolidColorBrush x:Key="Ollin.Accent" Color="#E9A23B" />
+      <SolidColorBrush x:Key="Ollin.AccentDim" Color="#8A6428" />
+      <SolidColorBrush x:Key="Ollin.Jade" Color="#47B8A8" />
+      <SolidColorBrush x:Key="Ollin.Danger" Color="#E05B5B" />
+      <SolidColorBrush x:Key="Ollin.ViewportBg" Color="#0B0D12" />
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://Ollin.Editor/Styles/Theme.axaml" />
+  </Application.Styles>
+</Application>

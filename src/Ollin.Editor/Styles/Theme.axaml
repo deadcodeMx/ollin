@@ -1,0 +1,113 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Style Selector="Window">
+    <Setter Property="FontSize" Value="12.5" />
+  </Style>
+
+  <Style Selector="Button">
+    <Setter Property="Background" Value="{DynamicResource Ollin.PanelAlt}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="10,5" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button:pointerover">
+    <Setter Property="Background" Value="#232936" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.AccentDim}" />
+  </Style>
+
+  <Style Selector="Button:pressed">
+    <Setter Property="Background" Value="#2B3242" />
+  </Style>
+
+  <Style Selector="Button.accent">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Accent}" />
+    <Setter Property="Foreground" Value="#1A1206" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Accent}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="Button.accent:pointerover">
+    <Setter Property="Background" Value="#F2B457" />
+  </Style>
+
+  <Style Selector="Button.tool">
+    <Setter Property="Padding" Value="9,4" />
+    <Setter Property="MinWidth" Value="34" />
+  </Style>
+
+  <Style Selector="TextBlock.section">
+    <Setter Property="FontSize" Value="10.5" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.TextDim}" />
+    <Setter Property="LetterSpacing" Value="1.2" />
+  </Style>
+
+  <Style Selector="TextBlock.hint">
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.TextDim}" />
+  </Style>
+
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+  </Style>
+
+  <Style Selector="Border.toolbar">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Padding" Value="8,6" />
+  </Style>
+
+  <Style Selector="NumericUpDown">
+    <Setter Property="Background" Value="{DynamicResource Ollin.PanelAlt}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="CornerRadius" Value="5" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="MinWidth" Value="96" />
+    <Setter Property="Height" Value="28" />
+  </Style>
+
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="{DynamicResource Ollin.PanelAlt}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="CornerRadius" Value="5" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Height" Value="28" />
+    <Setter Property="Padding" Value="7,3" />
+  </Style>
+
+  <Style Selector="TreeView">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="TreeViewItem">
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="Padding" Value="2,3" />
+  </Style>
+
+  <Style Selector="ListBox">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
+  <Style Selector="Menu">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Panel}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="Padding" Value="6,0" />
+  </Style>
+
+  <Style Selector="GridSplitter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+</Styles>

@@ -1,0 +1,294 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:Ollin.Editor.Controls"
+        mc:Ignorable="d"
+        x:Class="Ollin.Editor.Views.MainWindow"
+        Title="{Binding Title}"
+        Width="1440" Height="900"
+        MinWidth="1080" MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Ollin.Bg}">
+
+  <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+    <!-- Menú principal -->
+    <Menu Grid.Row="0">
+      <MenuItem Header="Archivo">
+        <MenuItem Header="Nueva escena" InputGesture="Ctrl+N" Click="OnNewScene" />
+        <MenuItem Header="Abrir escena…" InputGesture="Ctrl+O" Click="OnOpenScene" />
+        <Separator />
+        <MenuItem Header="Guardar" InputGesture="Ctrl+S" Click="OnSaveScene" />
+        <MenuItem Header="Guardar como…" Click="OnSaveSceneAs" />
+        <Separator />
+        <MenuItem Header="Salir" Click="OnExit" />
+      </MenuItem>
+      <MenuItem Header="Edición">
+        <MenuItem Header="Duplicar entidad" Click="OnDuplicate" />
+        <MenuItem Header="Eliminar entidad" Click="OnDelete" />
+      </MenuItem>
+      <MenuItem Header="Ver">
+        <MenuItem Header="Centrar cámara" InputGesture="Home" Click="OnResetCamera" />
+        <MenuItem Header="Enfocar selección" InputGesture="F" Click="OnFrameSelected" />
+        <MenuItem Header="Mostrar cuadrícula" ToggleType="CheckBox" IsChecked="{Binding ShowGrid}" />
+      </MenuItem>
+      <MenuItem Header="Ayuda">
+        <MenuItem Header="Acerca de Ollin" Click="OnAbout" />
+      </MenuItem>
+    </Menu>
+
+    <!-- Barra de herramientas -->
+    <Border Grid.Row="1" Classes="toolbar">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Button Classes="tool" Content="Nueva" Click="OnNewScene" ToolTip.Tip="Nueva escena (Ctrl+N)" />
+          <Button Classes="tool" Content="Abrir" Click="OnOpenScene" ToolTip.Tip="Abrir escena (Ctrl+O)" />
+          <Button Classes="tool" Content="Guardar" Click="OnSaveScene" ToolTip.Tip="Guardar (Ctrl+S)" />
+          <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
+          <Button Classes="tool" Content="+ Sprite" Click="OnAddSprite" ToolTip.Tip="Añadir una entidad con sprite" />
+          <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" ToolTip.Tip="Añadir una entidad vacía" />
+          <Button Classes="tool" Content="Duplicar" Click="OnDuplicate" />
+          <Button Classes="tool" Content="Eliminar" Click="OnDelete" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <Button Classes="tool" Content="Centrar" Click="OnResetCamera" />
+          <Button Classes="tool" Content="Enfocar" Click="OnFrameSelected" />
+          <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
+          <Button Classes="tool accent" Content="▶  Reproducir" IsEnabled="False"
+                  ToolTip.Tip="El modo juego llega en la etapa 2" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Cuerpo del editor -->
+    <Grid Grid.Row="2" ColumnDefinitions="286,4,*,4,332" Margin="8,8,8,6">
+
+      <!-- Jerarquía -->
+      <Border Grid.Column="0" Classes="card">
+        <Grid RowDefinitions="Auto,*,Auto">
+          <StackPanel Margin="12,10,12,4">
+            <TextBlock Classes="section" Text="JERARQUÍA" />
+            <TextBlock Classes="hint" Text="{Binding EntityCountText}" />
+          </StackPanel>
+          <TreeView Grid.Row="1"
+                    x:Name="SceneTree"
+                    ItemsSource="{Binding Roots}"
+                    SelectedItem="{Binding Selected, Mode=TwoWay}"
+                    Background="Transparent"
+                    Margin="4,0,4,4">
+            <TreeView.ItemTemplate>
+              <TreeDataTemplate ItemsSource="{Binding Children}">
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                  <TextBlock Text="{Binding Icon}" FontSize="10"
+                             Foreground="{DynamicResource Ollin.Jade}" VerticalAlignment="Center" />
+                  <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                </StackPanel>
+              </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+          </TreeView>
+          <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="6" Margin="10">
+            <Button Classes="tool" Content="+ Sprite" Click="OnAddSprite" />
+            <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <GridSplitter Grid.Column="1" ResizeDirection="Columns" Background="Transparent" />
+
+      <!-- Viewport + consola -->
+      <Grid Grid.Column="2" RowDefinitions="*,4,186">
+        <Border Grid.Row="0" Classes="card" Padding="0" ClipToBounds="True"
+                Background="{DynamicResource Ollin.ViewportBg}">
+          <Grid>
+            <controls:ViewportSurface x:Name="ViewportHost" />
+
+            <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"
+                    Background="#D910131A" CornerRadius="6" Padding="10,5" IsHitTestVisible="False">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="{Binding Scene.Name}" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding DirtyMarker}" Foreground="{DynamicResource Ollin.Accent}" />
+              </StackPanel>
+            </Border>
+
+            <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0"
+                    Background="#D910131A" CornerRadius="6" Padding="10,5" IsHitTestVisible="False">
+              <TextBlock Text="{Binding Fps, StringFormat='{}{0} fps'}"
+                         Foreground="{DynamicResource Ollin.TextDim}" FontSize="11" />
+            </Border>
+
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="14,0,0,12"
+                       Classes="hint" IsHitTestVisible="False"
+                       Text="Clic: seleccionar  ·  Rueda: zoom  ·  Alt + arrastrar: mover cámara" />
+
+            <Border IsVisible="{Binding #ViewportHost.Viewport.HasError}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="#E6212026" BorderBrush="{DynamicResource Ollin.Danger}"
+                    BorderThickness="1" CornerRadius="8" Padding="18" MaxWidth="560">
+              <StackPanel Spacing="6">
+                <TextBlock Text="No se pudo iniciar el viewport" FontWeight="SemiBold"
+                           Foreground="{DynamicResource Ollin.Danger}" />
+                <TextBlock Text="{Binding #ViewportHost.Viewport.ErrorText}" TextWrapping="Wrap"
+                           Foreground="{DynamicResource Ollin.TextDim}" FontSize="11" />
+              </StackPanel>
+            </Border>
+          </Grid>
+        </Border>
+
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows" Background="Transparent" />
+
+        <Border Grid.Row="2" Classes="card">
+          <Grid RowDefinitions="Auto,*">
+            <Grid ColumnDefinitions="*,Auto" Margin="12,8,10,2">
+              <TextBlock Classes="section" Text="CONSOLA" />
+              <Button Grid.Column="1" Classes="tool" Content="Limpiar" Click="OnClearConsole" />
+            </Grid>
+            <ListBox Grid.Row="1" x:Name="LogList" ItemsSource="{Binding Logs}"
+                     Background="Transparent" Margin="4,0,4,6">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Grid ColumnDefinitions="58,52,*" Margin="2,1">
+                    <TextBlock Text="{Binding Time}" Foreground="{DynamicResource Ollin.TextDim}" FontSize="11" />
+                    <TextBlock Grid.Column="1" Text="{Binding LevelText}" Foreground="{Binding Brush}"
+                               FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2" Text="{Binding Message}" Foreground="{Binding Brush}"
+                               FontSize="11.5" TextTrimming="CharacterEllipsis" />
+                  </Grid>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </Grid>
+        </Border>
+      </Grid>
+
+      <GridSplitter Grid.Column="3" ResizeDirection="Columns" Background="Transparent" />
+
+      <!-- Inspector -->
+      <Border Grid.Column="4" Classes="card">
+        <ScrollViewer>
+          <StackPanel Margin="14" Spacing="10">
+            <TextBlock Classes="section" Text="INSPECTOR" />
+
+            <Border IsVisible="{Binding HasNoSelection}" Background="{DynamicResource Ollin.PanelAlt}"
+                    CornerRadius="6" Padding="14">
+              <StackPanel Spacing="4">
+                <TextBlock Text="Nada seleccionado" FontWeight="SemiBold" />
+                <TextBlock Classes="hint" TextWrapping="Wrap"
+                           Text="Elige una entidad en la jerarquía o haz clic sobre un sprite en el viewport." />
+              </StackPanel>
+            </Border>
+
+            <StackPanel IsVisible="{Binding HasSelection}" Spacing="12">
+              <StackPanel Spacing="4">
+                <TextBlock Classes="section" Text="ENTIDAD" />
+                <TextBox Text="{Binding Selected.Name, Mode=TwoWay}" />
+                <TextBlock Classes="hint" Text="{Binding Selected.ComponentsSummary}" />
+              </StackPanel>
+
+              <StackPanel Spacing="5">
+                <TextBlock Classes="section" Text="TRANSFORMACIÓN" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Posición X" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.X, Mode=TwoWay}"
+                                 Increment="0.1" FormatString="0.###" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Posición Y" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.Y, Mode=TwoWay}"
+                                 Increment="0.1" FormatString="0.###" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Rotación°" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.RotationDegrees, Mode=TwoWay}"
+                                 Increment="5" FormatString="0.#" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Escala X" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.ScaleX, Mode=TwoWay}"
+                                 Increment="0.1" FormatString="0.###" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Escala Y" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.ScaleY, Mode=TwoWay}"
+                                 Increment="0.1" FormatString="0.###" />
+                </Grid>
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding Selected.HasSprite}" Spacing="5">
+                <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
+                <TextBlock Classes="section" Text="SPRITE" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Textura" VerticalAlignment="Center" Classes="hint" />
+                  <TextBox Grid.Column="1" Text="{Binding Selected.TexturePath, Mode=TwoWay}"
+                           Watermark="ruta/textura.png" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Color" VerticalAlignment="Center" Classes="hint" />
+                  <Grid Grid.Column="1" ColumnDefinitions="*,Auto">
+                    <TextBox Text="{Binding Selected.ColorHex, Mode=TwoWay}" Watermark="#RRGGBBAA" />
+                    <Border Grid.Column="1" Width="26" Height="26" Margin="6,0,0,0" CornerRadius="4"
+                            BorderThickness="1" BorderBrush="{DynamicResource Ollin.Border}"
+                            Background="{Binding Selected.ColorBrush}" />
+                  </Grid>
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Tamaño X" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.SpriteWidth, Mode=TwoWay}"
+                                 Increment="0.1" Minimum="0.01" FormatString="0.###" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Tamaño Y" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.SpriteHeight, Mode=TwoWay}"
+                                 Increment="0.1" Minimum="0.01" FormatString="0.###" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Orden" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.SortingOrder, Mode=TwoWay}"
+                                 Increment="1" FormatString="0" />
+                </Grid>
+                <CheckBox Content="Voltear horizontalmente" IsChecked="{Binding Selected.FlipX, Mode=TwoWay}"
+                          FontSize="11.5" />
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding Selected.HasCamera}" Spacing="5">
+                <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
+                <TextBlock Classes="section" Text="CÁMARA" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Altura" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.OrthographicSize, Mode=TwoWay}"
+                                 Increment="0.5" Minimum="0.1" FormatString="0.###" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Zoom" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraZoom, Mode=TwoWay}"
+                                 Increment="0.1" Minimum="0.05" FormatString="0.###" />
+                </Grid>
+              </StackPanel>
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+    </Grid>
+
+    <!-- Barra de estado -->
+    <Border Grid.Row="3" Background="{DynamicResource Ollin.Panel}"
+            BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="0,1,0,0">
+      <Grid ColumnDefinitions="*,Auto" Margin="12,4">
+        <StackPanel Orientation="Horizontal" Spacing="16">
+          <TextBlock Text="{Binding StatusMessage}" FontSize="11" />
+          <TextBlock Text="{Binding ScenePathText}" FontSize="11"
+                     Foreground="{DynamicResource Ollin.TextDim}" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+          <TextBlock Text="{Binding SelectionText}" FontSize="11"
+                     Foreground="{DynamicResource Ollin.Accent}" />
+          <TextBlock Text="{Binding ZoomText}" FontSize="11" Foreground="{DynamicResource Ollin.TextDim}" />
+          <TextBlock Text="{Binding Fps, StringFormat='{}{0} fps'}" FontSize="11"
+                     Foreground="{DynamicResource Ollin.TextDim}" />
+          <TextBlock Text="{Binding DrawCalls, StringFormat='{}{0} llamadas'}" FontSize="11"
+                     Foreground="{DynamicResource Ollin.TextDim}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

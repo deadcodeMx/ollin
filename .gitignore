@@ -1,0 +1,29 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+artifacts/
+probe/
+.probe/
+.dotnet-home/
+.nuget-packages/
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Builds del jugador
+Builds/
+*.exe
+*.pdb
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Capturas y temporales de verificación
+*.tmp
+captures/
