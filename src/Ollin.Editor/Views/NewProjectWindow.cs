@@ -16,6 +16,7 @@ public sealed class NewProjectWindow : Window
     private readonly TextBox _name;
     private readonly TextBox _folder;
     private readonly ComboBox _template;
+    private readonly TextBlock _error;
 
     public NewProjectWindow()
     {
@@ -37,6 +38,14 @@ public sealed class NewProjectWindow : Window
             ItemsSource = new[] { "Vacío (cámara + jugador)", "Plataformas", "Terror" },
             SelectedIndex = 0,
             HorizontalAlignment = HorizontalAlignment.Stretch,
+        };
+
+        _error = new TextBlock
+        {
+            FontSize = 11.5,
+            TextWrapping = TextWrapping.Wrap,
+            Foreground = new SolidColorBrush(Color.Parse("#E06C75")),
+            IsVisible = false,
         };
 
         var browse = new Button { Content = "Examinar…", Margin = new Thickness(8, 0, 0, 0) };
@@ -99,6 +108,7 @@ public sealed class NewProjectWindow : Window
                         browse,
                     },
                 },
+                _error,
                 new StackPanel
                 {
                     Orientation = Orientation.Horizontal,
@@ -116,17 +126,19 @@ public sealed class NewProjectWindow : Window
         var name = _name.Text?.Trim();
         var folder = _folder.Text?.Trim();
 
-        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(folder))
+        if (!ProjectService.CanCreate(folder, name, out var error))
         {
+            ShowError(error ?? "No se puede crear el proyecto.");
             return;
         }
 
         try
         {
-            Directory.CreateDirectory(folder);
+            Directory.CreateDirectory(folder!);
         }
-        catch
+        catch (Exception exception)
         {
+            ShowError($"No se puede usar esa carpeta: {exception.Message}");
             return;
         }
 
@@ -138,5 +150,11 @@ public sealed class NewProjectWindow : Window
         };
 
         Close(new NewProjectResult(name, folder, template));
+    }
+
+    private void ShowError(string message)
+    {
+        _error.Text = message;
+        _error.IsVisible = true;
     }
 }

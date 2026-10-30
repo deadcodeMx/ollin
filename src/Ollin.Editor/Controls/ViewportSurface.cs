@@ -13,6 +13,7 @@ namespace Ollin.Editor.Controls;
 public sealed class ViewportSurface : Border
 {
     private bool _panning;
+    private bool _painting;
     private bool _gizmoDragging;
     private Point _lastPointer;
     private IPointer? _capturedPointer;
@@ -49,6 +50,9 @@ public sealed class ViewportSurface : Border
 
         if (Viewport.ViewModel is { IsPaintingTiles: true })
         {
+            _painting = true;
+            _capturedPointer = e.Pointer;
+            e.Pointer.Capture(this);
             Viewport.PaintAt(position);
             e.Handled = true;
             return;
@@ -107,6 +111,13 @@ public sealed class ViewportSurface : Border
             return;
         }
 
+        if (_painting)
+        {
+            Viewport.PaintAt(e.GetPosition(this));
+            e.Handled = true;
+            return;
+        }
+
         if (!_panning)
         {
             return;
@@ -128,6 +139,15 @@ public sealed class ViewportSurface : Border
             Viewport.UpdateMouseButton(0, false);
             Viewport.UpdateMouseButton(1, false);
             Viewport.UpdateMouseButton(2, false);
+            e.Handled = true;
+            return;
+        }
+
+        if (_painting)
+        {
+            _painting = false;
+            _capturedPointer?.Capture(null);
+            _capturedPointer = null;
             e.Handled = true;
             return;
         }

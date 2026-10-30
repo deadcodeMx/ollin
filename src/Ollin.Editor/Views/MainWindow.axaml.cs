@@ -323,7 +323,7 @@ public partial class MainWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Motor de juego 2D · versión 0.7.0 beta",
+                    Text = "Motor de juego 2D · versión 0.7.1 beta",
                     FontSize = 12,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
@@ -403,12 +403,30 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnCloseDocument(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void OnCloseDocument(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (sender is Button { Tag: ViewModels.DocumentTab tab })
+        if (sender is not Button { Tag: ViewModels.DocumentTab tab } || ViewModel is null)
         {
-            ViewModel?.CloseDocument(tab);
+            return;
         }
+
+        if (tab is { IsScene: true, SceneDocument.IsDirty: true })
+        {
+            var confirm = await new ConfirmWindow(
+                "La escena tiene cambios sin guardar.",
+                "Cerrar sin guardar",
+                $"{tab.Title} se cerrará y los cambios se perderán.").ShowDialog<bool?>(this);
+
+            if (confirm != true)
+            {
+                return;
+            }
+
+            ViewModel.CloseDocument(tab, force: true);
+            return;
+        }
+
+        ViewModel.CloseDocument(tab);
     }
 
     private void OnSaveScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveActiveScript();
@@ -444,12 +462,7 @@ public partial class MainWindow : Window
         var path = file?.TryGetLocalPath();
         if (!string.IsNullOrWhiteSpace(path))
         {
-            if (!path.EndsWith(Ollin.Core.Prefabs.PrefabSerializer.Extension, StringComparison.OrdinalIgnoreCase))
-            {
-                path += Ollin.Core.Prefabs.PrefabSerializer.Extension;
-            }
-
-            ViewModel.SaveSelectedAsPrefab(path);
+            ViewModel.SaveSelectedAsPrefab(Ollin.Core.Prefabs.PrefabSerializer.NormalizePath(path));
         }
     }
 

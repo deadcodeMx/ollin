@@ -147,6 +147,44 @@ public static class ProjectService
         File.WriteAllText(project.ProjectFile, json);
     }
 
+    /// <summary>Nombre de carpeta que se usará para el proyecto.</summary>
+    public static string FolderNameFor(string name) => Sanitize(name);
+
+    /// <summary>Comprueba si se puede crear el proyecto sin tocar el disco.</summary>
+    public static bool CanCreate(string? parentFolder, string? name, out string? error)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            error = "Escribe un nombre para el proyecto.";
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(parentFolder))
+        {
+            error = "Elige la carpeta donde crear el proyecto.";
+            return false;
+        }
+
+        var target = Path.Combine(parentFolder!, FolderNameFor(name!));
+
+        try
+        {
+            if (Directory.Exists(target) && Directory.EnumerateFileSystemEntries(target).Any())
+            {
+                error = $"Ya existe '{target}' y no está vacía. Usa otro nombre o carpeta.";
+                return false;
+            }
+        }
+        catch (Exception exception)
+        {
+            error = $"No se puede usar esa carpeta: {exception.Message}";
+            return false;
+        }
+
+        error = null;
+        return true;
+    }
+
     private static string Sanitize(string name)
     {
         var invalid = Path.GetInvalidFileNameChars();

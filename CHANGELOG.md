@@ -17,6 +17,22 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.7.1] — 2026-10-30
+
+### Corregido
+
+- El diálogo de proyecto nuevo valida nombre y carpeta en línea y ya no se cierra
+  perdiendo los datos si la carpeta está ocupada.
+- Guardar un prefab como `torreta.json` producía `torreta.json.prefab.json`;
+  ahora la extensión se normaliza siempre a `.prefab.json`.
+- Cerrar una escena con cambios pide confirmación en lugar de no hacer nada.
+- No se puede cambiar ni cerrar una escena mientras se reproduce (evita desincronizar
+  la escena del runtime).
+- El pintado de tilemap funciona arrastrando y avisa si no hay un tilemap seleccionado.
+- Las pestañas de script se sincronizan con la recarga en caliente cuando el archivo
+  cambia por fuera y no hay cambios sin guardar.
+- 6 pruebas nuevas de regresión: 74 en total.
+
 ## [0.7.0] — 2026-10-30
 
 ### Añadido

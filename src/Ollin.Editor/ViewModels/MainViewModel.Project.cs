@@ -52,6 +52,14 @@ public sealed partial class MainViewModel
                 return;
             }
 
+            if (value is { IsScene: true, SceneDocument: { } target } &&
+                _runtime.IsPlaying &&
+                !ReferenceEquals(target, _currentSceneDoc))
+            {
+                StatusMessage = "Detén la reproducción para cambiar de escena";
+                return;
+            }
+
             _activeDocument = value;
             foreach (var document in Documents)
             {
@@ -401,17 +409,23 @@ public sealed partial class MainViewModel
         }
     }
 
-    public void CloseDocument(DocumentTab document)
+    public void CloseDocument(DocumentTab document, bool force = false)
     {
         if (document.IsScene)
         {
+            if (_runtime.IsPlaying)
+            {
+                StatusMessage = "Detén la reproducción para cerrar escenas";
+                return;
+            }
+
             if (Documents.Count(d => d.IsScene) <= 1)
             {
                 StatusMessage = "No se puede cerrar la única escena abierta";
                 return;
             }
 
-            if (document.SceneDocument?.IsDirty == true)
+            if (!force && document.SceneDocument?.IsDirty == true)
             {
                 StatusMessage = "Guarda la escena antes de cerrarla";
                 return;

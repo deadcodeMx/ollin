@@ -67,7 +67,7 @@ public sealed partial class MainViewModel : ObservableObject
         ReloadScripts();
         StartScriptWatcher();
         InitializeProject();
-        Log.Info("Ollin 0.4 — editor listo", "Editor");
+        Log.Info("Ollin 0.7 — editor listo", "Editor");
         Log.Info("Clic para seleccionar · Rueda para zoom · Alt+arrastrar para mover la cámara", "Editor");
     }
 
@@ -104,7 +104,11 @@ public sealed partial class MainViewModel : ObservableObject
         {
             if (SetProperty(ref _isPaintingTiles, value))
             {
-                StatusMessage = value ? "Modo pintar: clic en el viewport para colocar mosaicos" : "Listo";
+                StatusMessage = value
+                    ? (Selected?.Tilemap is null
+                        ? "Selecciona una entidad con tilemap para pintar"
+                        : "Modo pintar: clic o arrastra en el viewport para colocar mosaicos")
+                    : "Listo";
                 RequestRedraw();
             }
         }
@@ -597,6 +601,7 @@ public sealed partial class MainViewModel : ObservableObject
             StatusMessage = hot > 0
                 ? $"Recarga en caliente: {hot} script(s) con estado conservado"
                 : "No se pudieron recargar los scripts (ver consola)";
+            SyncOpenScripts();
             return;
         }
 
@@ -613,6 +618,40 @@ public sealed partial class MainViewModel : ObservableObject
         ScriptStatusText = _scripts.HasScripts
             ? $"Scripts: {string.Join(", ", result.Types.Select(t => t.Name))}"
             : "Scripts: sin scripts";
+
+        SyncOpenScripts();
+    }
+
+    /// <summary>Refresca las pestañas de script que no tienen cambios sin guardar.</summary>
+    private void SyncOpenScripts()
+    {
+        foreach (var document in Documents.Where(d => d.IsScript && d.FullPath is not null))
+        {
+            if (document.IsDirty || !File.Exists(document.FullPath))
+            {
+                continue;
+            }
+
+            try
+            {
+                var text = File.ReadAllText(document.FullPath!);
+                if (string.Equals(text, document.Text, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                document.LoadText(text);
+
+                if (ReferenceEquals(ActiveDocument, document))
+                {
+                    OnPropertyChanged(nameof(ActiveScript));
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Warn($"No se pudo sincronizar {document.Title}: {exception.Message}", "Editor");
+            }
+        }
     }
 
     /// <summary>Crea (o reutiliza) un script para la entidad seleccionada y lo enlaza.</summary>

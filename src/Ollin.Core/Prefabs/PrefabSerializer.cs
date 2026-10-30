@@ -16,6 +16,24 @@ public static class PrefabSerializer
 
     public const string Extension = ".prefab.json";
 
+    /// <summary>Fuerza la extensión `.prefab.json` (evita `x.json.prefab.json`).</summary>
+    public static string NormalizePath(string path)
+    {
+        var trimmed = path.Trim();
+
+        if (trimmed.EndsWith(Extension, StringComparison.OrdinalIgnoreCase))
+        {
+            return trimmed;
+        }
+
+        if (trimmed.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+        {
+            return trimmed[..^5] + Extension;
+        }
+
+        return trimmed + Extension;
+    }
+
     public static string Serialize(Entity entity)
     {
         var document = new PrefabDocument
