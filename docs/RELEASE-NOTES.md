@@ -1,23 +1,18 @@
-## Ollin 0.18.0 beta — exportar tu juego
+## Ollin 0.18.1 beta — arreglo del botón Exportar
 
-### Incluye
+### Corregido
 
-- `Archivo → Exportar juego…`: genera una carpeta jugable con `Ollin.Player.exe`,
-  escenas, assets, scripts y `game.json`.
-- Pantalla de inicio con el logo de Ollin y marca de agua «Hecho con Ollin»
-  (activadas por defecto; se desactivan en `game.json`).
-- Reproductor con F11 (pantalla completa) y Esc.
-- 120 pruebas automatizadas.
+- El botón **Exportar juego** ahora aparece en la barra de herramientas y en
+  **Archivo → Exportar juego…**.
 
-### Nota
+### Incluye (0.18.0)
 
-El reproductor necesita .NET 8 Desktop Runtime y no está firmado: Windows puede
-mostrar un aviso la primera vez.
+- Exportación a juego independiente con `Ollin.Player.exe`.
+- Pantalla de inicio con el logo de Ollin y marca de agua «Hecho con Ollin».
+- Reproductor con F11 y Esc; 120 pruebas.
 
 ### Instalación
 
-1. Descarga `Ollin-Setup-0.18.0-beta.exe`.
-2. Ejecútalo (Windows puede avisar por no estar firmado).
-3. Abre **Ollin**, elige un proyecto y prueba **Archivo → Exportar juego…**.
-
-Requiere .NET 8 Desktop Runtime.
+1. Descarga `Ollin-Setup-0.18.1-beta.exe`.
+2. Ejecútalo y abre tu proyecto.
+3. Pulsa **⬆ Exportar** en la barra superior.

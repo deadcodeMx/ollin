@@ -27,6 +27,8 @@
         <MenuItem Header="Guardar escena" InputGesture="Ctrl+S" Click="OnSaveScene" />
         <MenuItem Header="Guardar escena como…" Click="OnSaveSceneAs" />
         <Separator />
+        <MenuItem Header="Exportar juego…" Click="OnExportGame" IsEnabled="{Binding HasProject}" />
+        <Separator />
         <MenuItem Header="Salir" Click="OnExit" />
       </MenuItem>
       <MenuItem Header="Edición">
@@ -96,6 +98,8 @@
                   IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
           <Button Classes="tool" Content="⏸  Pausa" Click="OnPause"
                   IsEnabled="{Binding IsPlaying}" ToolTip.Tip="Pausar o reanudar (F6)" />
+          <Button Classes="tool" Content="⬆  Exportar" Click="OnExportGame"
+                  IsEnabled="{Binding HasProject}" ToolTip.Tip="Exportar el juego como aplicación independiente" />
           <Button Classes="tool" Content="⏹  Detener" Click="OnStopPlay"
                   IsEnabled="{Binding IsPlaying}" ToolTip.Tip="Detener y restaurar la escena" />
         </StackPanel>

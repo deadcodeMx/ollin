@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.18.1] — 2026-10-30
+
+### Corregido
+
+- El botón/menú **Exportar juego** no aparecía: ahora está en **Archivo → Exportar juego…**
+  y como botón visible en la barra de herramientas.
+
 ## [0.18.0] — 2026-10-30
 
 ### Añadido
