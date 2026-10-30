@@ -17,6 +17,19 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.12.0] — 2026-10-30
+
+### Añadido
+
+- **Sombras 2D experimentales**: las luces puntuales pueden proyectar la silueta de los
+  colliders (casilla *Proyectar sombras*, desactivada por defecto).
+- Geometría de sombras reutilizable y pruebas de proyección.
+
+### Nota
+
+- La calidad de las sombras aún es básica (sin tilemaps ni suavizado). Se dejan como
+  opción para no afectar la iluminación estable de 0.11.0.
+
 ## [0.11.0] — 2026-10-30
 
 ### Añadido

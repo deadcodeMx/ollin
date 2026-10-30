@@ -1113,6 +1113,23 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public bool LightShadows
+    {
+        get => Light?.CastShadows ?? false;
+        set
+        {
+            if (Light is null || Light.CastShadows == value)
+            {
+                return;
+            }
+
+            Light.CastShadows = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
     public decimal LightFlicker
     {
         get => (decimal)(Light?.FlickerAmplitude ?? 0f);

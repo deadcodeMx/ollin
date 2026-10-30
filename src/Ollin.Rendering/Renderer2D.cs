@@ -70,6 +70,7 @@ public sealed class Renderer2D : IDisposable
     private Texture2D? _vignette;
     private readonly Dictionary<int, Texture2D> _coneLights = new();
 
+
     public Renderer2D(GL gl)
     {
         _gl = gl;
@@ -537,7 +538,7 @@ public sealed class Renderer2D : IDisposable
         {
             _gl.BlendFunc(BlendingFactor.DstColor, BlendingFactor.Zero);
             _batch.Begin(viewProjection);
-            DrawViewQuad(cameraPosition, extents, new Vector4(ambient.X, ambient.Y, ambient.Z, 1f), null);
+            DrawViewQuad(cameraPosition, extents, new Vector4(ambient.X, ambient.Y, ambient.Z, 1f), null, false);
             _batch.End();
         }
 
@@ -545,57 +546,143 @@ public sealed class Renderer2D : IDisposable
         {
             _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
             _batch.Begin(viewProjection);
-
             foreach (var (entity, light) in lights)
             {
-                var intensity = light.CurrentIntensity > 0f ? light.CurrentIntensity : light.Intensity;
-                if (intensity <= 0f)
-                {
-                    continue;
-                }
-
-                var texture = light.Kind == LightKind.Cone ? ConeTexture(light.ConeAngle) : _radialLight;
-                if (texture is null)
-                {
-                    continue;
-                }
-
-                var world = scene.GetWorldMatrix(entity);
-                var corners = GetWorldCorners(world, new Vector2(light.Radius * 2f, light.Radius * 2f), new Vector2(0.5f, 0.5f));
-                var tint = new Vector4(
-                    light.Color.X * intensity,
-                    light.Color.Y * intensity,
-                    light.Color.Z * intensity,
-                    System.Math.Clamp(intensity, 0f, 1f));
-
-                _batch.DrawQuad(texture, corners[0], corners[1], corners[2], corners[3],
-                    new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f), tint);
+                DrawLightQuad(scene, entity, light);
             }
 
             _batch.End();
-        }
 
-        if (_vignette is not null)
-        {
-            _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            _batch.Begin(viewProjection);
-            DrawViewQuad(cameraPosition, extents, new Vector4(1f, 1f, 1f, 1f), _vignette);
-            _batch.End();
+            DrawShadows(scene, lights, viewProjection);
         }
 
         _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
+    /// <summary>
+    /// Sombras aproximadas: proyecta las aristas de colliders y celdas sólidas y
+    /// oscurece el volumen detrás de cada una. Se dibujan después de las luces.
+    /// </summary>
+    private void DrawShadows(Scene scene, List<(Entity Entity, Light2D Light)> lights, Matrix4x4 viewProjection)
+    {
+        var edges = BuildOccluderEdges(scene);
+        if (edges.Count == 0)
+        {
+            return;
+        }
+
+        var any = lights.Exists(entry => entry.Light.CastShadows && entry.Light.Kind == LightKind.Point);
+        if (!any)
+        {
+            return;
+        }
+
+        _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        _batch.Begin(viewProjection);
+
+        foreach (var (entity, light) in lights)
+        {
+            if (!light.CastShadows || light.Kind != LightKind.Point)
+            {
+                continue;
+            }
+
+            var center = scene.GetWorldPosition(entity);
+            var shadow = new Vector4(0f, 0f, 0f, 0.5f);
+
+            foreach (var (a, b) in edges)
+            {
+                if (ShadowGeometry.DistanceToEdge(center, a, b) > light.Radius)
+                {
+                    continue;
+                }
+
+                // Solo las aristas que miran en contra de la luz proyectan sombra.
+                var edge = b - a;
+                var normal = new Vector2(-edge.Y, edge.X);
+                var midpoint = (a + b) * 0.5f;
+
+                if (Vector2.Dot(normal, center - midpoint) > 0f)
+                {
+                    continue;
+                }
+
+                var quad = ShadowGeometry.ProjectEdge(center, a, b, light.Radius);
+                _batch.DrawQuad(null, quad.A, quad.B, quad.Bp, quad.Ap,
+                    new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f), shadow);
+            }
+        }
+
+        _batch.End();
+    }
+
+    private void DrawLightQuad(Scene scene, Entity entity, Light2D light)
+    {
+        var intensity = light.CurrentIntensity > 0f ? light.CurrentIntensity : light.Intensity;
+        if (intensity <= 0f)
+        {
+            return;
+        }
+
+        var texture = light.Kind == LightKind.Cone ? ConeTexture(light.ConeAngle) : _radialLight;
+        if (texture is null)
+        {
+            return;
+        }
+
+        var world = scene.GetWorldMatrix(entity);
+        var corners = GetWorldCorners(world, new Vector2(light.Radius * 2f, light.Radius * 2f), new Vector2(0.5f, 0.5f));
+        var tint = new Vector4(
+            light.Color.X * intensity,
+            light.Color.Y * intensity,
+            light.Color.Z * intensity,
+            System.Math.Clamp(intensity, 0f, 1f));
+
+        _batch.DrawQuad(texture, corners[0], corners[1], corners[2], corners[3],
+            new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f), tint);
+    }
+
+    private static List<(Vector2 A, Vector2 B)> BuildOccluderEdges(Scene scene)
+    {
+        var edges = new List<(Vector2 A, Vector2 B)>();
+
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active)
+            {
+                continue;
+            }
+
+            var world = scene.GetWorldMatrix(entity);
+
+            if (entity.GetComponent<BoxCollider>() is { Enabled: true, IsTrigger: false } collider)
+            {
+                AddEdges(edges, collider.GetWorldCorners(world));
+            }
+        }
+
+        return edges;
+    }
+
+    private static void AddEdges(List<(Vector2 A, Vector2 B)> edges, Vector2[] corners)
+    {
+        for (var i = 0; i < corners.Length; i++)
+        {
+            edges.Add((corners[i], corners[(i + 1) % corners.Length]));
+        }
+    }
     /// <summary>Dibuja un cuadro que cubre todo el viewport (ambiente, viñeta).</summary>
-    private void DrawViewQuad(Vector2 cameraPosition, Vector2 extents, Vector4 color, Texture2D? texture)
+    private void DrawViewQuad(Vector2 cameraPosition, Vector2 extents, Vector4 color, Texture2D? texture, bool flipV)
     {
         var topLeft = cameraPosition + new Vector2(-extents.X, extents.Y);
         var topRight = cameraPosition + new Vector2(extents.X, extents.Y);
         var bottomRight = cameraPosition + new Vector2(extents.X, -extents.Y);
         var bottomLeft = cameraPosition + new Vector2(-extents.X, -extents.Y);
 
+        var v0 = flipV ? 1f : 0f;
+        var v1 = flipV ? 0f : 1f;
         _batch.DrawQuad(texture, topLeft, topRight, bottomRight, bottomLeft,
-            new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f), color);
+            new Vector2(0f, v0), new Vector2(1f, v0), new Vector2(1f, v1), new Vector2(0f, v1), color);
     }
 
     public static Vector2[] GetWorldCorners(Matrix4x4 world, Vector2 size, Vector2 origin)

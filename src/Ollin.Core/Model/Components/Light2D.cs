@@ -31,6 +31,10 @@ public sealed class Light2D : Component, ITickable
 
     public float FlickerSpeed { get; set; } = 7f;
 
+    /// <summary>Si está activo, los colliders y tilemaps proyectan sombra.</summary>
+    /// <summary>Experimental: proyecta sombras desde colliders (desactivado por defecto).</summary>
+    public bool CastShadows { get; set; }
+
     /// <summary>Intensidad del frame; el renderizador usa <see cref="Intensity"/> si es 0.</summary>
     [JsonIgnore]
     public float CurrentIntensity { get; set; }
@@ -48,6 +52,7 @@ public sealed class Light2D : Component, ITickable
         ConeAngle = ConeAngle,
         FlickerAmplitude = FlickerAmplitude,
         FlickerSpeed = FlickerSpeed,
+        CastShadows = CastShadows,
         Owner = newOwner,
     };
 

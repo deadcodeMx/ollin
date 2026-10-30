@@ -248,7 +248,9 @@ interactuable para hacer algo además del diálogo.
 - **Cámara con seguimiento**: en la cámara, *Seguir* = etiqueta del objetivo
   (`player`) y *Suavizado*. Funciona durante la reproducción.
 
-> Las sombras por oclusión y el post-proceso (niebla, grano) todavía no están.
+> **Sombras (experimental):** la casilla *Proyectar sombras* de una luz puntual proyecta la
+> silueta de los colliders. Está desactivada por defecto y aún es tosca; el post-proceso
+> (niebla, grano) tampoco está.
 
 ## 10. Audio
 

@@ -98,7 +98,7 @@ tilemap/*autotiling* y buscador de propiedades en el inspector.
 
 ### Atmósfera y presentación
 - [x] Luces 2D: puntuales y conos, con color, radio, intensidad y parpadeo.
-- [ ] Sombras por oclusión (shadow casting) para luces 2D.
+- [~] Sombras por oclusión (shadow casting) para luces 2D: versión experimental opt-in.`n- [ ] Sombras suaves y oclusión desde tilemaps.
 - [ ] Niebla, viñeta, grano de película y aberración cromática (post-proceso).
 - [x] Capas de paralaje para fondos (factor por sprite).
 - [x] Cámara de seguimiento con etiqueta y suavizado.`n- [ ] Cámaras fijas por habitación (estilo clásico).

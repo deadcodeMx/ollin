@@ -579,6 +579,7 @@
                   <StackPanel Margin="8" Spacing="5">
                     <TextBlock Classes="section" Text="LUZ 2D" />
                     <CheckBox Content="Cono (linterna)" IsChecked="{Binding Selected.LightIsCone, Mode=TwoWay}" FontSize="11.5" />
+                    <CheckBox Content="Proyectar sombras" IsChecked="{Binding Selected.LightShadows, Mode=TwoWay}" FontSize="11.5" />
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Color" VerticalAlignment="Center" Classes="hint" />
                       <TextBox Grid.Column="1" Text="{Binding Selected.LightColorHex, Mode=TwoWay}" Watermark="#FFE0B0" />

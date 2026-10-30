@@ -80,6 +80,33 @@ public class LightingTests
     }
 
     [Fact]
+    public void LasSombrasProyectanLasAristasFueraDeLaLuz()
+    {
+        var (a, b, bp, ap) = ShadowGeometry.ProjectEdge(Vector2.Zero, new Vector2(-1f, 1f), new Vector2(1f, 1f), 5f);
+
+        Assert.Equal(new Vector2(-1f, 1f), a);
+        Assert.Equal(new Vector2(1f, 1f), b);
+        Assert.Equal(3.536f, ap.Y, 2);
+        Assert.Equal(3.536f, bp.Y, 2);
+        Assert.Equal(5f, ap.Length(), 2);
+        Assert.Equal(5f, bp.Length(), 2);
+    }
+
+    [Fact]
+    public void LaDistanciaAUnaAristaSirveParaDescartarSombrasLejanas()
+    {
+        var distance = ShadowGeometry.DistanceToEdge(Vector2.Zero, new Vector2(-1f, 2f), new Vector2(1f, 2f));
+
+        Assert.Equal(2f, distance, 3);
+    }
+
+    [Fact]
+    public void LasLucesNoProyectanSombrasPorDefecto()
+    {
+        Assert.False(new Light2D().CastShadows);
+    }
+
+    [Fact]
     public void ElAmbienteDeLaCamaraSeGuarda()
     {
         var scene = new Scene();

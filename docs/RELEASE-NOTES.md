@@ -1,23 +1,21 @@
-## Ollin 0.11.0 beta — luces y atmósfera
+## Ollin 0.12.0 beta — sombras experimentales
 
 ### Incluye
 
-- Componente **Light2D**: luces puntuales y conos con color, radio, intensidad,
-  ángulo y parpadeo.
-- Luz **ambiente** por cámara, viñeta y capas de **paralaje**.
-- **Cámara con seguimiento** por etiqueta y con suavizado.
-- Nota interactiva con diálogo y linterna de ejemplo en la plantilla Terror.
-- 88 pruebas automatizadas.
+- Casilla **Proyectar sombras** en luces puntuales (experimental, apagada por defecto).
+- Proyección de siluetas de colliders con geometría propia.
+- Iluminación estable heredada de 0.11.0: ambiente, luces, viñeta, paralaje y cámara.
+- 91 pruebas automatizadas.
+
+### Nota
+
+Las sombras todavía son básicas: no incluyen tilemaps ni suavizado. Actívalas por luz
+para probarlas; si algo se ve raro, desactívalas y la escena vuelve al aspecto de 0.11.0.
 
 ### Instalación
 
-1. Descarga `Ollin-Setup-0.11.0-beta.exe`.
+1. Descarga `Ollin-Setup-0.12.0-beta.exe`.
 2. Ejecútalo (Windows puede avisar por no estar firmado).
 3. Abre **Ollin** desde el acceso directo.
 
 Requiere .NET 8 Desktop Runtime.
-
-### Documentación
-
-- [Guía de uso](GUIA.md)
-- [Roadmap](ROADMAP.md)

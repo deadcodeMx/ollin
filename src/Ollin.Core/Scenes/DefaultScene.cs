@@ -29,6 +29,7 @@ public static class DefaultScene
             TexturePath = "assets/sprites/tiles.png",
             TilesetColumns = 4,
             SortingOrder = -10,
+            Collides = true,
         };
 
         for (var y = 0; y < tilemap.Height; y++)
@@ -78,6 +79,7 @@ public static class DefaultScene
             Size = new Vector2(1f, 1f),
             SortingOrder = 5,
         });
+        crate.AddComponent(new BoxCollider { Size = new Vector2(1.2f, 1.2f) });
         crate.AddComponent(new OscillatorComponent
         {
             Axis = new Vector2(0f, 1f),
@@ -103,6 +105,7 @@ public static class DefaultScene
 
         var tilted = scene.Create("Caja girada", new Vector2(-2.8f, -1.8f));
         tilted.Transform.Rotation = 0.35f;
+        tilted.AddComponent(new BoxCollider { Size = new Vector2(1f, 0.6f) });
         tilted.AddComponent(new SpriteRenderer
         {
             TexturePath = "assets/sprites/crate.png",
