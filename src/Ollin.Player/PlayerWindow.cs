@@ -35,6 +35,7 @@ public sealed class PlayerWindow : Window
         Background = Brushes.Black;
 
         _viewModel = new MainViewModel();
+        Ollin.Core.Audio.Audio.Root = game.Root;
         _viewModel.OpenProjectLocation(game.Root, logToConsole: false, remember: false);
 
         if (game.ScriptsImage is { Length: > 0 })

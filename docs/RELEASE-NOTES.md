@@ -1,20 +1,17 @@
-## Ollin 0.19.0 beta — juegos empaquetados y protegidos
+## Ollin 0.20.0 beta — arreglo de scripts y audio al exportar
+
+### Corregido
+
+- Los juegos exportados vuelven a ejecutar sus scripts (menús, botones, IA...).
+- El reproductor inicializa el audio y encuentra los sonidos dentro del paquete.
 
 ### Incluye
 
-- Exportación en **un solo ejecutable** con el nombre del juego.
-- `game.pak` **cifrado** con escenas, assets y **scripts compilados** (sin `.cs`).
-- Diálogo para activar/desactivar pantalla de inicio y marca de agua.
-- Exportación por consola para automatizar: `--export`.
-- 120 pruebas automatizadas.
-
-### Nota
-
-El `.exe` del juego requiere .NET 8 Desktop Runtime. La protección evita que el código
-fuente quede a la vista, pero no es DRM infalible.
+- Exportación a un único `.exe` + `game.pak` cifrado con scripts compilados.
+- Pantalla de inicio con el logo y marca de agua opcionales.
 
 ### Instalación
 
-1. Descarga `Ollin-Setup-0.19.0-beta.exe`.
-2. Abre tu proyecto y pulsa **⬆ Exportar**.
-3. Ejecuta el `<Juego>.exe` generado.
+1. Descarga `Ollin-Setup-0.20.0-beta.exe`.
+2. Vuelve a exportar tu juego (los paquetes antiguos no cambian).
+3. Ejecuta el nuevo `<Juego>.exe`; ya deben sonar los menús y responder los botones.

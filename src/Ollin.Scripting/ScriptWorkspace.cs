@@ -100,6 +100,7 @@ public sealed class ScriptWorkspace : IDisposable
         using var stream = new MemoryStream(image);
         _assembly = _loadContext.LoadFromStream(stream);
         _types = DiscoverTypes(_assembly);
+        Log.Info($"Scripts precargados: {_types.Count} ({string.Join(", ", _types.Select(t => t.Name))})", "Scripts");
 
         return new ScriptReloadResult(true, Array.Empty<ScriptDiagnostic>(), _types);
     }

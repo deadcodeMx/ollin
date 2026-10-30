@@ -203,6 +203,11 @@ public sealed partial class MainViewModel
     /// <summary>Carga scripts ya compilados (juego exportado).</summary>
     public void LoadPrecompiledScripts(byte[] image)
     {
+        _usesPrecompiledScripts = true;
+        _scriptWatcher?.Dispose();
+        _scriptWatcher = null;
+        _scriptReloadTimer?.Stop();
+
         var result = _scripts.LoadImage(image);
         StatusMessage = $"Scripts cargados: {result.Types.Count}";
     }
@@ -292,6 +297,7 @@ public sealed partial class MainViewModel
 
     private void ApplyProject(ProjectInfo project, bool remember = true)
     {
+        _usesPrecompiledScripts = false;
         Project = project;
         ProjectRoot = project.RootPath;
 

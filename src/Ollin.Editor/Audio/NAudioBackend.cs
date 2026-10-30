@@ -6,7 +6,7 @@ using Ollin.Core.Diagnostics;
 namespace Ollin.Editor.Audio;
 
 /// <summary>Reproducción de audio con NAudio (Windows). Cada sonido usa su propia salida.</summary>
-internal sealed class NAudioBackend : IAudioBackend, IDisposable
+public sealed class NAudioBackend : IAudioBackend, IDisposable
 {
     private sealed class Playback : IDisposable
     {

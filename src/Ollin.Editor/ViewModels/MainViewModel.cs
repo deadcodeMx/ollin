@@ -51,6 +51,7 @@ public sealed partial class MainViewModel : ObservableObject
     private bool _isPaintingTiles;
     private decimal _paintTileIndex;
     private FileSystemWatcher? _scriptWatcher;
+    private bool _usesPrecompiledScripts;
     private DispatcherTimer? _scriptReloadTimer;
     private Guid? _selectedBeforePlay;
     private AssetItem? _selectedAsset;
@@ -418,7 +419,11 @@ public sealed partial class MainViewModel : ObservableObject
         _dirtyBeforePlay = IsDirty;
         _selectedBeforePlay = Selected?.Id;
 
-        ReloadScripts();
+        if (!_usesPrecompiledScripts)
+        {
+            ReloadScripts();
+        }
+
         ResetHudState();
         _runtime.Dialogues = new Ollin.Core.Dialogue.DialogueDatabase(ProjectRoot);
         _runtime.Play(Scene, _scripts);

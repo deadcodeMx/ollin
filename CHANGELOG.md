@@ -17,6 +17,18 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.20.0] — 2026-10-30
+
+### Corregido
+
+- **Los scripts no se ejecutaban en el juego exportado**: al iniciar la partida se
+  recompilaban desde una carpeta de scripts vacía y se perdían los scripts del paquete.
+  Ahora se conservan los scripts compilados.
+- **Sin sonido en el juego exportado**: el reproductor no inicializaba el backend de
+  audio. Ahora inicializa NAudio y resuelve los audios contra la carpeta extraída.
+- Con ello vuelven a funcionar los menús, los botones y los sonidos de los juegos
+  exportados.
+
 ## [0.19.0] — 2026-10-30
 
 ### Añadido
