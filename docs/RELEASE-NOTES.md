@@ -1,21 +1,26 @@
-## Ollin 0.20.1 beta — entrada y diagnóstico del juego exportado
+## Ollin 0.20.2 beta — registro limpio del reproductor
 
 ### Corregido
 
-- El juego exportado captura el teclado y el ratón a nivel de ventana (aunque el foco
-  esté en otro control) y se activa al quitar la pantalla de inicio.
-- La exportación verifica el paquete y avisa si falta la escena, el manifiesto o los
-  scripts compilados.
-- El reproductor genera `player.log` junto al ejecutable con la versión, los scripts
-  cargados y cada sonido reproducido.
+- El juego exportado ya no carga el último proyecto del editor ni intenta compilar sus
+  scripts: `player.log` deja de mostrar errores falsos de `Ollin`/`OllinScript`.
+- Se mantienen las mejoras de 0.20.1: entrada de teclado/ratón, activación de ventana y
+  audio inicializado.
 
-### Importante
+### Cómo comprobar que funciona
 
-Hay que **volver a exportar** el juego con esta versión; los `.exe` exportados antes
-llevan dentro el reproductor antiguo.
+Abre `player.log` junto al `.exe`; debe mostrar:
+
+```
+Backend de audio: activo
+Scripts precargados: 4 (...)
+Script iniciado: Director ...
+Audio 'assets/audio/...' → id 1
+```
+
+Si aparece un id de audio y no se oye, revisa el volumen de Windows y la mezcladora
+para el proceso del juego.
 
 ### Instalación
 
-1. Descarga `Ollin-Setup-0.20.1-beta.exe`.
-2. Reexporta tu juego y ejecútalo.
-3. Si algo falla, envía el `player.log` que aparece junto al `.exe`.
+Descarga `Ollin-Setup-0.20.2-beta.exe`, reinstala y **vuelve a exportar** el juego.

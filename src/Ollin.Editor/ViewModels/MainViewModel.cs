@@ -56,7 +56,7 @@ public sealed partial class MainViewModel : ObservableObject
     private Guid? _selectedBeforePlay;
     private AssetItem? _selectedAsset;
 
-    public MainViewModel()
+    public MainViewModel(bool initialize = true)
     {
         _scripts = new ScriptWorkspace(_defaultProjectRoot);
         Log.Written += OnLogWritten;
@@ -67,6 +67,12 @@ public sealed partial class MainViewModel : ObservableObject
 
         LoadScene(DefaultScene.Create(), null);
         RefreshAssets(logToConsole: false);
+
+        if (!initialize)
+        {
+            return;
+        }
+
         ReloadScripts();
         StartScriptWatcher();
         InitializeProject();

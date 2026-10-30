@@ -34,7 +34,7 @@ public sealed class PlayerWindow : Window
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Background = Brushes.Black;
 
-        _viewModel = new MainViewModel();
+        _viewModel = new MainViewModel(initialize: false);
         Ollin.Core.Audio.Audio.Root = game.Root;
         _viewModel.OpenProjectLocation(game.Root, logToConsole: false, remember: false);
 

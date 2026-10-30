@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.20.2] — 2026-10-30
+
+### Corregido
+
+- El reproductor ya no intenta abrir ni compilar el último proyecto del editor antes
+  de cargar el juego. Eso generaba errores de compilación falsos en `player.log`.
+- El registro del reproductor queda limpio: backend, scripts precargados, escena y
+  audios.
+
 ## [0.20.1] — 2026-10-30
 
 ### Corregido
