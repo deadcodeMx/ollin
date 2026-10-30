@@ -96,6 +96,18 @@ con VAO y buffers dinámicos.
 - Al importar o asignar se pide vaciar la caché; el borrado real de texturas ocurre en el
   hilo de render (`RequestTextureReload`), que es donde vive el contexto OpenGL.
 
+### Historial y gizmos
+
+- `SceneHistory` (Core) guarda instantáneas JSON encadenadas: `Record` empuja el estado
+  actual y fija el nuevo; `Undo`/`Redo` intercambian entre las dos pilas. Las ediciones
+  continuas (girar un número, arrastrar) se agrupan con `ReplaceCurrent`, de modo que un
+  arrastre completo es **un solo** paso de deshacer (límite de 60 pasos).
+- Al restaurar se conservan cámara, zoom y selección, y la escena se marca como modificada.
+- Los gizmos viven en el viewport: `HitGizmo` mide en **espacio de pantalla** (11 px en
+  esquinas, 13 px en el rombo de rotación) y `BeginGizmo`/`UpdateGizmo`/`EndGizmo` aplican
+  la transformación. Con `Ctrl`: posición a 0.25, rotación a 15°, escala a 0.1.
+- El mango de rotación se dibuja alineado con el sprite (usa la dirección "arriba" local).
+
 ### Ollin.Runtime — bucle de juego
 
 - `SceneRuntime`: `Play(scene)` guarda una **instantánea JSON** del estado, arranca el

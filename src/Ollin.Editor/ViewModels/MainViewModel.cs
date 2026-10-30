@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Numerics;
 using Avalonia.Threading;
 using Ollin.Core.Assets;
 using Ollin.Core.Diagnostics;
+using Ollin.Core.History;
 using Ollin.Core.Math;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
@@ -31,7 +33,11 @@ public sealed class MainViewModel : ObservableObject
     private float _homeZoom = 1f;
 
     private readonly string _defaultProjectRoot = ProjectLocator.FindProjectRoot() ?? Environment.CurrentDirectory;
+    private readonly SceneHistory _history = new();
     private readonly SceneRuntime _runtime = new();
+    private string? _lastEditKey;
+    private DateTime _lastEditTime;
+    private bool _restoring;
     private readonly Stopwatch _playClock = new();
     private DispatcherTimer? _playTimer;
     private Vector2 _cameraBeforePlay;
@@ -79,6 +85,14 @@ public sealed class MainViewModel : ObservableObject
     }
 
     public bool HasSelectedAsset => SelectedAsset is not null;
+
+    public bool CanUndo => _history.CanUndo;
+
+    public bool CanRedo => _history.CanRedo;
+
+    public string UndoText => _history.UndoLabel is { } label ? $"Deshacer: {label}" : "Deshacer";
+
+    public string RedoText => _history.RedoLabel is { } label ? $"Rehacer: {label}" : "Rehacer";
 
     public string AssetCountText => Assets.Count == 1 ? "1 textura" : $"{Assets.Count} texturas";
 
@@ -326,10 +340,149 @@ public sealed class MainViewModel : ObservableObject
         _homeCameraPosition = CameraPosition;
         _homeZoom = ActiveCamera.Zoom;
         ResetCamera();
+        if (!_restoring)
+        {
+            _history.Initialize(scene);
+            NotifyHistory();
+        }
+
         OnPropertyChanged(nameof(EntityCountText));
         OnPropertyChanged(nameof(Title));
         RefreshAssets(logToConsole: false);
         RequestRedraw();
+    }
+
+    // ---------- Historial (deshacer / rehacer) ----------
+
+    /// <summary>Marca la escena como editada sin crear un paso de historial (arrastres en curso).</summary>
+    public void NotifySceneEdited()
+    {
+        IsDirty = true;
+        Selected?.RefreshAll();
+        RequestRedraw();
+    }
+
+    /// <summary>Registra un paso de deshacer con el estado actual de la escena.</summary>
+    public void CommitEdit(string label)
+    {
+        if (_restoring)
+        {
+            return;
+        }
+
+        var json = SceneSerializer.Serialize(Scene);
+        if (json == _history.Current?.Json)
+        {
+            return;
+        }
+
+        _lastEditKey = null;
+        _history.Record(json, label);
+        NotifyHistory();
+    }
+
+    /// <summary>Agrupa ediciones continuas del mismo campo en un solo paso.</summary>
+    private void CommitEditDebounced(string label, string key)
+    {
+        if (_restoring)
+        {
+            return;
+        }
+
+        var json = SceneSerializer.Serialize(Scene);
+        if (json == _history.Current?.Json)
+        {
+            return;
+        }
+
+        var now = DateTime.UtcNow;
+        if (key == _lastEditKey && (now - _lastEditTime).TotalMilliseconds < 800)
+        {
+            _history.ReplaceCurrent(json);
+        }
+        else
+        {
+            _history.Record(json, label);
+        }
+
+        _lastEditKey = key;
+        _lastEditTime = now;
+        NotifyHistory();
+    }
+
+    public void Undo()
+    {
+        if (_restoring || IsPlaying)
+        {
+            return;
+        }
+
+        var action = _history.Current?.Label ?? "edición";
+        var entry = _history.Undo();
+        if (entry is null)
+        {
+            return;
+        }
+
+        RestoreHistory(entry, $"Deshecho: {action}");
+    }
+
+    public void Redo()
+    {
+        if (_restoring || IsPlaying)
+        {
+            return;
+        }
+
+        var action = _history.RedoLabel;
+        var entry = _history.Redo();
+        if (entry is null)
+        {
+            return;
+        }
+
+        RestoreHistory(entry, $"Rehecho: {action}");
+    }
+
+    private void RestoreHistory(HistoryEntry entry, string verb)
+    {
+        _restoring = true;
+        try
+        {
+            var camera = CameraPosition;
+            var zoom = ActiveCamera.Zoom;
+            var selection = Selected?.Id;
+            var path = ScenePath;
+
+            var scene = SceneSerializer.Deserialize(entry.Json);
+            LoadScene(scene, path);
+            MoveCamera(camera);
+            ActiveCamera.Zoom = zoom;
+            if (selection is { } id)
+            {
+                Select(Scene.Find(id));
+            }
+
+            IsDirty = true;
+            OnPropertyChanged(nameof(ZoomText));
+            StatusMessage = verb;
+
+        }
+        finally
+        {
+            _restoring = false;
+        }
+
+        NotifyHistory();
+        RequestRedraw();
+    }
+
+    private void NotifyHistory()
+    {
+        OnPropertyChanged(nameof(CanUndo));
+        OnPropertyChanged(nameof(CanRedo));
+        OnPropertyChanged(nameof(UndoText));
+        OnPropertyChanged(nameof(RedoText));
     }
 
     // ---------- Assets ----------
@@ -474,6 +627,7 @@ public sealed class MainViewModel : ObservableObject
         RebuildTree();
         Select(entity);
         IsDirty = true;
+        CommitEdit("Crear entidad");
         OnPropertyChanged(nameof(EntityCountText));
         Log.Info($"Entidad creada: {entity.Name}", "Editor");
         RequestRedraw();
@@ -497,6 +651,7 @@ public sealed class MainViewModel : ObservableObject
         Selected = null;
         RebuildTree();
         IsDirty = true;
+        CommitEdit("Eliminar entidad");
         OnPropertyChanged(nameof(EntityCountText));
         Log.Info($"Entidad eliminada: {name}", "Editor");
         RequestRedraw();
@@ -517,6 +672,7 @@ public sealed class MainViewModel : ObservableObject
         RebuildTree();
         Select(copy);
         IsDirty = true;
+        CommitEdit("Duplicar entidad");
         OnPropertyChanged(nameof(EntityCountText));
         Log.Info($"Entidad duplicada: {copy.Name}", "Editor");
         RequestRedraw();
@@ -582,11 +738,16 @@ public sealed class MainViewModel : ObservableObject
         DrawCalls = drawCalls;
     }
 
-    public void MarkDirty()
+    public void MarkDirty([CallerMemberName] string? editKey = null)
     {
         IsDirty = true;
         OnPropertyChanged(nameof(Title));
         OnPropertyChanged(nameof(EntityCountText));
+
+        if (!string.IsNullOrEmpty(editKey))
+        {
+            CommitEditDebounced($"Editar {editKey}", editKey);
+        }
     }
 
     public Entity? GetCameraEntity() =>

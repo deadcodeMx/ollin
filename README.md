@@ -23,8 +23,10 @@ Motor de juego **2D** con editor gráfico propio y scripting en **C#**, construi
 | Consola de mensajes del motor | ✅ |
 | Modo Play: reproducir, pausar y detener con restauración | ✅ |
 | Panel de assets: miniaturas, importación y asignación de texturas | ✅ |
-| Pruebas automatizadas | ✅ 29/29 |
-| Gizmos, scripting C#, físicas, audio | ⏳ etapas 2–4 |
+| Gizmos en el viewport: mover, rotar y escalar con el ratón | ✅ |
+| Deshacer / rehacer con historial de estados | ✅ |
+| Pruebas automatizadas | ✅ 35/35 |
+| Drag & drop de assets, scripting C#, físicas, audio | ⏳ etapas 2–4 |
 
 Consulta el [roadmap por etapas](docs/ROADMAP.md) y la
 [arquitectura](docs/ARQUITECTURA.md).

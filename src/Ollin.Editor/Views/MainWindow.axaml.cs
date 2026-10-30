@@ -125,6 +125,10 @@ public partial class MainWindow : Window
 
     private void OnClearConsole(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Logs.Clear();
 
+    private void OnUndo(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Undo();
+
+    private void OnRedo(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Redo();
+
     // ---------- Assets ----------
 
     private async void OnImportAsset(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -266,6 +270,14 @@ public partial class MainWindow : Window
         var control = e.KeyModifiers.HasFlag(KeyModifiers.Control);
         switch (e.Key)
         {
+            case Key.Z when control:
+                ViewModel.Undo();
+                e.Handled = true;
+                break;
+            case Key.Y when control:
+                ViewModel.Redo();
+                e.Handled = true;
+                break;
             case Key.N when control:
                 ViewModel.NewScene();
                 e.Handled = true;

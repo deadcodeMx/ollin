@@ -52,6 +52,7 @@ public sealed class Renderer2D : IDisposable
     private static readonly Vector4 AxisXColor = new(0.85f, 0.35f, 0.32f, 0.55f);
     private static readonly Vector4 AxisYColor = new(0.35f, 0.78f, 0.55f, 0.55f);
     private static readonly Vector4 SelectionColor = new(0.91f, 0.64f, 0.23f, 1f);
+    private static readonly Vector4 HandleBorderColor = new(0.12f, 0.09f, 0.05f, 0.95f);
 
     private readonly GL _gl;
     private readonly SpriteBatch _batch;
@@ -121,7 +122,7 @@ public sealed class Renderer2D : IDisposable
 
         if (selectedEntityId is { } id && showHelpers)
         {
-            DrawSelection(scene, id);
+            DrawSelection(scene, id, camera, height);
         }
 
         _batch.End();
@@ -168,7 +169,7 @@ public sealed class Renderer2D : IDisposable
         }
     }
 
-    private void DrawSelection(Scene scene, Guid entityId)
+    private void DrawSelection(Scene scene, Guid entityId, Camera2D camera, int viewportHeight)
     {
         var entity = scene.Find(entityId);
         if (entity is null)
@@ -181,6 +182,7 @@ public sealed class Renderer2D : IDisposable
         var origin = sprite?.Origin ?? new Vector2(0.5f, 0.5f);
         var corners = GetWorldCorners(scene.GetWorldMatrix(entity), size, origin);
 
+        // Contorno
         for (var i = 0; i < 4; i++)
         {
             var a = corners[i];
@@ -188,13 +190,29 @@ public sealed class Renderer2D : IDisposable
             _batch.DrawLine(null, a, b, 0.035f, SelectionColor);
         }
 
-        // Esquinas resaltadas para que se vea claramente qué está seleccionado.
-        var center = (corners[0] + corners[1] + corners[2] + corners[3]) * 0.25f;
+        // Mangos de escala en las esquinas (tamaño constante en píxeles)
+        var ppu = CameraMath.PixelsPerUnit(camera.OrthographicSize, camera.Zoom, viewportHeight);
+        var handle = 9f / ppu;
         foreach (var corner in corners)
         {
-            var direction = Vector2.Normalize(corner - center) * 0.18f;
-            _batch.DrawLine(null, corner - direction, corner + direction, 0.06f, SelectionColor);
+            _batch.DrawRect(null, corner, new Vector2(handle * 1.35f), HandleBorderColor);
+            _batch.DrawRect(null, corner, new Vector2(handle), SelectionColor);
         }
+
+        // Mango de rotación sobre el lado superior, alineado con el sprite
+        var topCenter = (corners[0] + corners[1]) * 0.5f;
+        var bottomCenter = (corners[3] + corners[2]) * 0.5f;
+        var up = topCenter - bottomCenter;
+        if (up.LengthSquared() < 1e-6f)
+        {
+            up = Vector2.UnitY;
+        }
+
+        up = Vector2.Normalize(up);
+        var rotateHandle = topCenter + up * (26f / ppu);
+        _batch.DrawLine(null, topCenter, rotateHandle, 0.02f, SelectionColor);
+        _batch.DrawRect(null, rotateHandle, new Vector2(handle * 1.5f), HandleBorderColor, MathF.PI / 4f);
+        _batch.DrawRect(null, rotateHandle, new Vector2(handle * 1.05f), SelectionColor, MathF.PI / 4f);
     }
 
     private void DrawGrid(Camera2D camera, Vector2 cameraPosition, int width, int height)
@@ -263,7 +281,7 @@ public sealed class Renderer2D : IDisposable
         return PointInQuad(worldPoint, corners);
     }
 
-    private static bool PointInQuad(Vector2 point, Vector2[] quad)
+    public static bool PointInQuad(Vector2 point, Vector2[] quad)
     {
         var sign = 0;
         for (var i = 0; i < 4; i++)

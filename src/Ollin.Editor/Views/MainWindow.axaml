@@ -25,6 +25,9 @@
         <MenuItem Header="Salir" Click="OnExit" />
       </MenuItem>
       <MenuItem Header="Edición">
+        <MenuItem Header="Deshacer" InputGesture="Ctrl+Z" Click="OnUndo" />
+        <MenuItem Header="Rehacer" InputGesture="Ctrl+Y" Click="OnRedo" />
+        <Separator />
         <MenuItem Header="Duplicar entidad" Click="OnDuplicate" />
         <MenuItem Header="Eliminar entidad" Click="OnDelete" />
       </MenuItem>
@@ -50,6 +53,8 @@
           <Button Classes="tool" Content="Nueva" Click="OnNewScene" ToolTip.Tip="Nueva escena (Ctrl+N)" />
           <Button Classes="tool" Content="Abrir" Click="OnOpenScene" ToolTip.Tip="Abrir escena (Ctrl+O)" />
           <Button Classes="tool" Content="Guardar" Click="OnSaveScene" ToolTip.Tip="Guardar (Ctrl+S)" />
+          <Button Classes="tool" Content="↶" Click="OnUndo" IsEnabled="{Binding CanUndo}" ToolTip.Tip="{Binding UndoText}" />
+          <Button Classes="tool" Content="↷" Click="OnRedo" IsEnabled="{Binding CanRedo}" ToolTip.Tip="{Binding RedoText}" />
           <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
           <Button Classes="tool" Content="+ Sprite" Click="OnAddSprite" ToolTip.Tip="Añadir una entidad con sprite" />
           <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" ToolTip.Tip="Añadir una entidad vacía" />

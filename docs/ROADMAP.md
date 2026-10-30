@@ -41,8 +41,8 @@ deshacer/rehacer.
 - [x] Restauración exacta del estado de la escena al detener (instantánea JSON).
 - [x] Componentes animables de ejemplo: `RotatorComponent` y `OscillatorComponent`, editables en el inspector.
 - [x] Bloqueo de la edición mientras se reproduce.
-- [ ] Gizmos arrastrables: mover, rotar, escalar desde el viewport (snap con `Ctrl`).
-- [ ] Deshacer/rehacer (pila de comandos sobre la escena).
+- [x] Gizmos arrastrables: mover, rotar y escalar desde el viewport, con ajuste manteniendo `Ctrl`.
+- [x] Deshacer/rehacer con historial de instantáneas y agrupación de ediciones continuas.
 - [x] Panel de assets: miniaturas, importación y asignación de textura al sprite seleccionado.
 - [ ] Arrastrar una textura del panel al viewport (drag & drop).
 - [ ] Exportación del juego a carpeta ejecutable (Windows).

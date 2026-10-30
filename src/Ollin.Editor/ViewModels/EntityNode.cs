@@ -56,13 +56,29 @@ public sealed class EntityNode : ObservableObject
     public decimal X
     {
         get => (decimal)Entity.Transform.Position.X;
-        set => SetPosition((float)value, Entity.Transform.Position.Y);
+        set
+        {
+            if (Nearly(Entity.Transform.Position.X, (float)value))
+            {
+                return;
+            }
+
+            SetPosition((float)value, Entity.Transform.Position.Y);
+        }
     }
 
     public decimal Y
     {
         get => (decimal)Entity.Transform.Position.Y;
-        set => SetPosition(Entity.Transform.Position.X, (float)value);
+        set
+        {
+            if (Nearly(Entity.Transform.Position.Y, (float)value))
+            {
+                return;
+            }
+
+            SetPosition(Entity.Transform.Position.X, (float)value);
+        }
     }
 
     public decimal RotationDegrees
@@ -70,6 +86,11 @@ public sealed class EntityNode : ObservableObject
         get => (decimal)(Entity.Transform.Rotation * 180.0 / Math.PI);
         set
         {
+            if (Nearly(Entity.Transform.Rotation, (float)((double)value * Math.PI / 180.0)))
+            {
+                return;
+            }
+
             Entity.Transform.Rotation = (float)((double)value * Math.PI / 180.0);
             OnPropertyChanged();
             _owner.MarkDirty();
@@ -82,6 +103,11 @@ public sealed class EntityNode : ObservableObject
         get => (decimal)Entity.Transform.Scale.X;
         set
         {
+            if (Nearly(Entity.Transform.Scale.X, (float)value))
+            {
+                return;
+            }
+
             Entity.Transform.Scale = new Vector2((float)value, Entity.Transform.Scale.Y);
             OnPropertyChanged();
             _owner.MarkDirty();
@@ -94,6 +120,11 @@ public sealed class EntityNode : ObservableObject
         get => (decimal)Entity.Transform.Scale.Y;
         set
         {
+            if (Nearly(Entity.Transform.Scale.Y, (float)value))
+            {
+                return;
+            }
+
             Entity.Transform.Scale = new Vector2(Entity.Transform.Scale.X, (float)value);
             OnPropertyChanged();
             _owner.MarkDirty();
@@ -383,8 +414,15 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    private static bool Nearly(float a, float b) => MathF.Abs(a - b) < 0.00001f;
+
     private void SetPosition(float x, float y)
     {
+        if (Nearly(Entity.Transform.Position.X, x) && Nearly(Entity.Transform.Position.Y, y))
+        {
+            return;
+        }
+
         Entity.Transform.Position = new Vector2(x, y);
         OnPropertyChanged(nameof(X));
         OnPropertyChanged(nameof(Y));

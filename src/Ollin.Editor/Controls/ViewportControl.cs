@@ -37,6 +37,15 @@ public sealed class ViewportControl : OpenGlControlBase
     private volatile bool _textureReloadRequested;
     private string? _errorText;
 
+    private GizmoHandle _gizmoHandle = GizmoHandle.None;
+    private Vector2 _gizmoStartWorld;
+    private Vector2 _gizmoCenter;
+    private Vector2 _gizmoStartPosition;
+    private Vector2 _gizmoStartScale = Vector2.One;
+    private float _gizmoStartRotation;
+    private float _gizmoStartAngle;
+    private float _gizmoStartDistance = 1f;
+
     public ViewportControl()
     {
         Focusable = true;
@@ -281,6 +290,168 @@ public sealed class ViewportControl : OpenGlControlBase
         Diag($"hit={(hit?.Name ?? "nada")} order={bestOrder}");
         _viewModel.Select(hit);
         RequestNextFrameRendering();
+    }
+
+    /// <summary>Detecta qué parte del gizmo hay bajo el puntero (mover, rotar o escalar).</summary>
+    public GizmoHandle HitGizmo(Point position)
+    {
+        if (_viewModel?.Selected is null || _viewModel.IsPlaying)
+        {
+            return GizmoHandle.None;
+        }
+
+        var (width, height, scaling) = GetPixelSizeWithScaling();
+        var camera = _viewModel.ActiveCamera;
+        var cameraPosition = _viewModel.CameraPosition;
+        var entity = _viewModel.Selected.Entity;
+        var sprite = entity.GetComponent<SpriteRenderer>();
+        var size = sprite?.Size ?? Vector2.One;
+        var origin = sprite?.Origin ?? new Vector2(0.5f, 0.5f);
+        var corners = Renderer2D.GetWorldCorners(_viewModel.Scene.GetWorldMatrix(entity), size, origin);
+
+        var pointer = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
+        var screenCorners = new Vector2[4];
+        for (var i = 0; i < 4; i++)
+        {
+            screenCorners[i] = CameraMath.WorldToScreen(cameraPosition, camera.OrthographicSize, camera.Zoom, width, height, corners[i]);
+        }
+
+        var topCenter = (corners[0] + corners[1]) * 0.5f;
+        var bottomCenter = (corners[3] + corners[2]) * 0.5f;
+        var up = topCenter - bottomCenter;
+        up = up.LengthSquared() < 1e-6f ? Vector2.UnitY : Vector2.Normalize(up);
+        var ppu = CameraMath.PixelsPerUnit(camera.OrthographicSize, camera.Zoom, height);
+        var rotateWorld = topCenter + up * (26f / ppu);
+        var rotateScreen = CameraMath.WorldToScreen(cameraPosition, camera.OrthographicSize, camera.Zoom, width, height, rotateWorld);
+
+        if (Vector2.Distance(pointer, rotateScreen) <= 13f)
+        {
+            return GizmoHandle.Rotate;
+        }
+
+        var handles = new[]
+        {
+            GizmoHandle.ScaleTopLeft,
+            GizmoHandle.ScaleTopRight,
+            GizmoHandle.ScaleBottomRight,
+            GizmoHandle.ScaleBottomLeft,
+        };
+
+        for (var i = 0; i < 4; i++)
+        {
+            if (Vector2.Distance(pointer, screenCorners[i]) <= 11f)
+            {
+                return handles[i];
+            }
+        }
+
+        return Renderer2D.PointInQuad(pointer, screenCorners) ? GizmoHandle.Move : GizmoHandle.None;
+    }
+
+    /// <summary>Comienza a arrastrar el gizmo desde el puntero indicado.</summary>
+    public bool BeginGizmo(GizmoHandle handle, Point position)
+    {
+        if (handle == GizmoHandle.None || _viewModel?.Selected is null)
+        {
+            return false;
+        }
+
+        var entity = _viewModel.Selected.Entity;
+        _gizmoHandle = handle;
+        _gizmoStartWorld = ToWorld(position);
+        _gizmoCenter = _viewModel.Scene.GetWorldPosition(entity);
+        _gizmoStartPosition = entity.Transform.Position;
+        _gizmoStartScale = entity.Transform.Scale;
+        _gizmoStartRotation = entity.Transform.Rotation;
+
+        var offset = _gizmoStartWorld - _gizmoCenter;
+        _gizmoStartAngle = MathF.Atan2(offset.Y, offset.X);
+        _gizmoStartDistance = MathF.Max(0.0001f, offset.Length());
+        return true;
+    }
+
+    /// <summary>Aplica el arrastre del gizmo (con ajuste opcional).</summary>
+    public void UpdateGizmo(Point position, bool snap)
+    {
+        if (_gizmoHandle == GizmoHandle.None || _viewModel?.Selected is null)
+        {
+            return;
+        }
+
+        var entity = _viewModel.Selected.Entity;
+        var world = ToWorld(position);
+
+        switch (_gizmoHandle)
+        {
+            case GizmoHandle.Move:
+            {
+                var position2 = _gizmoStartPosition + (world - _gizmoStartWorld);
+                if (snap)
+                {
+                    position2 = new Vector2(MathF.Round(position2.X * 4f) / 4f, MathF.Round(position2.Y * 4f) / 4f);
+                }
+
+                entity.Transform.Position = position2;
+                break;
+            }
+
+            case GizmoHandle.Rotate:
+            {
+                var angle = MathF.Atan2(world.Y - _gizmoCenter.Y, world.X - _gizmoCenter.X);
+                var rotation = _gizmoStartRotation + (angle - _gizmoStartAngle);
+                if (snap)
+                {
+                    const float step = MathF.PI / 12f; // 15°
+                    rotation = MathF.Round(rotation / step) * step;
+                }
+
+                entity.Transform.Rotation = rotation;
+                break;
+            }
+
+            default:
+            {
+                var distance = Vector2.Distance(world, _gizmoCenter);
+                var factor = distance / _gizmoStartDistance;
+                if (snap)
+                {
+                    factor = MathF.Round(factor * 10f) / 10f;
+                }
+
+                factor = Math.Clamp(factor, 0.05f, 50f);
+                entity.Transform.Scale = _gizmoStartScale * factor;
+                break;
+            }
+        }
+
+        _viewModel.NotifySceneEdited();
+    }
+
+    /// <summary>Termina el arrastre y registra un paso de deshacer.</summary>
+    public void EndGizmo()
+    {
+        if (_gizmoHandle == GizmoHandle.None)
+        {
+            return;
+        }
+
+        var label = _gizmoHandle switch
+        {
+            GizmoHandle.Move => "Mover entidad",
+            GizmoHandle.Rotate => "Rotar entidad",
+            _ => "Escalar entidad",
+        };
+
+        _gizmoHandle = GizmoHandle.None;
+        _viewModel?.CommitEdit(label);
+    }
+
+    private Vector2 ToWorld(Point position)
+    {
+        var (width, height, scaling) = GetPixelSizeWithScaling();
+        var camera = _viewModel!.ActiveCamera;
+        var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
+        return CameraMath.ScreenToWorld(_viewModel.CameraPosition, camera.OrthographicSize, camera.Zoom, width, height, screen);
     }
 
     /// <summary>Mueve la cámara con un desplazamiento en píxeles de pantalla.</summary>

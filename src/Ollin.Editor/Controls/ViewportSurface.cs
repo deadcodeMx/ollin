@@ -13,6 +13,7 @@ namespace Ollin.Editor.Controls;
 public sealed class ViewportSurface : Border
 {
     private bool _panning;
+    private bool _gizmoDragging;
     private Point _lastPointer;
     private IPointer? _capturedPointer;
 
@@ -50,6 +51,16 @@ public sealed class ViewportSurface : Border
 
         if (point.Properties.IsLeftButtonPressed)
         {
+            var handle = Viewport.HitGizmo(position);
+            if (handle != GizmoHandle.None && Viewport.BeginGizmo(handle, position))
+            {
+                _gizmoDragging = true;
+                _capturedPointer = e.Pointer;
+                e.Pointer.Capture(this);
+                e.Handled = true;
+                return;
+            }
+
             Viewport.SelectAt(position);
             e.Handled = true;
         }
@@ -58,6 +69,15 @@ public sealed class ViewportSurface : Border
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
+
+        if (_gizmoDragging)
+        {
+            var snap = e.KeyModifiers.HasFlag(KeyModifiers.Control);
+            Viewport.UpdateGizmo(e.GetPosition(this), snap);
+            e.Handled = true;
+            return;
+        }
+
         if (!_panning)
         {
             return;
@@ -73,6 +93,17 @@ public sealed class ViewportSurface : Border
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
+
+        if (_gizmoDragging)
+        {
+            _gizmoDragging = false;
+            Viewport.EndGizmo();
+            _capturedPointer?.Capture(null);
+            _capturedPointer = null;
+            e.Handled = true;
+            return;
+        }
+
         if (!_panning)
         {
             return;
