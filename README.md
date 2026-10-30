@@ -51,7 +51,7 @@ un puente 2.5D antes del 3D.
 | 1 | Editor: escena, jerarquía, inspector, viewport, cámara, JSON | ✅ |
 | 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
-| 4 | Cerrar el 2D: recarga en vivo, animación, tilemaps, física, audio, prefabs | ⏳ |
+| 4 | Animación, tilemaps, física, rutinas y depuración | ✅ (parcial: faltan audio y prefabs) |
 | 5 | Terror y supervivencia: luces, triggers, diálogos, inventario, IA, día/noche | ⏳ |
 | 6 | 2.5D: sprites en espacio 3D con cámara en primera persona | ⏳ |
 | 7 | 3D: mallas glTF, luces y sombras, física, navmesh, editor 3D | ⏳ |
@@ -70,7 +70,12 @@ Detalle completo en [docs/ROADMAP.md](docs/ROADMAP.md).
 | Historial | Deshacer/rehacer con agrupación de ediciones continuas (60 pasos) |
 | Assets | Lista con miniaturas, importar PNG/JPG/BMP y asignar al sprite |
 | Juego | Reproducir, pausar y detener restaurando la escena exactamente |
-| Scripts | Compilación en memoria, ciclo de vida, `Input`/`Time`, recarga en caliente y errores con línea |
+| Scripts | Compilación en memoria, ciclo de vida, Input/Time, recarga en caliente y errores con línea |
+| Animación | Hojas de sprites con cuadros, FPS, bucle y recorte por cuadro |
+| Tilemaps | Rejilla con tileset, pintado con el ratón en el viewport |
+| Física | Cajas de colisión, cuerpos con velocidad, gravedad y disparadores con avisos a scripts |
+| Rutinas | StartCoroutine + WaitForSeconds para secuencias |
+| Depuración | DebugDraw.Line/Rect sobre el viewport |
 | Consola | Mensajes del motor con niveles (info, aviso, error) |
 
 ## Stack
@@ -140,6 +145,8 @@ src/
   Ollin.Rendering/   Renderer 2D sobre OpenGL ES (sprite batch, cuadrícula, hit-test)
   Ollin.Runtime/     Bucle de juego: reproducción, pausa, delta time y restauración
   Ollin.Scripting/   Compilación de scripts con Roslyn y API pública de scripting
+tools/
+  Ollin.Setup/       Instalador de Windows (copia, accesos directos y desinstalador)
   Ollin.Editor/      Aplicación Avalonia: GUI, viewport, inspector, consola
 tests/
   Ollin.Tests/       Pruebas del núcleo, del runtime y del compilador de scripts
@@ -200,6 +207,17 @@ public sealed class PlayerBob : OllinScript
 las nuevas instancias, copia los campos compatibles (números, cadenas, vectores,
 enumeraciones) y llama a `OnReload`. Las referencias a tipos definidos por el propio
 script no se conservan porque el ensamblado se recompila.
+
+## Beta instalable
+
+La versión de prueba se empaqueta como instalador de Windows:
+
+```
+dist/installer/Ollin-Setup.exe
+```
+
+Instala en `%LOCALAPPDATA%\Ollin`, crea accesos directos y añade el desinstalador.
+Instrucciones, requisitos y cómo regenerarla en [docs/BETA.md](docs/BETA.md).
 
 ## Formato de escena
 

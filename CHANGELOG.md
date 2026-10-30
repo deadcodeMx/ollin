@@ -12,10 +12,31 @@ versionado [SemVer](https://semver.org/lang/es/).
 
 ### Planeado
 
-- Animación por sprites, tilemaps, física 2D y audio.
+- Audio 2D y prefabs.
 - Luces 2D, triggers y diálogos para terror.
 - Puente 2.5D y 3D.
-- Exportación del juego a un ejecutable de Windows.
+- Exportación de un juego a un ejecutable.
+
+## [0.4.0] — 2026-10-30
+
+### Añadido
+
+- `SpriteAnimator`: animación por hoja de sprites con cuadros, FPS, bucle y recorte.
+- `Tilemap`: rejilla con tileset, redimensionado y pintado con el ratón en el viewport.
+- Física 2D: `BoxCollider`, `Rigidbody2D` con gravedad, resolución AABB y disparadores.
+- Avisos de física a los scripts: `OnCollisionEnter`, `OnTriggerEnter` y `OnTriggerExit`.
+- Rutinas en scripts: `StartCoroutine` con `WaitForSeconds`.
+- `DebugDraw.Line/Rect` para depurar desde los scripts.
+- Hoja de animación del héroe y tileset de ejemplo; la escena por defecto usa tilemap.
+- Instalador de Windows con accesos directos y desinstalador (`tools/Ollin.Setup`).
+- Guía de la beta y de generación del instalador en `docs/BETA.md`.
+- 8 pruebas nuevas (55 en total).
+
+### Corregido
+
+- Los tilemaps nuevos nacían con el mosaico 0 en todas las celdas.
+- El recorte de animación no se aplicaba en modo edición (se veía la hoja completa).
+- El desinstalador no podía borrar su propia carpeta; ahora se relanza desde `%TEMP%`.
 
 ## [0.3.0] — 2026-10-30
 

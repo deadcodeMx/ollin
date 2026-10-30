@@ -19,6 +19,12 @@ public sealed class SpriteRenderer : Component
 
     public Vector2 Origin { get; set; } = new(0.5f, 0.5f);
 
+    /// <summary>
+    /// Recorte de la textura en píxeles (x, y, ancho, alto) para hojas de sprites.
+    /// Si el ancho es 0 se dibuja la textura completa.
+    /// </summary>
+    public Vector4 FrameRect { get; set; }
+
     /// <summary>Orden de dibujo: menor se dibuja primero.</summary>
     public int SortingOrder { get; set; }
 
@@ -35,6 +41,7 @@ public sealed class SpriteRenderer : Component
         Tint = Tint,
         Size = Size,
         Origin = Origin,
+        FrameRect = FrameRect,
         SortingOrder = SortingOrder,
         FlipX = FlipX,
         FlipY = FlipY,

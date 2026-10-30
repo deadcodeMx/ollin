@@ -27,3 +27,5 @@ desktop.ini
 # Capturas y temporales de verificación
 *.tmp
 captures/
+dist/
+tools/payload.zip

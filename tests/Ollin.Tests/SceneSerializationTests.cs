@@ -27,7 +27,7 @@ public class SceneSerializationTests
         var sprite = player.GetComponent<SpriteRenderer>();
         Assert.NotNull(sprite);
         Assert.Equal(1.3f, sprite!.Size.X, 3);
-        Assert.Equal("assets/sprites/hero.png", sprite.TexturePath);
+        Assert.Equal("assets/sprites/hero-walk.png", sprite.TexturePath);
         Assert.Equal(Vector4.One, sprite.Tint);
 
         Assert.NotNull(loaded.GetMainCamera());

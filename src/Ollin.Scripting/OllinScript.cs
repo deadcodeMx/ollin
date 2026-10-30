@@ -1,3 +1,4 @@
+using System.Collections;
 using Ollin.Core.Model;
 
 namespace Ollin.Scripting;
@@ -17,6 +18,14 @@ public abstract class OllinScript
 
     /// <summary>Vincula el script con su entidad (lo llama el runtime).</summary>
     public void Attach(Entity entity) => Entity = entity;
+
+    internal List<IEnumerator> Coroutines { get; } = new();
+
+    /// <summary>Lanza una rutina: <c>yield return new WaitForSeconds(1f)</c>.</summary>
+    public void StartCoroutine(IEnumerator routine) => CoroutineHost.Pending.Add((this, routine));
+
+    /// <summary>Cancela las rutinas pendientes de este script.</summary>
+    public void StopAllCoroutines() => Coroutines.Clear();
 
     /// <summary>Se ejecuta una vez al comenzar la reproducción.</summary>
     public virtual void OnStart()
@@ -38,6 +47,21 @@ public abstract class OllinScript
     /// ya se restauró. Úsalo para reenganchar referencias externas.
     /// </summary>
     public virtual void OnReload()
+    {
+    }
+
+    /// <summary>Colisión sólida con otra entidad.</summary>
+    public virtual void OnCollisionEnter(Entity other)
+    {
+    }
+
+    /// <summary>Entrada en una zona de disparo.</summary>
+    public virtual void OnTriggerEnter(Entity other)
+    {
+    }
+
+    /// <summary>Salida de una zona de disparo.</summary>
+    public virtual void OnTriggerExit(Entity other)
     {
     }
 

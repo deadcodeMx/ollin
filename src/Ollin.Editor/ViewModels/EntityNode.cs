@@ -326,6 +326,310 @@ public sealed class EntityNode : ObservableObject
         _owner.RequestRedraw();
     }
 
+    // ---------- Animación ----------
+
+    public bool HasAnimator => Entity.GetComponent<SpriteAnimator>() is not null;
+
+    public SpriteAnimator? Animator => Entity.GetComponent<SpriteAnimator>();
+
+    public string AnimationTexture
+    {
+        get => Animator?.TexturePath ?? string.Empty;
+        set
+        {
+            if (Animator is null || Animator.TexturePath == value)
+            {
+                return;
+            }
+
+            Animator.TexturePath = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal FrameWidth
+    {
+        get => Animator?.FrameWidth ?? 32;
+        set
+        {
+            if (Animator is null || Animator.FrameWidth == (int)value)
+            {
+                return;
+            }
+
+            Animator.FrameWidth = Math.Max(1, (int)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal FrameHeight
+    {
+        get => Animator?.FrameHeight ?? 32;
+        set
+        {
+            if (Animator is null || Animator.FrameHeight == (int)value)
+            {
+                return;
+            }
+
+            Animator.FrameHeight = Math.Max(1, (int)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal FrameCount
+    {
+        get => Animator?.FrameCount ?? 4;
+        set
+        {
+            if (Animator is null || Animator.FrameCount == (int)value)
+            {
+                return;
+            }
+
+            Animator.FrameCount = Math.Max(1, (int)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal AnimationFps
+    {
+        get => (decimal)(Animator?.Fps ?? 8f);
+        set
+        {
+            if (Animator is null || MathF.Abs(Animator.Fps - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Animator.Fps = Math.Max(0.1f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool AnimationLoop
+    {
+        get => Animator?.Loop ?? true;
+        set
+        {
+            if (Animator is null || Animator.Loop == value)
+            {
+                return;
+            }
+
+            Animator.Loop = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    // ---------- Tilemap ----------
+
+    public bool HasTilemap => Entity.GetComponent<Tilemap>() is not null;
+
+    public Tilemap? Tilemap => Entity.GetComponent<Tilemap>();
+
+    public string TilemapTexture
+    {
+        get => Tilemap?.TexturePath ?? string.Empty;
+        set
+        {
+            if (Tilemap is null || Tilemap.TexturePath == value)
+            {
+                return;
+            }
+
+            Tilemap.TexturePath = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal TilemapWidth
+    {
+        get => Tilemap?.Width ?? 16;
+        set
+        {
+            if (Tilemap is null || Tilemap.Width == (int)value)
+            {
+                return;
+            }
+
+            Tilemap.Resize((int)value, Tilemap.Height);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal TilemapHeight
+    {
+        get => Tilemap?.Height ?? 8;
+        set
+        {
+            if (Tilemap is null || Tilemap.Height == (int)value)
+            {
+                return;
+            }
+
+            Tilemap.Resize(Tilemap.Width, (int)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal TileSize
+    {
+        get => (decimal)(Tilemap?.TileSize ?? 1f);
+        set
+        {
+            if (Tilemap is null || MathF.Abs(Tilemap.TileSize - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Tilemap.TileSize = Math.Max(0.05f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    // ---------- Física ----------
+
+    public bool HasCollider => Entity.GetComponent<BoxCollider>() is not null;
+
+    public BoxCollider? Collider => Entity.GetComponent<BoxCollider>();
+
+    public decimal ColliderWidth
+    {
+        get => (decimal)(Collider?.Size.X ?? 1f);
+        set
+        {
+            if (Collider is null || MathF.Abs(Collider.Size.X - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Collider.Size = new Vector2(Math.Max(0.01f, (float)value), Collider.Size.Y);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal ColliderHeight
+    {
+        get => (decimal)(Collider?.Size.Y ?? 1f);
+        set
+        {
+            if (Collider is null || MathF.Abs(Collider.Size.Y - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Collider.Size = new Vector2(Collider.Size.X, Math.Max(0.01f, (float)value));
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public bool IsTrigger
+    {
+        get => Collider?.IsTrigger ?? false;
+        set
+        {
+            if (Collider is null || Collider.IsTrigger == value)
+            {
+                return;
+            }
+
+            Collider.IsTrigger = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool HasRigidbody => Entity.GetComponent<Rigidbody2D>() is not null;
+
+    public Rigidbody2D? Body => Entity.GetComponent<Rigidbody2D>();
+
+    public decimal VelocityX
+    {
+        get => (decimal)(Body?.Velocity.X ?? 0f);
+        set
+        {
+            if (Body is null || MathF.Abs(Body.Velocity.X - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Body.Velocity = new Vector2((float)value, Body.Velocity.Y);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal VelocityY
+    {
+        get => (decimal)(Body?.Velocity.Y ?? 0f);
+        set
+        {
+            if (Body is null || MathF.Abs(Body.Velocity.Y - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Body.Velocity = new Vector2(Body.Velocity.X, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool UseGravity
+    {
+        get => Body?.AffectedByGravity ?? false;
+        set
+        {
+            if (Body is null || Body.AffectedByGravity == value)
+            {
+                return;
+            }
+
+            Body.AffectedByGravity = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool IsStaticBody
+    {
+        get => Body?.IsStatic ?? false;
+        set
+        {
+            if (Body is null || Body.IsStatic == value)
+            {
+                return;
+            }
+
+            Body.IsStatic = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
     public IBrush ColorBrush
     {
         get

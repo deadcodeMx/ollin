@@ -253,14 +253,14 @@ public partial class MainWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Motor de juego 2D · versión 0.3 (etapa 3 completada)",
+                    Text = "Motor de juego 2D · versión 0.4.0 beta",
                     FontSize = 12,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
                 new TextBlock
                 {
                     Text = "Editor con Avalonia y renderizado 2D con OpenGL (Silk.NET). " +
-                           "Scripts en C# compilados con Roslyn y recarga en caliente.",
+                           "Animación, tilemaps, física y scripts en C# con recarga en caliente.",
                     FontSize = 12,
                     TextWrapping = TextWrapping.Wrap,
                     Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")),

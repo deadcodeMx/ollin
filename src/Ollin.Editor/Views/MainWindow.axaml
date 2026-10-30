@@ -338,6 +338,107 @@
                 </Grid>
               </StackPanel>
 
+              <StackPanel IsVisible="{Binding Selected.HasAnimator}" Spacing="5">
+                <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
+                <TextBlock Classes="section" Text="ANIMACIÓN" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Hoja" VerticalAlignment="Center" Classes="hint" />
+                  <TextBox Grid.Column="1" Text="{Binding Selected.AnimationTexture, Mode=TwoWay}"
+                           Watermark="assets/sprites/hoja.png" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Cuadro ancho" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.FrameWidth, Mode=TwoWay}"
+                                 Increment="1" Minimum="1" FormatString="0" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Cuadro alto" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.FrameHeight, Mode=TwoWay}"
+                                 Increment="1" Minimum="1" FormatString="0" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Cuadros" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.FrameCount, Mode=TwoWay}"
+                                 Increment="1" Minimum="1" FormatString="0" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="FPS" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.AnimationFps, Mode=TwoWay}"
+                                 Increment="1" Minimum="0.1" FormatString="0.#" />
+                </Grid>
+                <CheckBox Content="Repetir en bucle" IsChecked="{Binding Selected.AnimationLoop, Mode=TwoWay}"
+                          FontSize="11.5" />
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding Selected.HasTilemap}" Spacing="5">
+                <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
+                <TextBlock Classes="section" Text="TILEMAP" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Tileset" VerticalAlignment="Center" Classes="hint" />
+                  <TextBox Grid.Column="1" Text="{Binding Selected.TilemapTexture, Mode=TwoWay}"
+                           Watermark="assets/sprites/tiles.png" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Ancho" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.TilemapWidth, Mode=TwoWay}"
+                                 Increment="1" Minimum="1" FormatString="0" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Alto" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.TilemapHeight, Mode=TwoWay}"
+                                 Increment="1" Minimum="1" FormatString="0" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Celda" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.TileSize, Mode=TwoWay}"
+                                 Increment="0.25" Minimum="0.05" FormatString="0.###" />
+                </Grid>
+                <CheckBox Content="Pintar en el viewport" IsChecked="{Binding IsPaintingTiles, Mode=TwoWay}"
+                          FontSize="11.5" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Mosaico" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding PaintTileIndex, Mode=TwoWay}"
+                                 Increment="1" Minimum="-1" FormatString="0" />
+                </Grid>
+                <TextBlock Classes="hint" Text="Clic pinta; -1 borra la celda." TextWrapping="Wrap" />
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding Selected.HasCollider}" Spacing="5">
+                <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
+                <TextBlock Classes="section" Text="COLISIÓN" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Ancho" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderWidth, Mode=TwoWay}"
+                                 Increment="0.1" Minimum="0.01" FormatString="0.###" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Alto" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderHeight, Mode=TwoWay}"
+                                 Increment="0.1" Minimum="0.01" FormatString="0.###" />
+                </Grid>
+                <CheckBox Content="Es disparador (trigger)" IsChecked="{Binding Selected.IsTrigger, Mode=TwoWay}"
+                          FontSize="11.5" />
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding Selected.HasRigidbody}" Spacing="5">
+                <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
+                <TextBlock Classes="section" Text="CUERPO" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Velocidad X" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.VelocityX, Mode=TwoWay}"
+                                 Increment="0.1" FormatString="0.###" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Velocidad Y" VerticalAlignment="Center" Classes="hint" />
+                  <NumericUpDown Grid.Column="1" Value="{Binding Selected.VelocityY, Mode=TwoWay}"
+                                 Increment="0.1" FormatString="0.###" />
+                </Grid>
+                <CheckBox Content="Afectado por gravedad" IsChecked="{Binding Selected.UseGravity, Mode=TwoWay}"
+                          FontSize="11.5" />
+                <CheckBox Content="Estático" IsChecked="{Binding Selected.IsStaticBody, Mode=TwoWay}"
+                          FontSize="11.5" />
+              </StackPanel>
+
               <StackPanel IsVisible="{Binding Selected.HasScript}" Spacing="5">
                 <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
                 <TextBlock Classes="section" Text="SCRIPT" />

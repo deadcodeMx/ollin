@@ -1,3 +1,4 @@
+using System.Collections;
 using Ollin.Core;
 using Ollin.Core.Diagnostics;
 using Ollin.Core.Input;
@@ -19,6 +20,8 @@ public sealed class SceneRuntime
     private static readonly float MaxDeltaTime = 0.1f;
 
     private readonly List<OllinScript> _scripts = new();
+    private readonly List<CoroutineEntry> _coroutines = new();
+    private readonly PhysicsSystem _physics = new();
     private Scene? _scene;
     private ScriptWorkspace? _scriptsWorkspace;
     private string? _snapshot;
@@ -46,6 +49,10 @@ public sealed class SceneRuntime
         UpdateCount = 0;
         TimeState.Reset();
         InputState.Reset();
+        DebugDraw.Clear();
+        _coroutines.Clear();
+        _physics.Reset();
+        CoroutineHost.Drain();
         StartScripts();
         Log.Info("Reproducción iniciada", "Runtime");
     }
@@ -80,6 +87,9 @@ public sealed class SceneRuntime
         IsPlaying = false;
         IsPaused = false;
         Elapsed = 0f;
+        _coroutines.Clear();
+        _physics.Reset();
+        DebugDraw.Clear();
         TimeState.Reset();
         InputState.Reset();
         _scene = null;
@@ -129,6 +139,9 @@ public sealed class SceneRuntime
         }
 
         UpdateScripts(dt);
+        DrainCoroutines();
+        _physics.Step(_scene, _scripts, dt);
+        UpdateCoroutines(dt);
 
         // Cierra el cuadro de entrada: calcula flancos y delta del ratón.
         InputState.Update();
@@ -165,6 +178,7 @@ public sealed class SceneRuntime
 
         // Se sueltan las instancias del ensamblado anterior para poder descargarlo.
         _scripts.Clear();
+        _coroutines.Clear();
         _scriptsWorkspace = workspace;
 
         var result = workspace.Reload();
@@ -200,6 +214,63 @@ public sealed class SceneRuntime
 
         Log.Info($"Recarga en caliente completada: {_scripts.Count} script(s) activos", "Runtime");
         return _scripts.Count;
+    }
+    /// <summary>Recoge las rutinas lanzadas por los scripts en este cuadro.</summary>
+    private void DrainCoroutines()
+    {
+        foreach (var (owner, routine) in CoroutineHost.Drain())
+        {
+            if (_scripts.Contains(owner))
+            {
+                _coroutines.Add(new CoroutineEntry { Owner = owner, Routine = routine });
+            }
+        }
+    }
+
+    /// <summary>Avanza las rutinas respetando <c>WaitForSeconds</c>.</summary>
+    private void UpdateCoroutines(float deltaTime)
+    {
+        for (var i = _coroutines.Count - 1; i >= 0; i--)
+        {
+            var entry = _coroutines[i];
+
+            if (entry.Wait > 0f)
+            {
+                entry.Wait -= deltaTime;
+                if (entry.Wait > 0f)
+                {
+                    continue;
+                }
+            }
+
+            bool moved;
+            try
+            {
+                moved = entry.Routine.MoveNext();
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"Error en una rutina de {entry.Owner.GetType().Name}: {exception.Message}", "Runtime");
+                moved = false;
+            }
+
+            if (!moved || !_scripts.Contains(entry.Owner))
+            {
+                _coroutines.RemoveAt(i);
+                continue;
+            }
+
+            entry.Wait = entry.Routine.Current is WaitForSeconds wait ? wait.Seconds : 0f;
+        }
+    }
+
+    private sealed class CoroutineEntry
+    {
+        public required OllinScript Owner { get; init; }
+
+        public required IEnumerator Routine { get; init; }
+
+        public float Wait { get; set; }
     }
     private void StartScripts()
     {

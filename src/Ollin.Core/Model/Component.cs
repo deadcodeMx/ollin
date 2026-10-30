@@ -12,6 +12,10 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.ScriptComponent), "script")]
 [JsonDerivedType(typeof(Components.RotatorComponent), "rotator")]
 [JsonDerivedType(typeof(Components.OscillatorComponent), "oscillator")]
+[JsonDerivedType(typeof(Components.SpriteAnimator), "animator")]
+[JsonDerivedType(typeof(Components.Tilemap), "tilemap")]
+[JsonDerivedType(typeof(Components.BoxCollider), "collider")]
+[JsonDerivedType(typeof(Components.Rigidbody2D), "rigidbody")]
 public abstract class Component
 {
     /// <summary>Entidad propietaria (no se serializa).</summary>

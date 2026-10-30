@@ -35,7 +35,7 @@ pruebas en verde y documentada aquí.
 | 1 | Editor: escena, jerarquía, inspector, viewport, cámara, JSON | ✅ |
 | 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
-| 4 | Cerrar el 2D | ⏳ siguiente |
+| 4 | Cerrar el 2D | ✅ parcial (faltan audio y prefabs) |
 | 5 | Herramientas de terror y supervivencia | ⏳ |
 | 6 | 2.5D (puente) | ⏳ |
 | 7 | 3D | ⏳ |
@@ -64,13 +64,13 @@ Queda para la etapa 4: temporizadores (`WaitForSeconds`) y dibujo de depuración
 **Objetivo:** que un prototipo 2D de 10 minutos sea cómodo de construir y jugar.
 
 ### Scripting (resto)
-- [ ] Temporizadores: `WaitForSeconds` y *coroutines* ligeras.
-- [ ] Dibujo de depuración en el viewport: líneas, cajas y texto.
+- [x] Temporizadores: `StartCoroutine` + `WaitForSeconds`.
+- [x] Dibujo de depuración en el viewport: líneas y cajas (`DebugDraw`).
 
 ### Contenido
-- [ ] Animación por sprites: clips, FPS, bucle, eventos de frame.
-- [ ] Tilemap con capas, colisión por celda y *autotiling* básico.
-- [ ] Física 2D: cuerpos estáticos/cinemáticos, colisiones AABB y triggers.
+- [x] Animación por sprites: hoja de cuadros, FPS, bucle y recorte por cuadro.`n- [ ] Eventos de frame y varias animaciones por entidad.
+- [x] Tilemap con tileset y pintado en el viewport.`n- [ ] Capas de tilemap, colisión por celda y *autotiling*.
+- [x] Física 2D: cajas AABB, cuerpos con velocidad/gravedad y triggers con avisos a scripts.`n- [ ] Colisión por celda del tilemap y cuerpos cinemáticos.
 - [ ] Audio 2D: efectos, música, canales con volumen y *fade*.
 - [ ] Prefabs: entidad plantilla + instancias con overrides.
 

@@ -46,6 +46,8 @@ public sealed class MainViewModel : ObservableObject
     private float _zoomBeforePlay;
     private bool _dirtyBeforePlay;
     private string _scriptStatus = "Scripts: —";
+    private bool _isPaintingTiles;
+    private decimal _paintTileIndex;
     private FileSystemWatcher? _scriptWatcher;
     private DispatcherTimer? _scriptReloadTimer;
     private Guid? _selectedBeforePlay;
@@ -93,6 +95,57 @@ public sealed class MainViewModel : ObservableObject
     }
 
     public bool HasSelectedAsset => SelectedAsset is not null;
+
+    public bool IsPaintingTiles
+    {
+        get => _isPaintingTiles;
+        set
+        {
+            if (SetProperty(ref _isPaintingTiles, value))
+            {
+                StatusMessage = value ? "Modo pintar: clic en el viewport para colocar mosaicos" : "Listo";
+                RequestRedraw();
+            }
+        }
+    }
+
+    public decimal PaintTileIndex
+    {
+        get => _paintTileIndex;
+        set => SetProperty(ref _paintTileIndex, value);
+    }
+
+    /// <summary>Pinta el mosaico seleccionado en la celda bajo un punto de mundo.</summary>
+    public void PaintTileAtWorld(Vector2 world)
+    {
+        if (!IsPaintingTiles || IsPlaying || Selected?.Tilemap is not { } map)
+        {
+            return;
+        }
+
+        var worldMatrix = Scene.GetWorldMatrix(Selected.Entity);
+        if (!Matrix4x4.Invert(worldMatrix, out var inverse))
+        {
+            return;
+        }
+
+        var local = Vector2.Transform(world, inverse);
+        var (x, y) = map.WorldToCell(local);
+        if (x < 0 || y < 0 || x >= map.Width || y >= map.Height)
+        {
+            return;
+        }
+
+        var tile = (int)_paintTileIndex;
+        if (map.TileAt(x, y) == tile)
+        {
+            return;
+        }
+
+        map.SetTile(x, y, tile);
+        MarkDirty();
+        RequestRedraw();
+    }
 
     public string ScriptStatusText
     {

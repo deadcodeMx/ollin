@@ -47,6 +47,13 @@ public sealed class ViewportSurface : Border
             return;
         }
 
+        if (Viewport.ViewModel is { IsPaintingTiles: true })
+        {
+            Viewport.PaintAt(position);
+            e.Handled = true;
+            return;
+        }
+
         var wantsPan = point.Properties.IsMiddleButtonPressed ||
                        (point.Properties.IsLeftButtonPressed && e.KeyModifiers.HasFlag(KeyModifiers.Alt));
 

@@ -13,20 +13,43 @@ public static class DefaultScene
         var camera = scene.Create("Cámara principal", new Vector2(0.9f, -1.2f));
         camera.AddComponent(new Camera2D { OrthographicSize = 6f, Zoom = 1f });
 
-        var ground = scene.Create("Suelo", new Vector2(0f, -2.5f));
-        ground.AddComponent(new SpriteRenderer
+        var ground = scene.Create("Terreno", new Vector2(-10f, -2.5f));
+        var tilemap = new Tilemap
         {
-            TexturePath = "assets/sprites/ground.png",
-            Size = new Vector2(14f, 0.5f),
+            Width = 20,
+            Height = 4,
+            TileSize = 1f,
+            TexturePath = "assets/sprites/tiles.png",
+            TilesetColumns = 4,
             SortingOrder = -10,
-        });
+        };
+
+        for (var y = 0; y < tilemap.Height; y++)
+        {
+            for (var x = 0; x < tilemap.Width; x++)
+            {
+                tilemap.SetTile(x, y, y == 0 ? 0 : 2);
+            }
+        }
+
+        ground.AddComponent(tilemap);
 
         var player = scene.Create("Jugador", new Vector2(0f, -1.6f));
         player.AddComponent(new SpriteRenderer
         {
-            TexturePath = "assets/sprites/hero.png",
+            TexturePath = "assets/sprites/hero-walk.png",
             Size = new Vector2(1.3f, 1.3f),
             SortingOrder = 10,
+        });
+        player.AddComponent(new SpriteAnimator
+        {
+            TexturePath = "assets/sprites/hero-walk.png",
+            FrameWidth = 32,
+            FrameHeight = 32,
+            Columns = 4,
+            FrameCount = 4,
+            Fps = 6f,
+            Loop = true,
         });
         player.AddComponent(new ScriptComponent
         {

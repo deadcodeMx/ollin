@@ -293,6 +293,9 @@ public sealed class ViewportControl : OpenGlControlBase
         RequestNextFrameRendering();
     }
 
+    /// <summary>Pinta el mosaico activo en la celda bajo el puntero.</summary>
+    public void PaintAt(Point position) => _viewModel?.PaintTileAtWorld(ToWorld(position));
+
     /// <summary>Alimenta la posición del ratón para los scripts (solo durante la reproducción).</summary>
     public void UpdatePointerInput(Point position)
     {
@@ -471,7 +474,8 @@ public sealed class ViewportControl : OpenGlControlBase
         _viewModel?.CommitEdit(label);
     }
 
-    private Vector2 ToWorld(Point position)
+    /// <summary>Convierte un punto del viewport a coordenadas de mundo.</summary>
+    public Vector2 ToWorld(Point position)
     {
         var (width, height, scaling) = GetPixelSizeWithScaling();
         var camera = _viewModel!.ActiveCamera;
