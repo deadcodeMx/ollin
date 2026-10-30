@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
 namespace Ollin.Setup;
@@ -59,9 +60,11 @@ internal static class Program
                 File.Copy(current, uninstaller, overwrite: true);
             }
 
-            CreateShortcut(Path.Combine(StartMenuFolder(), "Ollin.lnk"), appExe, installDir);
-            CreateShortcut(Path.Combine(DesktopFolder(), "Ollin.lnk"), appExe, installDir);
+            var iconPath = WriteIcon(installDir);
+            CreateShortcut(Path.Combine(StartMenuFolder(), "Ollin.lnk"), appExe, installDir, iconPath);
+            CreateShortcut(Path.Combine(DesktopFolder(), "Ollin.lnk"), appExe, installDir, iconPath);
             WriteUninstallEntry(installDir);
+            RefreshShellIcons(DesktopFolder());
             return null;
         }
         catch (Exception exception)
@@ -101,6 +104,7 @@ internal static class Program
         {
             DeleteShortcut(Path.Combine(StartMenuFolder(), "Ollin.lnk"));
             DeleteShortcut(Path.Combine(DesktopFolder(), "Ollin.lnk"));
+            RefreshShellIcons(DesktopFolder());
 
             using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\Ollin", writable: true))
             {
@@ -176,7 +180,7 @@ internal static class Program
         return folder;
     }
 
-    private static void CreateShortcut(string linkPath, string targetPath, string workingDirectory)
+    private static void CreateShortcut(string linkPath, string targetPath, string workingDirectory, string iconPath)
     {
         var shellType = Type.GetTypeFromProgID("WScript.Shell");
         if (shellType is null)
@@ -184,13 +188,73 @@ internal static class Program
             return;
         }
 
+        if (File.Exists(linkPath))
+        {
+            File.Delete(linkPath);
+        }
+
         dynamic shell = Activator.CreateInstance(shellType)!;
         dynamic shortcut = shell.CreateShortcut(linkPath);
         shortcut.TargetPath = targetPath;
         shortcut.WorkingDirectory = workingDirectory;
         shortcut.Description = DisplayName;
-        shortcut.IconLocation = targetPath;
+        shortcut.IconLocation = File.Exists(iconPath) ? iconPath + ",0" : targetPath + ",0";
         shortcut.Save();
+    }
+
+    /// <summary>Copia el icono junto a la aplicación y devuelve su ruta.</summary>
+    private static string WriteIcon(string installDir)
+    {
+        var destination = Path.Combine(installDir, "ollin.ico");
+
+        try
+        {
+            using var stream = typeof(Program).Assembly.GetManifestResourceStream("Ollin.Setup.icon.ico");
+            if (stream is null)
+            {
+                return destination;
+            }
+
+            using var file = File.Create(destination);
+            stream.CopyTo(file);
+        }
+        catch
+        {
+            // Si no se puede copiar, el acceso directo usará el icono del ejecutable.
+        }
+
+        return destination;
+    }
+
+    private const int ShcneUpdatedir = 0x00001000;
+    private const int ShcneAssocChanged = 0x08000000;
+    private const uint ShcnfIdList = 0x0000;
+    private const uint ShcnfPathW = 0x0005;
+
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+    private static extern void SHChangeNotify(int eventId, uint flags, IntPtr item1, IntPtr item2);
+
+    /// <summary>Pide al Explorador que vuelva a leer los iconos del escritorio.</summary>
+    private static void RefreshShellIcons(string folder)
+    {
+        try
+        {
+            var pointer = Marshal.StringToHGlobalUni(folder);
+            try
+            {
+                SHChangeNotify(ShcneUpdatedir, ShcnfPathW, pointer, IntPtr.Zero);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(pointer);
+            }
+
+            SHChangeNotify(ShcneAssocChanged, ShcnfIdList, IntPtr.Zero, IntPtr.Zero);
+        }
+        catch
+        {
+            // Sin notificación el icono se actualiza igualmente al reiniciar el Explorador.
+        }
     }
 
     private static void DeleteShortcut(string linkPath)
