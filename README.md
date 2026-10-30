@@ -21,7 +21,7 @@
 
 ## Descargas
 
-- **Última beta**: [Ollin-Setup-0.9.0-beta.exe](https://github.com/deadcodeMx/ollin/releases/latest)
+- **Última beta**: [Ollin-Setup-0.21.0-beta.exe](https://github.com/deadcodeMx/ollin/releases/latest)
 - **Todas las versiones**: [Releases del proyecto](https://github.com/deadcodeMx/ollin/releases)
 - **Guía completa de uso**: [docs/GUIA.md](docs/GUIA.md)
 
