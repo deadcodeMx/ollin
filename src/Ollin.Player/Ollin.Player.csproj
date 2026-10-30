@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Ollin.Player</RootNamespace>
+    <AssemblyName>Ollin.Player</AssemblyName>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationIcon>..\Ollin.Editor\Assets\ollin.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.22" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ollin.Editor\Ollin.Editor.csproj" />
+    <ProjectReference Include="..\Ollin.Core\Ollin.Core.csproj" />
+    <ProjectReference Include="..\Ollin.Rendering\Ollin.Rendering.csproj" />
+    <ProjectReference Include="..\Ollin.Runtime\Ollin.Runtime.csproj" />
+    <ProjectReference Include="..\Ollin.Scripting\Ollin.Scripting.csproj" />
+  </ItemGroup>
+</Project>

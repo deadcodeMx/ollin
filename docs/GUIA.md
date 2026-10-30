@@ -445,3 +445,31 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 8. Convierte enemigos u obstáculos en **prefabs** para reutilizarlos.
 
 Con eso tienes el ciclo completo: escena → componentes → scripts → sonido → prueba.
+
+## 20. Empaquetar el juego
+
+Cuando el proyecto esté listo: **Archivo → Exportar juego…**, elige una carpeta y Ollin
+crea una subcarpeta con el nombre del proyecto que contiene:
+
+- `Ollin.Player.exe` — reproductor independiente.
+- `project.ollin`, `scenes/`, `assets/`, `scripts/`, `dialogs/`, `items/` y `prefabs/`.
+- `game.json` — manifiesto (nombre, escena inicial, pantalla de inicio y marca de agua).
+- `LEEME.txt` — controles.
+
+Ejecuta `Ollin.Player.exe` para jugar. Al iniciar aparece la **pantalla de inicio con
+el logo de Ollin** y, durante el juego, una pequeña marca de agua «Hecho con Ollin».
+
+Para quitarlas, edita `game.json`:
+
+```json
+{ "projectName": "Mi Juego", "startScene": "scenes/inicio.ollin.json", "splash": false, "watermark": false }
+```
+
+**Controles del reproductor**: `F11` pantalla completa, `Esc` salir (o salir de pantalla
+completa).
+
+**Requisitos**: .NET 8 Desktop Runtime (el reproductor no es autocontenido). El editor
+necesita la carpeta `player/` junto al ejecutable; el instalador ya la incluye.
+
+**Limitaciones**: el reproductor compila los scripts al arrancar (por eso incluye
+Roslyn) y no está firmado; Windows puede avisar al ejecutarlo.

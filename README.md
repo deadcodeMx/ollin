@@ -202,6 +202,8 @@ docs/                Arquitectura, roadmap y guía de publicación en GitHub
   paralaje y cámara con seguimiento.
 - **Lanzador de proyectos**, **3 temas** (oscuro, claro y Ollin), **blueprints** con
   jerarquía, ventana de juego aparte y **proyecto de tutorial**.
+- **Exportar juego**: empaqueta el proyecto con `Ollin.Player.exe`, pantalla de inicio
+  con el logo y marca de agua opcional.
 
 ## Edición cómoda (estilo Unity/Godot)
 

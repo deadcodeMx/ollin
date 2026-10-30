@@ -159,7 +159,7 @@ public sealed partial class MainViewModel
     }
 
     /// <summary>Abre un proyecto a partir de su archivo, carpeta o una subcarpeta.</summary>
-    public void OpenProjectLocation(string path, bool logToConsole = true)
+    public void OpenProjectLocation(string path, bool logToConsole = true, bool remember = true)
     {
         try
         {
@@ -178,7 +178,7 @@ public sealed partial class MainViewModel
                 project = ProjectService.OpenFolder(folder);
             }
 
-            ApplyProject(project);
+            ApplyProject(project, remember);
 
             // Una carpeta sin proyecto propio (la de ejemplo) abre la escena de demostración.
             if (openedAsFolder && string.IsNullOrWhiteSpace(project.StartScene))
@@ -200,6 +200,49 @@ public sealed partial class MainViewModel
         }
     }
 
+    /// <summary>Empaqueta el proyecto y el reproductor en una carpeta jugable.</summary>
+    public string? ExportGame(string destination, bool splash = true, bool watermark = true)
+    {
+        if (Project is null)
+        {
+            StatusMessage = "Abre un proyecto para exportarlo";
+            return null;
+        }
+
+        try
+        {
+            if (IsPlaying)
+            {
+                StopPlay();
+            }
+
+            if (IsDirty && !string.IsNullOrWhiteSpace(ScenePath) && File.Exists(ScenePath))
+            {
+                SaveScene(ScenePath);
+            }
+
+            var template = GameExporter.FindPlayerTemplate();
+
+            if (template is null)
+            {
+                StatusMessage = "No se encontró el reproductor (carpeta 'player')";
+                Log.Error("Falta la carpeta 'player' junto al editor o en dist/app/player", "Exportar");
+                return null;
+            }
+
+            var path = GameExporter.Export(Project, destination, template, splash, watermark);
+            StatusMessage = $"Juego exportado: {path}";
+            Log.Info($"Juego exportado: {path}", "Exportar");
+            return path;
+        }
+        catch (Exception exception)
+        {
+            StatusMessage = "Error al exportar el juego";
+            Log.Error($"No se pudo exportar el juego: {exception.Message}", "Exportar");
+            return null;
+        }
+    }
+
     public void CloseProject()
     {
         Project = null;
@@ -218,7 +261,7 @@ public sealed partial class MainViewModel
         OnPropertyChanged(nameof(IsWelcomeVisible));
     }
 
-    private void ApplyProject(ProjectInfo project)
+    private void ApplyProject(ProjectInfo project, bool remember = true)
     {
         Project = project;
         ProjectRoot = project.RootPath;
@@ -230,8 +273,11 @@ public sealed partial class MainViewModel
         RefreshAssets(logToConsole: false);
         RefreshProjectFiles();
 
-        _settings.RememberProject(File.Exists(project.ProjectFile) ? project.ProjectFile : project.RootPath);
-        _settings.Save();
+        if (remember)
+        {
+            _settings.RememberProject(File.Exists(project.ProjectFile) ? project.ProjectFile : project.RootPath);
+            _settings.Save();
+        }
 
         Documents.Clear();
         _currentSceneDoc = null;

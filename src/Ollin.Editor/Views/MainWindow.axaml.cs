@@ -880,6 +880,45 @@ public partial class MainWindow : Window
         }
     }
 
+    private async void OnExportGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Project is null)
+        {
+            return;
+        }
+
+        var folders = await StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
+        {
+            Title = "Carpeta donde exportar el juego",
+            AllowMultiple = false,
+        });
+
+        var destination = folders.Count > 0 ? folders[0].TryGetLocalPath() : null;
+
+        if (string.IsNullOrWhiteSpace(destination))
+        {
+            return;
+        }
+
+        var exported = ViewModel.ExportGame(destination);
+
+        if (exported is not null)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = exported,
+                    UseShellExecute = true,
+                });
+            }
+            catch
+            {
+                // Si el explorador falla, la ruta queda en la barra de estado.
+            }
+        }
+    }
+
     private void OnSaveGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveGame();
 
     private void OnThemeDark(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTheme(Ollin.Editor.Styles.EditorThemeMode.Dark);

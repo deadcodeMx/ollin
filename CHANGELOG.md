@@ -17,6 +17,18 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.18.0] — 2026-10-30
+
+### Añadido
+
+- **Exportar juego**: `Archivo → Exportar juego…` empaqueta el proyecto con un
+  reproductor independiente (`Ollin.Player.exe`), sus datos y `game.json`.
+- **Pantalla de inicio** con el logo de Ollin y **marca de agua** «Hecho con Ollin»
+  durante el juego (activadas por defecto, desactivables en `game.json`).
+- Reproductor con pantalla completa (F11) y salida con Esc.
+- El instalador incluye la plantilla del reproductor en `player/`.
+- 1 prueba nueva: 120 en total.
+
 ## [0.17.0] — 2026-10-30
 
 ### Añadido
