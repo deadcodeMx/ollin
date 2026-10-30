@@ -17,7 +17,7 @@ using Ollin.Scripting;
 namespace Ollin.Editor.ViewModels;
 
 /// <summary>Estado completo del editor: documento de escena, selección, cámara y consola.</summary>
-public sealed class MainViewModel : ObservableObject
+public sealed partial class MainViewModel : ObservableObject
 {
     private readonly Camera2D _fallbackCamera = new();
     private Vector2 _fallbackCameraPosition;
@@ -66,7 +66,8 @@ public sealed class MainViewModel : ObservableObject
         RefreshAssets(logToConsole: false);
         ReloadScripts();
         StartScriptWatcher();
-        Log.Info("Ollin 0.1 — editor 2D listo", "Editor");
+        InitializeProject();
+        Log.Info("Ollin 0.4 — editor listo", "Editor");
         Log.Info("Clic para seleccionar · Rueda para zoom · Alt+arrastrar para mover la cámara", "Editor");
     }
 
@@ -401,7 +402,10 @@ public sealed class MainViewModel : ObservableObject
 
         Scene = scene;
         ScenePath = path;
-        ProjectRoot = path is null ? _defaultProjectRoot : System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(path)) ?? _defaultProjectRoot;
+        ProjectRoot = Project?.RootPath
+            ?? (path is null
+                ? _defaultProjectRoot
+                : System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(path)) ?? _defaultProjectRoot);
         if (!string.Equals(_scripts.ProjectRoot, ProjectRoot, StringComparison.OrdinalIgnoreCase))
         {
             _scripts.Dispose();

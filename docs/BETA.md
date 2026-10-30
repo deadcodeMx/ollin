@@ -1,4 +1,4 @@
-# Beta 0.4.0 de Ollin
+# Beta 0.5.0 de Ollin
 
 Primera compilación de prueba para instalar y usar fuera del repositorio.
 
@@ -16,7 +16,7 @@ Primera compilación de prueba para instalar y usar fuera del repositorio.
 
 ## Instalar
 
-1. Ejecuta `Ollin-Setup-0.4.0-beta.exe`.
+1. Ejecuta `Ollin-Setup-0.5.0-beta.exe`.
 2. Pulsa **Instalar**. Se copia en `%LOCALAPPDATA%\Ollin`.
 3. Se crean accesos directos en el escritorio y en el menú Inicio.
 4. Al terminar se abre el editor.

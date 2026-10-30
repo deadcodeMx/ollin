@@ -122,6 +122,30 @@
     <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
   </Style>
 
+  <Style Selector="Button.doc">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0,0,0,2" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Padding" Value="10,4" />
+    <Setter Property="FontSize" Value="11.5" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.TextDim}" />
+  </Style>
+
+  <Style Selector="Button.doc.active">
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Accent}" />
+    <Setter Property="Background" Value="{DynamicResource Ollin.PanelAlt}" />
+  </Style>
+
+  <Style Selector="Button.docclose">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="6,4" />
+    <Setter Property="FontSize" Value="9" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.TextDim}" />
+  </Style>
+
   <Style Selector="GridSplitter">
     <Setter Property="Background" Value="Transparent" />
   </Style>

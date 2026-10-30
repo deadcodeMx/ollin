@@ -17,6 +17,25 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.5.0] — 2026-10-30
+
+### Añadido
+
+- Sistema de proyectos: crear, abrir y cerrar proyectos con carpetas `scenes`,
+  `scripts`, `assets` y `prefabs`, archivo `project.ollin` y contenido inicial.
+- Recordatorio del último proyecto y pantalla de bienvenida con acciones.
+- Pestañas de documentos en el área central (escena + scripts abiertos).
+- Editor de scripts integrado con guardado (`Ctrl+S`) y recarga en caliente.
+- Dock inferior con pestañas **Consola** y **Archivos**, con explorador del proyecto
+  que abre scripts, escenas y texturas con doble clic.
+- Inspector reorganizado en pestañas: Entidad, Visual, Mundo, Tilemap y Cámara.
+- Apertura por línea de comandos: `--project` y `--script`.
+- 5 pruebas del sistema de proyectos (60 en total).
+
+### Corregido
+
+- El editor de scripts heredaba la altura fija del estilo global de `TextBox`.
+
 ## [0.4.0] — 2026-10-30
 
 ### Añadido

@@ -75,7 +75,8 @@ Queda para la etapa 4: temporizadores (`WaitForSeconds`) y dibujo de depuración
 - [ ] Prefabs: entidad plantilla + instancias con overrides.
 
 ### Herramientas
-- [ ] Panel de proyecto con escenas múltiples y carpetas.
+- [x] Proyectos independientes con carpetas, explorador de archivos y apertura de escenas.
+- [ ] Panel de escenas múltiples con pestañas propias y plantillas de proyecto.
 - [ ] Copiar/pegar entidades y componentes.
 - [ ] Buscador en jerarquía e inspector.
 

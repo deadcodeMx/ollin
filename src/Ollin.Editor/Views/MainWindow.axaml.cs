@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Ollin.Core.Assets;
 using Ollin.Core.Input;
 using Ollin.Editor.Controls;
 using Ollin.Editor.ViewModels;
@@ -253,7 +254,7 @@ public partial class MainWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Motor de juego 2D · versión 0.4.0 beta",
+                    Text = "Motor de juego 2D · versión 0.5.0 beta",
                     FontSize = 12,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
@@ -275,6 +276,97 @@ public partial class MainWindow : Window
         };
 
         about.ShowDialog(this);
+    }
+
+    // ---------- Proyectos ----------
+
+    private async void OnNewProject(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null)
+        {
+            return;
+        }
+
+        var dialog = new NewProjectWindow();
+        var result = await dialog.ShowDialog<NewProjectResult?>(this);
+
+        if (result is not null)
+        {
+            ViewModel.CreateProject(result.ParentFolder, result.Name);
+        }
+    }
+
+    private async void OnOpenProject(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null)
+        {
+            return;
+        }
+
+        var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        {
+            Title = "Abrir proyecto de Ollin",
+            AllowMultiple = false,
+        });
+
+        var path = folders.Count > 0 ? folders[0].TryGetLocalPath() : null;
+        if (!string.IsNullOrWhiteSpace(path))
+        {
+            ViewModel.OpenProjectLocation(path);
+        }
+    }
+
+    private void OnOpenSampleProject(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var root = ProjectLocator.FindProjectRoot() ?? AppContext.BaseDirectory;
+        ViewModel?.OpenProjectLocation(root);
+    }
+
+    private void OnCloseProject(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.CloseProject();
+
+    // ---------- Documentos ----------
+
+    private void OnSelectDocument(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: ViewModels.DocumentTab tab } && ViewModel is not null)
+        {
+            ViewModel.ActiveDocument = tab;
+        }
+    }
+
+    private void OnCloseDocument(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: ViewModels.DocumentTab tab })
+        {
+            ViewModel?.CloseDocument(tab);
+        }
+    }
+
+    private void OnSaveScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveActiveScript();
+
+    private void OnScriptTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (ViewModel?.ActiveScript is { } document && !ReferenceEquals(ScriptEditor.Text, document.Text))
+        {
+            document.Text = ScriptEditor.Text ?? string.Empty;
+        }
+    }
+
+    private void OnOpenSelectedScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        ViewModel?.OpenSelectedScript();
+
+    private void OnRefreshFiles(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        ViewModel?.RefreshProjectFiles();
+        ViewModel?.RefreshAssets();
+    }
+
+    private void OnFileDoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    {
+        if (FileTree.SelectedItem is ViewModels.FileNode node)
+        {
+            ViewModel?.OpenProjectFile(node);
+        }
     }
 
     // ---------- Atajos ----------
@@ -311,6 +403,14 @@ public partial class MainWindow : Window
             }
 
             base.OnKeyDown(e);
+            return;
+        }
+
+        // Guardar script con Ctrl+S aunque el foco esté en el editor de texto.
+        if (e.Key == Key.S && e.KeyModifiers.HasFlag(KeyModifiers.Control) && ViewModel.IsScriptActive)
+        {
+            ViewModel.SaveActiveScript();
+            e.Handled = true;
             return;
         }
 

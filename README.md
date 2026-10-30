@@ -145,15 +145,29 @@ src/
   Ollin.Rendering/   Renderer 2D sobre OpenGL ES (sprite batch, cuadrícula, hit-test)
   Ollin.Runtime/     Bucle de juego: reproducción, pausa, delta time y restauración
   Ollin.Scripting/   Compilación de scripts con Roslyn y API pública de scripting
+  Ollin.Editor/      Aplicación Avalonia: proyectos, documentos, viewport, inspector, consola
 tools/
   Ollin.Setup/       Instalador de Windows (copia, accesos directos y desinstalador)
-  Ollin.Editor/      Aplicación Avalonia: GUI, viewport, inspector, consola
 tests/
   Ollin.Tests/       Pruebas del núcleo, del runtime y del compilador de scripts
 assets/sprites/      Texturas de ejemplo (héroe, caja, moneda, suelo)
 scripts/             Scripts de usuario en C# (se compilan en memoria)
 docs/                Arquitectura, roadmap y guía de publicación en GitHub
 ```
+
+## El editor
+
+- **Proyectos independientes**: `Archivo → Nuevo proyecto…` crea una carpeta con
+  `scenes/`, `scripts/`, `assets/` y `prefabs/`, un `project.ollin`, una escena y un
+  script iniciales. `Abrir proyecto…` carga cualquiera existente y recuerda el último.
+- **Pestañas de documentos**: la escena y los scripts abiertos conviven en el área
+  central, con marca de cambios y cierre individual.
+- **Editor de scripts integrado**: abre un `.cs` desde el dock *Archivos* o con
+  `Edición → Abrir script de la selección`. `Ctrl+S` guarda y dispara la recarga.
+- **Dock inferior con pestañas**: *Consola* y *Archivos* (explorador del proyecto;
+  doble clic abre scripts, escenas y asigna texturas).
+- **Inspector por pestañas**: Entidad, Visual, Mundo, Tilemap y Cámara.
+- **Línea de comandos**: `Ollin.Editor.exe --project <ruta> [--script <archivo.cs>]`.
 
 ## Scripts en C#
 
