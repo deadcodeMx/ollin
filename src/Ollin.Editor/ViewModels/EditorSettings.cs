@@ -9,6 +9,30 @@ public sealed class EditorSettings
 
     public bool ShowGrid { get; set; } = true;
 
+    /// <summary>Tema de la interfaz: Dark, Light u Ollin.</summary>
+    public string Theme { get; set; } = "Dark";
+
+    /// <summary>Últimos proyectos abiertos, del más reciente al más antiguo.</summary>
+    public List<string> RecentProjects { get; set; } = new();
+
+    public void RememberProject(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        RecentProjects.RemoveAll(item => string.Equals(item, path, StringComparison.OrdinalIgnoreCase));
+        RecentProjects.Insert(0, path);
+
+        if (RecentProjects.Count > 10)
+        {
+            RecentProjects.RemoveRange(10, RecentProjects.Count - 10);
+        }
+
+        LastProject = path;
+    }
+
     private static string SettingsFile => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Ollin",
@@ -20,7 +44,15 @@ public sealed class EditorSettings
         {
             if (File.Exists(SettingsFile))
             {
-                return JsonSerializer.Deserialize<EditorSettings>(File.ReadAllText(SettingsFile)) ?? new EditorSettings();
+                var settings = JsonSerializer.Deserialize<EditorSettings>(File.ReadAllText(SettingsFile)) ?? new EditorSettings();
+                settings.RecentProjects ??= new List<string>();
+
+                if (settings.RecentProjects.Count == 0 && !string.IsNullOrWhiteSpace(settings.LastProject))
+                {
+                    settings.RecentProjects.Add(settings.LastProject);
+                }
+
+                return settings;
             }
         }
         catch

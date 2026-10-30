@@ -31,7 +31,53 @@ public sealed class EntityNode : ObservableObject
 
     public bool IsExpanded { get; set; } = true;
 
-    public string Icon => Entity.GetComponent<Camera2D>() is not null ? "◉" : Entity.GetComponent<SpriteRenderer>() is not null ? "▣" : "◇";
+    private static readonly IBrush NeutralBrush = new SolidColorBrush(Color.Parse("#C7D0DE"));
+
+    public string Icon =>
+        !string.IsNullOrWhiteSpace(Entity.EditorIcon)
+            ? Entity.EditorIcon!
+            : Entity.GetComponent<Camera2D>() is not null ? "◉"
+            : Entity.GetComponent<SpriteRenderer>() is not null ? "▣"
+            : "◇";
+
+    public IBrush NameBrush =>
+        string.IsNullOrWhiteSpace(Entity.EditorColor)
+            ? NeutralBrush
+            : new SolidColorBrush(Color.Parse(Entity.EditorColor));
+
+    public string EditorIcon
+    {
+        get => Entity.EditorIcon ?? string.Empty;
+        set
+        {
+            if ((Entity.EditorIcon ?? string.Empty) == value)
+            {
+                return;
+            }
+
+            Entity.EditorIcon = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Icon));
+            _owner.MarkDirty();
+        }
+    }
+
+    public string EditorColorHex
+    {
+        get => Entity.EditorColor ?? string.Empty;
+        set
+        {
+            if ((Entity.EditorColor ?? string.Empty) == value)
+            {
+                return;
+            }
+
+            Entity.EditorColor = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(NameBrush));
+            _owner.MarkDirty();
+        }
+    }
 
     public string Name
     {

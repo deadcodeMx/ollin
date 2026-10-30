@@ -11,6 +11,7 @@ public enum ProjectTemplate
     Empty,
     Platformer,
     Horror,
+    Tutorial,
 }
 
 /// <summary>Contenido inicial de un proyecto nuevo, según su plantilla.</summary>
@@ -20,6 +21,7 @@ public static class StarterProject
     {
         ProjectTemplate.Platformer => CreatePlatformer(),
         ProjectTemplate.Horror => CreateHorror(),
+        ProjectTemplate.Tutorial => CreateTutorial(),
         _ => CreateEmpty(),
     };
 
@@ -27,6 +29,7 @@ public static class StarterProject
     {
         ProjectTemplate.Platformer => ("Plataformas.cs", PlatformerScriptSource),
         ProjectTemplate.Horror => ("Terror.cs", HorrorScriptSource),
+        ProjectTemplate.Tutorial => ("Tutorial.cs", TutorialScriptSource),
         _ => ("Juego.cs", ScriptSource),
     };
 
@@ -34,43 +37,15 @@ public static class StarterProject
     {
         var scene = new Scene { Name = "Inicio" };
 
-        var camera = scene.Create("Cámara principal", new Vector2(0f, -0.5f));
+        var camera = scene.Create("Cámara principal", new Vector2(0f, 0f));
         camera.AddComponent(new Camera2D
         {
             OrthographicSize = 6f,
             Zoom = 1f,
-            Ambient = new Vector4(0.55f, 0.57f, 0.65f, 1f),
-            FollowTag = "player",
-            FollowSmoothing = 6f,
         });
-        camera.AddComponent(new DayNightCycle { DayLengthSeconds = 150f, TimeOfDay = 0.35f });
-
-        var ground = scene.Create("Suelo", new Vector2(0f, -2.5f));
-        ground.AddComponent(new SpriteRenderer
-        {
-            Size = new Vector2(16f, 0.5f),
-            Tint = new Vector4(0.24f, 0.29f, 0.36f, 1f),
-            SortingOrder = -10,
-        });
-
-        var player = scene.Create("Jugador", new Vector2(0f, -1.6f));
-        player.Tags.Add("player");
-        AddLight(player);
-        AddSystems(player);
-        player.AddComponent(new SpriteRenderer
-        {
-            Size = new Vector2(1f, 1f),
-            Tint = new Vector4(0.91f, 0.64f, 0.23f, 1f),
-            SortingOrder = 10,
-        });
-        player.AddComponent(new BoxCollider { Size = new Vector2(1f, 1f) });
-        player.AddComponent(new Rigidbody2D());
-        player.AddComponent(new ScriptComponent { ScriptPath = "scripts/Juego.cs", ClassName = "Juego" });
-        AddNote(scene, new Vector2(-1.2f, -1.5f));
 
         return scene;
     }
-
     private static Scene CreatePlatformer()
     {
         var scene = new Scene { Name = "Nivel 1" };
@@ -107,7 +82,6 @@ public static class StarterProject
 
         var player = scene.Create("Jugador", new Vector2(-10f, -2.2f));
         player.Tags.Add("player");
-        AddLight(player);
         AddSystems(player);
         player.AddComponent(new SpriteRenderer
         {
@@ -156,7 +130,7 @@ public static class StarterProject
         {
             OrthographicSize = 5.5f,
             Zoom = 1f,
-            Ambient = new Vector4(0.08f, 0.09f, 0.12f, 1f),
+            Ambient = new Vector4(0.35f, 0.36f, 0.42f, 1f),
             FollowTag = "player",
             FollowSmoothing = 4f,
         });
@@ -201,7 +175,6 @@ public static class StarterProject
 
         var player = scene.Create("Jugador", new Vector2(-7f, -1.6f));
         player.Tags.Add("player");
-        AddLight(player, cone: true);
         AddSystems(player);
         player.AddComponent(new SpriteRenderer
         {
@@ -269,6 +242,101 @@ public static class StarterProject
         });
     }
 
+    private static Scene CreateTutorial()
+    {
+        var scene = new Scene { Name = "Tutorial" };
+
+        var camera = scene.Create("Cámara principal", new Vector2(0f, 0f));
+        camera.AddComponent(new Camera2D
+        {
+            OrthographicSize = 7f,
+            Zoom = 1f,
+            Ambient = new Vector4(0.75f, 0.76f, 0.82f, 1f),
+            FollowTag = "player",
+            FollowSmoothing = 5f,
+        });
+
+        var ground = scene.Create("Suelo", new Vector2(-10f, -3f));
+        var tiles = ground.AddComponent(new Tilemap
+        {
+            Width = 20,
+            Height = 2,
+            TileSize = 1f,
+            TexturePath = "assets/sprites/tiles.png",
+            TilesetColumns = 4,
+            SortingOrder = -10,
+            Collides = true,
+        });
+
+        for (var x = 0; x < tiles.Width; x++)
+        {
+            tiles.SetTile(x, 0, 1);
+            tiles.SetTile(x, 1, 2);
+        }
+
+        var player = scene.Create("Jugador", new Vector2(-6f, -1.8f));
+        player.Tags.Add("player");
+        player.AddComponent(new SpriteRenderer
+        {
+            TexturePath = "assets/sprites/hero-walk.png",
+            Size = new Vector2(0.9f, 1f),
+            SortingOrder = 10,
+        });
+        player.AddComponent(new SpriteAnimator
+        {
+            TexturePath = "assets/sprites/hero-walk.png",
+            FrameWidth = 32,
+            FrameHeight = 32,
+            FrameCount = 4,
+            Fps = 10f,
+        });
+        player.AddComponent(new BoxCollider { Size = new Vector2(0.8f, 1f) });
+        player.AddComponent(new Rigidbody2D());
+        player.AddComponent(new ScriptComponent { ScriptPath = "scripts/Tutorial.cs", ClassName = "Tutorial" });
+        AddSystems(player);
+
+        var note = scene.Create("Nota", new Vector2(-3f, -1.8f));
+        note.AddComponent(new SpriteRenderer
+        {
+            Size = new Vector2(0.45f, 0.55f),
+            Tint = new Vector4(0.93f, 0.89f, 0.72f, 1f),
+            SortingOrder = 22,
+        });
+        note.AddComponent(new Interactable
+        {
+            Prompt = "E: leer la nota",
+            DialogueId = "bienvenida",
+            Radius = 2f,
+        });
+
+        var coin = scene.Create("Moneda", new Vector2(0f, -1.6f));
+        coin.AddComponent(new SpriteRenderer
+        {
+            TexturePath = "assets/sprites/coin.png",
+            Size = new Vector2(0.55f, 0.55f),
+            SortingOrder = 20,
+        });
+        coin.AddComponent(new RotatorComponent { DegreesPerSecond = 120f });
+
+        var enemy = scene.Create("Merodeador", new Vector2(3f, -1.8f));
+        enemy.AddComponent(new SpriteRenderer
+        {
+            TexturePath = "assets/sprites/crate.png",
+            Size = new Vector2(0.9f, 0.9f),
+            Tint = new Vector4(0.5f, 0.42f, 0.6f, 1f),
+            SortingOrder = 8,
+        });
+        enemy.AddComponent(new AiAgent
+        {
+            TargetTag = "player",
+            Speed = 1.5f,
+            VisionRadius = 4f,
+            PatrolRadius = 2f,
+        });
+
+        return scene;
+    }
+
     private static void AddNote(Scene scene, Vector2 position)
     {
         var note = scene.Create("Nota", position);
@@ -302,6 +370,92 @@ public static class StarterProject
             { "text": "Bienvenido a tu nuevo proyecto de Ollin." },
             { "text": "A/D para moverte, espacio para saltar y E para interactuar." }
           ]
+        }
+        """;
+
+    public const string TutorialScriptSource = """
+        using System.Numerics;
+        using Ollin.Core.Input;
+        using Ollin.Core.Model.Components;
+        using Ollin.Scripting;
+
+        /// <summary>
+        /// Proyecto de tutorial: movimiento, HUD, estadísticas, inventario,
+        /// interacción y guardado. Lee los comentarios y cambia lo que quieras.
+        /// </summary>
+        public sealed class Tutorial : OllinScript
+        {
+            private float _verticalSpeed;
+            private bool _grounded;
+
+            public override void OnStart()
+            {
+                // 1) HUD: barras y etiquetas.
+                Hud.SetBar("Vida", 100f, 100f);
+                Hud.SetLabel("Monedas", "0");
+                Hud.Message("A/D para moverte, espacio para saltar, E para leer", 4f);
+
+                // 2) Datos persistentes: se guardan con la partida.
+                if (!Save.Has("tutorial_visto"))
+                {
+                    Save.SetFlag("tutorial_visto", true);
+                    Debug("Primera vez en el tutorial");
+                }
+            }
+
+            public override void OnUpdate(float deltaTime)
+            {
+                // 3) Movimiento con física sencilla.
+                var body = Entity.GetComponent<Rigidbody2D>();
+                var direction = 0f;
+                if (Input.GetKey(KeyCode.A)) direction -= 1f;
+                if (Input.GetKey(KeyCode.D)) direction += 1f;
+
+                if (body is not null)
+                {
+                    body.Velocity = new Vector2(direction * 5f, body.Velocity.Y);
+                }
+
+                _grounded = Entity.Transform.Position.Y <= -1.8f;
+
+                if (Input.GetKeyDown(KeyCode.Space) && _grounded)
+                {
+                    _verticalSpeed = 7.5f;
+                    Audio.Play("assets/audio/jump.wav", 0.5f);
+                }
+
+                if (_verticalSpeed != 0f)
+                {
+                    _verticalSpeed -= 20f * deltaTime;
+                    Entity.Transform.Position += new Vector2(0f, _verticalSpeed * deltaTime);
+
+                    if (Entity.Transform.Position.Y <= -1.8f)
+                    {
+                        Entity.Transform.Position = new Vector2(Entity.Transform.Position.X, -1.8f);
+                        _verticalSpeed = 0f;
+                    }
+                }
+
+                // 4) Estadísticas e inventario reflejados en el HUD.
+                var stats = Entity.GetComponent<Stats>();
+                if (stats is not null) Hud.SetBar("Vida", stats.Get("Vida"), 100f);
+
+                var bag = Entity.GetComponent<Inventory>();
+                if (bag is not null) Hud.SetLabel("Monedas", bag.Count("moneda").ToString());
+            }
+
+            public override void OnInteract(Ollin.Core.Model.Entity other)
+            {
+                // 5) Al interactuar con la nota, además del diálogo, damos una moneda.
+                var bag = Entity.GetComponent<Inventory>();
+                bag?.Add("moneda", 1);
+                Hud.Message("Has encontrado una moneda", 2f);
+            }
+
+            public override void OnCollisionEnter(Ollin.Core.Model.Entity other)
+            {
+                Debug("Choque con " + other.Name);
+            }
         }
         """;
 

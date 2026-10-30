@@ -1,59 +1,89 @@
-# Beta 0.16.0 de Ollin
+# Beta 0.17.0 de Ollin
 
-Primera compilación de prueba para instalar y usar fuera del repositorio.
+Compilación de prueba para instalar y usar el motor fuera del repositorio. Cierra la
+etapa 5 del roadmap (herramientas de juego 2D).
 
 ## Qué incluye
 
-- Editor completo con escena de ejemplo (animación, tilemap, física y scripts).
-- Scripts en C# con recarga en caliente (`assets/` y `scripts/` incluidos).
-- Instalador con accesos directos y desinstalador.
+- **Lanzador de proyectos** con recientes, crear y abrir carpeta.
+- **Tres temas** de interfaz: oscuro, claro y Ollin (colores del logo).
+- Editor con proyectos independientes, escenas múltiples y explorador de archivos.
+- Viewport OpenGL ES 3.0, gizmos, deshacer/rehacer y **ventana de juego** aparte
+  (pantalla completa con F11 en otro monitor).
+- Scripts en C# con resaltado, autocompletado y recarga en caliente.
+- **Diálogos**, interacción con E, etiquetas y **HUD** para scripts.
+- **Luces 2D**, ambiente, viñeta, paralaje y cámara con seguimiento.
+- **Inventario**, **estadísticas**, **ciclo día/noche**, **IA con A\*** y **guardado de
+  partida**.
+- **Prefabs** y **blueprints** (entidad + jerarquía completa).
+- **Plantilla Tutorial** guiada (HUD, inventario, diálogo, IA y guardado).
+- 119 pruebas automatizadas.
 
 ## Requisitos
 
 - Windows 10/11 de 64 bits.
 - **.NET 8 Desktop Runtime** ([descarga](https://dotnet.microsoft.com/download/dotnet/8.0)).
   El instalador no lo incluye; si falta, el programa no arranca.
+- GPU con OpenGL 3.0 o superior.
 
 ## Instalar
 
-1. Ejecuta `Ollin-Setup-0.16.0-beta.exe`.
+1. Ejecuta `Ollin-Setup-0.17.0-beta.exe`.
 2. Pulsa **Instalar**. Se copia en `%LOCALAPPDATA%\Ollin`.
 3. Se crean accesos directos en el escritorio y en el menú Inicio.
-4. Al terminar se abre el editor.
+4. Abre Ollin y elige un proyecto en el lanzador, o crea uno con la plantilla
+   **Tutorial** para ver todo lo que puede hacer el motor.
 
 Para desinstalar: **Configuración → Aplicaciones → Ollin → Desinstalar**, o ejecuta
-`Desinstalar.exe` dentro de la carpeta de instalación (también se puede lanzar con
+`Desinstalar.exe` dentro de la carpeta de instalación (también admite
 `--uninstall --silent`).
+
+## Primeros pasos
+
+1. Crea un proyecto con la plantilla **Tutorial**.
+2. Pulsa **Reproducir** (F5): verás HUD, nota interactiva (E), moneda y un
+   merodeador con IA.
+3. Abre `scripts/Tutorial.cs` para ver movimiento, estadísticas, inventario,
+   interacción y guardado comentados.
+4. Prueba `Escena → Guardar partida`, cierra y `Cargar partida`.
+
+## Limitaciones conocidas
+
+- El instalador no está firmado: Windows puede mostrar SmartScreen
+  («Más información → Ejecutar de todas formas»).
+- Requiere .NET 8 instalado (no es autocontenido para mantener el instalador pequeño).
+- Las **sombras 2D** son experimentales y están desactivadas por defecto.
+- No hay clima ni crafteo como sistemas del motor; el crafteo se resuelve en scripts
+  (ejemplo en la guía).
+- El guardado incluye la escena y `Save.Set/Get`, pero no variables internas de scripts
+  que no uses `Save`.
+- Sin audio posicional (el audio es por canales de efecto/música).
 
 ## Cómo se genera la beta
 
 ```powershell
-# 1. Aplicación (dependiente del runtime, ~44 MB)
+powershell -ExecutionPolicy Bypass -File tools/release.ps1
+```
+
+Ese script publica la aplicación, comprime la carga útil, genera el instalador y deja
+`dist/installer/Ollin-Setup-<versión>-beta.exe`. Con `-Publish` y GitHub CLI crea el
+release automáticamente.
+
+Equivalente manual:
+
+```powershell
 dotnet publish src/Ollin.Editor -c Release -r win-x64 --self-contained false -o dist/app
 Copy-Item -Recurse assets, scripts dist/app
 Copy-Item README.md, LICENSE, CHANGELOG.md dist/app
-
-# 2. Carga útil comprimida (~17 MB)
 Compress-Archive -Path dist/app/* -DestinationPath tools/payload.zip -Force
-
-# 3. Instalador de un solo archivo
 dotnet publish tools/Ollin.Setup -c Release -r win-x64 --self-contained false `
   -p:PublishSingleFile=true -o dist/installer
 ```
 
-El resultado es `dist/installer/Ollin-Setup.exe`.
-
 ## Prueba automática del instalador
 
 ```powershell
-$setup = "dist/installer/Ollin-Setup.exe"
-Start-Process $setup -ArgumentList "--silent" -Wait          # instala
+$setup = "dist/installer/Ollin-Setup-0.17.0-beta.exe"
+Start-Process $setup -ArgumentList "--silent" -Wait
 Start-Process "$env:LOCALAPPDATA/Ollin/Desinstalar.exe" -ArgumentList "--uninstall --silent" -Wait
 ```
-
-## Limitaciones conocidas de esta beta
-
-- Sin audio: el sonido llega en la siguiente entrega.
-- Sin prefabs ni escenas múltiples todavía.
-- El instalador no firma el ejecutable: Windows puede mostrar un aviso de SmartScreen.
-- Requiere .NET 8 instalado (no es autocontenido para mantener el instalador pequeño).

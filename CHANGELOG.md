@@ -17,6 +17,27 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.17.0] — 2026-10-30
+
+### Añadido
+
+- **Lanzador de proyectos** antes del editor, con recientes, crear y abrir carpeta.
+- **Tres temas**: oscuro, claro y Ollin (colores del logo), con selector en Ver → Tema.
+- **Blueprints** (`.blueprint.json`): guardan una entidad y toda su jerarquía y se
+  instancian con doble clic.
+- **Ventana de juego** aparte (Ctrl+G), movible a otro monitor y a pantalla completa
+  con F11.
+- **Plantilla Tutorial** con recorrido guiado: HUD, estadísticas, inventario, diálogo,
+  IA y guardado.
+- **Símbolo y color por entidad** en la jerarquía.
+- **Quitar componentes** desde el menú contextual de la jerarquía.
+- La plantilla Vacío crea solo la cámara; las luces ya no vienen puestas.
+
+### Corregido
+
+- Las colisiones podían atravesarse tras un frame largo: la física ahora usa subpasos
+  y anula la velocidad en el eje del impacto.
+
 ## [0.16.0] — 2026-10-30
 
 ### Añadido

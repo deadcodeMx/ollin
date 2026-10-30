@@ -23,7 +23,7 @@ public static class DefaultScene
         camera.AddComponent(new DayNightCycle
         {
             DayLengthSeconds = 180f,
-            TimeOfDay = 0.2f,
+            TimeOfDay = 0.45f,
             DayAmbient = new Vector4(1f, 0.97f, 0.9f, 1f),
             NightAmbient = new Vector4(0.12f, 0.14f, 0.22f, 1f),
         });
@@ -69,12 +69,7 @@ public static class DefaultScene
                 new InventorySlot { ItemId = "moneda", Quantity = 1 },
             },
         });
-        player.AddComponent(new Light2D
-        {
-            Radius = 5.5f,
-            Intensity = 0.85f,
-            Color = new Vector4(1f, 0.92f, 0.78f, 1f),
-        });
+
         player.AddComponent(new SpriteRenderer
         {
             TexturePath = "assets/sprites/hero-walk.png",
@@ -120,13 +115,7 @@ public static class DefaultScene
             SortingOrder = 20,
         });
         coin.AddComponent(new RotatorComponent { DegreesPerSecond = 120f });
-        coin.AddComponent(new Light2D
-        {
-            Radius = 2.2f,
-            Intensity = 0.7f,
-            Color = new Vector4(1f, 0.82f, 0.35f, 1f),
-            FlickerAmplitude = 0.08f,
-        });
+
 
         var tilted = scene.Create("Caja girada", new Vector2(-2.8f, -1.8f));
         tilted.Transform.Rotation = 0.35f;

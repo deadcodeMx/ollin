@@ -1,0 +1,18 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Ollin.Editor.Controls"
+        x:Class="Ollin.Editor.Views.GameWindow"
+        Title="Ollin — Juego"
+        Width="960" Height="540"
+        MinWidth="480" MinHeight="270"
+        Background="#000000"
+        WindowStartupLocation="CenterScreen">
+  <Grid>
+    <controls:ViewportSurface x:Name="GameHost" />
+    <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"
+            Background="#B305070B" CornerRadius="4" Padding="8,4" IsHitTestVisible="False">
+      <TextBlock Text="Ventana de juego · F11 pantalla completa · Esc para salir de pantalla completa"
+                 FontSize="10" Foreground="#C9D1DE" />
+    </Border>
+  </Grid>
+</Window>

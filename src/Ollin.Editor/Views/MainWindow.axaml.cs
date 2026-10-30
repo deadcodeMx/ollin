@@ -28,6 +28,7 @@ public partial class MainWindow : Window
     };
 
     private bool _loadingScript;
+    private GameWindow? _gameWindow;
     private CompletionWindow? _completionWindow;
 
     public MainWindow()
@@ -173,6 +174,11 @@ public partial class MainWindow : Window
         if (Environment.GetCommandLineArgs().Any(arg => arg.Equals("--play", StringComparison.OrdinalIgnoreCase)))
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(vm.StartPlayback, Avalonia.Threading.DispatcherPriority.Background);
+        }
+
+        if (Environment.GetCommandLineArgs().Any(arg => arg.Equals("--game", StringComparison.OrdinalIgnoreCase)))
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(OpenGameWindow, Avalonia.Threading.DispatcherPriority.Background);
         }
         vm.TexturesReloadRequested += () => ViewportHost.Viewport.RequestTextureReload();
     }
@@ -529,6 +535,26 @@ public partial class MainWindow : Window
     private void OnOpenSelectedScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewModel?.OpenSelectedScript();
 
+    private void OnOpenGameWindow(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => OpenGameWindow();
+
+    private void OpenGameWindow()
+    {
+        if (ViewModel is null)
+        {
+            return;
+        }
+
+        if (_gameWindow is { IsVisible: true })
+        {
+            _gameWindow.Activate();
+            return;
+        }
+
+        _gameWindow = new GameWindow(ViewModel);
+        _gameWindow.Closed += (_, _) => _gameWindow = null;
+        _gameWindow.Show();
+    }
+
     private void OnResumeMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ResumeFromMenu();
 
     private void OnRestartScene(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.RestartPlay();
@@ -820,7 +846,47 @@ public partial class MainWindow : Window
 
     private void OnAddAi(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "ai");
 
+    private void OnRemoveComponentFromMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is MenuItem { Tag: string kind } && MenuEntity(sender) is { } node && ViewModel is { } vm)
+        {
+            vm.Select(node.Entity);
+            vm.RemoveComponent(kind);
+        }
+    }
+
+    private async void OnSaveBlueprint(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected is null)
+        {
+            ViewModel?.CopySelected();
+            return;
+        }
+
+        var start = await StorageProvider.TryGetFolderFromPathAsync(ViewModel.PrefabsFolder);
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Guardar como blueprint",
+            SuggestedFileName = $"{ViewModel.Selected.Name}{Ollin.Core.Prefabs.BlueprintSerializer.Extension}",
+            DefaultExtension = "json",
+            SuggestedStartLocation = start,
+        });
+
+        var path = file?.TryGetLocalPath();
+
+        if (!string.IsNullOrWhiteSpace(path))
+        {
+            ViewModel.SaveSelectedAsBlueprint(path);
+        }
+    }
+
     private void OnSaveGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveGame();
+
+    private void OnThemeDark(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTheme(Ollin.Editor.Styles.EditorThemeMode.Dark);
+
+    private void OnThemeLight(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTheme(Ollin.Editor.Styles.EditorThemeMode.Light);
+
+    private void OnThemeOllin(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTheme(Ollin.Editor.Styles.EditorThemeMode.Ollin);
 
     private void OnLoadGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.LoadGame();
 

@@ -15,6 +15,11 @@
       <SolidColorBrush x:Key="Ollin.Jade" Color="#47B8A8" />
       <SolidColorBrush x:Key="Ollin.Danger" Color="#E05B5B" />
       <SolidColorBrush x:Key="Ollin.ViewportBg" Color="#0B0D12" />
+      <SolidColorBrush x:Key="Ollin.AccentHover" Color="#F2B457" />
+      <SolidColorBrush x:Key="Ollin.AccentText" Color="#1A1206" />
+      <SolidColorBrush x:Key="Ollin.Hover" Color="#232936" />
+      <SolidColorBrush x:Key="Ollin.Pressed" Color="#2B3242" />
+      <SolidColorBrush x:Key="Ollin.Neutral" Color="#C7D0DE" />
     </ResourceDictionary>
   </Application.Resources>
 

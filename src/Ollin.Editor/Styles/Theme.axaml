@@ -17,23 +17,23 @@
   </Style>
 
   <Style Selector="Button:pointerover">
-    <Setter Property="Background" Value="#232936" />
+    <Setter Property="Background" Value="{DynamicResource Ollin.Hover}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Ollin.AccentDim}" />
   </Style>
 
   <Style Selector="Button:pressed">
-    <Setter Property="Background" Value="#2B3242" />
+    <Setter Property="Background" Value="{DynamicResource Ollin.Pressed}" />
   </Style>
 
   <Style Selector="Button.accent">
     <Setter Property="Background" Value="{DynamicResource Ollin.Accent}" />
-    <Setter Property="Foreground" Value="#1A1206" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.AccentText}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Accent}" />
     <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
 
   <Style Selector="Button.accent:pointerover">
-    <Setter Property="Background" Value="#F2B457" />
+    <Setter Property="Background" Value="{DynamicResource Ollin.AccentHover}" />
   </Style>
 
   <Style Selector="Button.tool">

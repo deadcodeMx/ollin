@@ -46,6 +46,14 @@
         <MenuItem Header="Centrar cámara" InputGesture="Home" Click="OnResetCamera" />
         <MenuItem Header="Enfocar selección" InputGesture="F" Click="OnFrameSelected" />
         <MenuItem Header="Mostrar cuadrícula" ToggleType="CheckBox" IsChecked="{Binding ShowGrid}" />
+        <Separator />
+        <MenuItem Header="Ventana de juego" InputGesture="Ctrl+G" Click="OnOpenGameWindow" />
+        <Separator />
+        <MenuItem Header="Tema">
+          <MenuItem Header="Oscuro" Click="OnThemeDark" />
+          <MenuItem Header="Claro" Click="OnThemeLight" />
+          <MenuItem Header="Ollin (logo)" Click="OnThemeOllin" />
+        </MenuItem>
       </MenuItem>
       <MenuItem Header="Escena">
         <MenuItem Header="Reproducir / detener" InputGesture="F5" Click="OnPlay" />
@@ -133,17 +141,36 @@
                               <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                               <MenuItem Header="Script" Click="OnAddScriptComponent" />
                             </MenuItem>
+                            <MenuItem Header="Quitar componente">
+                              <MenuItem Header="Sprite" Tag="sprite" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Animación" Tag="animator" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Cámara" Tag="camera" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Tilemap" Tag="tilemap" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Colisión" Tag="collider" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Cuerpo físico" Tag="rigidbody" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Audio" Tag="audio" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Luz 2D" Tag="light" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Interacción" Tag="interactable" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Inventario" Tag="inventory" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Estadísticas" Tag="stats" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Día/Noche" Tag="daynight" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="IA" Tag="ai" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Script" Tag="script" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Rotador" Tag="rotator" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Oscilador" Tag="oscillator" Click="OnRemoveComponentFromMenu" />
+                            </MenuItem>
                             <Separator />
                             <MenuItem Header="Duplicar" Click="OnDuplicate" />
                             <MenuItem Header="Enfocar en la cámara" Click="OnFocusEntity" />
                             <MenuItem Header="Guardar como prefab…" Click="OnSavePrefab" />
+                            <MenuItem Header="Guardar como blueprint…" Click="OnSaveBlueprint" />
                             <Separator />
                             <MenuItem Header="Eliminar" Click="OnDelete" />
                           </ContextMenu>
                         </StackPanel.ContextMenu>
                         <TextBlock Text="{Binding Icon}" FontSize="10"
                                    Foreground="{DynamicResource Ollin.Jade}" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Name}" Foreground="{Binding NameBrush}" VerticalAlignment="Center" />
                       </StackPanel>
                     </TreeDataTemplate>
                   </TreeView.ItemTemplate>
@@ -403,6 +430,14 @@
                       <Grid ColumnDefinitions="86,*" Margin="0,1">
                         <TextBlock Text="Etiquetas" VerticalAlignment="Center" Classes="hint" />
                         <TextBox Grid.Column="1" Text="{Binding Selected.TagsText, Mode=TwoWay}" Watermark="player, enemy" />
+                      </Grid>
+                      <Grid ColumnDefinitions="86,*" Margin="0,1">
+                        <TextBlock Text="Símbolo" VerticalAlignment="Center" Classes="hint" />
+                        <TextBox Grid.Column="1" Text="{Binding Selected.EditorIcon, Mode=TwoWay}" Watermark="★, 👾, ▲" />
+                      </Grid>
+                      <Grid ColumnDefinitions="86,*" Margin="0,1">
+                        <TextBlock Text="Color" VerticalAlignment="Center" Classes="hint" />
+                        <TextBox Grid.Column="1" Text="{Binding Selected.EditorColorHex, Mode=TwoWay}" Watermark="#E9A23B" />
                       </Grid>
                       <Button Classes="tool accent" Content="+ Añadir componente" HorizontalAlignment="Stretch" Margin="0,6,0,0">
                         <Button.Flyout>

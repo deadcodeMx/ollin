@@ -27,9 +27,9 @@ Requisitos:
    en el escritorio y en el menú de inicio.
 3. Abre **Ollin** desde el acceso directo.
 
-La primera vez verás la pantalla de bienvenida con tres opciones: **crear proyecto**,
-**abrir proyecto** o **abrir carpeta de ejemplo**. Las siguientes veces se abre
-automáticamente el último proyecto.
+Al abrir Ollin aparece el **lanzador de proyectos**: una lista con los proyectos
+recientes y botones para **crear** uno nuevo o **abrir** una carpeta existente. El
+editor se abre después de elegir un proyecto.
 
 > Windows puede mostrar un aviso de SmartScreen porque el instalador no está firmado.
 > Es normal en una beta: elige «Más información → Ejecutar de todas formas».
@@ -40,8 +40,8 @@ automáticamente el último proyecto.
 
 `Archivo → Nuevo proyecto…` (o el botón del escritorio de bienvenida).
 
-- **Plantilla**: Vacío, Plataformas o Terror. Cada una crea una escena y un script
-  inicial que ya funciona.
+- **Plantilla**: Vacío (solo la cámara), Plataformas, Terror o Tutorial. La de
+  Tutorial crea un recorrido guiado con HUD, inventario, diálogo, IA y guardado.
 - **Nombre**: se usa también como nombre de la carpeta (los espacios pasan a `_`).
 - **Carpeta**: dónde se creará. El diálogo tiene desplazamiento si la pantalla es
   pequeña y valida que la carpeta no esté ocupada.
@@ -64,6 +64,12 @@ proyecto).
 ---
 
 ## 4. La interfaz
+
+- **Temas**: `Ver → Tema` ofrece **Oscuro**, **Claro** y **Ollin** (colores del logo).
+  Se recuerda entre sesiones.
+- **Ventana de juego**: `Ver → Ventana de juego` (Ctrl+G) abre una ventana aparte con el
+  viewport del juego. Puedes moverla a otro monitor y pulsar **F11** para pantalla
+  completa; **Esc** la devuelve a ventana.
 
 | Zona | Para qué sirve |
 | --- | --- |

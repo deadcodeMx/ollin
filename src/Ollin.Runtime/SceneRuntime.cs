@@ -416,7 +416,15 @@ public sealed class SceneRuntime
 
         UpdateScripts(dt);
         DrainCoroutines();
-        _physics.Step(_scene, _scripts, dt);
+        // Física en subpasos: evita que un cuerpo rápido atraviese un sólido
+        // cuando el frame se alarga (pérdida de foco, recarga, etc.).
+        var physicsSteps = System.Math.Clamp((int)MathF.Ceiling(dt / 0.016f), 1, 8);
+        var physicsDelta = dt / physicsSteps;
+
+        for (var step = 0; step < physicsSteps; step++)
+        {
+            _physics.Step(_scene, _scripts, physicsDelta);
+        }
         UpdateCoroutines(dt);
         UpdateCameraFollow(dt);
         ApplyDayNight();

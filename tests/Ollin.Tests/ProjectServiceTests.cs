@@ -15,7 +15,7 @@ public class ProjectServiceTests
 
         try
         {
-            var project = ProjectService.Create(parent, "Mi Juego");
+            var project = ProjectService.Create(parent, "Mi Juego", template: ProjectTemplate.Platformer);
 
             Assert.True(Directory.Exists(Path.Combine(project.RootPath, "scenes")));
             Assert.True(Directory.Exists(Path.Combine(project.RootPath, "scripts")));
@@ -23,7 +23,7 @@ public class ProjectServiceTests
             Assert.True(Directory.Exists(Path.Combine(project.RootPath, "prefabs")));
             Assert.True(File.Exists(project.ProjectFile));
             Assert.True(File.Exists(project.StartSceneFullPath));
-            Assert.True(File.Exists(Path.Combine(project.RootPath, "scripts", "Juego.cs")));
+            Assert.True(File.Exists(Path.Combine(project.RootPath, "scripts", "Plataformas.cs")));
 
             var scene = SceneSerializer.Load(project.StartSceneFullPath);
             Assert.NotNull(scene.GetMainCamera());
@@ -43,14 +43,14 @@ public class ProjectServiceTests
 
         try
         {
-            var project = ProjectService.Create(parent, "Compila");
+            var project = ProjectService.Create(parent, "Compila", template: ProjectTemplate.Platformer);
             using var workspace = new ScriptWorkspace(project.RootPath);
 
             var result = workspace.Reload();
 
             Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
-            Assert.Contains(result.Types, t => t.Name == "Juego");
-            Assert.NotNull(workspace.CreateInstance("Juego"));
+            Assert.Contains(result.Types, t => t.Name == "Plataformas");
+            Assert.NotNull(workspace.CreateInstance("Plataformas"));
         }
         finally
         {

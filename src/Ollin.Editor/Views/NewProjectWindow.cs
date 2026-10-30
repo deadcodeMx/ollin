@@ -36,7 +36,7 @@ public sealed class NewProjectWindow : Window
         _folder = new TextBox { Text = suggested };
         _template = new ComboBox
         {
-            ItemsSource = new[] { "Vacío (cámara + jugador)", "Plataformas", "Terror" },
+            ItemsSource = new[] { "Vacío (solo cámara)", "Plataformas", "Terror", "Tutorial (recorrido)" },
             SelectedIndex = 0,
             HorizontalAlignment = HorizontalAlignment.Stretch,
         };
@@ -157,6 +157,7 @@ public sealed class NewProjectWindow : Window
         {
             1 => ProjectTemplate.Platformer,
             2 => ProjectTemplate.Horror,
+            3 => ProjectTemplate.Tutorial,
             _ => ProjectTemplate.Empty,
         };
 

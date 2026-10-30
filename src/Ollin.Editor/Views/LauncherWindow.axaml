@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Ollin.Editor.Views.LauncherWindow"
+        Title="Ollin — Proyectos"
+        Width="820" Height="560"
+        MinWidth="640" MinHeight="460"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Ollin.Bg}">
+
+  <Grid RowDefinitions="Auto,*,Auto" Margin="28,24,28,20">
+
+    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="16">
+      <Image x:Name="Logo" Width="64" Height="64" />
+      <StackPanel VerticalAlignment="Center" Spacing="2">
+        <TextBlock Text="Ollin" FontSize="30" FontWeight="Bold"
+                   Foreground="{DynamicResource Ollin.Accent}" />
+        <TextBlock Text="Motor de juego 2D · elige un proyecto" FontSize="12"
+                   Foreground="{DynamicResource Ollin.TextDim}" />
+      </StackPanel>
+    </StackPanel>
+
+    <Border Grid.Row="1" Classes="card" Margin="0,18,0,14">
+      <Grid RowDefinitions="Auto,*" Margin="14,12">
+        <TextBlock Classes="section" Text="PROYECTOS RECIENTES" Margin="2,0,0,8" />
+        <ListBox Grid.Row="1" x:Name="RecentList" Background="Transparent"
+                 DoubleTapped="OnOpenSelected">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <StackPanel Spacing="1" Margin="2,3">
+                <TextBlock Text="{Binding Name}" FontSize="13" />
+                <TextBlock Text="{Binding Path}" FontSize="10.5"
+                           Foreground="{DynamicResource Ollin.TextDim}" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock x:Name="EmptyHint" Grid.Row="1" Text="Todavía no hay proyectos recientes."
+                   Classes="hint" HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Classes="accent" Content="Crear proyecto…" Click="OnCreateProject" />
+        <Button Content="Abrir carpeta…" Click="OnOpenFolder" />
+      </StackPanel>
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+        <Button Content="Salir" Click="OnExit" />
+        <Button Classes="accent" Content="Abrir proyecto" Click="OnOpenSelected" />
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Window>

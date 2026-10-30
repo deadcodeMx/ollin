@@ -18,6 +18,12 @@ public sealed class Entity
 
     public bool Active { get; set; } = true;
 
+    /// <summary>Símbolo personalizado para la jerarquía del editor.</summary>
+    public string? EditorIcon { get; set; }
+
+    /// <summary>Color personalizado (hex) para la jerarquía del editor.</summary>
+    public string? EditorColor { get; set; }
+
     /// <summary>Etiquetas libres para identificar entidades ("player", "enemy"...).</summary>
     public List<string> Tags { get; set; } = new();
 
@@ -80,6 +86,8 @@ public sealed class Entity
             Name = Name,
             ParentId = ParentId,
             Active = Active,
+            EditorIcon = EditorIcon,
+            EditorColor = EditorColor,
             Transform = Transform.Clone(),
             Tags = new List<string>(Tags),
         };

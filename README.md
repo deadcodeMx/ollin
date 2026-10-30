@@ -14,7 +14,7 @@
 ![Avalonia](https://img.shields.io/badge/Avalonia-11.3-8B44AC)
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
 ![Roslyn](https://img.shields.io/badge/Roslyn-4.11-2E7D32)
-![Pruebas](https://img.shields.io/badge/pruebas-76%2F76-47B8A8)
+![Pruebas](https://img.shields.io/badge/pruebas-119%2F119-47B8A8)
 ![Etapa](https://img.shields.io/badge/etapa-4%20de%208%20completada-47B8A8)
 
 ![Editor de Ollin](docs/images/editor.png)
@@ -65,7 +65,7 @@ herramientas cómodas, arranque rápido y alcance contenido. El plan completo es
 | 2 | Runtime (Play/Pausa/Detener), assets, gizmos, deshacer/rehacer | ✅ |
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
 | 4 | Animación, tilemaps, física, audio, prefabs, proyectos y herramientas | ✅ |
-| 5 | Herramientas de juego 2D: luces, triggers, diálogos, inventario, IA, día/noche | 🚧 en curso (diálogos e iluminación) |
+| 5 | Herramientas de juego 2D: luces, triggers, diálogos, inventario, IA, día/noche | ✅ |
 | 6 | 2.5D: sprites en espacio 3D con cámara en primera persona | ⏳ |
 | 7 | 3D: mallas glTF, luces y sombras, física, navmesh, editor 3D | ⏳ |
 | 8 | Producto: build, guardado, opciones, perfilador, localización | ⏳ |
@@ -200,6 +200,8 @@ docs/                Arquitectura, roadmap y guía de publicación en GitHub
   y etiquetas de entidad.
 - **Luces 2D y atmósfera**: luces puntuales y conos, ambiente por cámara, viñeta,
   paralaje y cámara con seguimiento.
+- **Lanzador de proyectos**, **3 temas** (oscuro, claro y Ollin), **blueprints** con
+  jerarquía, ventana de juego aparte y **proyecto de tutorial**.
 
 ## Edición cómoda (estilo Unity/Godot)
 

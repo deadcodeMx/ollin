@@ -230,7 +230,7 @@ public sealed partial class MainViewModel
         RefreshAssets(logToConsole: false);
         RefreshProjectFiles();
 
-        _settings.LastProject = File.Exists(project.ProjectFile) ? project.ProjectFile : project.RootPath;
+        _settings.RememberProject(File.Exists(project.ProjectFile) ? project.ProjectFile : project.RootPath);
         _settings.Save();
 
         Documents.Clear();

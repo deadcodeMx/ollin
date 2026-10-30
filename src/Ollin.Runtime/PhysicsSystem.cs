@@ -171,11 +171,13 @@ internal sealed class PhysicsSystem
                             {
                                 var direction = body.Entity.Transform.Position.X < (cellMin.X + cellMax.X) * 0.5f ? -1f : 1f;
                                 body.Entity.Transform.Position += new Vector2(overlapX * direction, 0f);
+                                CancelVelocity(body, new Vector2(direction, 0f));
                             }
                             else
                             {
                                 var direction = body.Entity.Transform.Position.Y < (cellMin.Y + cellMax.Y) * 0.5f ? -1f : 1f;
                                 body.Entity.Transform.Position += new Vector2(0f, overlapY * direction);
+                                CancelVelocity(body, new Vector2(0f, direction));
                             }
 
                             GetBounds(scene, body.Entity, body.Collider, out bodyMin, out bodyMax);
@@ -233,15 +235,45 @@ internal sealed class PhysicsSystem
         {
             a.Entity.Transform.Position += delta * 0.5f;
             b.Entity.Transform.Position -= delta * 0.5f;
+            CancelVelocity(a, delta);
+            CancelVelocity(b, -delta);
         }
         else if (aDynamic)
         {
             a.Entity.Transform.Position += delta;
+            CancelVelocity(a, delta);
         }
         else if (bDynamic)
         {
             b.Entity.Transform.Position -= delta;
+            CancelVelocity(b, -delta);
         }
+    }
+
+    /// <summary>
+    /// Anula la velocidad en el eje del empuje: evita que el cuerpo vuelva a
+    /// penetrar el sólido en el siguiente paso (y que acabe atravesándolo).
+    /// </summary>
+    private static void CancelVelocity((Entity Entity, BoxCollider Collider, Rigidbody2D? Body) body, Vector2 push)
+    {
+        if (body.Body is not { IsStatic: false } rigidbody)
+        {
+            return;
+        }
+
+        var velocity = rigidbody.Velocity;
+
+        if (MathF.Abs(push.X) > 0.0001f)
+        {
+            velocity.X = 0f;
+        }
+
+        if (MathF.Abs(push.Y) > 0.0001f)
+        {
+            velocity.Y = 0f;
+        }
+
+        rigidbody.Velocity = velocity;
     }
 
     private static void GetBounds(Scene scene, Entity entity, BoxCollider collider, out Vector2 min, out Vector2 max)

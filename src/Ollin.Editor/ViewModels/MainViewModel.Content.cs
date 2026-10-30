@@ -32,6 +32,15 @@ public sealed partial class MainViewModel
     /// <summary>Nombres de las clases de script compiladas (para autocompletar).</summary>
     public IReadOnlyList<string> ScriptClassNames => _scripts.Types.Select(t => t.Name).ToList();
 
+    /// <summary>Aplica y guarda el tema de la interfaz.</summary>
+    public void SetTheme(Styles.EditorThemeMode mode)
+    {
+        Styles.EditorTheme.Apply(mode);
+        _settings.Theme = mode.ToString();
+        _settings.Save();
+        RequestRedraw();
+    }
+
     /// <summary>Carpeta de prefabs del proyecto (o una local si no hay proyecto).</summary>
     public string PrefabsFolder => Project?.PrefabsFolder ?? Path.Combine(ProjectRoot, "prefabs");
 
@@ -311,6 +320,99 @@ public sealed partial class MainViewModel
         CommitEdit("Añadir componente");
         StatusMessage = $"Componente {kind} añadido a {entity.Name}";
         RequestRedraw();
+    }
+
+    /// <summary>Quita un componente de la entidad seleccionada (menú de jerarquía).</summary>
+    public void RemoveComponent(string kind)
+    {
+        if (IsPlaying || Selected is null)
+        {
+            return;
+        }
+
+        var entity = Selected.Entity;
+        Component? component = kind switch
+        {
+            "sprite" => entity.GetComponent<SpriteRenderer>(),
+            "animator" => entity.GetComponent<SpriteAnimator>(),
+            "camera" => entity.GetComponent<Camera2D>(),
+            "tilemap" => entity.GetComponent<Tilemap>(),
+            "collider" => entity.GetComponent<BoxCollider>(),
+            "rigidbody" => entity.GetComponent<Rigidbody2D>(),
+            "audio" => entity.GetComponent<AudioSource>(),
+            "light" => entity.GetComponent<Light2D>(),
+            "interactable" => entity.GetComponent<Interactable>(),
+            "inventory" => entity.GetComponent<Inventory>(),
+            "stats" => entity.GetComponent<Stats>(),
+            "daynight" => entity.GetComponent<DayNightCycle>(),
+            "ai" => entity.GetComponent<AiAgent>(),
+            "script" => entity.GetComponent<ScriptComponent>(),
+            "rotator" => entity.GetComponent<RotatorComponent>(),
+            "oscillator" => entity.GetComponent<OscillatorComponent>(),
+            _ => null,
+        };
+
+        if (component is null)
+        {
+            StatusMessage = "La entidad no tiene ese componente";
+            return;
+        }
+
+        entity.RemoveComponent(component);
+        Selected.RefreshAll();
+        IsDirty = true;
+        CommitEdit("Quitar componente");
+        StatusMessage = $"Componente '{kind}' quitado de {entity.Name}";
+        RequestRedraw();
+    }
+
+    /// <summary>Guarda la entidad seleccionada y sus hijos como blueprint.</summary>
+    public void SaveSelectedAsBlueprint(string path)
+    {
+        if (Selected is null)
+        {
+            StatusMessage = "Selecciona una entidad para guardarla como blueprint";
+            return;
+        }
+
+        try
+        {
+            var normalized = BlueprintSerializer.NormalizePath(path);
+            BlueprintSerializer.Save(Scene, Selected.Entity, normalized);
+            RefreshProjectFiles();
+            StatusMessage = $"Blueprint guardado: {Path.GetFileName(normalized)}";
+            Log.Info($"Blueprint guardado: {normalized}", "Editor");
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"No se pudo guardar el blueprint: {exception.Message}", "Editor");
+        }
+    }
+
+    /// <summary>Instancia un blueprint completo (entidad + hijos).</summary>
+    public void InstantiateBlueprint(string path)
+    {
+        if (IsPlaying)
+        {
+            return;
+        }
+
+        try
+        {
+            var document = BlueprintSerializer.Load(path);
+            var root = BlueprintSerializer.Instantiate(Scene, document, CameraPosition);
+            RebuildTree();
+            Select(root);
+            IsDirty = true;
+            CommitEdit("Instanciar blueprint");
+            OnPropertyChanged(nameof(EntityCountText));
+            StatusMessage = $"Blueprint instanciado: {root.Name}";
+            RequestRedraw();
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"No se pudo instanciar el blueprint: {exception.Message}", "Editor");
+        }
     }
 
     /// <summary>Crea una entidad hija de la indicada (estilo Unity).</summary>
