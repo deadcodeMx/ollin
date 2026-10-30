@@ -377,7 +377,7 @@ public partial class MainWindow : Window
         Bitmap? logo = null;
         try
         {
-            logo = new Bitmap(AssetLoader.Open(new Uri("avares://Ollin.Editor/Assets/ollin.ico")));
+            logo = new Bitmap(AssetLoader.Open(new Uri("avares://Ollin.Editor/Assets/ollin.png")));
         }
         catch
         {
