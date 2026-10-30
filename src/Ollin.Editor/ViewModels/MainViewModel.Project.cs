@@ -127,18 +127,18 @@ public sealed partial class MainViewModel
     }
 
     /// <summary>Crea un proyecto nuevo con su propia carpeta y lo abre.</summary>
-    public void CreateProject(string parentFolder, string name)
+    public void CreateProject(string parentFolder, string name, ProjectTemplate template = ProjectTemplate.Empty)
     {
         try
         {
-            var template = Path.Combine(AppContext.BaseDirectory, "assets");
-            if (!Directory.Exists(template))
+            var templateAssets = Path.Combine(AppContext.BaseDirectory, "assets");
+            if (!Directory.Exists(templateAssets))
             {
                 var root = ProjectLocator.FindProjectRoot();
-                template = root is null ? template : Path.Combine(root, "assets");
+                templateAssets = root is null ? templateAssets : Path.Combine(root, "assets");
             }
 
-            var project = ProjectService.Create(parentFolder, name, Directory.Exists(template) ? template : null);
+            var project = ProjectService.Create(parentFolder, name, Directory.Exists(templateAssets) ? templateAssets : null, template);
             ApplyProject(project);
             StatusMessage = $"Proyecto '{project.Name}' creado en {project.RootPath}";
             Log.Info($"Proyecto creado: {project.ProjectFile}", "Proyecto");
@@ -176,6 +176,7 @@ public sealed partial class MainViewModel
             if (openedAsFolder && string.IsNullOrWhiteSpace(project.StartScene))
             {
                 LoadScene(Ollin.Core.Scenes.DefaultScene.Create(), null);
+                RefreshSceneTabTitle();
                 ActiveDocument = Documents.FirstOrDefault();
             }
 

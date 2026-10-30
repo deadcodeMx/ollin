@@ -17,6 +17,20 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.7.0] — 2026-10-30
+
+### Añadido
+
+- Audio 2D con NAudio: componente `AudioSource`, canales de efecto y música,
+  fundidos y API `Audio.Play` / `Audio.Music` para scripts. Sonidos de ejemplo.
+- Prefabs `*.prefab.json`: guardar la entidad seleccionada e instanciarla desde el
+  explorador de archivos.
+- Copiar y pegar entidades con `Ctrl+C` / `Ctrl+V`.
+- Buscador de entidades en la jerarquía.
+- Plantillas de proyecto: Vacío, Plataformas y Terror, con escena y script propios.
+- Colisión por celda en tilemaps y cuerpos cinemáticos.
+- 8 pruebas nuevas (prefabs, audio, colisión por celda y plantillas): 68 en total.
+
 ## [0.6.0] — 2026-10-30
 
 ### Añadido

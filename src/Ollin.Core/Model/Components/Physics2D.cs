@@ -58,6 +58,9 @@ public sealed class Rigidbody2D : Component, ITickable
 
     public float Mass { get; set; } = 1f;
 
+    /// <summary>Cuerpo cinemático: se mueve con su velocidad pero no lo empujan.</summary>
+    public bool IsKinematic { get; set; }
+
     public override Component CloneFor(Entity newOwner) => new Rigidbody2D
     {
         Enabled = Enabled,
@@ -66,6 +69,7 @@ public sealed class Rigidbody2D : Component, ITickable
         GravityScale = GravityScale,
         IsStatic = IsStatic,
         Mass = Mass,
+        IsKinematic = IsKinematic,
         Owner = newOwner,
     };
 

@@ -23,6 +23,9 @@ public sealed class Tilemap : Component
 
     public int SortingOrder { get; set; } = -5;
 
+    /// <summary>Si está activo, sus celdas bloquean a los cuerpos dinámicos.</summary>
+    public bool Collides { get; set; }
+
     /// <summary>Índices por fila: <c>Tiles[y * Width + x]</c> (-1 = celda vacía).</summary>
     public int[] Tiles { get; set; } = CreateEmpty(16, 8);
 
@@ -42,6 +45,7 @@ public sealed class Tilemap : Component
         TexturePath = TexturePath,
         TilesetColumns = TilesetColumns,
         SortingOrder = SortingOrder,
+        Collides = Collides,
         Tiles = (int[])Tiles.Clone(),
         Owner = newOwner,
     };

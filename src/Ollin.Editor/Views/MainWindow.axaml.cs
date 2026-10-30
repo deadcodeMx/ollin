@@ -29,6 +29,25 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContextChanged += OnDataContextChanged;
         SetupScriptEditor();
+        SetupAudio();
+    }
+
+    private void SetupAudio()
+    {
+        try
+        {
+            var backend = new Ollin.Editor.Audio.NAudioBackend();
+            Ollin.Core.Audio.Audio.Initialize(backend);
+            Closed += (_, _) =>
+            {
+                Ollin.Core.Audio.Audio.Shutdown();
+                backend.Dispose();
+            };
+        }
+        catch (Exception exception)
+        {
+            Ollin.Core.Diagnostics.Log.Warn($"Sin salida de audio: {exception.Message}", "Audio");
+        }
     }
 
     private void SetupScriptEditor()
@@ -304,7 +323,7 @@ public partial class MainWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Motor de juego 2D · versión 0.6.0 beta",
+                    Text = "Motor de juego 2D · versión 0.7.0 beta",
                     FontSize = 12,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
@@ -342,7 +361,7 @@ public partial class MainWindow : Window
 
         if (result is not null)
         {
-            ViewModel.CreateProject(result.ParentFolder, result.Name);
+            ViewModel.CreateProject(result.ParentFolder, result.Name, result.Template);
         }
     }
 
@@ -398,6 +417,41 @@ public partial class MainWindow : Window
 
     private void OnOpenSelectedScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewModel?.OpenSelectedScript();
+
+    private void OnCopyEntity(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.CopySelected();
+
+    private void OnPasteEntity(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.PasteCopied();
+
+    private void OnClearSearch(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ClearSearch();
+
+    private async void OnSavePrefab(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected is null)
+        {
+            ViewModel?.CopySelected();
+            return;
+        }
+
+        var start = await StorageProvider.TryGetFolderFromPathAsync(ViewModel.PrefabsFolder);
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Guardar entidad como prefab",
+            SuggestedFileName = $"{ViewModel.Selected.Name}{Ollin.Core.Prefabs.PrefabSerializer.Extension}",
+            DefaultExtension = "json",
+            SuggestedStartLocation = start,
+        });
+
+        var path = file?.TryGetLocalPath();
+        if (!string.IsNullOrWhiteSpace(path))
+        {
+            if (!path.EndsWith(Ollin.Core.Prefabs.PrefabSerializer.Extension, StringComparison.OrdinalIgnoreCase))
+            {
+                path += Ollin.Core.Prefabs.PrefabSerializer.Extension;
+            }
+
+            ViewModel.SaveSelectedAsPrefab(path);
+        }
+    }
 
     private void OnRefreshFiles(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
@@ -487,6 +541,14 @@ public partial class MainWindow : Window
                 OnSaveScene(this, new Avalonia.Interactivity.RoutedEventArgs());
                 e.Handled = true;
                 break;
+            case Key.C when control:
+                ViewModel.CopySelected();
+                e.Handled = true;
+                break;
+            case Key.V when control:
+                ViewModel.PasteCopied();
+                e.Handled = true;
+                break;
             case Key.Delete:
                 ViewModel.DeleteSelected();
                 e.Handled = true;
@@ -524,6 +586,6 @@ public partial class MainWindow : Window
     }
 
     private bool IsTextInputFocused() =>
-        FocusManager?.GetFocusedElement() is TextBox or NumericUpDown ||
+        FocusManager?.GetFocusedElement() is TextBox or NumericUpDown or AvaloniaEdit.TextEditor ||
         FocusManager?.GetFocusedElement() is Control { Name: "PART_TextBox" };
 }

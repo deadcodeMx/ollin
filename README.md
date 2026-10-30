@@ -171,6 +171,19 @@ docs/                Arquitectura, roadmap y guía de publicación en GitHub
 - **Inspector por pestañas**: Entidad, Visual, Mundo, Tilemap y Cámara.
 - **Línea de comandos**: `Ollin.Editor.exe --project <ruta> [--script <archivo.cs>]`.
 
+## Audio, prefabs y herramientas (etapa 4)
+
+- **Audio 2D** con NAudio: `AudioSource` por entidad (clip, volumen, bucle, música,
+  fundido) y API para scripts: `Audio.Play(...)`, `Audio.Music(...)`, `Audio.StopAll()`.
+  Incluye sonidos de ejemplo en `assets/audio/`.
+- **Prefabs** `*.prefab.json`: guarda la entidad seleccionada y instánciala con doble
+  clic desde el explorador de archivos.
+- **Copiar y pegar** entidades con `Ctrl+C` / `Ctrl+V` (nombre y posición ajustados).
+- **Buscador en la jerarquía** para filtrar entidades por nombre.
+- **Plantillas de proyecto**: Vacío, Plataformas y Terror, con escena y script inicial
+  propios.
+- **Colisión por celda** en los tilemaps (casilla *Colisiona*) y cuerpos cinemáticos.
+
 ## Scripts en C#
 
 Los scripts viven en `scripts/` y se compilan **en memoria con Roslyn** al abrir el

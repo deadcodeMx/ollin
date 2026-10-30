@@ -103,6 +103,99 @@ internal sealed class PhysicsSystem
             }
         }
 
+        // Colisión contra celdas sólidas de los tilemaps (marcadas con Collides).
+        var tilemaps = new List<(Entity Entity, Tilemap Map)>();
+        foreach (var entity in scene.Entities)
+        {
+            var map = entity.GetComponent<Tilemap>();
+            if (entity.Active && map is { Enabled: true, Collides: true })
+            {
+                tilemaps.Add((entity, map));
+            }
+        }
+
+        if (tilemaps.Count > 0)
+        {
+            foreach (var body in bodies)
+            {
+                if (body.Body is not { IsStatic: false })
+                {
+                    continue;
+                }
+
+                GetBounds(scene, body.Entity, body.Collider, out var bodyMin, out var bodyMax);
+
+                foreach (var (mapEntity, map) in tilemaps)
+                {
+                    var world = scene.GetWorldMatrix(mapEntity);
+                    var hit = false;
+
+                    for (var y = 0; y < map.Height; y++)
+                    {
+                        for (var x = 0; x < map.Width; x++)
+                        {
+                            if (map.TileAt(x, y) < 0)
+                            {
+                                continue;
+                            }
+
+                            var origin = map.CellOrigin(x, y);
+                            var size = new Vector2(map.TileSize, map.TileSize);
+                            var cellMin = new Vector2(float.MaxValue);
+                            var cellMax = new Vector2(float.MinValue);
+
+                            foreach (var corner in new[]
+                            {
+                                origin,
+                                origin + new Vector2(size.X, 0f),
+                                origin + size,
+                                origin + new Vector2(0f, size.Y),
+                            })
+                            {
+                                var worldCorner = Vector2.Transform(corner, world);
+                                cellMin = Vector2.Min(cellMin, worldCorner);
+                                cellMax = Vector2.Max(cellMax, worldCorner);
+                            }
+
+                            if (bodyMax.X <= cellMin.X || bodyMin.X >= cellMax.X || bodyMax.Y <= cellMin.Y || bodyMin.Y >= cellMax.Y)
+                            {
+                                continue;
+                            }
+
+                            hit = true;
+
+                            var overlapX = MathF.Min(bodyMax.X - cellMin.X, cellMax.X - bodyMin.X);
+                            var overlapY = MathF.Min(bodyMax.Y - cellMin.Y, cellMax.Y - bodyMin.Y);
+
+                            if (overlapX < overlapY)
+                            {
+                                var direction = body.Entity.Transform.Position.X < (cellMin.X + cellMax.X) * 0.5f ? -1f : 1f;
+                                body.Entity.Transform.Position += new Vector2(overlapX * direction, 0f);
+                            }
+                            else
+                            {
+                                var direction = body.Entity.Transform.Position.Y < (cellMin.Y + cellMax.Y) * 0.5f ? -1f : 1f;
+                                body.Entity.Transform.Position += new Vector2(0f, overlapY * direction);
+                            }
+
+                            GetBounds(scene, body.Entity, body.Collider, out bodyMin, out bodyMax);
+                        }
+                    }
+
+                    if (hit)
+                    {
+                        var key = Ordered(body.Entity.Id, mapEntity.Id);
+                        current.Add(key);
+
+                        if (_overlapping.Add(key))
+                        {
+                            Notify(scripts, body.Entity, mapEntity, entered: true);
+                        }
+                    }
+                }
+            }
+        }
+
         // Pares que dejaron de solaparse: se avisa solo a los disparadores.
         foreach (var pair in _overlapping)
         {
@@ -133,8 +226,8 @@ internal sealed class PhysicsSystem
         (Entity Entity, BoxCollider Collider, Rigidbody2D? Body) b,
         Vector2 delta)
     {
-        var aDynamic = a.Body is { IsStatic: false };
-        var bDynamic = b.Body is { IsStatic: false };
+        var aDynamic = a.Body is { IsStatic: false, IsKinematic: false };
+        var bDynamic = b.Body is { IsStatic: false, IsKinematic: false };
 
         if (aDynamic && bDynamic)
         {

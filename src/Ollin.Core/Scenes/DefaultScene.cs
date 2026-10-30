@@ -90,6 +90,16 @@ public static class DefaultScene
             SortingOrder = 6,
         });
 
+        var music = scene.Create("Música", new Vector2(0f, 0f));
+        music.AddComponent(new AudioSource
+        {
+            Clip = "assets/audio/ambient.wav",
+            Volume = 0.25f,
+            Loop = true,
+            Music = true,
+            PlayOnStart = true,
+        });
+
         return scene;
     }
 }

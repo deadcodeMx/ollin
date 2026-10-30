@@ -46,7 +46,7 @@ public static class ProjectService
     /// script iniciales. Si se indica <paramref name="templateAssets"/>, copia esas
     /// texturas al proyecto.
     /// </summary>
-    public static ProjectInfo Create(string parentFolder, string name, string? templateAssets = null)
+    public static ProjectInfo Create(string parentFolder, string name, string? templateAssets = null, ProjectTemplate template = ProjectTemplate.Empty)
     {
         var folderName = Sanitize(name);
         var root = Path.Combine(parentFolder, folderName);
@@ -74,9 +74,11 @@ public static class ProjectService
             CopyDirectory(templateAssets, Path.Combine(root, "assets"));
         }
 
-        var scene = StarterProject.CreateScene();
+        var scene = StarterProject.CreateScene(template);
         Serialization.SceneSerializer.Save(scene, project.StartSceneFullPath);
-        File.WriteAllText(Path.Combine(root, "scripts", "Juego.cs"), StarterProject.ScriptSource);
+
+        var (scriptFile, scriptSource) = StarterProject.ScriptFor(template);
+        File.WriteAllText(Path.Combine(root, "scripts", scriptFile), scriptSource);
 
         Save(project);
         return project;

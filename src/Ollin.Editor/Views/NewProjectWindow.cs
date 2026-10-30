@@ -3,17 +3,19 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Ollin.Core.Projects;
 
 namespace Ollin.Editor.Views;
 
 /// <summary>Resultado del diálogo de proyecto nuevo.</summary>
-public sealed record NewProjectResult(string Name, string ParentFolder);
+public sealed record NewProjectResult(string Name, string ParentFolder, ProjectTemplate Template);
 
 /// <summary>Diálogo para crear un proyecto con su propia carpeta.</summary>
 public sealed class NewProjectWindow : Window
 {
     private readonly TextBox _name;
     private readonly TextBox _folder;
+    private readonly ComboBox _template;
 
     public NewProjectWindow()
     {
@@ -30,6 +32,12 @@ public sealed class NewProjectWindow : Window
 
         _name = new TextBox { Text = "MiJuego", Watermark = "Nombre del proyecto" };
         _folder = new TextBox { Text = suggested };
+        _template = new ComboBox
+        {
+            ItemsSource = new[] { "Vacío (cámara + jugador)", "Plataformas", "Terror" },
+            SelectedIndex = 0,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+        };
 
         var browse = new Button { Content = "Examinar…", Margin = new Thickness(8, 0, 0, 0) };
         browse.Click += async (_, _) =>
@@ -77,6 +85,8 @@ public sealed class NewProjectWindow : Window
                     FontSize = 11.5,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
+                new TextBlock { Text = "Plantilla", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                _template,
                 new TextBlock { Text = "Nombre", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
                 _name,
                 new TextBlock { Text = "Carpeta", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
@@ -120,6 +130,13 @@ public sealed class NewProjectWindow : Window
             return;
         }
 
-        Close(new NewProjectResult(name, folder));
+        var template = _template.SelectedIndex switch
+        {
+            1 => ProjectTemplate.Platformer,
+            2 => ProjectTemplate.Horror,
+            _ => ProjectTemplate.Empty,
+        };
+
+        Close(new NewProjectResult(name, folder, template));
     }
 }

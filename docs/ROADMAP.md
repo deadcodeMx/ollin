@@ -68,18 +68,20 @@ Queda para la etapa 4: temporizadores (`WaitForSeconds`) y dibujo de depuración
 - [x] Dibujo de depuración en el viewport: líneas y cajas (`DebugDraw`).
 
 ### Contenido
-- [x] Animación por sprites: hoja de cuadros, FPS, bucle y recorte por cuadro.`n- [ ] Eventos de frame y varias animaciones por entidad.
-- [x] Tilemap con tileset y pintado en el viewport.`n- [ ] Capas de tilemap, colisión por celda y *autotiling*.
-- [x] Física 2D: cajas AABB, cuerpos con velocidad/gravedad y triggers con avisos a scripts.`n- [ ] Colisión por celda del tilemap y cuerpos cinemáticos.
-- [ ] Audio 2D: efectos, música, canales con volumen y *fade*.
-- [ ] Prefabs: entidad plantilla + instancias con overrides.
+- [x] Animación por sprites: hoja de cuadros, FPS, bucle y recorte por cuadro.
+- [ ] Eventos de frame y varias animaciones por entidad.
+- [x] Tilemap con tileset, pintado en el viewport y colisión por celda.
+- [ ] Capas de tilemap y *autotiling*.
+- [x] Física 2D: AABB, velocidad/gravedad, triggers, colisión por celda y cuerpos cinemáticos.
+- [x] Audio 2D: efectos, música, canales con volumen y *fade*.
+- [x] Prefabs: entidad plantilla guardada en `*.prefab.json` e instancias independientes.
 
 ### Herramientas
 - [x] Proyectos independientes con carpetas, explorador de archivos y apertura de escenas.
 - [x] Escenas múltiples con pestañas propias y estado independiente (cámara, selección, historial).
-- [ ] Plantillas de proyecto (vacío, plataformas, terror).
-- [ ] Copiar/pegar entidades y componentes.
-- [ ] Buscador en jerarquía e inspector.
+- [x] Plantillas de proyecto (vacío, plataformas, terror).
+- [x] Copiar/pegar entidades (Ctrl+C / Ctrl+V).
+- [x] Buscador en la jerarquía.`n- [ ] Buscador de propiedades en el inspector.
 
 **Criterio de cierre:** un nivel 2D de 10 minutos con animación, colisiones, sonido y
 guardado de partida.

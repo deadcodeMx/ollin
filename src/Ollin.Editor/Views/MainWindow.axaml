@@ -32,6 +32,10 @@
         <MenuItem Header="Deshacer" InputGesture="Ctrl+Z" Click="OnUndo" />
         <MenuItem Header="Rehacer" InputGesture="Ctrl+Y" Click="OnRedo" />
         <Separator />
+        <MenuItem Header="Copiar entidad" InputGesture="Ctrl+C" Click="OnCopyEntity" />
+        <MenuItem Header="Pegar entidad" InputGesture="Ctrl+V" Click="OnPasteEntity" />
+        <MenuItem Header="Guardar como prefab…" Click="OnSavePrefab" />
+        <Separator />
         <MenuItem Header="Duplicar entidad" Click="OnDuplicate" />
         <MenuItem Header="Eliminar entidad" Click="OnDelete" />
         <Separator />
@@ -95,9 +99,14 @@
         <Border Grid.Column="0" Classes="card" IsEnabled="{Binding CanEdit}" Padding="0">
           <TabControl Background="Transparent" Padding="0">
             <TabItem Header="Jerarquía">
-              <Grid RowDefinitions="Auto,*,Auto">
+              <Grid RowDefinitions="Auto,Auto,*,Auto">
                 <TextBlock Classes="section" Text="{Binding EntityCountText}" Margin="12,8,12,4" />
-                <TreeView Grid.Row="1" x:Name="SceneTree"
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="10,0,10,6">
+                  <TextBox Text="{Binding SearchText, Mode=TwoWay}" Watermark="Buscar entidad…" />
+                  <Button Grid.Column="1" Classes="tool" Content="✕" Margin="6,0,0,0"
+                          Click="OnClearSearch" IsVisible="{Binding HasSearch}" ToolTip.Tip="Quitar filtro" />
+                </Grid>
+                <TreeView Grid.Row="2" x:Name="SceneTree"
                           ItemsSource="{Binding Roots}"
                           SelectedItem="{Binding Selected, Mode=TwoWay}"
                           Background="Transparent" Margin="4,0,4,4">
@@ -111,7 +120,7 @@
                     </TreeDataTemplate>
                   </TreeView.ItemTemplate>
                 </TreeView>
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="6" Margin="10">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="6" Margin="10">
                   <Button Classes="tool" Content="+ Sprite" Click="OnAddSprite" />
                   <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" />
                 </StackPanel>
@@ -367,6 +376,31 @@
                 </ScrollViewer>
               </TabItem>
 
+              <TabItem Header="Audio" IsVisible="{Binding Selected.HasAudio}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="AUDIO" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Clip" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.AudioClip, Mode=TwoWay}" Watermark="assets/audio/sonido.wav" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Volumen" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.AudioVolume, Mode=TwoWay}" Increment="0.1" Minimum="0" Maximum="1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Entrada (s)" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.AudioFadeIn, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <CheckBox Content="En bucle" IsChecked="{Binding Selected.AudioLoop, Mode=TwoWay}" FontSize="11.5" />
+                    <CheckBox Content="Reproducir al iniciar" IsChecked="{Binding Selected.AudioPlayOnStart, Mode=TwoWay}" FontSize="11.5" />
+                    <CheckBox Content="Canal de música" IsChecked="{Binding Selected.AudioMusic, Mode=TwoWay}" FontSize="11.5" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="Los scripts también pueden llamar a Audio.Play(&quot;assets/audio/x.wav&quot;)." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
               <TabItem Header="Mundo">
                 <ScrollViewer>
                   <StackPanel Margin="8" Spacing="8">
@@ -395,6 +429,7 @@
                       </Grid>
                       <CheckBox Content="Afectado por gravedad" IsChecked="{Binding Selected.UseGravity, Mode=TwoWay}" FontSize="11.5" />
                       <CheckBox Content="Estático" IsChecked="{Binding Selected.IsStaticBody, Mode=TwoWay}" FontSize="11.5" />
+                      <CheckBox Content="Cinemático (no lo empujan)" IsChecked="{Binding Selected.IsKinematicBody, Mode=TwoWay}" FontSize="11.5" />
                     </StackPanel>
 
                     <StackPanel IsVisible="{Binding Selected.HasScript}" Spacing="5">
@@ -435,6 +470,7 @@
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.TileSize, Mode=TwoWay}" Increment="0.25" Minimum="0.05" FormatString="0.###" />
                     </Grid>
                     <CheckBox Content="Pintar en el viewport" IsChecked="{Binding IsPaintingTiles, Mode=TwoWay}" FontSize="11.5" />
+                    <CheckBox Content="Colisiona (bloquea cuerpos)" IsChecked="{Binding Selected.TilemapCollides, Mode=TwoWay}" FontSize="11.5" />
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Mosaico" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding PaintTileIndex, Mode=TwoWay}" Increment="1" Minimum="-1" FormatString="0" />

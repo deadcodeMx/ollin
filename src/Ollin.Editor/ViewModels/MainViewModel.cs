@@ -277,7 +277,13 @@ public sealed partial class MainViewModel : ObservableObject
     public string ProjectRoot
     {
         get => _projectRoot;
-        set => SetProperty(ref _projectRoot, value);
+        set
+        {
+            if (SetProperty(ref _projectRoot, value))
+            {
+                Core.Audio.Audio.Root = value;
+            }
+        }
     }
 
     /// <summary>Cámara activa: la de la escena o una de respaldo si no existe.</summary>
@@ -1044,21 +1050,32 @@ public sealed partial class MainViewModel : ObservableObject
     private void RebuildTree()
     {
         Roots.Clear();
+        var filter = string.IsNullOrWhiteSpace(SearchText) ? null : SearchText.Trim();
+
         foreach (var root in Scene.RootEntities.OrderBy(e => e.Name, StringComparer.OrdinalIgnoreCase))
         {
-            Roots.Add(CreateNode(root));
+            var node = CreateNode(root, filter);
+            if (node is not null)
+            {
+                Roots.Add(node);
+            }
         }
     }
 
-    private EntityNode CreateNode(Entity entity)
+    private EntityNode? CreateNode(Entity entity, string? filter)
     {
         var node = new EntityNode(entity, this);
         foreach (var child in Scene.ChildrenOf(entity.Id).OrderBy(e => e.Name, StringComparer.OrdinalIgnoreCase))
         {
-            node.Children.Add(CreateNode(child));
+            var childNode = CreateNode(child, filter);
+            if (childNode is not null)
+            {
+                node.Children.Add(childNode);
+            }
         }
 
-        return node;
+        var matches = filter is null || entity.Name.Contains(filter, StringComparison.OrdinalIgnoreCase);
+        return matches || node.Children.Count > 0 ? node : null;
     }
 
     private EntityNode? FindNode(Guid id, IEnumerable<EntityNode>? nodes = null)

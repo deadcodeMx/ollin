@@ -630,6 +630,138 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public bool HasAudio => Entity.GetComponent<AudioSource>() is not null;
+
+    public AudioSource? Source => Entity.GetComponent<AudioSource>();
+
+    public string AudioClip
+    {
+        get => Source?.Clip ?? string.Empty;
+        set
+        {
+            if (Source is null || Source.Clip == value)
+            {
+                return;
+            }
+
+            Source.Clip = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal AudioVolume
+    {
+        get => (decimal)(Source?.Volume ?? 1f);
+        set
+        {
+            if (Source is null || MathF.Abs(Source.Volume - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Source.Volume = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool AudioLoop
+    {
+        get => Source?.Loop ?? false;
+        set
+        {
+            if (Source is null || Source.Loop == value)
+            {
+                return;
+            }
+
+            Source.Loop = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool AudioPlayOnStart
+    {
+        get => Source?.PlayOnStart ?? false;
+        set
+        {
+            if (Source is null || Source.PlayOnStart == value)
+            {
+                return;
+            }
+
+            Source.PlayOnStart = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool AudioMusic
+    {
+        get => Source?.Music ?? false;
+        set
+        {
+            if (Source is null || Source.Music == value)
+            {
+                return;
+            }
+
+            Source.Music = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal AudioFadeIn
+    {
+        get => (decimal)(Source?.FadeIn ?? 0f);
+        set
+        {
+            if (Source is null || MathF.Abs(Source.FadeIn - (float)value) < 0.001f)
+            {
+                return;
+            }
+
+            Source.FadeIn = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool IsKinematicBody
+    {
+        get => Body?.IsKinematic ?? false;
+        set
+        {
+            if (Body is null || Body.IsKinematic == value)
+            {
+                return;
+            }
+
+            Body.IsKinematic = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool TilemapCollides
+    {
+        get => Tilemap?.Collides ?? false;
+        set
+        {
+            if (Tilemap is null || Tilemap.Collides == value)
+            {
+                return;
+            }
+
+            Tilemap.Collides = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
     public IBrush ColorBrush
     {
         get

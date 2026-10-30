@@ -2,6 +2,8 @@ using System.Collections;
 using Ollin.Core;
 using Ollin.Core.Diagnostics;
 using Ollin.Core.Input;
+using Ollin.Core.Audio;
+using GameAudio = Ollin.Core.Audio.Audio;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
 using Ollin.Scripting;
@@ -54,7 +56,36 @@ public sealed class SceneRuntime
         _physics.Reset();
         CoroutineHost.Drain();
         StartScripts();
+        StartAudio(scene);
         Log.Info("Reproducción iniciada", "Runtime");
+    }
+
+    private static void StartAudio(Scene scene)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active)
+            {
+                continue;
+            }
+
+            var source = entity.GetComponent<AudioSource>();
+            if (source is not { Enabled: true, PlayOnStart: true } || string.IsNullOrWhiteSpace(source.Clip))
+            {
+                continue;
+            }
+
+            var handle = GameAudio.Play(
+                source.Clip!,
+                source.Volume,
+                source.Loop,
+                source.Music ? AudioChannel.Music : AudioChannel.Effect);
+
+            if (handle >= 0 && source.FadeIn > 0f)
+            {
+                GameAudio.Fade(handle, source.Volume, source.FadeIn);
+            }
+        }
     }
 
     public void TogglePause()
@@ -80,6 +111,7 @@ public sealed class SceneRuntime
         }
 
         StopScripts();
+        GameAudio.StopAll();
 
         var restored = SceneSerializer.Deserialize(_snapshot);
         var elapsed = Elapsed;
