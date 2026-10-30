@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.20.3] — 2026-10-30
+
+### Corregido
+
+- El instalador **cierra el editor y el reproductor** antes de copiar. Si estaban
+  abiertos, Windows bloqueaba los DLL y la instalación se quedaba en la versión
+  anterior, por lo que seguirían fallando los juegos exportados.
+- Tras actualizar, asegúrate de **volver a exportar** el juego.
+
 ## [0.20.2] — 2026-10-30
 
 ### Corregido

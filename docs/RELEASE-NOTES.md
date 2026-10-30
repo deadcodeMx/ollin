@@ -1,26 +1,25 @@
-## Ollin 0.20.2 beta — registro limpio del reproductor
+## Ollin 0.20.3 beta — el instalador actualiza de verdad
 
 ### Corregido
 
-- El juego exportado ya no carga el último proyecto del editor ni intenta compilar sus
-  scripts: `player.log` deja de mostrar errores falsos de `Ollin`/`OllinScript`.
-- Se mantienen las mejoras de 0.20.1: entrada de teclado/ratón, activación de ventana y
-  audio inicializado.
+- El instalador **cierra Ollin.Editor y Ollin.Player** antes de copiar los archivos.
+  Antes podían quedar bloqueados y la instalación seguía usando la versión vieja.
+- Esto explica que tras instalar 0.20.x se siguieran exportando juegos con el
+  reproductor antiguo.
 
-### Cómo comprobar que funciona
+### Importante
 
-Abre `player.log` junto al `.exe`; debe mostrar:
+1. Instala 0.20.3 (el instalador cerrará el editor solo).
+2. Abre tu proyecto y **vuelve a exportar** el juego.
+3. Ejecuta el nuevo `<Juego>.exe`.
+
+### Diagnóstico
+
+Junto al `.exe` se genera `player.log`. Debe contener:
 
 ```
 Backend de audio: activo
-Scripts precargados: 4 (...)
-Script iniciado: Director ...
+Scripts precargados: N (...)
+Script iniciado: ...
 Audio 'assets/audio/...' → id 1
 ```
-
-Si aparece un id de audio y no se oye, revisa el volumen de Windows y la mezcladora
-para el proceso del juego.
-
-### Instalación
-
-Descarga `Ollin-Setup-0.20.2-beta.exe`, reinstala y **vuelve a exportar** el juego.

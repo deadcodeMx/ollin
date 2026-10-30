@@ -41,6 +41,7 @@ internal static class Program
 
         try
         {
+            CloseRunningApps();
             Directory.CreateDirectory(installDir);
 
             using var stream = OpenPayload();
@@ -71,6 +72,41 @@ internal static class Program
         {
             return exception.Message;
         }
+    }
+
+    /// <summary>
+    /// Cierra el editor y el reproductor si están abiertos; si no, Windows mantiene
+    /// los DLL bloqueados y la instalación se queda en la versión anterior.
+    /// </summary>
+    private static void CloseRunningApps()
+    {
+        foreach (var name in new[] { "Ollin.Editor", "Ollin.Player" })
+        {
+            foreach (var process in Process.GetProcessesByName(name))
+            {
+                try
+                {
+                    process.CloseMainWindow();
+                    process.WaitForExit(1500);
+
+                    if (!process.HasExited)
+                    {
+                        process.Kill(entireProcessTree: true);
+                        process.WaitForExit(1500);
+                    }
+                }
+                catch
+                {
+                    // Si no se puede cerrar, la extracción dará el error correspondiente.
+                }
+                finally
+                {
+                    process.Dispose();
+                }
+            }
+        }
+
+        Thread.Sleep(300);
     }
 
     public static int Uninstall(bool silent)
