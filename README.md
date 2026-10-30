@@ -184,6 +184,18 @@ docs/                Arquitectura, roadmap y guía de publicación en GitHub
   propios.
 - **Colisión por celda** en los tilemaps (casilla *Colisiona*) y cuerpos cinemáticos.
 
+## Edición cómoda (estilo Unity/Godot)
+
+- **Arrastrar y soltar**: lleva un `.cs` desde *Archivos* a una entidad (jerarquía o
+  viewport) para enlazarlo; suelta un `*.prefab.json` para instanciarlo donde quieras.
+- **Menú contextual de entidad**: crear hijo, añadir componente, duplicar, enfocar,
+  guardar como prefab y eliminar.
+- **Componentes desde el inspector**: botón *+ Añadir componente* y *Quitar script*.
+- **Eliminar archivos** con clic derecho en *Archivos* (pide confirmación).
+- **Doble clic en la jerarquía** centra la cámara en la entidad.
+- **Autocompletado C#**: `Ctrl+Espacio` y automático tras escribir `.`, con palabras
+  clave, tipos, API de Ollin, entidades y scripts del proyecto.
+
 ## Scripts en C#
 
 Los scripts viven en `scripts/` y se compilan **en memoria con Roslyn** al abrir el

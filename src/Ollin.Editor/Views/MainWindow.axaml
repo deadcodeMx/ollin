@@ -109,10 +109,34 @@
                 <TreeView Grid.Row="2" x:Name="SceneTree"
                           ItemsSource="{Binding Roots}"
                           SelectedItem="{Binding Selected, Mode=TwoWay}"
+                          DoubleTapped="OnHierarchyDoubleTapped"
                           Background="Transparent" Margin="4,0,4,4">
                   <TreeView.ItemTemplate>
                     <TreeDataTemplate ItemsSource="{Binding Children}">
-                      <StackPanel Orientation="Horizontal" Spacing="7">
+                      <StackPanel Orientation="Horizontal" Spacing="7" Background="Transparent">
+                        <StackPanel.ContextMenu>
+                          <ContextMenu>
+                            <MenuItem Header="Crear hijo" Click="OnCreateChild" />
+                            <MenuItem Header="Añadir componente">
+                              <MenuItem Header="Colisión (caja)" Click="OnAddCollider" />
+                              <MenuItem Header="Disparador (trigger)" Click="OnAddTrigger" />
+                              <MenuItem Header="Cuerpo físico" Click="OnAddRigidbody" />
+                              <MenuItem Header="Cámara" Click="OnAddCameraComponent" />
+                              <MenuItem Header="Animación" Click="OnAddAnimator" />
+                              <MenuItem Header="Tilemap" Click="OnAddTilemap" />
+                              <MenuItem Header="Audio" Click="OnAddAudio" />
+                              <MenuItem Header="Rotador" Click="OnAddRotator" />
+                              <MenuItem Header="Oscilador" Click="OnAddOscillator" />
+                              <MenuItem Header="Script" Click="OnAddScriptComponent" />
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem Header="Duplicar" Click="OnDuplicate" />
+                            <MenuItem Header="Enfocar en la cámara" Click="OnFocusEntity" />
+                            <MenuItem Header="Guardar como prefab…" Click="OnSavePrefab" />
+                            <Separator />
+                            <MenuItem Header="Eliminar" Click="OnDelete" />
+                          </ContextMenu>
+                        </StackPanel.ContextMenu>
                         <TextBlock Text="{Binding Icon}" FontSize="10"
                                    Foreground="{DynamicResource Ollin.Jade}" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
@@ -279,6 +303,22 @@
                       <TextBlock Classes="section" Text="NOMBRE" />
                       <TextBox Text="{Binding Selected.Name, Mode=TwoWay}" />
                       <TextBlock Classes="hint" Text="{Binding Selected.ComponentsSummary}" />
+                      <Button Classes="tool accent" Content="+ Añadir componente" HorizontalAlignment="Stretch" Margin="0,6,0,0">
+                        <Button.Flyout>
+                          <MenuFlyout>
+                            <MenuItem Header="Colisión (caja)" Click="OnAddCollider" />
+                            <MenuItem Header="Disparador (trigger)" Click="OnAddTrigger" />
+                            <MenuItem Header="Cuerpo físico" Click="OnAddRigidbody" />
+                            <MenuItem Header="Cámara" Click="OnAddCameraComponent" />
+                            <MenuItem Header="Animación" Click="OnAddAnimator" />
+                            <MenuItem Header="Tilemap" Click="OnAddTilemap" />
+                            <MenuItem Header="Audio" Click="OnAddAudio" />
+                            <MenuItem Header="Rotador" Click="OnAddRotator" />
+                            <MenuItem Header="Oscilador" Click="OnAddOscillator" />
+                            <MenuItem Header="Script" Click="OnAddScriptComponent" />
+                          </MenuFlyout>
+                        </Button.Flyout>
+                      </Button>
                     </StackPanel>
 
                     <StackPanel Spacing="5">
@@ -444,6 +484,7 @@
                       </Grid>
                       <Button Classes="tool accent" Content="Abrir script" Click="OnOpenSelectedScript" HorizontalAlignment="Stretch" />
                       <Button Classes="tool" Content="Crear script para esta entidad" Click="OnCreateScript" HorizontalAlignment="Stretch" />
+                      <Button Classes="tool" Content="Quitar script" Click="OnRemoveScript" HorizontalAlignment="Stretch" />
                     </StackPanel>
                   </StackPanel>
                 </ScrollViewer>
@@ -538,7 +579,14 @@
                         Margin="4,0,4,6" DoubleTapped="OnFileDoubleTapped">
                 <TreeView.ItemTemplate>
                   <TreeDataTemplate ItemsSource="{Binding Children}">
-                    <StackPanel Orientation="Horizontal" Spacing="7">
+                    <StackPanel Orientation="Horizontal" Spacing="7" Background="Transparent">
+                      <StackPanel.ContextMenu>
+                        <ContextMenu>
+                          <MenuItem Header="Abrir" Click="OnFileMenuOpen" />
+                          <Separator />
+                          <MenuItem Header="Eliminar…" Click="OnFileMenuDelete" />
+                        </ContextMenu>
+                      </StackPanel.ContextMenu>
                       <TextBlock Text="{Binding Icon}" FontSize="10" Width="18"
                                  Foreground="{DynamicResource Ollin.Jade}" VerticalAlignment="Center" />
                       <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />

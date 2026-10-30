@@ -1,7 +1,9 @@
 using System.Collections.Specialized;
 using System.Xml;
 using AvaloniaEdit.Highlighting;
+using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Highlighting.Xshd;
+using Ollin.Scripting;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -23,6 +25,7 @@ public partial class MainWindow : Window
     };
 
     private bool _loadingScript;
+    private CompletionWindow? _completionWindow;
 
     public MainWindow()
     {
@@ -30,6 +33,7 @@ public partial class MainWindow : Window
         DataContextChanged += OnDataContextChanged;
         SetupScriptEditor();
         SetupAudio();
+        SetupDragAndDrop();
     }
 
     private void SetupAudio()
@@ -65,6 +69,8 @@ public partial class MainWindow : Window
             // Sin resaltado el editor sigue siendo usable.
         }
 
+        ScriptEditor.TextArea.TextEntered += OnScriptTextEntered;
+
         ScriptEditor.TextChanged += (_, _) =>
         {
             if (_loadingScript || ViewModel?.ActiveScript is not { } document)
@@ -77,6 +83,59 @@ public partial class MainWindow : Window
                 document.Text = ScriptEditor.Text ?? string.Empty;
             }
         };
+    }
+
+    private void OnScriptTextEntered(object? sender, TextInputEventArgs e)
+    {
+        var text = e.Text;
+
+        if (text == ".")
+        {
+            ShowCompletion(CompletionCatalog.Members, ScriptEditor.CaretOffset);
+            return;
+        }
+
+        if (_completionWindow is not null && text is { Length: 1 } && (char.IsLetterOrDigit(text[0]) || text[0] == '_'))
+        {
+            _completionWindow.CompletionList.SelectItem(text);
+        }
+    }
+
+    private int WordStartOffset()
+    {
+        var text = ScriptEditor.Document.Text ?? string.Empty;
+        var index = ScriptEditor.CaretOffset;
+        while (index > 0 && (char.IsLetterOrDigit(text[index - 1]) || text[index - 1] == '_'))
+        {
+            index--;
+        }
+
+        return index;
+    }
+
+    private void ShowCompletion(IReadOnlyList<CompletionEntry> entries, int startOffset)
+    {
+        if (ViewModel?.IsScriptActive != true || ScriptEditor.Document is null)
+        {
+            return;
+        }
+
+        _completionWindow?.Close();
+
+        var window = new CompletionWindow(ScriptEditor)
+        {
+            StartOffset = startOffset,
+            EndOffset = ScriptEditor.CaretOffset,
+        };
+
+        foreach (var entry in entries)
+        {
+            window.CompletionList.CompletionData.Add(new OllinCompletionData(entry.Text, entry.Description));
+        }
+
+        window.Closed += (_, _) => _completionWindow = null;
+        _completionWindow = window;
+        window.Show();
     }
 
     private void LoadActiveScriptText()
@@ -323,7 +382,7 @@ public partial class MainWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Motor de juego 2D · versión 0.7.1 beta",
+                    Text = "Motor de juego 2D · versión 0.8.0 beta",
                     FontSize = 12,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
@@ -480,6 +539,271 @@ public partial class MainWindow : Window
         }
     }
 
+    // ---------- Arrastrar y soltar / menús ----------
+
+    private const string AssetDragFormat = "ollin/asset-path";
+
+    private Point _fileDragStart;
+    private bool _fileDragArmed;
+
+    private void SetupDragAndDrop()
+    {
+        DragDrop.SetAllowDrop(SceneTree, true);
+        SceneTree.AddHandler(DragDrop.DragOverEvent, OnEntityDragOver);
+        SceneTree.AddHandler(DragDrop.DropEvent, OnEntityDrop);
+
+        DragDrop.SetAllowDrop(ViewportHost, true);
+        ViewportHost.AddHandler(DragDrop.DragOverEvent, OnViewportDragOver);
+        ViewportHost.AddHandler(DragDrop.DropEvent, OnViewportDrop);
+
+        FileTree.AddHandler(PointerPressedEvent, OnFileTreePointerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+        FileTree.AddHandler(PointerMovedEvent, OnFileTreePointerMoved, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+    }
+
+
+    private static ViewModels.EntityNode? EntityUnder(object? source)
+    {
+        var control = source as Control;
+        while (control is not null && control is not TreeView)
+        {
+            if (control.DataContext is ViewModels.EntityNode node)
+            {
+                return node;
+            }
+
+            control = control.Parent as Control;
+        }
+
+        return null;
+    }
+
+    private static ViewModels.FileNode? FileUnder(object? source)
+    {
+        var control = source as Control;
+        while (control is not null && control is not TreeView)
+        {
+            if (control.DataContext is ViewModels.FileNode node)
+            {
+                return node;
+            }
+
+            control = control.Parent as Control;
+        }
+
+        return null;
+    }
+
+    private static string? DraggedPath(DragEventArgs e) =>
+        e.Data.Get(AssetDragFormat) as string ?? e.Data.GetText();
+
+    private void OnEntityDragOver(object? sender, DragEventArgs e)
+    {
+        var path = DraggedPath(e);
+        e.DragEffects = path is not null &&
+                        (path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) ||
+                         path.EndsWith(Ollin.Core.Prefabs.PrefabSerializer.Extension, StringComparison.OrdinalIgnoreCase))
+            ? DragDropEffects.Copy
+            : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private void OnEntityDrop(object? sender, DragEventArgs e)
+    {
+        var path = DraggedPath(e);
+        if (path is null || ViewModel is null)
+        {
+            return;
+        }
+
+        var node = EntityUnder(e.Source);
+
+        if (path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+        {
+            if (node is null)
+            {
+                ViewModel.StatusMessage = "Suelta el script sobre una entidad";
+            }
+            else
+            {
+                ViewModel.AttachScript(node.Entity, path);
+            }
+
+            e.Handled = true;
+            return;
+        }
+
+        if (path.EndsWith(Ollin.Core.Prefabs.PrefabSerializer.Extension, StringComparison.OrdinalIgnoreCase))
+        {
+            var position = node?.Entity.Transform.Position ?? ViewModel.CameraPosition;
+            ViewModel.InstantiatePrefabAt(path, position);
+            e.Handled = true;
+        }
+    }
+
+    private void OnViewportDragOver(object? sender, DragEventArgs e)
+    {
+        var path = DraggedPath(e);
+        e.DragEffects = path is not null &&
+                        (path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) ||
+                         path.EndsWith(Ollin.Core.Prefabs.PrefabSerializer.Extension, StringComparison.OrdinalIgnoreCase))
+            ? DragDropEffects.Copy
+            : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private void OnViewportDrop(object? sender, DragEventArgs e)
+    {
+        var path = DraggedPath(e);
+        if (path is null || ViewModel is null)
+        {
+            return;
+        }
+
+        var local = e.GetPosition(ViewportHost);
+        var world = ViewportHost.Viewport.ToWorld(local);
+
+        if (path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+        {
+            ViewportHost.Viewport.SelectAt(local);
+            if (ViewModel.Selected is { } selected)
+            {
+                ViewModel.AttachScript(selected.Entity, path);
+            }
+            else
+            {
+                ViewModel.StatusMessage = "Suelta el script sobre una entidad del viewport";
+            }
+
+            e.Handled = true;
+            return;
+        }
+
+        if (path.EndsWith(Ollin.Core.Prefabs.PrefabSerializer.Extension, StringComparison.OrdinalIgnoreCase))
+        {
+            ViewModel.InstantiatePrefabAt(path, world);
+            e.Handled = true;
+        }
+    }
+
+    private void OnFileTreePointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(FileTree).Properties.IsLeftButtonPressed)
+        {
+            _fileDragStart = e.GetPosition(FileTree);
+            _fileDragArmed = true;
+        }
+    }
+
+    private async void OnFileTreePointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (!_fileDragArmed || !e.GetCurrentPoint(FileTree).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+
+        var position = e.GetPosition(FileTree);
+        if (System.Math.Abs(position.X - _fileDragStart.X) < 6 && System.Math.Abs(position.Y - _fileDragStart.Y) < 6)
+        {
+            return;
+        }
+
+        _fileDragArmed = false;
+
+        var node = FileUnder(e.Source) ?? FileTree.SelectedItem as FileNode;
+        if (node is null || node.IsFolder)
+        {
+            return;
+        }
+
+        var data = new DataObject();
+        data.Set(AssetDragFormat, node.FullPath);
+        await DragDrop.DoDragDrop(e, data, DragDropEffects.Copy);
+    }
+
+    private ViewModels.EntityNode? MenuEntity(object? sender) =>
+        (sender as MenuItem)?.DataContext as ViewModels.EntityNode ?? ViewModel?.Selected;
+
+    private void OnHierarchyDoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    {
+        if (SceneTree.SelectedItem is ViewModels.EntityNode node)
+        {
+            ViewModel?.FocusEntity(node.Entity);
+        }
+    }
+
+    private void OnCreateChild(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (MenuEntity(sender) is { } node)
+        {
+            ViewModel?.CreateChild(node.Entity);
+        }
+    }
+
+    private void OnFocusEntity(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (MenuEntity(sender) is { } node)
+        {
+            ViewModel?.FocusEntity(node.Entity);
+        }
+    }
+
+    private void AddComponentToNode(object? sender, string kind)
+    {
+        if (MenuEntity(sender) is { } node && ViewModel is not null)
+        {
+            ViewModel.Select(node.Entity);
+            ViewModel.AddComponentTo(kind);
+        }
+    }
+
+    private void OnAddCollider(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "collider");
+
+    private void OnAddTrigger(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "trigger");
+
+    private void OnAddRigidbody(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "rigidbody");
+
+    private void OnAddCameraComponent(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "camera");
+
+    private void OnAddAnimator(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "animator");
+
+    private void OnAddTilemap(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "tilemap");
+
+    private void OnAddAudio(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "audio");
+
+    private void OnAddRotator(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "rotator");
+
+    private void OnAddOscillator(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "oscillator");
+
+    private void OnAddScriptComponent(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "script");
+
+    private void OnRemoveScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.RemoveScriptFromSelected();
+
+    private void OnFileMenuOpen(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if ((sender as MenuItem)?.DataContext is ViewModels.FileNode node)
+        {
+            ViewModel?.OpenProjectFile(node);
+        }
+    }
+
+    private async void OnFileMenuDelete(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if ((sender as MenuItem)?.DataContext is not ViewModels.FileNode node)
+        {
+            return;
+        }
+
+        var confirm = await new ConfirmWindow(
+            $"¿Eliminar «{node.Name}»?",
+            "Eliminar",
+            "Esta acción no se puede deshacer.").ShowDialog<bool?>(this);
+
+        if (confirm == true)
+        {
+            ViewModel?.DeleteFile(node);
+        }
+    }
+
     // ---------- Atajos ----------
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -514,6 +838,15 @@ public partial class MainWindow : Window
             }
 
             base.OnKeyDown(e);
+            return;
+        }
+
+        // Autocompletar con Ctrl+Espacio dentro del editor de scripts.
+        if (e.Key == Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Control) && ViewModel?.IsScriptActive == true)
+        {
+            var entities = ViewModel.Scene.Entities.Select(entity => entity.Name);
+            ShowCompletion(CompletionCatalog.All(entities, ViewModel.ScriptClassNames), WordStartOffset());
+            e.Handled = true;
             return;
         }
 

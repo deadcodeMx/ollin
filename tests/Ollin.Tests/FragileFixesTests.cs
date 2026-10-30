@@ -78,6 +78,28 @@ public class ProjectFolderNameTests
     }
 }
 
+public class CompletionCatalogTests
+{
+    [Fact]
+    public void IncluyePalabrasTiposApiEntidadesYScripts()
+    {
+        var all = Ollin.Scripting.CompletionCatalog.All(new[] { "Jugador" }, new[] { "PlayerBob" });
+
+        Assert.Contains(all, e => e.Text == "public");
+        Assert.Contains(all, e => e.Text == "Vector2");
+        Assert.Contains(all, e => e.Text == "Input.GetKey(KeyCode.A)");
+        Assert.Contains(all, e => e.Text == "PlayerBob");
+        Assert.Contains(all, e => e.Text == "\"Jugador\"");
+    }
+
+    [Fact]
+    public void LosMiembrosNoSeRepiten()
+    {
+        var texts = Ollin.Scripting.CompletionCatalog.Members.Select(m => m.Text).ToList();
+        Assert.Equal(texts.Count, texts.Distinct().Count());
+    }
+}
+
 public class TilemapPaintMathTests
 {
     [Fact]

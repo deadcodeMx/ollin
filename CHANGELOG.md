@@ -17,6 +17,21 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.8.0] — 2026-10-30
+
+### Añadido
+
+- Arrastrar scripts desde el explorador a una entidad (jerarquía o viewport) para
+  enlazarlos, y prefabs para instanciarlos en el punto de destino.
+- Menú contextual de entidad: crear hijo, añadir componente, duplicar, enfocar,
+  guardar como prefab y eliminar.
+- Botones para añadir componentes desde el inspector y quitar el script de una entidad.
+- Eliminar archivos del proyecto con clic derecho en el explorador (con confirmación).
+- Doble clic en la jerarquía centra la cámara en la entidad.
+- Autocompletado C# en el editor: `Ctrl+Espacio` y tras `.`, con palabras clave,
+  tipos, API, entidades de la escena y clases de script.
+- 2 pruebas del catálogo de autocompletado: 76 en total.
+
 ## [0.7.1] — 2026-10-30
 
 ### Corregido
