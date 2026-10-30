@@ -22,8 +22,9 @@ public sealed class PlayerWindow : Window
     private readonly Grid _splash;
     private bool _started;
 
-    public PlayerWindow(string projectRoot, GameManifest manifest)
+    public PlayerWindow(LoadedGame game)
     {
+        var manifest = game.Manifest;
         _manifest = manifest;
         Title = manifest.ProjectName;
         Width = 1280;
@@ -34,7 +35,12 @@ public sealed class PlayerWindow : Window
         Background = Brushes.Black;
 
         _viewModel = new MainViewModel();
-        _viewModel.OpenProjectLocation(projectRoot, logToConsole: false, remember: false);
+        _viewModel.OpenProjectLocation(game.Root, logToConsole: false, remember: false);
+
+        if (game.ScriptsImage is { Length: > 0 })
+        {
+            _viewModel.LoadPrecompiledScripts(game.ScriptsImage);
+        }
 
         _surface = new ViewportSurface
         {

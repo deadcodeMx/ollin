@@ -200,6 +200,13 @@ public sealed partial class MainViewModel
         }
     }
 
+    /// <summary>Carga scripts ya compilados (juego exportado).</summary>
+    public void LoadPrecompiledScripts(byte[] image)
+    {
+        var result = _scripts.LoadImage(image);
+        StatusMessage = $"Scripts cargados: {result.Types.Count}";
+    }
+
     /// <summary>Empaqueta el proyecto y el reproductor en una carpeta jugable.</summary>
     public string? ExportGame(string destination, bool splash = true, bool watermark = true)
     {
@@ -230,7 +237,29 @@ public sealed partial class MainViewModel
                 return null;
             }
 
-            var path = GameExporter.Export(Project, destination, template, splash, watermark);
+            if (Directory.Exists(Project.ScriptsFolder) &&
+                Directory.EnumerateFiles(Project.ScriptsFolder, "*.cs", SearchOption.AllDirectories).Any())
+            {
+                var compilation = Ollin.Scripting.ScriptCompiler.CompileDirectory(Project.ScriptsFolder);
+
+                if (!compilation.Success || compilation.Image is null)
+                {
+                    foreach (var diagnostic in compilation.Diagnostics.Where(d => d.IsError))
+                    {
+                        Log.Error(diagnostic.Text, "Exportar");
+                    }
+
+                    StatusMessage = "No se pudo exportar: hay errores de script";
+                    return null;
+                }
+
+                var pathWithScripts = GameExporter.Export(Project, destination, template, compilation.Image, splash, watermark);
+                StatusMessage = $"Juego exportado: {pathWithScripts}";
+                Log.Info($"Juego exportado: {pathWithScripts}", "Exportar");
+                return pathWithScripts;
+            }
+
+            var path = GameExporter.Export(Project, destination, template, null, splash, watermark);
             StatusMessage = $"Juego exportado: {path}";
             Log.Info($"Juego exportado: {path}", "Exportar");
             return path;

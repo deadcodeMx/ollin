@@ -887,6 +887,13 @@ public partial class MainWindow : Window
             return;
         }
 
+        var options = await new ExportOptionsWindow().ShowDialog<ExportOptions?>(this);
+
+        if (options is null)
+        {
+            return;
+        }
+
         var folders = await StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
         {
             Title = "Carpeta donde exportar el juego",
@@ -900,7 +907,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        var exported = ViewModel.ExportGame(destination);
+        var exported = ViewModel.ExportGame(destination, options.Splash, options.Watermark);
 
         if (exported is not null)
         {

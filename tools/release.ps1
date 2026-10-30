@@ -26,7 +26,7 @@ try {
     dotnet publish 'src/Ollin.Editor/Ollin.Editor.csproj' -c Release -r win-x64 --self-contained false -o 'dist/app' -v q --nologo
     if ($LASTEXITCODE -ne 0) { throw 'Fallo la publicacion del editor' }
 
-    dotnet publish 'src/Ollin.Player/Ollin.Player.csproj' -c Release -r win-x64 --self-contained false -o 'dist/app/player' -v q --nologo
+    dotnet publish 'src/Ollin.Player/Ollin.Player.csproj' -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o 'dist/app/player' -v q --nologo
     if ($LASTEXITCODE -ne 0) { throw 'Fallo la publicacion del reproductor' }
 
     Copy-Item -Recurse -Force assets 'dist/app'

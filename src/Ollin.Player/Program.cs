@@ -17,11 +17,11 @@ public sealed class PlayerApp : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var (projectRoot, manifest) = GameLoader.Load();
+            var game = GameLoader.Load();
 
-            desktop.MainWindow = projectRoot is null || manifest is null
-                ? new ErrorWindow("No se encontró ningún juego.\n\nColoca Ollin.Player.exe junto a game.json o usa --project <carpeta>.")
-                : new PlayerWindow(projectRoot, manifest);
+            desktop.MainWindow = game is null
+                ? new ErrorWindow("No se encontró ningún juego.\n\nColoca el ejecutable junto a game.pak o usa --project <carpeta>.")
+                : new PlayerWindow(game);
         }
 
         base.OnFrameworkInitializationCompleted();

@@ -22,8 +22,8 @@ public sealed class GameManifest
 }
 
 /// <summary>
-/// Empaqueta un proyecto y el reproductor en una carpeta lista para ejecutar
-/// (`Ollin.Player.exe` + escenas, assets, scripts y `game.json`).
+/// Empaqueta un proyecto en un juego listo para distribuir: un ejecutable con el
+/// nombre del juego y un `game.pak` cifrado con escenas, assets y scripts compilados.
 /// </summary>
 public static class GameExporter
 {
@@ -34,15 +34,11 @@ public static class GameExporter
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };
 
-    private static readonly string[] ProjectFolders =
-    {
-        "scenes", "assets", "scripts", "dialogs", "items", "prefabs",
-    };
-
     public static string Export(
         ProjectInfo project,
         string destination,
         string playerTemplate,
+        byte[]? scriptsImage = null,
         bool splash = true,
         bool watermark = true)
     {
@@ -54,20 +50,6 @@ public static class GameExporter
         var target = Path.Combine(destination, SafeName(project.Name));
         Directory.CreateDirectory(target);
 
-        CopyDirectory(playerTemplate, target);
-
-        foreach (var folder in ProjectFolders)
-        {
-            var source = Path.Combine(project.RootPath, folder);
-
-            if (Directory.Exists(source))
-            {
-                CopyDirectory(source, Path.Combine(target, folder));
-            }
-        }
-
-        File.Copy(project.ProjectFile, Path.Combine(target, ProjectService.FileName), overwrite: true);
-
         var manifest = new GameManifest
         {
             ProjectName = project.Name,
@@ -77,9 +59,12 @@ public static class GameExporter
             Watermark = watermark,
         };
 
-        File.WriteAllText(Path.Combine(target, "game.json"), JsonSerializer.Serialize(manifest, JsonOptions));
-        File.WriteAllText(Path.Combine(target, "LEEME.txt"), ReadmeText(project.Name, manifest));
+        var package = GamePackage.Create(project, manifest, scriptsImage);
+        File.WriteAllBytes(Path.Combine(target, "game.pak"), package);
 
+        CopyPlayer(playerTemplate, target, SafeName(project.Name) + ".exe");
+
+        File.WriteAllText(Path.Combine(target, "LEEME.txt"), ReadmeText(project.Name, manifest));
         return target;
     }
 
@@ -105,6 +90,33 @@ public static class GameExporter
             .FirstOrDefault(path => Directory.Exists(path) && Directory.EnumerateFiles(path, "Ollin.Player*").Any());
     }
 
+    private static void CopyPlayer(string template, string target, string executableName)
+    {
+        foreach (var file in Directory.EnumerateFiles(template))
+        {
+            var name = Path.GetFileName(file);
+            var destination = name.Equals("Ollin.Player.exe", StringComparison.OrdinalIgnoreCase)
+                ? executableName
+                : name;
+
+            File.Copy(file, Path.Combine(target, destination), overwrite: true);
+        }
+
+        foreach (var directory in Directory.EnumerateDirectories(template))
+        {
+            var destination = Path.Combine(target, Path.GetFileName(directory));
+            Directory.CreateDirectory(destination);
+
+            foreach (var file in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
+            {
+                var relative = Path.GetRelativePath(directory, file);
+                var path = Path.Combine(destination, relative);
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                File.Copy(file, path, overwrite: true);
+            }
+        }
+    }
+
     private static string? FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -126,14 +138,15 @@ public static class GameExporter
         {name}
         Hecho con Ollin {manifest.OllinVersion}
 
-        Ejecuta Ollin.Player.exe.
+        Ejecuta {name}.exe.
 
         Controles:
           F11  pantalla completa
           Esc  salir
 
-        Este juego incluye el reproductor de Ollin y los datos del proyecto.
-        La pantalla de inicio y la marca de agua se pueden quitar modificando game.json.
+        game.pak contiene las escenas, assets y scripts compilados del juego.
+        El código fuente no se incluye. La pantalla de inicio y la marca de agua
+        se pueden quitar editando el manifiesto dentro del paquete.
         """;
 
     private static string SafeName(string name)
@@ -141,20 +154,5 @@ public static class GameExporter
         var invalid = Path.GetInvalidFileNameChars();
         var clean = new string(name.Select(c => invalid.Contains(c) ? '-' : c).ToArray()).Trim();
         return string.IsNullOrWhiteSpace(clean) ? "Juego" : clean;
-    }
-
-    private static void CopyDirectory(string source, string target)
-    {
-        Directory.CreateDirectory(target);
-
-        foreach (var file in Directory.EnumerateFiles(source))
-        {
-            File.Copy(file, Path.Combine(target, Path.GetFileName(file)), overwrite: true);
-        }
-
-        foreach (var directory in Directory.EnumerateDirectories(source))
-        {
-            CopyDirectory(directory, Path.Combine(target, Path.GetFileName(directory)));
-        }
     }
 }

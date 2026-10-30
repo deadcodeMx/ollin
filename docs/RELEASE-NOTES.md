@@ -1,18 +1,20 @@
-## Ollin 0.18.1 beta — arreglo del botón Exportar
+## Ollin 0.19.0 beta — juegos empaquetados y protegidos
 
-### Corregido
+### Incluye
 
-- El botón **Exportar juego** ahora aparece en la barra de herramientas y en
-  **Archivo → Exportar juego…**.
+- Exportación en **un solo ejecutable** con el nombre del juego.
+- `game.pak` **cifrado** con escenas, assets y **scripts compilados** (sin `.cs`).
+- Diálogo para activar/desactivar pantalla de inicio y marca de agua.
+- Exportación por consola para automatizar: `--export`.
+- 120 pruebas automatizadas.
 
-### Incluye (0.18.0)
+### Nota
 
-- Exportación a juego independiente con `Ollin.Player.exe`.
-- Pantalla de inicio con el logo de Ollin y marca de agua «Hecho con Ollin».
-- Reproductor con F11 y Esc; 120 pruebas.
+El `.exe` del juego requiere .NET 8 Desktop Runtime. La protección evita que el código
+fuente quede a la vista, pero no es DRM infalible.
 
 ### Instalación
 
-1. Descarga `Ollin-Setup-0.18.1-beta.exe`.
-2. Ejecútalo y abre tu proyecto.
-3. Pulsa **⬆ Exportar** en la barra superior.
+1. Descarga `Ollin-Setup-0.19.0-beta.exe`.
+2. Abre tu proyecto y pulsa **⬆ Exportar**.
+3. Ejecuta el `<Juego>.exe` generado.

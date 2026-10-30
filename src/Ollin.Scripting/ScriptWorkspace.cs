@@ -88,6 +88,22 @@ public sealed class ScriptWorkspace : IDisposable
         return new ScriptReloadResult(true, compilation.Diagnostics, _types);
     }
 
+    /// <summary>
+    /// Carga scripts ya compilados (por ejemplo `game.dll` de un juego exportado).
+    /// No compila ni necesita los archivos `.cs`.
+    /// </summary>
+    public ScriptReloadResult LoadImage(byte[] image)
+    {
+        UnloadPrevious();
+
+        _loadContext = new AssemblyLoadContext($"Ollin.Scripts.{Guid.NewGuid():N}", isCollectible: true);
+        using var stream = new MemoryStream(image);
+        _assembly = _loadContext.LoadFromStream(stream);
+        _types = DiscoverTypes(_assembly);
+
+        return new ScriptReloadResult(true, Array.Empty<ScriptDiagnostic>(), _types);
+    }
+
     /// <summary>Crea una instancia del script indicado, o null si no existe.</summary>
     public OllinScript? CreateInstance(string? className)
     {

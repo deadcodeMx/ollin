@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Ollin.Core.Projects;
 using Xunit;
@@ -19,24 +20,29 @@ public class GameExporterTests
         try
         {
             var project = ProjectService.Create(root, "Juego Test", template: ProjectTemplate.Platformer);
-            var target = GameExporter.Export(project, output, template);
+            var scripts = new byte[] { 1, 2, 3, 4 };
+            var target = GameExporter.Export(project, output, template, scripts);
 
-            Assert.True(File.Exists(Path.Combine(target, "Ollin.Player.exe")));
-            Assert.True(File.Exists(Path.Combine(target, "project.ollin")));
-            Assert.True(File.Exists(Path.Combine(target, "game.json")));
+            Assert.True(File.Exists(Path.Combine(target, "Juego Test.exe")));
+            Assert.True(File.Exists(Path.Combine(target, "game.pak")));
             Assert.True(File.Exists(Path.Combine(target, "LEEME.txt")));
-            Assert.True(Directory.Exists(Path.Combine(target, "scenes")));
-            Assert.True(Directory.Exists(Path.Combine(target, "scripts")));
+            Assert.False(File.Exists(Path.Combine(target, "project.ollin")));
+            Assert.False(Directory.Exists(Path.Combine(target, "scripts")));
 
-            var manifest = JsonSerializer.Deserialize<GameManifest>(
-                File.ReadAllText(Path.Combine(target, "game.json")),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var package = File.ReadAllBytes(Path.Combine(target, "game.pak"));
+            Assert.True(GamePackage.IsPackage(package));
+            Assert.DoesNotContain("project.ollin", Encoding.UTF8.GetString(package));
 
-            Assert.NotNull(manifest);
-            Assert.Equal("Juego Test", manifest!.ProjectName);
+            var extract = Path.Combine(root, "extract");
+            var (manifest, loadedScripts) = GamePackage.Extract(package, extract);
+
+            Assert.Equal("Juego Test", manifest.ProjectName);
             Assert.True(manifest.Splash);
             Assert.True(manifest.Watermark);
-            Assert.True(File.Exists(Path.Combine(target, manifest.StartScene.Replace('/', Path.DirectorySeparatorChar))));
+            Assert.Equal(scripts, loadedScripts);
+            Assert.True(File.Exists(Path.Combine(extract, manifest.StartScene.Replace('/', Path.DirectorySeparatorChar))));
+            Assert.True(File.Exists(Path.Combine(extract, ProjectService.FileName)));
+            Assert.Empty(Directory.EnumerateFiles(extract, "*.cs", SearchOption.AllDirectories));
         }
         finally
         {

@@ -448,28 +448,28 @@ Con eso tienes el ciclo completo: escena → componentes → scripts → sonido 
 
 ## 20. Empaquetar el juego
 
-Cuando el proyecto esté listo: **Archivo → Exportar juego…**, elige una carpeta y Ollin
-crea una subcarpeta con el nombre del proyecto que contiene:
+Cuando el proyecto esté listo: **Archivo → Exportar juego…** (o el botón **⬆ Exportar**).
+Elige si quieres pantalla de inicio y marca de agua, y luego la carpeta de destino.
+Ollin crea una subcarpeta con el nombre del proyecto y **solo tres archivos**:
 
-- `Ollin.Player.exe` — reproductor independiente.
-- `project.ollin`, `scenes/`, `assets/`, `scripts/`, `dialogs/`, `items/` y `prefabs/`.
-- `game.json` — manifiesto (nombre, escena inicial, pantalla de inicio y marca de agua).
+- `<Juego>.exe` — el juego completo en un único ejecutable.
+- `game.pak` — paquete **cifrado** con escenas, assets, diálogos, objetos y los
+  **scripts ya compilados** (`game.dll`).
 - `LEEME.txt` — controles.
 
-Ejecuta `Ollin.Player.exe` para jugar. Al iniciar aparece la **pantalla de inicio con
-el logo de Ollin** y, durante el juego, una pequeña marca de agua «Hecho con Ollin».
+**El código fuente no viaja en el paquete**: los `.cs` se compilan al exportar y solo se
+incluye el ensamblado. `game.pak` usa cifrado AES-256-GCM; el reproductor lo descifra en
+memoria y extrae los assets a una carpeta temporal para poder cargarlos.
 
-Para quitarlas, edita `game.json`:
+Al ejecutar `<Juego>.exe` aparece la **pantalla de inicio con el logo de Ollin** y,
+durante el juego, una marca de agua «Hecho con Ollin». Ambas se pueden desactivar en el
+diálogo de exportación.
 
-```json
-{ "projectName": "Mi Juego", "startScene": "scenes/inicio.ollin.json", "splash": false, "watermark": false }
-```
-
-**Controles del reproductor**: `F11` pantalla completa, `Esc` salir (o salir de pantalla
-completa).
+**Controles**: `F11` pantalla completa, `Esc` salir (o salir de pantalla completa).
 
 **Requisitos**: .NET 8 Desktop Runtime (el reproductor no es autocontenido). El editor
 necesita la carpeta `player/` junto al ejecutable; el instalador ya la incluye.
 
-**Limitaciones**: el reproductor compila los scripts al arrancar (por eso incluye
-Roslyn) y no está firmado; Windows puede avisar al ejecutarlo.
+**Limitaciones honestas**: esto protege el código fuente de miradas casuales, pero no es
+DRM infalible: un usuario con conocimientos puede decompilar el ensamblado o inspeccionar
+la carpeta temporal. Las claves van dentro del ejecutable.

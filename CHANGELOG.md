@@ -17,6 +17,21 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.19.0] — 2026-10-30
+
+### Añadido
+
+- **Empaquetado seguro**: el juego exportado son solo `<Juego>.exe` + `game.pak` +
+  `LEEME.txt`. Los scripts se compilan a DLL y **no se incluye el código fuente**.
+- **Paquete cifrado** AES-256-GCM con escenas, assets, diálogos, objetos y scripts.
+- **Un único ejecutable** (reproductor single-file), con el nombre del juego.
+- Diálogo de exportación para activar o desactivar la pantalla de inicio y la marca de agua.
+- Exportación por línea de comandos: `--export <carpeta> [--no-splash] [--no-watermark]`.
+
+### Corregido
+
+- El botón **Exportar** ahora sí aparece y la exportación termina con código correcto.
+
 ## [0.18.1] — 2026-10-30
 
 ### Corregido

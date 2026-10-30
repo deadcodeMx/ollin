@@ -1,12 +1,16 @@
+using System.Security.Cryptography;
 using System.Text.Json;
 using Ollin.Core.Projects;
 
 namespace Ollin.Player;
 
-/// <summary>Localiza la carpeta del juego y su manifiesto.</summary>
+/// <summary>Carpeta extraída del juego y manifiesto.</summary>
+public sealed record LoadedGame(string Root, GameManifest Manifest, byte[]? ScriptsImage);
+
+/// <summary>Localiza y descomprime el paquete `game.pak` del juego.</summary>
 public static class GameLoader
 {
-    public static (string? Root, GameManifest? Manifest) Load()
+    public static LoadedGame? Load()
     {
         var arguments = Environment.GetCommandLineArgs();
         string? requested = null;
@@ -19,40 +23,53 @@ public static class GameLoader
             }
         }
 
-        var root = ResolveRoot(requested);
+        var origin = ResolveOrigin(requested);
 
-        if (root is null)
+        if (origin is null)
         {
-            return (null, null);
+            return null;
         }
 
-        var manifestPath = Path.Combine(root, "game.json");
+        var packagePath = Path.Combine(origin, "game.pak");
 
-        if (!File.Exists(manifestPath))
+        if (File.Exists(packagePath))
         {
-            if (!File.Exists(Path.Combine(root, ProjectService.FileName)))
+            try
             {
-                return (null, null);
+                var bytes = File.ReadAllBytes(packagePath);
+                var extractRoot = Path.Combine(
+                    Path.GetTempPath(),
+                    "OllinGames",
+                    Convert.ToHexString(SHA256.HashData(bytes))[..16]);
+
+                Directory.CreateDirectory(extractRoot);
+                var (manifest, scripts) = GamePackage.Extract(bytes, extractRoot);
+                return new LoadedGame(extractRoot, manifest, scripts);
             }
-
-            return (root, new GameManifest { ProjectName = Path.GetFileName(root) });
+            catch
+            {
+                return null;
+            }
         }
 
-        try
+        // Carpeta de proyecto sin empaquetar (útil en desarrollo).
+        if (File.Exists(Path.Combine(origin, ProjectService.FileName)))
         {
-            var manifest = JsonSerializer.Deserialize<GameManifest>(
-                File.ReadAllText(manifestPath),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var manifestPath = Path.Combine(origin, "game.json");
+            var manifest = File.Exists(manifestPath)
+                ? JsonSerializer.Deserialize<GameManifest>(File.ReadAllText(manifestPath), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                }) ?? new GameManifest { ProjectName = Path.GetFileName(origin) }
+                : new GameManifest { ProjectName = Path.GetFileName(origin) };
 
-            return manifest is null ? (root, new GameManifest()) : (root, manifest);
+            return new LoadedGame(origin, manifest, null);
         }
-        catch
-        {
-            return (root, new GameManifest());
-        }
+
+        return null;
     }
 
-    private static string? ResolveRoot(string? requested)
+    private static string? ResolveOrigin(string? requested)
     {
         if (!string.IsNullOrWhiteSpace(requested))
         {
@@ -62,12 +79,15 @@ public static class GameLoader
 
         var baseDirectory = AppContext.BaseDirectory;
 
-        if (File.Exists(Path.Combine(baseDirectory, ProjectService.FileName)) ||
-            File.Exists(Path.Combine(baseDirectory, "game.json")))
+        if (File.Exists(Path.Combine(baseDirectory, "game.pak")) ||
+            File.Exists(Path.Combine(baseDirectory, ProjectService.FileName)))
         {
             return baseDirectory;
         }
 
-        return null;
+        var processDirectory = Path.GetDirectoryName(Environment.ProcessPath);
+        return processDirectory is not null && File.Exists(Path.Combine(processDirectory, "game.pak"))
+            ? processDirectory
+            : null;
     }
 }

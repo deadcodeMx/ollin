@@ -10,15 +10,25 @@
     <ApplicationIcon>..\Ollin.Editor\Assets\ollin.ico</ApplicationIcon>
   </PropertyGroup>
 
+  <Target Name="BuildEditorBeforePlayer" BeforeTargets="ResolveAssemblyReferences">
+    <MSBuild Projects="..\Ollin.Editor\Ollin.Editor.csproj" Targets="Build"
+             Properties="Configuration=$(Configuration)"
+             RemoveProperties="RuntimeIdentifier;SelfContained;PublishSingleFile" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.3.22" />
     <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.22" />
+    <PackageReference Include="OneWare.AvaloniaEdit" Version="11.3.20" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ollin.Editor\Ollin.Editor.csproj" />
+    <Reference Include="Ollin.Editor">
+      <HintPath>..\Ollin.Editor\bin\$(Configuration)\net8.0\Ollin.Editor.dll</HintPath>
+    </Reference>
     <ProjectReference Include="..\Ollin.Core\Ollin.Core.csproj" />
     <ProjectReference Include="..\Ollin.Rendering\Ollin.Rendering.csproj" />
     <ProjectReference Include="..\Ollin.Runtime\Ollin.Runtime.csproj" />
