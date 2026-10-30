@@ -12,6 +12,7 @@ using Ollin.Core.Model.Components;
 using Ollin.Core.Scenes;
 using Ollin.Core.Serialization;
 using Ollin.Runtime;
+using Ollin.Scripting;
 
 namespace Ollin.Editor.ViewModels;
 
@@ -34,6 +35,7 @@ public sealed class MainViewModel : ObservableObject
 
     private readonly string _defaultProjectRoot = ProjectLocator.FindProjectRoot() ?? Environment.CurrentDirectory;
     private readonly SceneHistory _history = new();
+    private ScriptWorkspace _scripts;
     private readonly SceneRuntime _runtime = new();
     private string? _lastEditKey;
     private DateTime _lastEditTime;
@@ -43,11 +45,13 @@ public sealed class MainViewModel : ObservableObject
     private Vector2 _cameraBeforePlay;
     private float _zoomBeforePlay;
     private bool _dirtyBeforePlay;
+    private string _scriptStatus = "Scripts: —";
     private Guid? _selectedBeforePlay;
     private AssetItem? _selectedAsset;
 
     public MainViewModel()
     {
+        _scripts = new ScriptWorkspace(_defaultProjectRoot);
         Log.Written += OnLogWritten;
         foreach (var entry in Log.History)
         {
@@ -56,6 +60,7 @@ public sealed class MainViewModel : ObservableObject
 
         LoadScene(DefaultScene.Create(), null);
         RefreshAssets(logToConsole: false);
+        ReloadScripts();
         Log.Info("Ollin 0.1 — editor 2D listo", "Editor");
         Log.Info("Clic para seleccionar · Rueda para zoom · Alt+arrastrar para mover la cámara", "Editor");
     }
@@ -85,6 +90,12 @@ public sealed class MainViewModel : ObservableObject
     }
 
     public bool HasSelectedAsset => SelectedAsset is not null;
+
+    public string ScriptStatusText
+    {
+        get => _scriptStatus;
+        private set => SetProperty(ref _scriptStatus, value);
+    }
 
     public bool CanUndo => _history.CanUndo;
 
@@ -259,7 +270,8 @@ public sealed class MainViewModel : ObservableObject
         _dirtyBeforePlay = IsDirty;
         _selectedBeforePlay = Selected?.Id;
 
-        _runtime.Play(Scene);
+        ReloadScripts();
+        _runtime.Play(Scene, _scripts);
         _playClock.Restart();
         _playTimer ??= CreatePlayTimer();
         _playTimer.Start();
@@ -334,6 +346,12 @@ public sealed class MainViewModel : ObservableObject
         Scene = scene;
         ScenePath = path;
         ProjectRoot = path is null ? _defaultProjectRoot : System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(path)) ?? _defaultProjectRoot;
+        if (!string.Equals(_scripts.ProjectRoot, ProjectRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            _scripts.Dispose();
+            _scripts = new ScriptWorkspace(ProjectRoot);
+            ReloadScripts();
+        }
         IsDirty = false;
         RebuildTree();
         Selected = null;
@@ -484,6 +502,97 @@ public sealed class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(UndoText));
         OnPropertyChanged(nameof(RedoText));
     }
+
+    // ---------- Scripts (etapa 3) ----------
+
+    /// <summary>Recompila los scripts del proyecto y refleja el resultado en consola y barra de estado.</summary>
+    public void ReloadScripts()
+    {
+        var result = _scripts.Reload();
+        var errors = result.Diagnostics.Count(d => d.IsError);
+
+        if (errors > 0)
+        {
+            ScriptStatusText = $"Scripts: {errors} error(es)";
+            StatusMessage = "Errores de compilación en scripts (ver consola)";
+            return;
+        }
+
+        ScriptStatusText = _scripts.HasScripts
+            ? $"Scripts: {string.Join(", ", result.Types.Select(t => t.Name))}"
+            : "Scripts: sin scripts";
+    }
+
+    /// <summary>Crea (o reutiliza) un script para la entidad seleccionada y lo enlaza.</summary>
+    public void CreateScriptForSelected()
+    {
+        if (IsPlaying || Selected is null)
+        {
+            return;
+        }
+
+        var entity = Selected.Entity;
+        var className = SanitizeIdentifier(entity.Name) + "Script";
+        var folder = _scripts.ScriptsFolder;
+        Directory.CreateDirectory(folder);
+        var fullPath = Path.Combine(folder, className + ".cs");
+
+        if (!File.Exists(fullPath))
+        {
+            File.WriteAllText(fullPath, ScriptTemplate(className, entity.Name));
+        }
+
+        var component = entity.GetComponent<ScriptComponent>() ?? entity.AddComponent(new ScriptComponent());
+        component.ScriptPath = $"scripts/{className}.cs";
+        component.ClassName = className;
+
+        ReloadScripts();
+        Selected.RefreshAll();
+        MarkDirty();
+        StatusMessage = $"Script {className} enlazado a {entity.Name}";
+        Log.Info($"Script creado: scripts/{className}.cs", "Scripts");
+    }
+
+    private static string SanitizeIdentifier(string name)
+    {
+        var builder = new System.Text.StringBuilder();
+        foreach (var character in name)
+        {
+            if (char.IsLetterOrDigit(character))
+            {
+                builder.Append(character);
+            }
+        }
+
+        var result = builder.ToString();
+        if (result.Length == 0)
+        {
+            return "Entity";
+        }
+
+        return char.IsDigit(result[0]) ? "E" + result : result;
+    }
+
+    private static string ScriptTemplate(string className, string entityName) => $$"""
+        using System;
+        using System.Numerics;
+        using Ollin.Scripting;
+
+        /// <summary>Script de {{entityName}}.</summary>
+        public sealed class {{className}} : OllinScript
+        {
+            public override void OnStart()
+            {
+                Debug("{{className}} iniciado en " + Entity.Name);
+            }
+
+            public override void OnUpdate(float deltaTime)
+            {
+                // Ejemplo: girar la entidad poco a poco.
+                // Entity.Transform.Rotation += deltaTime;
+            }
+        }
+        """;
 
     // ---------- Assets ----------
 

@@ -25,8 +25,9 @@ Motor de juego **2D** con editor gráfico propio y scripting en **C#**, construi
 | Panel de assets: miniaturas, importación y asignación de texturas | ✅ |
 | Gizmos en el viewport: mover, rotar y escalar con el ratón | ✅ |
 | Deshacer / rehacer con historial de estados | ✅ |
-| Pruebas automatizadas | ✅ 35/35 |
-| Drag & drop de assets, scripting C#, físicas, audio | ⏳ etapas 2–4 |
+| Scripting en C# con Roslyn (compilación en memoria) y ciclo de vida | ✅ |
+| Pruebas automatizadas | ✅ 41/41 |
+| Recarga en caliente sin parar, físicas, audio, export | ⏳ etapas 3–5 |
 
 Consulta el [roadmap por etapas](docs/ROADMAP.md) y la
 [arquitectura](docs/ARQUITECTURA.md).
@@ -73,6 +74,39 @@ Las texturas viven en `assets/` junto al proyecto y se referencian con rutas rel
 
 La escena de ejemplo ya usa las texturas de `assets/sprites/`, generadas para el proyecto.
 
+## Scripts en C#
+
+Los scripts viven en `scripts/` y se compilan **en memoria con Roslyn** al abrir el
+proyecto y al pulsar Reproducir (o el botón `⟳ Scripts`).
+
+```csharp
+using System;
+using System.Numerics;
+using Ollin.Scripting;
+
+public sealed class PlayerBob : OllinScript
+{
+    private Vector2 _origin;
+    private float _time;
+
+    public override void OnStart() => _origin = Entity.Transform.Position;
+
+    public override void OnUpdate(float deltaTime)
+    {
+        _time += deltaTime;
+        Entity.Transform.Position = _origin + new Vector2(0f, MathF.Sin(_time * 2.2f) * 0.28f);
+    }
+
+    public override void OnDestroy() => Entity.Transform.Position = _origin;
+}
+```
+
+- **Ciclo de vida:** `OnStart`, `OnUpdate(deltaTime)` y `OnDestroy`.
+- **API:** `Entity` (con `Transform`), `Scene` y `Debug("mensaje")` hacia la consola.
+- **Enlazar:** en el inspector, sección *SCRIPT* (archivo + clase) o botón
+  *Crear script para esta entidad*, que genera la plantilla.
+- **Errores:** se muestran en la consola con archivo, línea y código (`CS0029`…).
+
 ## Estructura del repositorio
 
 ```
@@ -80,11 +114,13 @@ src/
   Ollin.Core/        Modelo de escena, componentes, cámara, serialización, log
   Ollin.Rendering/   Renderer 2D sobre OpenGL ES (sprite batch, cuadrícula, hit-test)
   Ollin.Runtime/     Bucle de juego: reproducción, pausa, delta time y restauración
+  Ollin.Scripting/   Compilación de scripts con Roslyn y API pública de scripting
   Ollin.Editor/      Aplicación Avalonia: GUI, viewport, inspector, consola
 tests/
   Ollin.Tests/       Pruebas del núcleo y del runtime (xUnit)
 assets/
   sprites/           Texturas de ejemplo (héroe, caja, moneda, suelo)
+scripts/             Scripts de usuario en C# (se compilan en memoria)
 docs/
   ARQUITECTURA.md    Cómo está construido y por qué
   ROADMAP.md         Etapas de desarrollo

@@ -40,10 +40,21 @@ public partial class MainWindow : Window
 
     private void OnLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.Action == NotifyCollectionChangedAction.Add && LogList.ItemCount > 0)
+        if (e.Action != NotifyCollectionChangedAction.Add || LogList.ItemCount == 0)
         {
-            LogList.ScrollIntoView(LogList.ItemCount - 1);
+            return;
         }
+
+        // Se difiere al final del layout: con virtualización, desplazar antes de medir no surte efecto.
+        Avalonia.Threading.Dispatcher.UIThread.Post(
+            () =>
+            {
+                if (LogList.ItemCount > 0)
+                {
+                    LogList.ScrollIntoView(LogList.ItemCount - 1);
+                }
+            },
+            Avalonia.Threading.DispatcherPriority.Background);
     }
 
     // ---------- Archivo ----------
@@ -183,6 +194,13 @@ public partial class MainWindow : Window
             e.Handled = true;
         }
     }
+
+    // ---------- Scripts ----------
+
+    private void OnReloadScripts(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ReloadScripts();
+
+    private void OnCreateScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        ViewModel?.CreateScriptForSelected();
 
     // ---------- Modo juego ----------
 

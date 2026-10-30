@@ -6,5 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ollin.Core\Ollin.Core.csproj" />
+    <ProjectReference Include="..\Ollin.Scripting\Ollin.Scripting.csproj" />
   </ItemGroup>
 </Project>

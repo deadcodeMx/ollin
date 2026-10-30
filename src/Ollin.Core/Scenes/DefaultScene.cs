@@ -28,6 +28,11 @@ public static class DefaultScene
             Size = new Vector2(1.3f, 1.3f),
             SortingOrder = 10,
         });
+        player.AddComponent(new ScriptComponent
+        {
+            ScriptPath = "scripts/PlayerBob.cs",
+            ClassName = "PlayerBob",
+        });
 
         var crate = scene.Create("Caja", new Vector2(2.6f, -1.9f));
         crate.AddComponent(new SpriteRenderer

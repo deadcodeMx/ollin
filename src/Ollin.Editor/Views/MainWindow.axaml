@@ -62,6 +62,7 @@
           <Button Classes="tool" Content="Eliminar" Click="OnDelete" />
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+          <Button Classes="tool" Content="⟳ Scripts" Click="OnReloadScripts" ToolTip.Tip="Recompilar scripts" />
           <Button Classes="tool" Content="Centrar" Click="OnResetCamera" />
           <Button Classes="tool" Content="Enfocar" Click="OnFrameSelected" />
           <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
@@ -337,6 +338,23 @@
                 </Grid>
               </StackPanel>
 
+              <StackPanel IsVisible="{Binding Selected.HasScript}" Spacing="5">
+                <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
+                <TextBlock Classes="section" Text="SCRIPT" />
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Archivo" VerticalAlignment="Center" Classes="hint" />
+                  <TextBox Grid.Column="1" Text="{Binding Selected.ScriptPath, Mode=TwoWay}"
+                           Watermark="scripts/MiScript.cs" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Clase" VerticalAlignment="Center" Classes="hint" />
+                  <TextBox Grid.Column="1" Text="{Binding Selected.ScriptClass, Mode=TwoWay}"
+                           Watermark="NombreDeLaClase" />
+                </Grid>
+                <Button Classes="tool" Content="Crear script para esta entidad" Click="OnCreateScript"
+                        HorizontalAlignment="Stretch" />
+              </StackPanel>
+
               <StackPanel IsVisible="{Binding Selected.HasCamera}" Spacing="5">
                 <Border Height="1" Background="{DynamicResource Ollin.Border}" Margin="0,2" />
                 <TextBlock Classes="section" Text="CÁMARA" />
@@ -367,6 +385,8 @@
                      Foreground="{DynamicResource Ollin.TextDim}" />
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+          <TextBlock Text="{Binding ScriptStatusText}" FontSize="11"
+                     Foreground="{DynamicResource Ollin.TextDim}" />
           <TextBlock Text="{Binding PlayStateText}" FontSize="11"
                      Foreground="{DynamicResource Ollin.Jade}" />
           <TextBlock Text="{Binding ElapsedText}" FontSize="11"

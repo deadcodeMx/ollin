@@ -121,6 +121,23 @@ Componentes con comportamiento incorporados: `RotatorComponent` (grados/s) y
 `OscillatorComponent` (amplitud, frecuencia, eje y fase). En la etapa 3 los scripts de
 usuario implementarán el mismo `ITickable`.
 
+### Ollin.Scripting — scripts de usuario
+
+- `OllinScript` es la clase base: `Entity`, `Scene`, `OnStart`, `OnUpdate(dt)`, `OnDestroy`
+  y `Debug(...)`, que escribe en la consola del editor.
+- `ScriptCompiler` compila todos los `.cs` de `scripts/` con Roslyn en un ensamblado en
+  memoria. Las referencias salen de `TRUSTED_PLATFORM_ASSEMBLIES` más los ensamblados
+  `Ollin.Core` y `Ollin.Scripting`, así los scripts pueden usar todo .NET 8.
+- `ScriptWorkspace` carga el ensamblado en un `AssemblyLoadContext` **recolectable**;
+  cada recarga descarga el anterior, de modo que no se acumulan versiones.
+- Los diagnósticos se formatean como `Archivo(linea,col): error CSxxxx: mensaje`.
+- `SceneRuntime` crea una instancia por entidad con `ScriptComponent`, llama a `OnStart`,
+  distribuye `OnUpdate` y, al detener, `OnDestroy`. Un script que lanza una excepción se
+  registra en consola y se retira del bucle.
+
+**Límite conocido:** la recarga descarga el ensamblado anterior, así que no conserva el
+estado de los scripts en ejecución; para aplicarla hay que detener y volver a reproducir.
+
 ### Ollin.Editor — aplicación
 
 - `Program` / `App`: arranque de Avalonia, tema Fluent oscuro y estilos propios.

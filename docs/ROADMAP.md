@@ -50,17 +50,19 @@ deshacer/rehacer.
 > Nota de diseño: `ITickable` es el contrato que en la etapa 3 implementarán los
 > scripts de usuario compilados con Roslyn, sin tocar el runtime.
 
-## Etapa 3 — Scripting en C#
+## Etapa 3 — Scripting en C# (en curso)
 
 **Objetivo:** escribir comportamiento en C# con recarga en caliente.
 
-- [ ] Compilación en memoria con **Roslyn** (`Microsoft.CodeAnalysis.CSharp`).
-- [ ] Ciclo de vida: `Awake`, `Start`, `Update(dt)`, `OnDestroy`.
-- [ ] API pública: `Entity`, `Transform`, `Input` (teclado/ratón), `Time`, `Debug`, `Scene`.
-- [ ] Recarga en caliente: al guardar un `.cs` se recompila y se conservan los valores.
-- [ ] Errores de compilación en la consola, con archivo y línea.
-- [ ] Componente `ScriptComponent` que enlaza la entidad con su script.
-- [ ] Plantillas al crear un script desde el editor.
+- [x] Compilación en memoria con **Roslyn** (`Microsoft.CodeAnalysis.CSharp`) y ensamblado recargable.
+- [x] Ciclo de vida: `OnStart`, `OnUpdate(dt)`, `OnDestroy`.
+- [x] API base: `Entity`, `Transform`, `Scene`, `Debug` hacia la consola.
+- [x] Errores de compilación en la consola, con archivo, línea y código.
+- [x] `ScriptComponent` que enlaza la entidad con su script.
+- [x] Plantillas al crear un script desde el editor.
+- [x] Recompilación al reproducir y botón `⟳ Scripts`.
+- [ ] Recarga en caliente **sin detener** la reproducción, conservando estado.
+- [ ] API de entrada y tiempo: `Input` (teclado/ratón), `Time`, `Coroutine`/temporizadores.
 
 ## Etapa 4 — 2D completo
 

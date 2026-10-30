@@ -136,11 +136,47 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasCamera => Entity.GetComponent<Camera2D>() is not null;
 
+    public bool HasScript => Entity.GetComponent<ScriptComponent>() is not null;
+
     public bool HasRotator => Entity.GetComponent<RotatorComponent>() is not null;
 
     public bool HasOscillator => Entity.GetComponent<OscillatorComponent>() is not null;
 
     public RotatorComponent? Rotator => Entity.GetComponent<RotatorComponent>();
+
+    public ScriptComponent? Script => Entity.GetComponent<ScriptComponent>();
+
+    public string ScriptPath
+    {
+        get => Script?.ScriptPath ?? string.Empty;
+        set
+        {
+            if (Script is null)
+            {
+                return;
+            }
+
+            Script.ScriptPath = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public string ScriptClass
+    {
+        get => Script?.ClassName ?? string.Empty;
+        set
+        {
+            if (Script is null)
+            {
+                return;
+            }
+
+            Script.ClassName = value ?? string.Empty;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
 
     public OscillatorComponent? Oscillator => Entity.GetComponent<OscillatorComponent>();
 
@@ -453,5 +489,7 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(RotationSpeed));
         OnPropertyChanged(nameof(OscillationAmplitude));
         OnPropertyChanged(nameof(OscillationFrequency));
+        OnPropertyChanged(nameof(ScriptPath));
+        OnPropertyChanged(nameof(ScriptClass));
     }
 }

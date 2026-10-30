@@ -23,5 +23,6 @@
     <ProjectReference Include="..\Ollin.Core\Ollin.Core.csproj" />
     <ProjectReference Include="..\Ollin.Rendering\Ollin.Rendering.csproj" />
     <ProjectReference Include="..\Ollin.Runtime\Ollin.Runtime.csproj" />
+    <ProjectReference Include="..\Ollin.Scripting\Ollin.Scripting.csproj" />
   </ItemGroup>
 </Project>
