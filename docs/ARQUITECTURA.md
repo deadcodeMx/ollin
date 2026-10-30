@@ -86,6 +86,16 @@ con VAO y buffers dinámicos.
 - Cámara: `OrthographicSize` = mitad de la altura visible en unidades; `Zoom` multiplica.
 - Píxeles por unidad: `altura_px / (2 · OrthographicSize) · Zoom`.
 
+### Assets
+
+- `AssetDatabase` indexa las texturas de `assets/` (recursivo, rutas relativas con `/`) e
+  importa copiando el archivo sin sobrescribir (sufijo `-1`, `-2`…).
+- `ProjectLocator` sube desde el ejecutable hasta encontrar `Ollin.sln` o `assets/`, de modo
+  que el editor funciona lanzado desde `bin/`.
+- `Renderer2D` cachea texturas por ruta y usa un tablero de ajedrez si falta el archivo.
+- Al importar o asignar se pide vaciar la caché; el borrado real de texturas ocurre en el
+  hilo de render (`RequestTextureReload`), que es donde vive el contexto OpenGL.
+
 ### Ollin.Runtime — bucle de juego
 
 - `SceneRuntime`: `Play(scene)` guarda una **instantánea JSON** del estado, arranca el

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Numerics;
 using Avalonia.Threading;
+using Ollin.Core.Assets;
 using Ollin.Core.Diagnostics;
 using Ollin.Core.Math;
 using Ollin.Core.Model;
@@ -29,6 +30,7 @@ public sealed class MainViewModel : ObservableObject
     private Vector2 _homeCameraPosition;
     private float _homeZoom = 1f;
 
+    private readonly string _defaultProjectRoot = ProjectLocator.FindProjectRoot() ?? Environment.CurrentDirectory;
     private readonly SceneRuntime _runtime = new();
     private readonly Stopwatch _playClock = new();
     private DispatcherTimer? _playTimer;
@@ -36,6 +38,7 @@ public sealed class MainViewModel : ObservableObject
     private float _zoomBeforePlay;
     private bool _dirtyBeforePlay;
     private Guid? _selectedBeforePlay;
+    private AssetItem? _selectedAsset;
 
     public MainViewModel()
     {
@@ -46,6 +49,7 @@ public sealed class MainViewModel : ObservableObject
         }
 
         LoadScene(DefaultScene.Create(), null);
+        RefreshAssets(logToConsole: false);
         Log.Info("Ollin 0.1 — editor 2D listo", "Editor");
         Log.Info("Clic para seleccionar · Rueda para zoom · Alt+arrastrar para mover la cámara", "Editor");
     }
@@ -56,6 +60,27 @@ public sealed class MainViewModel : ObservableObject
     public ObservableCollection<EntityNode> Roots { get; } = new();
 
     public ObservableCollection<LogItem> Logs { get; } = new();
+
+    public ObservableCollection<AssetItem> Assets { get; } = new();
+
+    /// <summary>Se dispara cuando cambian archivos de textura y hay que vaciar la caché de GPU.</summary>
+    public event Action? TexturesReloadRequested;
+
+    public AssetItem? SelectedAsset
+    {
+        get => _selectedAsset;
+        set
+        {
+            if (SetProperty(ref _selectedAsset, value))
+            {
+                OnPropertyChanged(nameof(HasSelectedAsset));
+            }
+        }
+    }
+
+    public bool HasSelectedAsset => SelectedAsset is not null;
+
+    public string AssetCountText => Assets.Count == 1 ? "1 textura" : $"{Assets.Count} texturas";
 
     public Scene Scene
     {
@@ -294,7 +319,7 @@ public sealed class MainViewModel : ObservableObject
 
         Scene = scene;
         ScenePath = path;
-        ProjectRoot = path is null ? Environment.CurrentDirectory : System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(path)) ?? Environment.CurrentDirectory;
+        ProjectRoot = path is null ? _defaultProjectRoot : System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(path)) ?? _defaultProjectRoot;
         IsDirty = false;
         RebuildTree();
         Selected = null;
@@ -303,6 +328,87 @@ public sealed class MainViewModel : ObservableObject
         ResetCamera();
         OnPropertyChanged(nameof(EntityCountText));
         OnPropertyChanged(nameof(Title));
+        RefreshAssets(logToConsole: false);
+        RequestRedraw();
+    }
+
+    // ---------- Assets ----------
+
+    /// <summary>Reindexa las texturas del proyecto.</summary>
+    public void RefreshAssets(bool logToConsole = true)
+    {
+        Assets.Clear();
+        foreach (var info in AssetDatabase.ScanTextures(ProjectRoot))
+        {
+            Assets.Add(new AssetItem(info));
+        }
+
+        if (SelectedAsset is not null && !Assets.Contains(SelectedAsset))
+        {
+            SelectedAsset = null;
+        }
+
+        OnPropertyChanged(nameof(AssetCountText));
+
+        if (logToConsole)
+        {
+            Log.Info($"Assets actualizados: {Assets.Count} texturas", "Assets");
+        }
+    }
+
+    /// <summary>Copia una imagen al proyecto y la deja lista para asignar.</summary>
+    public void ImportTexture(string sourcePath)
+    {
+        try
+        {
+            var relative = AssetDatabase.ImportTexture(ProjectRoot, sourcePath);
+            RefreshAssets(logToConsole: false);
+            SelectedAsset = Assets.FirstOrDefault(a => a.RelativePath == relative) ?? Assets.FirstOrDefault(a => a.Name == System.IO.Path.GetFileName(relative));
+            Log.Info($"Textura importada: {relative}", "Assets");
+            TexturesReloadRequested?.Invoke();
+            StatusMessage = $"Textura importada: {System.IO.Path.GetFileName(relative)}";
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"No se pudo importar la textura: {exception.Message}", "Assets");
+        }
+    }
+
+    /// <summary>Asigna la textura seleccionada al sprite de la entidad seleccionada.</summary>
+    public void AssignAssetToSelected()
+    {
+        if (IsPlaying)
+        {
+            return;
+        }
+
+        if (Selected is null)
+        {
+            Log.Warn("Selecciona una entidad para asignarle la textura", "Assets");
+            return;
+        }
+
+        if (SelectedAsset is null)
+        {
+            Log.Warn("Selecciona una textura en el panel de assets", "Assets");
+            return;
+        }
+
+        if (Selected.Sprite is null)
+        {
+            Log.Warn($"'{Selected.Name}' no tiene un componente SpriteRenderer", "Assets");
+            return;
+        }
+
+        Selected.AssignTexture(SelectedAsset);
+        TexturesReloadRequested?.Invoke();
+        StatusMessage = $"Textura asignada a {Selected.Name}";
+        RequestRedraw();
+    }
+
+    public void RequestTextureReload()
+    {
+        TexturesReloadRequested?.Invoke();
         RequestRedraw();
     }
 

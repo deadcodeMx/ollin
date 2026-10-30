@@ -43,7 +43,8 @@ deshacer/rehacer.
 - [x] Bloqueo de la edición mientras se reproduce.
 - [ ] Gizmos arrastrables: mover, rotar, escalar desde el viewport (snap con `Ctrl`).
 - [ ] Deshacer/rehacer (pila de comandos sobre la escena).
-- [ ] Panel de assets: importar PNG, arrastrar textura al sprite, vista de miniaturas.
+- [x] Panel de assets: miniaturas, importación y asignación de textura al sprite seleccionado.
+- [ ] Arrastrar una textura del panel al viewport (drag & drop).
 - [ ] Exportación del juego a carpeta ejecutable (Windows).
 
 > Nota de diseño: `ITickable` es el contrato que en la etapa 3 implementarán los

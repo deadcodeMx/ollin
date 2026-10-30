@@ -73,34 +73,74 @@
     <!-- Cuerpo del editor -->
     <Grid Grid.Row="2" ColumnDefinitions="286,4,*,4,332" Margin="8,8,8,6">
 
-      <!-- Jerarquía -->
-      <Border Grid.Column="0" Classes="card" IsEnabled="{Binding CanEdit}">
-        <Grid RowDefinitions="Auto,*,Auto">
-          <StackPanel Margin="12,10,12,4">
-            <TextBlock Classes="section" Text="JERARQUÍA" />
-            <TextBlock Classes="hint" Text="{Binding EntityCountText}" />
-          </StackPanel>
-          <TreeView Grid.Row="1"
-                    x:Name="SceneTree"
-                    ItemsSource="{Binding Roots}"
-                    SelectedItem="{Binding Selected, Mode=TwoWay}"
-                    Background="Transparent"
-                    Margin="4,0,4,4">
-            <TreeView.ItemTemplate>
-              <TreeDataTemplate ItemsSource="{Binding Children}">
-                <StackPanel Orientation="Horizontal" Spacing="7">
-                  <TextBlock Text="{Binding Icon}" FontSize="10"
-                             Foreground="{DynamicResource Ollin.Jade}" VerticalAlignment="Center" />
-                  <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+      <!-- Jerarquía y assets -->
+      <Border Grid.Column="0" Classes="card" IsEnabled="{Binding CanEdit}" Padding="0">
+        <TabControl Background="Transparent" Padding="0">
+          <TabItem Header="Jerarquía">
+            <Grid RowDefinitions="Auto,*,Auto">
+              <TextBlock Classes="section" Text="{Binding EntityCountText}" Margin="12,8,12,4" />
+              <TreeView Grid.Row="1"
+                        x:Name="SceneTree"
+                        ItemsSource="{Binding Roots}"
+                        SelectedItem="{Binding Selected, Mode=TwoWay}"
+                        Background="Transparent"
+                        Margin="4,0,4,4">
+                <TreeView.ItemTemplate>
+                  <TreeDataTemplate ItemsSource="{Binding Children}">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Text="{Binding Icon}" FontSize="10"
+                                 Foreground="{DynamicResource Ollin.Jade}" VerticalAlignment="Center" />
+                      <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </TreeDataTemplate>
+                </TreeView.ItemTemplate>
+              </TreeView>
+              <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="6" Margin="10">
+                <Button Classes="tool" Content="+ Sprite" Click="OnAddSprite" />
+                <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" />
+              </StackPanel>
+            </Grid>
+          </TabItem>
+
+          <TabItem Header="Assets">
+            <Grid RowDefinitions="Auto,*" Margin="8,6,8,8">
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Classes="section" Text="{Binding AssetCountText}" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                  <Button Classes="tool accent" Content="Asignar" Click="OnAssignAsset"
+                          ToolTip.Tip="Asignar la textura a la entidad seleccionada (o doble clic / Enter)" />
+                  <Button Classes="tool" Content="Importar…" Click="OnImportAsset" />
+                  <Button Classes="tool" Content="⟳" Click="OnReloadAssets" ToolTip.Tip="Recargar texturas" />
                 </StackPanel>
-              </TreeDataTemplate>
-            </TreeView.ItemTemplate>
-          </TreeView>
-          <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="6" Margin="10">
-            <Button Classes="tool" Content="+ Sprite" Click="OnAddSprite" />
-            <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" />
-          </StackPanel>
-        </Grid>
+              </Grid>
+
+              <ListBox Grid.Row="1" x:Name="AssetList" Margin="0,8,0,0"
+                       KeyDown="OnAssetListKeyDown"
+                       ItemsSource="{Binding Assets}"
+                       SelectedItem="{Binding SelectedAsset, Mode=TwoWay}"
+                       DoubleTapped="OnAssignAsset"
+                       Background="Transparent">
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <Grid ColumnDefinitions="34,*" Margin="1,2">
+                      <Border Width="32" Height="32" CornerRadius="4" Background="#0F1218"
+                              BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1">
+                        <Image Source="{Binding Thumbnail}" Stretch="Uniform" Margin="2" />
+                      </Border>
+                      <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Name}" FontSize="11.5" />
+                        <TextBlock Text="{Binding SizeText}" FontSize="10"
+                                   Foreground="{DynamicResource Ollin.TextDim}" />
+                      </StackPanel>
+                    </Grid>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+
+
+            </Grid>
+          </TabItem>
+        </TabControl>
       </Border>
 
       <GridSplitter Grid.Column="1" ResizeDirection="Columns" Background="Transparent" />
@@ -230,6 +270,14 @@
                   <TextBlock Text="Textura" VerticalAlignment="Center" Classes="hint" />
                   <TextBox Grid.Column="1" Text="{Binding Selected.TexturePath, Mode=TwoWay}"
                            Watermark="ruta/textura.png" />
+                </Grid>
+                <Grid ColumnDefinitions="86,*" Margin="0,1">
+                  <TextBlock Text="Vista" VerticalAlignment="Top" Margin="0,4,0,0" Classes="hint" />
+                  <Border Grid.Column="1" Width="76" Height="76" HorizontalAlignment="Left"
+                          CornerRadius="4" Background="#0F1218" Padding="3"
+                          BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1">
+                    <Image Source="{Binding Selected.TexturePreview}" Stretch="Uniform" />
+                  </Border>
                 </Grid>
                 <Grid ColumnDefinitions="86,*" Margin="0,1">
                   <TextBlock Text="Color" VerticalAlignment="Center" Classes="hint" />

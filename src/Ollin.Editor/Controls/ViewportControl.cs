@@ -34,6 +34,7 @@ public sealed class ViewportControl : OpenGlControlBase
     private int _frames;
     private DateTime _statsClock = DateTime.UtcNow;
     private bool _hasError;
+    private volatile bool _textureReloadRequested;
     private string? _errorText;
 
     public ViewportControl()
@@ -43,6 +44,16 @@ public sealed class ViewportControl : OpenGlControlBase
     }
 
     public bool HasError => _hasError;
+
+    /// <summary>
+    /// Pide vaciar la caché de texturas en el próximo cuadro. Debe hacerse en el
+    /// hilo de render, que es donde vive el contexto OpenGL.
+    /// </summary>
+    public void RequestTextureReload()
+    {
+        _textureReloadRequested = true;
+        RequestNextFrameRendering();
+    }
 
     public string? ErrorText => _errorText;
 
@@ -149,6 +160,12 @@ public sealed class ViewportControl : OpenGlControlBase
 
         try
         {
+            if (_textureReloadRequested)
+            {
+                _renderer.ClearTextureCache();
+                _textureReloadRequested = false;
+            }
+
             _renderer.ProjectRoot = _viewModel.ProjectRoot;
             _renderer.RenderFrame(
                 _viewModel.Scene,

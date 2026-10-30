@@ -35,6 +35,7 @@ public partial class MainWindow : Window
 
         ViewportHost.Viewport.ViewModel = vm;
         vm.Logs.CollectionChanged += OnLogsChanged;
+        vm.TexturesReloadRequested += () => ViewportHost.Viewport.RequestTextureReload();
     }
 
     private void OnLogsChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -123,6 +124,61 @@ public partial class MainWindow : Window
     private void OnDelete(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.DeleteSelected();
 
     private void OnClearConsole(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Logs.Clear();
+
+    // ---------- Assets ----------
+
+    private async void OnImportAsset(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null)
+        {
+            return;
+        }
+
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Importar textura",
+            AllowMultiple = true,
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType("Imágenes")
+                {
+                    Patterns = new[] { "*.png", "*.jpg", "*.jpeg", "*.bmp" },
+                },
+            },
+        });
+
+        foreach (var file in files)
+        {
+            var path = file.TryGetLocalPath();
+            if (!string.IsNullOrEmpty(path))
+            {
+                ViewModel.ImportTexture(path);
+            }
+        }
+    }
+
+    private void OnReloadAssets(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null)
+        {
+            return;
+        }
+
+        ViewModel.RefreshAssets();
+        ViewModel.RequestTextureReload();
+    }
+
+    private void OnAssignAsset(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        ViewModel?.AssignAssetToSelected();
+
+    private void OnAssetListKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key is Key.Enter or Key.Space)
+        {
+            ViewModel?.AssignAssetToSelected();
+            e.Handled = true;
+        }
+    }
 
     // ---------- Modo juego ----------
 

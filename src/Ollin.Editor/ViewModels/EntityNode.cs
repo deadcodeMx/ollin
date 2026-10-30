@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Numerics;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Ollin.Core.Math;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
@@ -14,6 +15,7 @@ namespace Ollin.Editor.ViewModels;
 public sealed class EntityNode : ObservableObject
 {
     private readonly MainViewModel _owner;
+    private IImage? _texturePreview;
 
     public EntityNode(Entity entity, MainViewModel owner)
     {
@@ -174,7 +176,9 @@ public sealed class EntityNode : ObservableObject
             }
 
             Sprite.TexturePath = string.IsNullOrWhiteSpace(value) ? null : value;
+            _texturePreview = null;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(TexturePreview));
             _owner.MarkDirty();
             _owner.RequestRedraw();
         }
@@ -193,9 +197,66 @@ public sealed class EntityNode : ObservableObject
             Sprite.Tint = ColorUtil.FromHex(value, Sprite.Tint);
             OnPropertyChanged();
             OnPropertyChanged(nameof(ColorBrush));
+        OnPropertyChanged(nameof(TexturePreview));
             _owner.MarkDirty();
             _owner.RequestRedraw();
         }
+    }
+
+    /// <summary>Miniatura de la textura asignada (se carga bajo demanda y se cachea).</summary>
+    public IImage? TexturePreview
+    {
+        get
+        {
+            _texturePreview ??= LoadTexturePreview();
+            return _texturePreview;
+        }
+    }
+
+    private IImage? LoadTexturePreview()
+    {
+        var path = Sprite?.TexturePath;
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return null;
+        }
+
+        var fullPath = Path.IsPathRooted(path) ? path : Path.Combine(_owner.ProjectRoot, path);
+        if (!File.Exists(fullPath))
+        {
+            return null;
+        }
+
+        try
+        {
+            using var stream = File.OpenRead(fullPath);
+            return new Bitmap(stream);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>Asigna una textura del proyecto y ajusta el ancho según su proporción.</summary>
+    public void AssignTexture(AssetItem asset)
+    {
+        if (Sprite is null)
+        {
+            return;
+        }
+
+        Sprite.TexturePath = asset.RelativePath;
+        var height = Sprite.Size.Y > 0.01f ? Sprite.Size.Y : 1f;
+        Sprite.Size = new Vector2(height * asset.AspectRatio, height);
+        _texturePreview = null;
+
+        OnPropertyChanged(nameof(TexturePath));
+        OnPropertyChanged(nameof(TexturePreview));
+        OnPropertyChanged(nameof(SpriteWidth));
+        OnPropertyChanged(nameof(SpriteHeight));
+        _owner.MarkDirty();
+        _owner.RequestRedraw();
     }
 
     public IBrush ColorBrush
@@ -343,6 +404,7 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(TexturePath));
         OnPropertyChanged(nameof(ColorHex));
         OnPropertyChanged(nameof(ColorBrush));
+        OnPropertyChanged(nameof(TexturePreview));
         OnPropertyChanged(nameof(SpriteWidth));
         OnPropertyChanged(nameof(SpriteHeight));
         OnPropertyChanged(nameof(SortingOrder));

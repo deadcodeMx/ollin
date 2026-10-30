@@ -22,8 +22,9 @@ Motor de juego **2D** con editor gráfico propio y scripting en **C#**, construi
 | Guardar / abrir escena en JSON | ✅ |
 | Consola de mensajes del motor | ✅ |
 | Modo Play: reproducir, pausar y detener con restauración | ✅ |
-| Pruebas automatizadas | ✅ 24/24 |
-| Gizmos, assets, scripting C#, físicas, audio | ⏳ etapas 2–4 |
+| Panel de assets: miniaturas, importación y asignación de texturas | ✅ |
+| Pruebas automatizadas | ✅ 29/29 |
+| Gizmos, scripting C#, físicas, audio | ⏳ etapas 2–4 |
 
 Consulta el [roadmap por etapas](docs/ROADMAP.md) y la
 [arquitectura](docs/ARQUITECTURA.md).
@@ -58,6 +59,18 @@ La primera vez se abre una escena de ejemplo con cámara, jugador, cajas y una m
 | Rueda | Zoom anclado al cursor |
 | `Alt` + arrastrar, o botón central | Mover la cámara |
 
+## Assets
+
+Las texturas viven en `assets/` junto al proyecto y se referencian con rutas relativas
+(`assets/sprites/hero.png`), así el proyecto se puede mover de carpeta sin romper nada.
+
+- **Importar:** pestaña *Assets* → `Importar…` (copia el archivo a `assets/` y evita sobrescribir).
+- **Asignar:** selecciona una entidad y una textura, y pulsa `Asignar` (o doble clic / `Enter`).
+  El ancho del sprite se ajusta solo según la proporción de la imagen.
+- **Formatos:** PNG, JPG y BMP.
+
+La escena de ejemplo ya usa las texturas de `assets/sprites/`, generadas para el proyecto.
+
 ## Estructura del repositorio
 
 ```
@@ -68,6 +81,8 @@ src/
   Ollin.Editor/      Aplicación Avalonia: GUI, viewport, inspector, consola
 tests/
   Ollin.Tests/       Pruebas del núcleo y del runtime (xUnit)
+assets/
+  sprites/           Texturas de ejemplo (héroe, caja, moneda, suelo)
 docs/
   ARQUITECTURA.md    Cómo está construido y por qué
   ROADMAP.md         Etapas de desarrollo
