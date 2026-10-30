@@ -912,7 +912,7 @@ public partial class MainWindow : Window
                 e.Handled = true;
                 break;
             case Key.F6:
-                ViewModel.TogglePause();
+                ViewModel?.TogglePause();
                 e.Handled = true;
                 break;
         }
