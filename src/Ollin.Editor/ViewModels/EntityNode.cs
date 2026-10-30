@@ -1555,6 +1555,22 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public decimal AiMemory
+    {
+        get => (decimal)(Ai?.MemorySeconds ?? 3f);
+        set
+        {
+            if (Ai is null || MathF.Abs(Ai.MemorySeconds - (float)value) < 0.01f)
+            {
+                return;
+            }
+
+            Ai.MemorySeconds = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
     public string AiStatus => Ai is null ? string.Empty : Ai.IsChasing ? "Persiguiendo" : "Patrullando";
 
     public void RefreshAiStatus() => OnPropertyChanged(nameof(AiStatus));

@@ -406,8 +406,13 @@ public sealed partial class MainViewModel : ObservableObject
         }
     }
 
-    private void StartPlay()
+    private void StartPlay(bool keepState = false)
     {
+        if (!keepState)
+        {
+            _runtime.GameState.Clear();
+        }
+
         _cameraBeforePlay = CameraPosition;
         _zoomBeforePlay = ActiveCamera.Zoom;
         _dirtyBeforePlay = IsDirty;

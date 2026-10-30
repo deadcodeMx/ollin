@@ -227,7 +227,7 @@ public sealed partial class MainViewModel
         {
             var root = Project?.RootPath ?? ProjectRoot;
             var path = SaveService.DefaultPath(root);
-            SaveService.Save(Scene, path, ScenePath);
+            SaveService.Save(Scene, path, ScenePath, "Partida", _runtime.GameState);
             StatusMessage = "Partida guardada";
             Log.Info($"Partida guardada: {path}", "Guardado");
         }
@@ -260,7 +260,8 @@ public sealed partial class MainViewModel
             }
 
             LoadScene(save.Scene!, save.ScenePath);
-            StartPlay();
+            _runtime.GameState.CopyFrom(save.State);
+            StartPlay(keepState: true);
             StatusMessage = "Partida cargada";
             Log.Info($"Partida cargada: {path}", "Guardado");
         }

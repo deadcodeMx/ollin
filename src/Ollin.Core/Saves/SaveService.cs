@@ -15,12 +15,15 @@ public sealed class GameSave
     public string? ScenePath { get; set; }
 
     public Scene? Scene { get; set; }
+
+    /// <summary>Datos globales de los scripts (puertas, misiones...).</summary>
+    public GameState State { get; set; } = new();
 }
 
 /// <summary>Guarda y carga partidas con la escena y el estado de sus componentes.</summary>
 public static class SaveService
 {
-    public static void Save(Scene scene, string path, string? scenePath = null, string name = "Partida")
+    public static void Save(Scene scene, string path, string? scenePath = null, string name = "Partida", GameState? state = null)
     {
         var directory = Path.GetDirectoryName(Path.GetFullPath(path));
 
@@ -35,6 +38,7 @@ public static class SaveService
             SavedAt = DateTime.Now,
             ScenePath = scenePath,
             Scene = scene,
+            State = state ?? new GameState(),
         };
 
         File.WriteAllText(path, JsonSerializer.Serialize(save, SceneSerializer.Options));

@@ -17,6 +17,18 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.16.0] — 2026-10-30
+
+### Añadido
+
+- **Datos persistentes de script**: `Save.Set/Get/SetFlag/SetNumber/Remove`, incluidos
+  en el guardado de partida.
+- **Memoria de la IA**: el agente sigue buscando al objetivo unos segundos después de
+  perderlo de vista, configurable en el inspector.
+- Recuperación correcta de los datos de script al cargar una partida.
+- Ejemplos de crafteo y puertas persistentes en la guía.
+- 3 pruebas nuevas: 114 en total.
+
 ## [0.15.0] — 2026-10-30
 
 ### Añadido

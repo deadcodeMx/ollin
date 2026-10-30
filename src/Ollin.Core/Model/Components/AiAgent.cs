@@ -21,6 +21,9 @@ public sealed class AiAgent : Component, ITickable
 
     public float PathRefreshSeconds { get; set; } = 0.45f;
 
+    /// <summary>Segundos que sigue buscando al objetivo tras perderlo de vista.</summary>
+    public float MemorySeconds { get; set; } = 3f;
+
     [JsonIgnore]
     public bool IsChasing { get; private set; }
 
@@ -35,6 +38,8 @@ public sealed class AiAgent : Component, ITickable
     private float _refresh;
     private float _patrolTimer;
     private Vector2 _patrolTarget;
+    private float _memory;
+    private Vector2 _lastKnown;
 
     public void OnUpdate(float deltaTime)
     {
@@ -53,13 +58,26 @@ public sealed class AiAgent : Component, ITickable
         var position = Owner.Transform.Position;
         var target = FindTarget(scene);
         var distance = target is null ? float.MaxValue : Vector2.Distance(position, target.Transform.Position);
+        var visible = target is not null && distance <= VisionRadius;
+
+        if (visible)
+        {
+            _lastKnown = target!.Transform.Position;
+            _memory = MemorySeconds;
+        }
 
         Vector2 desired;
 
-        if (target is not null && distance <= VisionRadius)
+        if (visible)
         {
             IsChasing = true;
-            desired = target.Transform.Position;
+            desired = _lastKnown;
+        }
+        else if (_memory > 0f)
+        {
+            IsChasing = true;
+            _memory -= deltaTime;
+            desired = _lastKnown;
         }
         else
         {
@@ -230,6 +248,7 @@ public sealed class AiAgent : Component, ITickable
         VisionRadius = VisionRadius,
         PatrolRadius = PatrolRadius,
         PathRefreshSeconds = PathRefreshSeconds,
+        MemorySeconds = MemorySeconds,
         Owner = newOwner,
     };
 }

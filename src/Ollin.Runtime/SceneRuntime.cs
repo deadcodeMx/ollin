@@ -7,6 +7,7 @@ using Ollin.Core.Audio;
 using Ollin.Core.Dialogue;
 using Ollin.Core.Hud;
 using Ollin.Core.Interaction;
+using Ollin.Core.Saves;
 using GameAudio = Ollin.Core.Audio.Audio;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
@@ -30,6 +31,7 @@ public sealed class SceneRuntime
     private readonly PhysicsSystem _physics = new();
     private readonly DialogueRunner _dialogue = new();
     private readonly HudModel _hud = new();
+    private readonly GameState _gameState = new();
     private bool _skipDialogueAdvance;
     private Scene? _scene;
     private ScriptWorkspace? _scriptsWorkspace;
@@ -48,6 +50,9 @@ public sealed class SceneRuntime
 
     /// <summary>HUD de la partida (barras, etiquetas, mensajes y fin de partida).</summary>
     public HudModel Hud => _hud;
+
+    /// <summary>Datos globales que los scripts pueden guardar entre partidas.</summary>
+    public GameState GameState => _gameState;
 
     public bool IsPaused { get; private set; }
 
@@ -75,6 +80,7 @@ public sealed class SceneRuntime
         _skipDialogueAdvance = false;
         InteractionState.Reset();
         _hud.Clear();
+        GameStateHost.Current = _gameState;
 
         // Los manejadores deben existir antes de OnStart: los scripts ya usan Hud y Dialogue.
         HudHost.BarHandler = _hud.SetBar;

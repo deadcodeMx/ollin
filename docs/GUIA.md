@@ -308,7 +308,8 @@ En el inspector, pestaña **Estadísticas**, escribe `vida=80`, `hambre+10` o `e
 **IA** (`AiAgent`): añade el componente a un enemigo y configura:
 
 - **Objetivo**: etiqueta a perseguir (`player`).
-- **Velocidad**, **Visión** y **Patrulla** (radio alrededor de su posición inicial).
+- **Velocidad**, **Visión**, **Patrulla** (radio alrededor de su posición inicial) y **Memoria**
+  (segundos que sigue buscando al objetivo tras perderlo de vista).
 - El agente patrulla y, cuando ve al objetivo, lo persigue. Si hay un **tilemap con
   “Colisiona”**, calcula la ruta con **A\***; si no, va en línea recta.
 - En el inspector, pestaña **IA**, se ve el estado actual (patrullando/persiguiendo).
@@ -319,8 +320,26 @@ En el inspector, pestaña **Estadísticas**, escribe `vida=80`, `hambre+10` o `e
 - `Escena → Cargar partida` (también en pausa) restaura la escena y reanuda el juego.
 - Se guarda en `saves/partida.json` con la escena completa: posiciones, inventario,
   estadísticas, luces y demás componentes.
-- **No** se guardan las variables internas de los scripts; para eso, escribe tu propio
-  guardado con `System.IO`.
+- **Datos de script**: usa `Save.Set/Get` para guardar lo tuyo (puertas, misiones,
+  contadores). Se incluyen en la partida automáticamente.
+
+```csharp
+// Al abrir una puerta
+Save.SetFlag("puerta_1", true);
+
+// En OnStart, para restaurar el estado
+if (Save.GetFlag("puerta_1"))
+{
+    Entity.Transform.Position = new Vector2(10f, 0f);
+}
+
+// Crafteo sencillo con el inventario (2 monedas -> 1 poción)
+var bag = Entity.GetComponent<Inventory>();
+if (bag is not null && bag.Has("moneda", 2) && bag.Add("pocion", 1) == 1)
+{
+    bag.Remove("moneda", 2);
+}
+```
 
 ## 13. Audio
 

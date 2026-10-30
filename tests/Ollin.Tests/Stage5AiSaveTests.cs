@@ -103,6 +103,92 @@ public class AiAgentTests
     }
 }
 
+public class GameStateTests
+{
+    [Fact]
+    public void GuardaValoresBanderasYNumeros()
+    {
+        var state = new GameState();
+        state.Set("puerta", "abierta");
+        state.SetNumber("contador", 3f);
+        state.SetFlag("jefe", true);
+
+        Assert.Equal("abierta", state.Get("puerta"));
+        Assert.Equal(3f, state.GetNumber("contador"), 3);
+        Assert.True(state.GetFlag("jefe"));
+        Assert.True(state.Has("puerta"));
+
+        var copy = new GameState();
+        copy.CopyFrom(state);
+        Assert.Equal("abierta", copy.Get("puerta"));
+    }
+
+    [Fact]
+    public void LosScriptsEscribenEnElEstadoDelRuntime()
+    {
+        var runtime = new SceneRuntime();
+        runtime.Play(new Scene());
+
+        try
+        {
+            Ollin.Scripting.Save.Set("puerta", "abierta");
+            Ollin.Scripting.Save.SetNumber("puntos", 12f);
+
+            Assert.Equal("abierta", runtime.GameState.Get("puerta"));
+            Assert.Equal(12f, runtime.GameState.GetNumber("puntos"), 3);
+        }
+        finally
+        {
+            runtime.Stop();
+        }
+    }
+}
+
+public class AiAgentMemoryTests
+{
+    [Fact]
+    public void MantieneElRastroUnosSegundosTrasPerderDeVista()
+    {
+        var scene = new Scene();
+
+        var player = scene.Create("Jugador", new Vector2(3f, 0f));
+        player.Tags.Add("player");
+
+        var enemy = scene.Create("Enemigo", Vector2.Zero);
+        var agent = enemy.AddComponent(new AiAgent
+        {
+            TargetTag = "player",
+            VisionRadius = 4f,
+            Speed = 2f,
+            MemorySeconds = 0.5f,
+        });
+
+        var runtime = new SceneRuntime();
+        runtime.Play(scene);
+
+        try
+        {
+            runtime.Tick(0.1f);
+            Assert.True(agent.IsChasing);
+
+            player.Transform.Position = new Vector2(100f, 0f);
+            runtime.Tick(0.1f);
+            Assert.True(agent.IsChasing);
+
+            for (var i = 0; i < 10; i++)
+            {
+                runtime.Tick(0.1f);
+            }
+
+            Assert.False(agent.IsChasing);
+        }
+        finally
+        {
+            runtime.Stop();
+        }
+    }
+}
+
 public class SaveServiceTests
 {
     [Fact]
@@ -125,12 +211,15 @@ public class SaveServiceTests
 
             player.AddComponent(new AiAgent { TargetTag = "player" });
 
-            SaveService.Save(scene, path, "scenes/nivel.json");
+            var state = new GameState();
+            state.Set("puerta", "abierta");
+            SaveService.Save(scene, path, "scenes/nivel.json", "Partida", state);
 
             var loaded = SaveService.Load(path);
             var loadedPlayer = loaded.Scene.Find("Jugador")!;
 
             Assert.Equal("Nivel guardado", loaded.Scene.Name);
+            Assert.Equal("abierta", loaded.State.Get("puerta"));
             Assert.Equal("scenes/nivel.json", loaded.ScenePath);
             Assert.Equal(4f, loadedPlayer.Transform.Position.X, 3);
             Assert.Equal(2, loadedPlayer.GetComponent<Inventory>()!.Count("pocion"));

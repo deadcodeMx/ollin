@@ -665,6 +665,10 @@
                       <TextBlock Text="Repetir ruta" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.AiRefresh, Mode=TwoWay}" Increment="0.05" Minimum="0.1" FormatString="0.##" />
                     </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Memoria (s)" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.AiMemory, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" />
+                    </Grid>
                     <TextBlock Classes="hint" TextWrapping="Wrap"
                                Text="Patrulla alrededor de su posición inicial y persigue al objetivo al verlo. Usa A* si hay un tilemap con 'Colisiona'." />
                   </StackPanel>
