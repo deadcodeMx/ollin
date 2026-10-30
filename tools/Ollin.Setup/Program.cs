@@ -205,10 +205,19 @@ internal static class Program
     /// <summary>Copia el icono junto a la aplicación y devuelve su ruta.</summary>
     private static string WriteIcon(string installDir)
     {
-        var destination = Path.Combine(installDir, "ollin.ico");
+        // Nombre con versión: al actualizar cambia la ruta y el Explorador no reutiliza la caché.
+        var destination = Path.Combine(installDir, $"ollin-{SetupInfo.Version}.ico");
 
         try
         {
+            foreach (var old in Directory.EnumerateFiles(installDir, "ollin*.ico"))
+            {
+                if (!string.Equals(old, destination, StringComparison.OrdinalIgnoreCase))
+                {
+                    File.Delete(old);
+                }
+            }
+
             using var stream = typeof(Program).Assembly.GetManifestResourceStream("Ollin.Setup.icon.ico");
             if (stream is null)
             {
