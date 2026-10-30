@@ -58,6 +58,11 @@ public sealed partial class MainViewModel
                 document.IsActive = ReferenceEquals(document, value);
             }
 
+            if (value is { IsScene: true, SceneDocument: { } sceneDocument })
+            {
+                ActivateSceneDocument(sceneDocument);
+            }
+
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsSceneActive));
             OnPropertyChanged(nameof(IsScriptActive));
@@ -195,7 +200,7 @@ public sealed partial class MainViewModel
         ReloadScripts();
         StartScriptWatcher();
         Documents.Clear();
-        EnsureSceneTab();
+        _currentSceneDoc = null;
         ProjectFiles.Clear();
         RefreshAssets(logToConsole: false);
         NewScene();
@@ -220,7 +225,7 @@ public sealed partial class MainViewModel
         _settings.Save();
 
         Documents.Clear();
-        EnsureSceneTab();
+        _currentSceneDoc = null;
 
         if (!string.IsNullOrWhiteSpace(project.StartScene) && File.Exists(project.StartSceneFullPath))
         {
@@ -230,8 +235,6 @@ public sealed partial class MainViewModel
         {
             NewScene();
         }
-
-        ActiveDocument = Documents.FirstOrDefault();
     }
 
     private void EnsureSceneTab()
@@ -241,9 +244,24 @@ public sealed partial class MainViewModel
             return;
         }
 
-        var tab = new DocumentTab("Escena", isScene: true);
+        if (_currentSceneDoc is null)
+        {
+            _currentSceneDoc = new SceneDocument(Scene, ScenePath, _history)
+            {
+                IsDirty = IsDirty,
+                CameraPosition = CameraPosition,
+                Zoom = ActiveCamera.Zoom,
+                SelectedId = Selected?.Id,
+            };
+        }
+
+        var tab = new DocumentTab(_currentSceneDoc.Title, isScene: true, scene: _currentSceneDoc);
         Documents.Insert(0, tab);
-        ActiveDocument ??= tab;
+
+        if (ActiveDocument is null)
+        {
+            ActiveDocument = tab;
+        }
     }
 
     /// <summary>Reconstruye el explorador de archivos del proyecto.</summary>
@@ -386,6 +404,25 @@ public sealed partial class MainViewModel
     {
         if (document.IsScene)
         {
+            if (Documents.Count(d => d.IsScene) <= 1)
+            {
+                StatusMessage = "No se puede cerrar la única escena abierta";
+                return;
+            }
+
+            if (document.SceneDocument?.IsDirty == true)
+            {
+                StatusMessage = "Guarda la escena antes de cerrarla";
+                return;
+            }
+
+            var next = Documents.FirstOrDefault(d => d.IsScene && !ReferenceEquals(d, document));
+            if (ReferenceEquals(ActiveDocument, document) && next is not null)
+            {
+                ActiveDocument = next;
+            }
+
+            Documents.Remove(document);
             return;
         }
 

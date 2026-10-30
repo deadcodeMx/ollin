@@ -11,16 +11,32 @@ public sealed class DocumentTab : INotifyPropertyChanged
     private bool _isDirty;
     private bool _isActive;
 
-    public DocumentTab(string title, bool isScene, string? fullPath = null)
+    public DocumentTab(string title, bool isScene, string? fullPath = null, SceneDocument? scene = null)
     {
         Title = title;
         IsScene = isScene;
         FullPath = fullPath;
+        SceneDocument = scene;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public string Title { get; }
+    public string Title { get; private set; }
+
+    /// <summary>Escena asociada cuando la pestaña es de escena.</summary>
+    public SceneDocument? SceneDocument { get; }
+
+    public void UpdateTitle(string title)
+    {
+        if (Title == title)
+        {
+            return;
+        }
+
+        Title = title;
+        OnPropertyChanged(nameof(Title));
+        OnPropertyChanged(nameof(TitleWithDirty));
+    }
 
     public bool IsScene { get; }
 

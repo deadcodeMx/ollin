@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="using:Ollin.Editor.Controls"
+        xmlns:ae="using:AvaloniaEdit"
         mc:Ignorable="d"
         x:Class="Ollin.Editor.Views.MainWindow"
         Title="{Binding Title}"
@@ -177,7 +178,7 @@
                         <Button Classes="doc" Classes.active="{Binding IsActive}"
                                 Content="{Binding TitleWithDirty}" Tag="{Binding}" Click="OnSelectDocument" />
                         <Button Classes="docclose" Content="✕" Tag="{Binding}" Click="OnCloseDocument"
-                                IsVisible="{Binding IsScript}" ToolTip.Tip="Cerrar script" />
+                                ToolTip.Tip="Cerrar pestaña" />
                       </StackPanel>
                     </DataTemplate>
                   </ItemsControl.ItemTemplate>
@@ -235,16 +236,11 @@
                     </StackPanel>
                   </Grid>
                 </Border>
-                <TextBox Grid.Row="1" x:Name="ScriptEditor"
-                         AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap"
-                         FontFamily="Consolas, Cascadia Mono, Courier New, monospace"
-                         FontSize="13" Padding="12,8"
-                         VerticalContentAlignment="Top"
-                         VerticalAlignment="Stretch"
-                         Height="NaN" MinHeight="220"
-                         Background="#0F1218" BorderThickness="0"
-                         TextChanged="OnScriptTextChanged"
-                         Text="{Binding ActiveScript.Text, Mode=OneWay}" />
+                <ae:TextEditor Grid.Row="1" x:Name="ScriptEditor"
+                               FontFamily="Consolas, Cascadia Mono, Courier New, monospace"
+                               FontSize="13" Padding="10,8"
+                               Background="#0F1218" Foreground="#E7EAF0"
+                               ShowLineNumbers="True" WordWrap="False" />
               </Grid>
             </Grid>
           </Grid>

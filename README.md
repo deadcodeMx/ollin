@@ -160,8 +160,10 @@ docs/                Arquitectura, roadmap y guía de publicación en GitHub
 - **Proyectos independientes**: `Archivo → Nuevo proyecto…` crea una carpeta con
   `scenes/`, `scripts/`, `assets/` y `prefabs/`, un `project.ollin`, una escena y un
   script iniciales. `Abrir proyecto…` carga cualquiera existente y recuerda el último.
-- **Pestañas de documentos**: la escena y los scripts abiertos conviven en el área
-  central, con marca de cambios y cierre individual.
+- **Pestañas de documentos**: varias escenas y scripts abiertos conviven en el área
+  central. Cada escena conserva cámara, selección e historial propios.
+- **Editor de código con resaltado C#**: numeración de líneas, colores para palabras
+  clave, tipos, cadenas, comentarios y números (AvaloniaEdit con tema oscuro).
 - **Editor de scripts integrado**: abre un `.cs` desde el dock *Archivos* o con
   `Edición → Abrir script de la selección`. `Ctrl+S` guarda y dispara la recarga.
 - **Dock inferior con pestañas**: *Consola* y *Archivos* (explorador del proyecto;

@@ -76,7 +76,8 @@ Queda para la etapa 4: temporizadores (`WaitForSeconds`) y dibujo de depuración
 
 ### Herramientas
 - [x] Proyectos independientes con carpetas, explorador de archivos y apertura de escenas.
-- [ ] Panel de escenas múltiples con pestañas propias y plantillas de proyecto.
+- [x] Escenas múltiples con pestañas propias y estado independiente (cámara, selección, historial).
+- [ ] Plantillas de proyecto (vacío, plataformas, terror).
 - [ ] Copiar/pegar entidades y componentes.
 - [ ] Buscador en jerarquía e inspector.
 

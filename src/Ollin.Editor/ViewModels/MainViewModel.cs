@@ -34,7 +34,7 @@ public sealed partial class MainViewModel : ObservableObject
     private float _homeZoom = 1f;
 
     private readonly string _defaultProjectRoot = ProjectLocator.FindProjectRoot() ?? Environment.CurrentDirectory;
-    private readonly SceneHistory _history = new();
+    private SceneHistory _history = new();
     private ScriptWorkspace _scripts;
     private readonly SceneRuntime _runtime = new();
     private string? _lastEditKey;
@@ -221,6 +221,11 @@ public sealed partial class MainViewModel : ObservableObject
         {
             if (SetProperty(ref _scenePath, value))
             {
+                if (_currentSceneDoc is not null)
+                {
+                    _currentSceneDoc.Path = value;
+                }
+
                 OnPropertyChanged(nameof(Title));
                 OnPropertyChanged(nameof(ScenePathText));
             }
@@ -234,6 +239,11 @@ public sealed partial class MainViewModel : ObservableObject
         {
             if (SetProperty(ref _isDirty, value))
             {
+                if (_currentSceneDoc is not null)
+                {
+                    _currentSceneDoc.IsDirty = value;
+                }
+
                 OnPropertyChanged(nameof(Title));
                 OnPropertyChanged(nameof(DirtyMarker));
             }
@@ -402,6 +412,11 @@ public sealed partial class MainViewModel : ObservableObject
 
         Scene = scene;
         ScenePath = path;
+        if (_currentSceneDoc is not null)
+        {
+            _currentSceneDoc.Scene = scene;
+        }
+
         ProjectRoot = Project?.RootPath
             ?? (path is null
                 ? _defaultProjectRoot
@@ -814,10 +829,11 @@ public sealed partial class MainViewModel : ObservableObject
 
     public void NewScene()
     {
-        var scene = new Scene { Name = "Escena nueva" };
+        var number = Documents.Count(d => d.IsScene) + 1;
+        var scene = new Scene { Name = $"Escena {number}" };
         var camera = scene.Create("Cámara principal", Vector2.Zero);
         camera.AddComponent(new Camera2D());
-        LoadScene(scene, null);
+        AddSceneDocument(scene, null);
         Log.Info("Escena nueva creada", "Editor");
     }
 
@@ -825,8 +841,19 @@ public sealed partial class MainViewModel : ObservableObject
     {
         try
         {
-            var scene = SceneSerializer.Load(path);
-            LoadScene(scene, path);
+            var fullPath = Path.GetFullPath(path);
+            var alreadyOpen = Documents.FirstOrDefault(d =>
+                d is { IsScene: true, SceneDocument: not null } &&
+                string.Equals(d.SceneDocument.Path, fullPath, StringComparison.OrdinalIgnoreCase));
+
+            if (alreadyOpen is not null)
+            {
+                ActiveDocument = alreadyOpen;
+                return;
+            }
+
+            var scene = SceneSerializer.Load(fullPath);
+            AddSceneDocument(scene, fullPath);
             Log.Info($"Escena cargada: {path}", "Editor");
         }
         catch (Exception exception)
@@ -843,6 +870,7 @@ public sealed partial class MainViewModel : ObservableObject
             SceneSerializer.Save(Scene, path);
             ScenePath = path;
             IsDirty = false;
+            RefreshSceneTabTitle();
             ProjectRoot = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(path)) ?? ProjectRoot;
             Log.Info($"Escena guardada: {path}", "Editor");
             StatusMessage = "Escena guardada";

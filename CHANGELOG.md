@@ -17,6 +17,19 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.6.0] — 2026-10-30
+
+### Añadido
+
+- Resaltado de sintaxis C# en el editor integrado, con numeración de líneas y tema
+  oscuro propio (AvaloniaEdit).
+- Escenas múltiples: cada pestaña conserva su escena, cámara, selección e historial.
+- Pestañas de escena numeradas, cerrables y reutilizables al abrir la misma escena.
+
+### Corregido
+
+- El editor de código no cargaba el texto si el script se abría antes de crear la ventana.
+
 ## [0.5.0] — 2026-10-30
 
 ### Añadido

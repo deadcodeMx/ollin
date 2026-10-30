@@ -20,6 +20,7 @@
 
   <Application.Styles>
     <FluentTheme />
+    <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
     <StyleInclude Source="avares://Ollin.Editor/Styles/Theme.axaml" />
   </Application.Styles>
 </Application>

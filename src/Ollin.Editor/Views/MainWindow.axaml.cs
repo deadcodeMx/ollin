@@ -1,4 +1,7 @@
 using System.Collections.Specialized;
+using System.Xml;
+using AvaloniaEdit.Highlighting;
+using AvaloniaEdit.Highlighting.Xshd;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -19,12 +22,49 @@ public partial class MainWindow : Window
         Patterns = new[] { "*.ollin.json", "*.json" },
     };
 
+    private bool _loadingScript;
+
     public MainWindow()
     {
         InitializeComponent();
         DataContextChanged += OnDataContextChanged;
+        SetupScriptEditor();
+    }
 
+    private void SetupScriptEditor()
+    {
+        ScriptEditor.Options.ConvertTabsToSpaces = true;
+        ScriptEditor.Options.IndentationSize = 4;
 
+        try
+        {
+            using var reader = XmlReader.Create(new StringReader(SyntaxTheme.CSharpDark));
+            ScriptEditor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+        }
+        catch
+        {
+            // Sin resaltado el editor sigue siendo usable.
+        }
+
+        ScriptEditor.TextChanged += (_, _) =>
+        {
+            if (_loadingScript || ViewModel?.ActiveScript is not { } document)
+            {
+                return;
+            }
+
+            if (!string.Equals(ScriptEditor.Text, document.Text, StringComparison.Ordinal))
+            {
+                document.Text = ScriptEditor.Text ?? string.Empty;
+            }
+        };
+    }
+
+    private void LoadActiveScriptText()
+    {
+        _loadingScript = true;
+        ScriptEditor.Text = ViewModel?.ActiveScript?.Text ?? string.Empty;
+        _loadingScript = false;
     }
 
     private MainViewModel? ViewModel => DataContext as MainViewModel;
@@ -38,6 +78,16 @@ public partial class MainWindow : Window
 
         ViewportHost.Viewport.ViewModel = vm;
         vm.Logs.CollectionChanged += OnLogsChanged;
+        vm.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(ViewModels.MainViewModel.ActiveDocument) or nameof(ViewModels.MainViewModel.ActiveScript))
+            {
+                LoadActiveScriptText();
+            }
+        };
+
+        // El proyecto puede haberse abierto antes de crear la ventana (por ejemplo con --script).
+        LoadActiveScriptText();
         vm.TexturesReloadRequested += () => ViewportHost.Viewport.RequestTextureReload();
     }
 
@@ -254,7 +304,7 @@ public partial class MainWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Motor de juego 2D · versión 0.5.0 beta",
+                    Text = "Motor de juego 2D · versión 0.6.0 beta",
                     FontSize = 12,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
@@ -344,13 +394,7 @@ public partial class MainWindow : Window
 
     private void OnSaveScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveActiveScript();
 
-    private void OnScriptTextChanged(object? sender, TextChangedEventArgs e)
-    {
-        if (ViewModel?.ActiveScript is { } document && !ReferenceEquals(ScriptEditor.Text, document.Text))
-        {
-            document.Text = ScriptEditor.Text ?? string.Empty;
-        }
-    }
+
 
     private void OnOpenSelectedScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewModel?.OpenSelectedScript();
