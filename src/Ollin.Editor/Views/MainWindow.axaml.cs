@@ -860,6 +860,18 @@ public partial class MainWindow : Window
 
     private void OnAddAi3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "ai3d");
 
+    private void OnAddHealth(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "health");
+
+    private void OnAddWeapon(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "weapon");
+
+    private void OnAddPickup(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "pickup");
+
+    private void OnAddDoor(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "door");
+
+    private void OnAddRules(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "rules");
+
+    private void OnAddIntro(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "intro");
+
     private void OnRemoveComponentFromMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (sender is MenuItem { Tag: string kind } && MenuEntity(sender) is { } node && ViewModel is { } vm)

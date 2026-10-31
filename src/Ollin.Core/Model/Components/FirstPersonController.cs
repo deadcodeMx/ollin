@@ -23,6 +23,9 @@ public sealed class FirstPersonController : Component, ITickable
 
     public bool LookWithMouse { get; set; } = true;
 
+    /// <summary>Ignora el ratón al arrancar para evitar giros por el salto del puntero.</summary>
+    public float LookWarmupSeconds { get; set; } = 0.8f;
+
     public void OnUpdate(float deltaTime)
     {
         if (Owner?.Scene is not { } scene || deltaTime <= 0f)

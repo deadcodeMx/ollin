@@ -4,18 +4,20 @@
 
 # Ollin
 
-**Motor de juego 2D con editor propio y scripting en C#.**
+**Motor de juego 2D y 2.5D, gratis y libre (MIT) para cualquier persona, con editor propio y scripting opcional en C#.**
 
 > *Ollin* significa **movimiento** en náhuatl. El *Nahui Ollin* es el símbolo mexica del
 > movimiento y el cambio.
+
+Ollin es **gratis y de código abierto (MIT)**: puedes usarlo, modificarlo y distribuir tus juegos sin pagar ni pedir permiso. El objetivo es que **cualquier persona** pueda crear un juego 2D o 2.5D, programando o sin programar.
 
 [![CI](https://github.com/deadcodeMx/ollin/actions/workflows/ci.yml/badge.svg)](https://github.com/deadcodeMx/ollin/actions/workflows/ci.yml)
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![Avalonia](https://img.shields.io/badge/Avalonia-11.3-8B44AC)
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
 ![Roslyn](https://img.shields.io/badge/Roslyn-4.11-2E7D32)
-![Pruebas](https://img.shields.io/badge/pruebas-119%2F119-47B8A8)
-![Etapa](https://img.shields.io/badge/etapa-4%20de%208%20completada-47B8A8)
+![Pruebas](https://img.shields.io/badge/pruebas-138%2F138-47B8A8)
+![Etapa](https://img.shields.io/badge/etapa-6%20de%208%20en%20curso-E9A23B)
 
 ![Editor de Ollin](docs/images/editor.png)
 

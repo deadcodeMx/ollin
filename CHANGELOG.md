@@ -17,6 +17,37 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.26.2] — 2026-10-31
+
+### Corregido
+
+- La cámara ignora el ratón durante 0.8 s al arrancar: evita que el juego exportado
+  aparezca en negro por el salto inicial del puntero al entrar en la ventana.
+
+## [0.26.1] — 2026-10-31
+
+### Corregido
+
+- La cámara ya no gira al recibir un salto enorme del ratón al entrar al viewport
+  (el juego exportado aparecía en negro).
+- README y visión del motor actualizados: **gratis y libre (MIT) para cualquier persona**,
+  con creación de juegos sin programar.
+
+## [0.26.0] — 2026-10-31
+
+### Añadido
+
+- **Comportamientos sin código**: Salud, Arma, Recogible, Puerta, Reglas de juego y
+  Mensaje inicial, con pestañas en el inspector.
+- **Ataque de la IA 3D** y animación de billboards con `SpriteAnimator`.
+- **Mini-juego 2.5D sin scripts**: salud, disparo, llave, puerta con llave, enemigo que
+  ataca y victoria/derrota.
+- El motor se declara **gratis y libre (MIT) para cualquier persona**.
+
+### Cambiado
+
+- La plantilla 2.5D ya no incluye scripts: todo se configura con componentes.
+
 ## [0.25.0] — 2026-10-31
 
 ### Añadido

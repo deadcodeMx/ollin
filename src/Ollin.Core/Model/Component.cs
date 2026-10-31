@@ -27,6 +27,12 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.Wall3D), "wall3d")]
 [JsonDerivedType(typeof(Components.FirstPersonController), "fps")]
 [JsonDerivedType(typeof(Components.AiAgent3D), "ai3d")]
+[JsonDerivedType(typeof(Components.Health), "health")]
+[JsonDerivedType(typeof(Components.Weapon), "weapon")]
+[JsonDerivedType(typeof(Components.Pickup), "pickup")]
+[JsonDerivedType(typeof(Components.Door), "door")]
+[JsonDerivedType(typeof(Components.WinLoseRules), "rules")]
+[JsonDerivedType(typeof(Components.IntroMessage), "intro")]
 public abstract class Component
 {
     /// <summary>Entidad propietaria (no se serializa).</summary>

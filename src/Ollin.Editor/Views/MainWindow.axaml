@@ -166,6 +166,12 @@
                               <MenuItem Header="Pared 3D" Tag="wall3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Controlador FPS" Tag="fps" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="IA 3D" Tag="ai3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Salud" Tag="health" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Arma" Tag="weapon" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Recogible" Tag="pickup" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Puerta" Tag="door" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Reglas" Tag="rules" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Mensaje inicial" Tag="intro" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Script" Tag="script" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Rotador" Tag="rotator" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Oscilador" Tag="oscillator" Click="OnRemoveComponentFromMenu" />
@@ -469,6 +475,12 @@
                             <MenuItem Header="Pared 3D" Click="OnAddWall3D" />
                             <MenuItem Header="Controlador FPS" Click="OnAddFps" />
                             <MenuItem Header="IA 3D" Click="OnAddAi3D" />
+                            <MenuItem Header="Salud" Click="OnAddHealth" />
+                            <MenuItem Header="Arma" Click="OnAddWeapon" />
+                            <MenuItem Header="Recogible" Click="OnAddPickup" />
+                            <MenuItem Header="Puerta" Click="OnAddDoor" />
+                            <MenuItem Header="Reglas de juego" Click="OnAddRules" />
+                            <MenuItem Header="Mensaje inicial" Click="OnAddIntro" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                             <MenuItem Header="Script" Click="OnAddScriptComponent" />
@@ -868,8 +880,158 @@
                       <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.Ai3DRadius, Mode=TwoWay}" Increment="0.05" Minimum="0.05" FormatString="0.##" />
                     </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Daño" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Ai3DAttackDamage, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Alcance ataque" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Ai3DAttackRange, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Cadencia" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Ai3DAttackCooldown, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
                     <TextBlock Classes="hint" TextWrapping="Wrap"
                                Text="Patrulla alrededor de su origen, ve al objetivo si hay línea de vista y lo persigue; recuerda su última posición. Colisiona con cajas 3D." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Salud" IsVisible="{Binding Selected.HasHealth}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="SALUD" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Máximo" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.HealthMax, Mode=TwoWay}" Increment="10" Minimum="1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Actual" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.HealthCurrent, Mode=TwoWay}" Increment="10" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <CheckBox Content="Desactivar al morir" IsChecked="{Binding Selected.HealthDeactivate, Mode=TwoWay}" FontSize="11.5" />
+                    <CheckBox Content="Mostrar en el HUD" IsChecked="{Binding Selected.HealthShowHud, Mode=TwoWay}" FontSize="11.5" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Etiqueta HUD" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.HealthLabelText, Mode=TwoWay}" Watermark="Vida" />
+                    </Grid>
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Para el jugador usa «Desactivar al morir» desmarcado." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Arma" IsVisible="{Binding Selected.HasWeapon}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="ARMA FPS" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Daño" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponDamage, Mode=TwoWay}" Increment="5" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Alcance" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponRange, Mode=TwoWay}" Increment="5" Minimum="0.5" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Cadencia" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponCooldown, Mode=TwoWay}" Increment="0.05" Minimum="0.05" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Munición" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponAmmo, Mode=TwoWay}" Increment="1" Minimum="-1" FormatString="0" />
+                    </Grid>
+                    <CheckBox Content="Automática (mantener clic)" IsChecked="{Binding Selected.WeaponAutomatic, Mode=TwoWay}" FontSize="11.5" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Clic izquierdo desde la cámara FPS. Munición -1 = infinita." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Recogible" IsVisible="{Binding Selected.HasPickup}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="RECOGIBLE" />
+                    <ComboBox SelectedIndex="{Binding Selected.PickupKindIndex, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                      <ComboBoxItem Content="Objeto (inventario)" />
+                      <ComboBoxItem Content="Vida" />
+                    </ComboBox>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Objeto" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.PickupItemId, Mode=TwoWay}" Watermark="llave" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Cantidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.PickupQuantity, Mode=TwoWay}" Increment="1" Minimum="1" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Cura" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.PickupHealthAmount, Mode=TwoWay}" Increment="5" Minimum="1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.PickupRadius, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <TextBox Text="{Binding Selected.PickupMessage, Mode=TwoWay}" Watermark="Has encontrado la llave" />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Puerta" IsVisible="{Binding Selected.HasDoor}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="PUERTA" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Llave" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.DoorKeyItemId, Mode=TwoWay}" Watermark="llave (vacío = gratis)" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.DoorRadius, Mode=TwoWay}" Increment="0.5" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Subir" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.DoorOpenHeight, Mode=TwoWay}" Increment="0.5" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.DoorSpeed, Mode=TwoWay}" Increment="0.5" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <CheckBox Content="Empieza abierta" IsChecked="{Binding Selected.DoorOpen, Mode=TwoWay}" FontSize="11.5" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="La puerta necesita una caja 3D en la misma entidad. Se abre con E." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Reglas" IsVisible="{Binding Selected.HasRules}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="VICTORIA / DERROTA" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Jugador" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.RulesPlayerTag, Mode=TwoWay}" Watermark="player" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Enemigos" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.RulesEnemiesTag, Mode=TwoWay}" Watermark="enemy" />
+                    </Grid>
+                    <CheckBox Content="Ganar al eliminar enemigos" IsChecked="{Binding Selected.RulesWin, Mode=TwoWay}" FontSize="11.5" />
+                    <CheckBox Content="Perder si el jugador muere" IsChecked="{Binding Selected.RulesLose, Mode=TwoWay}" FontSize="11.5" />
+                    <TextBox Text="{Binding Selected.RulesWinMessage, Mode=TwoWay}" Watermark="¡Has ganado!" />
+                    <TextBox Text="{Binding Selected.RulesLoseMessage, Mode=TwoWay}" Watermark="Has caído" />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Mensaje" IsVisible="{Binding Selected.HasIntro}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="MENSAJE INICIAL" />
+                    <TextBox Text="{Binding Selected.IntroText, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Duración" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.IntroDuration, Mode=TwoWay}" Increment="0.5" Minimum="0.5" FormatString="0.##" />
+                    </Grid>
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Se muestra al empezar la partida, sin necesidad de scripts." />
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>

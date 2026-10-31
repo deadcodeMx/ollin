@@ -128,10 +128,15 @@ public class CorridorTemplateTests
             Assert.Equal(new Vector3(0.4f, 3.6f, 26f), wall.Size);
             Assert.True(wall.Collides);
 
-            using var workspace = new Ollin.Scripting.ScriptWorkspace(project.RootPath);
-            var result = workspace.Reload();
-            Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
-            Assert.Contains(result.Types, type => type.Name == "Pasillo");
+            Assert.NotNull(camera.GetComponent<Health>());
+            Assert.NotNull(camera.GetComponent<Weapon>());
+            Assert.NotNull(camera.GetComponent<Inventory>());
+            Assert.NotNull(camera.GetComponent<WinLoseRules>());
+            Assert.NotNull(camera.GetComponent<IntroMessage>());
+            Assert.Equal(14f, scene.Find("Sombra")!.GetComponent<AiAgent3D>()!.AttackDamage, 3);
+            Assert.NotNull(scene.Find("Llave")!.GetComponent<Pickup>());
+            Assert.NotNull(scene.Find("Puerta")!.GetComponent<Door>());
+            Assert.Empty(Directory.EnumerateFiles(project.RootPath, "*.cs", SearchOption.AllDirectories));
         }
         finally
         {

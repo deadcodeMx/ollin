@@ -502,3 +502,30 @@ Atajos del flujo:
 (pintor, sin búfer de profundidad), las paredes son cajas de color liso, aún no hay
 cilindros, gizmos 3D en el viewport ni IA 3D. Está pensado para pasillos y estética
 retro tipo PS1/Doom.
+
+## 22. Crear un juego 2.5D sin programar
+
+La plantilla **2.5D (pasillo)** es un mini-juego completo sin una línea de código. Los
+comportamientos se añaden desde **clic derecho → Añadir componente** y se ajustan en el
+inspector:
+
+| Componente | Para qué sirve |
+| --- | --- |
+| **Salud** | Vida máxima/actual; desactivar al morir; mostrar barra en el HUD |
+| **Arma** | Disparo desde la cámara con clic izquierdo; daño, alcance, cadencia y munición |
+| **Recogible** | Añade un objeto al inventario o cura; radio y mensaje |
+| **Puerta** | Se abre con E si el jugador tiene la llave; la caja sube |
+| **Reglas de juego** | Victoria al eliminar a los enemigos; derrota si el jugador muere |
+| **Mensaje inicial** | Texto de ayuda al empezar, sin scripts |
+| **IA 3D** | Patrulla, visión con línea de vista, persecución y ataque |
+
+Flujo típico sin programar:
+
+1. Crea un proyecto con la plantilla **2.5D (pasillo)**.
+2. La cámara ya trae Salud, Arma, Inventario, Reglas y Mensaje.
+3. La **Sombra** trae IA 3D con ataque y Salud; la **Llave** es un Recogible; la
+   **Puerta** pide `llave`.
+4. Ajusta los valores en el inspector, reproduce y exporta.
+
+Para tu propio nivel: coloca cajas 3D, asigna texturas, añade un enemigo con IA 3D +
+Salud, coloca una llave y una puerta, y pon las Reglas en la cámara. No hace falta C#.

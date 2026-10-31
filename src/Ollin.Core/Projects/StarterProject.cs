@@ -262,7 +262,35 @@ public static class StarterProject
             Ambient = new Vector4(0.58f, 0.58f, 0.65f, 1f),
         });
         camera.AddComponent(new FirstPersonController { Speed = 3.6f });
-        camera.AddComponent(new ScriptComponent { ScriptPath = "scripts/Pasillo.cs", ClassName = "Pasillo" });
+        camera.AddComponent(new Health
+        {
+            Max = 100f,
+            Current = 100f,
+            DeactivateOnDeath = false,
+            ShowOnHud = true,
+            HudLabel = "Vida",
+        });
+        camera.AddComponent(new Weapon
+        {
+            Damage = 40f,
+            Range = 25f,
+            Cooldown = 0.3f,
+            Ammo = -1,
+            Automatic = true,
+        });
+        camera.AddComponent(new Inventory { Capacity = 8 });
+        camera.AddComponent(new WinLoseRules
+        {
+            PlayerTag = "player",
+            EnemiesTag = "enemy",
+            WinMessage = "¡Has ganado!",
+            LoseMessage = "La Sombra te alcanzó",
+        });
+        camera.AddComponent(new IntroMessage
+        {
+            Text = "WASD + ratón · clic para disparar · E abre la puerta · recoge la llave",
+            Duration = 6f,
+        });
 
         AddWall(scene, "Suelo", new Vector2(0f, 13f), new Vector3(9f, 0.2f, 26f), new Vector3(0.3f, 0.27f, 0.22f), false, 0f, "assets/textures/floor.png", 2.2f);
         AddWall(scene, "Techo", new Vector2(0f, 13f), new Vector3(9f, 0.2f, 26f), new Vector3(0.3f, 0.29f, 0.33f), false, 3.6f, "assets/textures/ceiling.png", 2.4f);
@@ -270,6 +298,13 @@ public static class StarterProject
         AddWall(scene, "Pared derecha", new Vector2(4.3f, 13f), new Vector3(0.4f, 3.6f, 26f), new Vector3(0.58f, 0.55f, 0.5f), true, 0f, "assets/textures/wall.png", 2.5f);
         AddWall(scene, "Muro final", new Vector2(0f, 26f), new Vector3(9f, 3.6f, 0.4f), new Vector3(0.36f, 0.35f, 0.34f), true);
         AddWall(scene, "Puerta", new Vector2(0f, 16f), new Vector3(3f, 3f, 0.35f), new Vector3(0.72f, 0.42f, 0.2f), true);
+        scene.Find("Puerta")!.AddComponent(new Door
+        {
+            KeyItemId = "llave",
+            OpenHeight = 3.2f,
+            Speed = 1.4f,
+            InteractionRadius = 3f,
+        });
 
         var lamp = scene.Create("Luz pasillo", new Vector2(0f, 8f));
         lamp.AddComponent(new Light2D
@@ -296,12 +331,28 @@ public static class StarterProject
         });
 
         var enemy = scene.Create("Sombra", new Vector2(0.8f, 9f));
+        enemy.Tags.Add("enemy");
         enemy.AddComponent(new SpriteRenderer
         {
-            TexturePath = "assets/sprites/crate.png",
+            TexturePath = "assets/sprites/hero-walk.png",
             Size = new Vector2(1.2f, 1.4f),
             Tint = new Vector4(0.45f, 0.35f, 0.6f, 1f),
             SortingOrder = 10,
+        });
+        enemy.AddComponent(new SpriteAnimator
+        {
+            TexturePath = "assets/sprites/hero-walk.png",
+            FrameWidth = 32,
+            FrameHeight = 32,
+            FrameCount = 4,
+            Fps = 8f,
+        });
+        enemy.AddComponent(new Health
+        {
+            Max = 70f,
+            Current = 70f,
+            DeactivateOnDeath = true,
+            ShowOnHud = false,
         });
         enemy.AddComponent(new AiAgent3D
         {
@@ -310,9 +361,30 @@ public static class StarterProject
             VisionRadius = 7f,
             PatrolRadius = 2f,
             MemorySeconds = 3f,
+            AttackDamage = 14f,
+            AttackRange = 1.5f,
+            AttackCooldown = 1.1f,
         });
 
-        var coin = scene.Create("Moneda", new Vector2(2.2f, 20f));
+        var key = scene.Create("Llave", new Vector2(2.4f, 6f));
+        key.AddComponent(new SpriteRenderer
+        {
+            TexturePath = "assets/sprites/coin.png",
+            Size = new Vector2(0.6f, 0.6f),
+            Tint = new Vector4(1f, 0.82f, 0.3f, 1f),
+            SortingOrder = 12,
+        });
+        key.AddComponent(new RotatorComponent { DegreesPerSecond = 140f });
+        key.AddComponent(new Pickup
+        {
+            Kind = PickupKind.Item,
+            ItemId = "llave",
+            Quantity = 1,
+            Radius = 1.3f,
+            Message = "Has encontrado la llave",
+        });
+
+        var coin = scene.Create("Moneda", new Vector2(-2.2f, 20f));
         coin.AddComponent(new SpriteRenderer
         {
             TexturePath = "assets/sprites/coin.png",
@@ -323,7 +395,6 @@ public static class StarterProject
 
         return scene;
     }
-
     private static void AddWall(Scene scene, string name, Vector2 position, Vector3 size, Vector3 color, bool collides, float baseY = 0f, string? texture = null, float textureScale = 2f)
     {
         var wall = scene.Create(name, position);

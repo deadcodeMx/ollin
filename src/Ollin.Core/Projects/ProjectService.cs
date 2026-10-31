@@ -79,8 +79,11 @@ public static class ProjectService
         var scene = StarterProject.CreateScene(template);
         Serialization.SceneSerializer.Save(scene, project.StartSceneFullPath);
 
+        if (template != ProjectTemplate.Corridor)
+        {
         var (scriptFile, scriptSource) = StarterProject.ScriptFor(template);
         File.WriteAllText(Path.Combine(root, "scripts", scriptFile), scriptSource);
+        }
         Directory.CreateDirectory(Path.Combine(root, "dialogs"));
         Directory.CreateDirectory(Path.Combine(root, "items"));
         File.WriteAllText(Path.Combine(root, "dialogs", "bienvenida.json"), StarterProject.WelcomeDialogue);

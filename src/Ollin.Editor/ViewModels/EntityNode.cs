@@ -2026,4 +2026,353 @@ public sealed class EntityNode : ObservableObject
     public string Ai3DStatus => Ai3D is null ? string.Empty : Ai3D.IsChasing ? "Persiguiendo" : "Patrullando";
 
     public void RefreshAi3DStatus() => OnPropertyChanged(nameof(Ai3DStatus));
+
+    public bool HasHealth => Entity.GetComponent<Health>() is not null;
+
+    public Health? HealthState => Entity.GetComponent<Health>();
+
+    public decimal HealthMax
+    {
+        get => (decimal)(HealthState?.Max ?? 100f);
+        set
+        {
+            if (HealthState is null || MathF.Abs(HealthState.Max - (float)value) < 0.01f) return;
+            HealthState.Max = MathF.Max(1f, (float)value);
+            HealthState.Current = MathF.Min(HealthState.Current, HealthState.Max);
+            OnPropertyChanged(); OnPropertyChanged(nameof(HealthCurrent)); _owner.MarkDirty();
+        }
+    }
+
+    public decimal HealthCurrent
+    {
+        get => (decimal)(HealthState?.Current ?? 100f);
+        set
+        {
+            if (HealthState is null || MathF.Abs(HealthState.Current - (float)value) < 0.01f) return;
+            HealthState.Current = Math.Clamp((float)value, 0f, HealthState.Max);
+            OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public bool HealthDeactivate
+    {
+        get => HealthState?.DeactivateOnDeath ?? true;
+        set
+        {
+            if (HealthState is null || HealthState.DeactivateOnDeath == value) return;
+            HealthState.DeactivateOnDeath = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HealthShowHud
+    {
+        get => HealthState?.ShowOnHud ?? true;
+        set
+        {
+            if (HealthState is null || HealthState.ShowOnHud == value) return;
+            HealthState.ShowOnHud = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string HealthLabelText
+    {
+        get => HealthState?.HudLabel ?? "Vida";
+        set
+        {
+            if (HealthState is null || HealthState.HudLabel == value) return;
+            HealthState.HudLabel = string.IsNullOrWhiteSpace(value) ? "Vida" : value.Trim();
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasWeapon => Entity.GetComponent<Weapon>() is not null;
+
+    public Weapon? WeaponState => Entity.GetComponent<Weapon>();
+
+    public decimal WeaponDamage
+    {
+        get => (decimal)(WeaponState?.Damage ?? 34f);
+        set
+        {
+            if (WeaponState is null || MathF.Abs(WeaponState.Damage - (float)value) < 0.01f) return;
+            WeaponState.Damage = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal WeaponRange
+    {
+        get => (decimal)(WeaponState?.Range ?? 30f);
+        set
+        {
+            if (WeaponState is null || MathF.Abs(WeaponState.Range - (float)value) < 0.01f) return;
+            WeaponState.Range = MathF.Max(0.5f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal WeaponCooldown
+    {
+        get => (decimal)(WeaponState?.Cooldown ?? 0.3f);
+        set
+        {
+            if (WeaponState is null || MathF.Abs(WeaponState.Cooldown - (float)value) < 0.001f) return;
+            WeaponState.Cooldown = MathF.Max(0.05f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal WeaponAmmo
+    {
+        get => WeaponState?.Ammo ?? -1;
+        set
+        {
+            if (WeaponState is null || WeaponState.Ammo == (int)value) return;
+            WeaponState.Ammo = (int)value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool WeaponAutomatic
+    {
+        get => WeaponState?.Automatic ?? true;
+        set
+        {
+            if (WeaponState is null || WeaponState.Automatic == value) return;
+            WeaponState.Automatic = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasPickup => Entity.GetComponent<Pickup>() is not null;
+
+    public Pickup? PickupState => Entity.GetComponent<Pickup>();
+
+    public int PickupKindIndex
+    {
+        get => PickupState?.Kind == PickupKind.Health ? 1 : 0;
+        set
+        {
+            if (PickupState is null || (int)PickupState.Kind == value) return;
+            PickupState.Kind = value == 1 ? PickupKind.Health : PickupKind.Item;
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string PickupItemId
+    {
+        get => PickupState?.ItemId ?? string.Empty;
+        set
+        {
+            if (PickupState is null || PickupState.ItemId == value) return;
+            PickupState.ItemId = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal PickupQuantity
+    {
+        get => PickupState?.Quantity ?? 1;
+        set
+        {
+            if (PickupState is null || PickupState.Quantity == (int)value) return;
+            PickupState.Quantity = Math.Max(1, (int)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal PickupHealthAmount
+    {
+        get => (decimal)(PickupState?.HealthAmount ?? 25f);
+        set
+        {
+            if (PickupState is null || MathF.Abs(PickupState.HealthAmount - (float)value) < 0.01f) return;
+            PickupState.HealthAmount = MathF.Max(1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal PickupRadius
+    {
+        get => (decimal)(PickupState?.Radius ?? 1.2f);
+        set
+        {
+            if (PickupState is null || MathF.Abs(PickupState.Radius - (float)value) < 0.01f) return;
+            PickupState.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string PickupMessage
+    {
+        get => PickupState?.Message ?? string.Empty;
+        set
+        {
+            if (PickupState is null || PickupState.Message == value) return;
+            PickupState.Message = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasDoor => Entity.GetComponent<Door>() is not null;
+
+    public Door? DoorState => Entity.GetComponent<Door>();
+
+    public string DoorKeyItemId
+    {
+        get => DoorState?.KeyItemId ?? string.Empty;
+        set
+        {
+            if (DoorState is null || DoorState.KeyItemId == value) return;
+            DoorState.KeyItemId = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal DoorRadius
+    {
+        get => (decimal)(DoorState?.InteractionRadius ?? 2.8f);
+        set
+        {
+            if (DoorState is null || MathF.Abs(DoorState.InteractionRadius - (float)value) < 0.01f) return;
+            DoorState.InteractionRadius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal DoorOpenHeight
+    {
+        get => (decimal)(DoorState?.OpenHeight ?? 3f);
+        set
+        {
+            if (DoorState is null || MathF.Abs(DoorState.OpenHeight - (float)value) < 0.01f) return;
+            DoorState.OpenHeight = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal DoorSpeed
+    {
+        get => (decimal)(DoorState?.Speed ?? 2f);
+        set
+        {
+            if (DoorState is null || MathF.Abs(DoorState.Speed - (float)value) < 0.01f) return;
+            DoorState.Speed = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool DoorOpen
+    {
+        get => DoorState?.Open ?? false;
+        set
+        {
+            if (DoorState is null || DoorState.Open == value) return;
+            DoorState.Open = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public bool HasRules => Entity.GetComponent<WinLoseRules>() is not null;
+
+    public WinLoseRules? RulesState => Entity.GetComponent<WinLoseRules>();
+
+    public string RulesPlayerTag
+    {
+        get => RulesState?.PlayerTag ?? "player";
+        set
+        {
+            if (RulesState is null || RulesState.PlayerTag == value) return;
+            RulesState.PlayerTag = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string RulesEnemiesTag
+    {
+        get => RulesState?.EnemiesTag ?? "enemy";
+        set
+        {
+            if (RulesState is null || RulesState.EnemiesTag == value) return;
+            RulesState.EnemiesTag = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool RulesWin
+    {
+        get => RulesState?.WinWhenEnemiesDead ?? true;
+        set
+        {
+            if (RulesState is null || RulesState.WinWhenEnemiesDead == value) return;
+            RulesState.WinWhenEnemiesDead = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool RulesLose
+    {
+        get => RulesState?.LoseWhenPlayerDead ?? true;
+        set
+        {
+            if (RulesState is null || RulesState.LoseWhenPlayerDead == value) return;
+            RulesState.LoseWhenPlayerDead = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string RulesWinMessage
+    {
+        get => RulesState?.WinMessage ?? "¡Has ganado!";
+        set
+        {
+            if (RulesState is null || RulesState.WinMessage == value) return;
+            RulesState.WinMessage = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string RulesLoseMessage
+    {
+        get => RulesState?.LoseMessage ?? "Has caído";
+        set
+        {
+            if (RulesState is null || RulesState.LoseMessage == value) return;
+            RulesState.LoseMessage = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasIntro => Entity.GetComponent<IntroMessage>() is not null;
+
+    public IntroMessage? IntroState => Entity.GetComponent<IntroMessage>();
+
+    public string IntroText
+    {
+        get => IntroState?.Text ?? string.Empty;
+        set
+        {
+            if (IntroState is null || IntroState.Text == value) return;
+            IntroState.Text = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal IntroDuration
+    {
+        get => (decimal)(IntroState?.Duration ?? 5f);
+        set
+        {
+            if (IntroState is null || MathF.Abs(IntroState.Duration - (float)value) < 0.01f) return;
+            IntroState.Duration = MathF.Max(0.5f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal Ai3DAttackDamage
+    {
+        get => (decimal)(Ai3D?.AttackDamage ?? 0f);
+        set
+        {
+            if (Ai3D is null || MathF.Abs(Ai3D.AttackDamage - (float)value) < 0.01f) return;
+            Ai3D.AttackDamage = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal Ai3DAttackRange
+    {
+        get => (decimal)(Ai3D?.AttackRange ?? 1.5f);
+        set
+        {
+            if (Ai3D is null || MathF.Abs(Ai3D.AttackRange - (float)value) < 0.01f) return;
+            Ai3D.AttackRange = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal Ai3DAttackCooldown
+    {
+        get => (decimal)(Ai3D?.AttackCooldown ?? 1.2f);
+        set
+        {
+            if (Ai3D is null || MathF.Abs(Ai3D.AttackCooldown - (float)value) < 0.01f) return;
+            Ai3D.AttackCooldown = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
 }

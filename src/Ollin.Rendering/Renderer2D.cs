@@ -638,12 +638,38 @@ public sealed class Renderer2D : IDisposable
             var texture = string.IsNullOrWhiteSpace(sprite.TexturePath) ? null : ResolveTexture(sprite.TexturePath);
             var color = ApplyLight3D(scene, camera, sprite.Tint, center);
 
+            var frame = sprite.FrameRect;
+
+            if (frame.Z <= 0f && entity.GetComponent<SpriteAnimator>() is { Enabled: true } animator)
+            {
+                var columns = Math.Max(1, animator.Columns);
+                var start = Math.Clamp(animator.StartFrame, 0, Math.Max(0, animator.FrameCount - 1));
+                frame = new Vector4(
+                    start % columns * animator.FrameWidth,
+                    start / columns * animator.FrameHeight,
+                    animator.FrameWidth,
+                    animator.FrameHeight);
+            }
+
+            var (u0, v0, u1, v1) = (0f, 0f, 1f, 1f);
+
+            if (frame.Z > 0f && texture is not null && texture.Width > 0 && texture.Height > 0)
+            {
+                u0 = frame.X / texture.Width;
+                v0 = frame.Y / texture.Height;
+                u1 = (frame.X + frame.Z) / texture.Width;
+                v1 = (frame.Y + frame.W) / texture.Height;
+            }
+
+            if (sprite.FlipX) (u0, u1) = (u1, u0);
+            if (sprite.FlipY) (v0, v1) = (v1, v0);
+
             _batch3D.DrawQuad(texture,
                 center - right + up,
                 center + right + up,
                 center + right - up,
                 center - right - up,
-                new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f),
+                new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1),
                 color);
         }
     }

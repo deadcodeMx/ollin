@@ -22,6 +22,12 @@ public sealed class AiAgent3D : Component, ITickable
 
     public float CollisionRadius { get; set; } = 0.4f;
 
+    public float AttackDamage { get; set; }
+
+    public float AttackRange { get; set; } = 1.5f;
+
+    public float AttackCooldown { get; set; } = 1.2f;
+
     [JsonIgnore]
     public bool IsChasing { get; private set; }
 
@@ -35,6 +41,7 @@ public sealed class AiAgent3D : Component, ITickable
     private float _patrolTimer;
     private Vector2 _lastKnown;
     private Vector2 _patrolTarget;
+    private float _attackTimer;
 
     public void OnUpdate(float deltaTime)
     {
@@ -108,6 +115,15 @@ public sealed class AiAgent3D : Component, ITickable
         next.X = MoveAxis(next, step.X, horizontal: true, walls);
         next.Y = MoveAxis(next, step.Y, horizontal: false, walls);
         Owner.Transform.Position = next;
+
+        _attackTimer -= deltaTime;
+
+        if (target is not null && AttackDamage > 0f && _attackTimer <= 0f &&
+            distance <= AttackRange && HasLineOfSight(scene, next, targetPosition))
+        {
+            target.GetComponent<Health>()?.TakeDamage(AttackDamage);
+            _attackTimer = MathF.Max(0.1f, AttackCooldown);
+        }
     }
 
     private Entity? FindTarget(Scenes.Scene scene)
@@ -211,6 +227,9 @@ public sealed class AiAgent3D : Component, ITickable
         PatrolRadius = PatrolRadius,
         MemorySeconds = MemorySeconds,
         CollisionRadius = CollisionRadius,
+        AttackDamage = AttackDamage,
+        AttackRange = AttackRange,
+        AttackCooldown = AttackCooldown,
         Owner = newOwner,
     };
 }
