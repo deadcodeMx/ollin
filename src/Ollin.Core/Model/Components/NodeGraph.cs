@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using Ollin.Core.Saves;
+using Ollin.Core.Scripting;
 using Ollin.Core.Input;
 
 namespace Ollin.Core.Model.Components;
@@ -24,6 +26,7 @@ public enum GraphConditionKind
     Always,
     HasItem,
     HealthBelow,
+    Expression,
 }
 
 /// <summary>Nodo de un grafo visual de ejecución.</summary>
@@ -48,6 +51,10 @@ public sealed class GraphNode
     public string Message { get; set; } = "¡Hola!";
 
     public string ItemId { get; set; } = "llave";
+
+    public string VariableName { get; set; } = "contador";
+
+    public string Expression { get; set; } = "1";
 
     public float Radius { get; set; } = 2.5f;
 
@@ -86,6 +93,8 @@ public sealed class GraphNode
         TargetName = TargetName,
         Message = Message,
         ItemId = ItemId,
+        VariableName = VariableName,
+        Expression = Expression,
         Radius = Radius,
         Interval = Interval,
         Amount = Amount,
@@ -215,7 +224,14 @@ public sealed class NodeGraph : Component, ITickable
 
             if (node.Kind == GraphNodeKind.Action)
             {
-                ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount);
+                if (node.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.ToggleFlag)
+                {
+                    ApplyVariable(node, player);
+                }
+                else
+                {
+                    ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount);
+                }
             }
 
             current = node.Next;
@@ -233,8 +249,35 @@ public sealed class NodeGraph : Component, ITickable
         {
             GraphConditionKind.HasItem => player.GetComponent<Inventory>()?.Has(node.ItemId, 1) == true,
             GraphConditionKind.HealthBelow => player.GetComponent<Health>() is { } health && health.Current <= node.Threshold,
+            GraphConditionKind.Expression => ExpressionEvaluator.EvaluateBool(node.Expression, new ExpressionContext
+            {
+                State = GameStateHost.Current,
+                Player = player,
+            }),
             _ => true,
         };
+    }
+
+    private static void ApplyVariable(GraphNode node, Entity? player)
+    {
+        var state = GameStateHost.Current ??= new GameState();
+        var context = new ExpressionContext { State = state, Player = player };
+        var value = ExpressionEvaluator.Evaluate(node.Expression, context);
+
+        switch (node.Action)
+        {
+            case ActionKind.SetVariable:
+                state.Set(node.VariableName, ExpressionEvaluator.Format(value));
+                break;
+
+            case ActionKind.AddVariable:
+                state.SetNumber(node.VariableName, state.GetNumber(node.VariableName) + ExpressionEvaluator.ToNumber(value));
+                break;
+
+            case ActionKind.ToggleFlag:
+                state.SetFlag(node.VariableName, !state.GetFlag(node.VariableName));
+                break;
+        }
     }
 
     public override Component CloneFor(Entity newOwner)

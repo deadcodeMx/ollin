@@ -630,3 +630,32 @@ crea la siguiente ranura libre. En el juego, **1/2/3** cambia de arma.
 En la pausa del juego exportado hay **tres ranuras** de guardado/carga y un
 **autoguardado cada 45 s**. Los archivos van a `%APPDATA%\Ollin\Saves` con el nombre del
 juego y la ranura.
+
+## 26. Variables y expresiones en el grafo (0.30)
+
+El grafo puede usar **variables globales** de la partida, que se guardan con la partida.
+
+### Variables
+- **Fijar variable**: asigna un valor (`contador = 2`).
+- **Sumar variable**: suma una cantidad (`contador += 1`).
+- **Alternar flag**: invierte un booleano (`abierto`).
+
+### Condición de expresión
+En una condición elige **Expresión** y escribe, por ejemplo:
+
+- `contador >= 3`
+- `contador == 5 && tiene("llave")`
+- `vida < 40`
+- `abierto == true`
+- `2 + 3 * 4 == 14`
+
+También puedes usar `vida`, `vidamax`, `vidas`, `min(...)`, `max(...)`.
+
+### Ejemplo de contador
+1. Evento **Al iniciar**.
+2. Acción **Fijar variable**: `contador` = `0`.
+3. Acción **Sumar variable**: `contador` += `1`.
+4. Condición **Expresión**: `contador >= 3`.
+5. Rama **Sí** → abrir puerta o ganar.
+
+Las variables se guardan en la partida; al cargar, los contadores y flags continúan.

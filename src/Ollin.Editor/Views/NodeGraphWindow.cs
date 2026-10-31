@@ -409,7 +409,7 @@ public sealed class NodeGraphWindow : Window
         {
             _inspector.Children.Add(Label("Condición"));
             _inspector.Children.Add(Combo(
-                new[] { "Siempre", "Tiene objeto", "Vida por debajo" },
+                new[] { "Siempre", "Tiene objeto", "Vida por debajo", "Expresión" },
                 (int)node.Condition,
                 index => { node.Condition = (GraphConditionKind)index; MarkChanged(); Render(); }));
 
@@ -424,12 +424,25 @@ public sealed class NodeGraphWindow : Window
                 _inspector.Children.Add(Label("Vida ≤"));
                 _inspector.Children.Add(Number(node.Threshold, 0, value => { node.Threshold = (float)value; MarkChanged(); }));
             }
+
+            if (node.Condition == GraphConditionKind.Expression)
+            {
+                _inspector.Children.Add(Label("Expresión"));
+                _inspector.Children.Add(TextInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
+                _inspector.Children.Add(new TextBlock
+                {
+                    Text = "Ej: contador >= 3 && tiene(\"llave\")",
+                    FontSize = 10,
+                    TextWrapping = TextWrapping.Wrap,
+                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                });
+            }
         }
         else
         {
             _inspector.Children.Add(Label("Acción"));
             _inspector.Children.Add(Combo(
-                new[] { "Mensaje", "Abrir puerta", "Activar", "Desactivar", "Generar", "Checkpoint", "Ganar", "Dañar", "Curar", "Teletransportar" },
+                new[] { "Mensaje", "Abrir puerta", "Activar", "Desactivar", "Generar", "Checkpoint", "Ganar", "Dañar", "Curar", "Teletransportar", "Fijar variable", "Sumar variable", "Alternar flag" },
                 (int)node.Action,
                 index => { node.Action = (ActionKind)index; MarkChanged(); Render(); }));
 
@@ -441,6 +454,21 @@ public sealed class NodeGraphWindow : Window
 
             _inspector.Children.Add(Label("Cantidad"));
             _inspector.Children.Add(Number(node.Amount, 0, value => { node.Amount = (float)value; MarkChanged(); }));
+
+            if (node.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.ToggleFlag)
+            {
+                _inspector.Children.Add(Label("Variable"));
+                _inspector.Children.Add(TextInput(node.VariableName, value => { node.VariableName = value; MarkChanged(); }));
+                _inspector.Children.Add(Label("Expresión / valor"));
+                _inspector.Children.Add(TextInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
+                _inspector.Children.Add(new TextBlock
+                {
+                    Text = "contador + 1, true, 3.5…",
+                    FontSize = 10,
+                    TextWrapping = TextWrapping.Wrap,
+                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                });
+            }
         }
 
         var delete = new Button
@@ -541,6 +569,7 @@ public sealed class NodeGraphWindow : Window
             {
                 GraphConditionKind.HasItem => $"¿Tiene «{node.ItemId}»?",
                 GraphConditionKind.HealthBelow => $"¿Vida ≤ {node.Threshold:0.##}?",
+                GraphConditionKind.Expression => $"¿{node.Expression}?",
                 _ => "Siempre",
             };
         }
@@ -557,6 +586,9 @@ public sealed class NodeGraphWindow : Window
             ActionKind.Win => "Ganar",
             ActionKind.Damage => $"Dañar {target} ({node.Amount:0.#})",
             ActionKind.Heal => $"Curar {target} ({node.Amount:0.#})",
+            ActionKind.SetVariable => $"{node.VariableName} = {node.Expression}",
+            ActionKind.AddVariable => $"{node.VariableName} += {node.Expression}",
+            ActionKind.ToggleFlag => $"Alternar {node.VariableName}",
             _ => $"Teletransportar a {target}",
         };
     }

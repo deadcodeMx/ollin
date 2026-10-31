@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.30.0] — 2026-10-31
+
+### Añadido
+
+- **Variables globales** en el grafo: fijar, sumar y alternar flags.
+- **Condición de expresión** con comparaciones, aritmética, booleanos y `tiene("objeto")`.
+- Funciones `vida`, `vidamax`, `vidas`, `min` y `max`.
+- Las variables se guardan y cargan con la partida.
+- 4 pruebas nuevas: 156 en total.
+
 ## [0.29.1] — 2026-10-31
 
 ### Corregido

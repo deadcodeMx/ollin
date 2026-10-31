@@ -155,6 +155,7 @@ principio a fin.
 - [x] Vista previa del pincel y texturas con el ratón.
 - [x] Editor de armas por ranuras.
 - [x] Guardado por ranuras y autoguardado.
+- [x] Variables, contadores, flags y expresiones en el grafo.
 - [x] Audio posicional básico (atenuación por distancia).
 
 **Por qué:** permite hacer juegos con estética retro estilo PS1/Doom con el renderer y el flujo actuales, y

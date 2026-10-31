@@ -16,6 +16,9 @@ public enum ActionKind
     Damage,
     Heal,
     Teleport,
+    SetVariable,
+    AddVariable,
+    ToggleFlag,
 }
 
 public static class ActionExecutor
