@@ -17,6 +17,17 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.34.0] — 2026-10-31
+
+### Añadido
+
+- `SceneSerializer.TryLoad` con errores de JSON con línea/columna.
+- `SceneValidator`: assets faltantes, jerarquía rota, ciclos e IDs duplicados.
+- El editor informa de escenas corruptas sin cerrar la escena actual.
+- Entidades hijas 2.5D verificadas al guardar/cargar (padre, posición local y mundo).
+- `SceneRuntime.ResetGameState`: GameState se limpia al cambiar de escena.
+- 6 pruebas nuevas: 177 en total.
+
 ## [0.33.0] — 2026-10-31
 
 ### Añadido

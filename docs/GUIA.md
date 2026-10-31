@@ -753,3 +753,16 @@ Los nodos con error se marcan en rojo y los avisos en ámbar.
 
 Requiere una sesión de escritorio de Windows. No sustituye a pruebas de clic en cada
 botón, pero cubre el flujo real de ventana y foco.
+
+## 31. Robustez de escenas (0.34)
+
+- **Carga tolerante**: `SceneSerializer.TryLoad` devuelve un mensaje con línea/columna
+  en vez de lanzar una excepción a la interfaz.
+- El editor informa del error en la consola y no reemplaza la escena actual.
+- **Validación de assets**: texturas, animaciones, audio, scripts, proyectiles y armas.
+  Los faltantes aparecen como avisos y en la barra de estado.
+- **Validación de jerarquía**: padre inexistente, auto-parentesco, ciclos e IDs duplicados.
+- **Entidades hijas**: `ParentId` y posiciones locales se conservan al guardar/cargar;
+  `Scene.GetWorldPosition` sigue funcionando tras la carga.
+- **GameState**: se limpia al cambiar de escena; al cargar una partida se restaura desde
+  el guardado.

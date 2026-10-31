@@ -61,6 +61,13 @@ public sealed class SceneRuntime
 
     public int UpdateCount { get; private set; }
 
+    /// <summary>Limpia las variables globales al cambiar de escena.</summary>
+    public void ResetGameState()
+    {
+        _gameState.Clear();
+        GameStateHost.Current = _gameState;
+    }
+
     /// <summary>Comienza la reproducción guardando una instantánea de la escena.</summary>
     public void Play(Scene scene, ScriptWorkspace? scripts = null)
     {

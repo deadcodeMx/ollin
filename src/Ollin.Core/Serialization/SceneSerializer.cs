@@ -55,6 +55,51 @@ public static class SceneSerializer
         return scene;
     }
 
+    /// <summary>Intenta cargar una escena sin lanzar excepciones hacia la UI.</summary>
+    public static bool TryLoad(string path, out Scene? scene, out string? error)
+    {
+        try
+        {
+            var json = File.ReadAllText(path);
+            return TryDeserialize(json, out scene, out error);
+        }
+        catch (Exception exception)
+        {
+            scene = null;
+            error = exception switch
+            {
+                FileNotFoundException => $"No existe la escena: {path}",
+                DirectoryNotFoundException => $"No existe la carpeta de la escena: {path}",
+                UnauthorizedAccessException => $"Sin permisos para leer: {path}",
+                _ => $"No se pudo leer la escena: {exception.Message}",
+            };
+            return false;
+        }
+    }
+
+    /// <summary>Intenta deserializar JSON y devuelve un mensaje con línea/columna.</summary>
+    public static bool TryDeserialize(string json, out Scene? scene, out string? error)
+    {
+        try
+        {
+            scene = Deserialize(json);
+            error = null;
+            return true;
+        }
+        catch (JsonException exception)
+        {
+            scene = null;
+            error = $"JSON inválido en línea {exception.LineNumber + 1}, columna {exception.BytePositionInLine + 1}: {exception.Message}";
+            return false;
+        }
+        catch (Exception exception)
+        {
+            scene = null;
+            error = $"La escena no es válida: {exception.Message}";
+            return false;
+        }
+    }
+
     public static void Save(Scene scene, string path)
     {
         var directory = Path.GetDirectoryName(Path.GetFullPath(path));

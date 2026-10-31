@@ -13,6 +13,7 @@ using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
 using Ollin.Core.Scenes;
 using Ollin.Core.Serialization;
+using Ollin.Core.Validation;
 using Ollin.Runtime;
 using Ollin.Scripting;
 
@@ -547,6 +548,7 @@ public sealed partial class MainViewModel : ObservableObject
             NotifyPlayState();
         }
 
+        _runtime.ResetGameState();
         Scene = scene;
         ScenePath = path;
         if (_currentSceneDoc is not null)

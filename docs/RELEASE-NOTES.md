@@ -1,24 +1,26 @@
-## Ollin 0.33.0 beta — guardado y pruebas de interfaz
+## Ollin 0.34.0 beta — robustez de escenas
 
 ### Incluye
 
-- Servicio de **tres ranuras** y **autoguardado** independiente.
-- `AutosaveScheduler` y `PlayerSettings` compartidos por el jugador.
-- Historial y validación del grafo extraídos a clases probadas.
-- **Smoke test de interfaz**: pausa/reanudación real y apertura del grafo.
-- **171 pruebas automatizadas**.
+- Carga tolerante de escenas: error claro con línea/columna, sin tumbar el editor.
+- Validador de **assets faltantes** (texturas, audio, scripts, proyectiles y armas).
+- Validador de **jerarquía**: padres inexistentes, ciclos, auto-parentesco e IDs duplicados.
+- Guardado/carga de **entidades hijas 2.5D** con posición local y mundo.
+- **GameState** se limpia al cambiar de escena y se restaura al cargar partida.
+- **177 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 0.33.0.
-2. Abre el demo y guarda/carga en las tres ranuras.
-3. Espera 45 s para ver el autoguardado.
-4. En el editor, abre el grafo y usa deshacer/zoom/validación.
-5. Opcional: ejecuta `powershell -ExecutionPolicy Bypass -File tools/ui-smoke.ps1`.
+1. Instala 0.34.0.
+2. Abre una escena válida y comprueba la consola.
+3. Corrompe una copia del `.json` y ábrela: debe mostrar error sin cerrar la escena actual.
+4. Borra una textura o audio y vuelve a abrir: aparecerá un aviso de asset faltante.
+5. Crea un padre y un hijo, guarda, cierra y abre: el hijo conserva padre y posición.
 
 ### Limitaciones
 
-- El smoke test requiere Windows con sesión de escritorio; no corre en CI headless.
-- No se pulsa cada botón del menú; se prueba la lógica y el flujo pausa/reanudación.
-- El canvas del grafo se prueba por lógica (historial/validación), no píxel a píxel.
-- El pointer lock solo está implementado para Windows.
+- La validación avisa, no repara automáticamente.
+- Una escena corrupta no recupera entidades parciales.
+- La jerarquía 2.5D se guarda/carga, pero el renderer y la IA de hijos aún usan
+  transformaciones locales en varios sistemas.
+- El validador no cubre todos los assets posibles ni migraciones de formato.
