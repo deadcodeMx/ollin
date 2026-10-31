@@ -906,3 +906,11 @@ error de sintaxis.
 - **Conexiones desactivadas cortas**: no dibujan etiqueta para evitar solape;
   muestran tooltip y el puerto indica `(off)`.
 - **Historial**: además de 500 archivos y 30 días, límite de **20 MB**.
+
+## 46. Cierre de limitaciones de 0.45 (0.49)
+
+- **Ejecutar hasta seleccionado** en **Más ▾**: reanuda y pausa al llegar al nodo.
+- **Migración automática** de grupos antiguos a `ParentGroupId`.
+- **Mover hijos ocultos** opcional al arrastrar un grupo plegado.
+- **Variables por nodo** en el panel de depuración (últimos 3 nodos).
+- El **modo paso** se conserva al cerrar y reabrir el grafo.

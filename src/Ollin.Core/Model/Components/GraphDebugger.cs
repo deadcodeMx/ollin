@@ -8,13 +8,16 @@ public static class GraphDebugger
     /// <summary>Pausa en cada nodo, aunque no haya breakpoint.</summary>
     public static bool StepMode { get; set; }
 
+    public static Guid? RunToNodeId { get; set; }
+
     public static bool Raise(NodeGraph graph, Guid nodeId)
     {
-        if (!StepMode && !graph.Breakpoints.Contains(nodeId))
+        if (!StepMode && !graph.Breakpoints.Contains(nodeId) && RunToNodeId != nodeId)
         {
             return false;
         }
 
+        if (RunToNodeId == nodeId) RunToNodeId = null;
         BreakpointHit?.Invoke(graph, nodeId);
         return true;
     }

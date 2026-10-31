@@ -31,6 +31,8 @@ public enum GraphConditionKind
     Expression,
 }
 
+public sealed record GraphDebugFrame(Guid NodeId, Dictionary<string, string> Variables);
+
 /// <summary>Nodo de un grafo visual de ejecución.</summary>
 public sealed class GraphNode
 {
@@ -141,6 +143,12 @@ public sealed class NodeGraph : Component, ITickable
 
     [JsonIgnore]
     public Guid? DebugCursor { get; private set; }
+
+    [JsonIgnore]
+    public bool StepModeEnabled { get; set; }
+
+    [JsonIgnore]
+    public List<GraphDebugFrame> DebugFrames { get; } = new();
 
     [JsonIgnore]
     public List<Guid> ExecutionHistory { get; } = new();
@@ -347,10 +355,19 @@ public sealed class NodeGraph : Component, ITickable
     {
         LastNodeId = nodeId;
         ExecutionHistory.Add(nodeId);
+        var variables = GameStateHost.Current is { } state
+            ? new Dictionary<string, string>(state.Values, StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        DebugFrames.Add(new GraphDebugFrame(nodeId, variables));
 
         while (ExecutionHistory.Count > 24)
         {
             ExecutionHistory.RemoveAt(0);
+        }
+
+        while (DebugFrames.Count > 24)
+        {
+            DebugFrames.RemoveAt(0);
         }
 
         return honorBreakpoint && GraphDebugger.Raise(this, nodeId);

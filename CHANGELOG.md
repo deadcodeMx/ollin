@@ -17,6 +17,17 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.49.0] — 2026-10-31
+
+### Añadido
+
+- Ejecutar hasta el nodo seleccionado.
+- Migración de grupos geométricos a paternidad explícita.
+- Opción Mover hijos ocultos al arrastrar grupos plegados.
+- Variables por nodo en la depuración.
+- Persistencia del modo paso al cerrar/reabrir.
+- 1 prueba nueva: 204 en total.
+
 ## [0.48.0] — 2026-10-31
 
 ### Cambiado

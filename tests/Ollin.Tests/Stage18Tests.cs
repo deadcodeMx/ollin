@@ -85,4 +85,40 @@ public class GraphStepModeTests
             if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
         }
     }
+    [Fact]
+    public void EjecutarHastaElNodoSeDetieneEnElObjetivo()
+    {
+        var scene = new Scene();
+        var player = scene.Create("Jugador", Vector2.Zero);
+        player.Tags.Add("player");
+
+        var doorEntity = scene.Create("Puerta", new Vector2(0f, 3f));
+        var door = doorEntity.AddComponent(new Door());
+        doorEntity.AddComponent(new Wall3D { Size = new Vector3(1f, 3f, 0.3f) });
+
+        var graphEntity = scene.Create("Grafo", Vector2.Zero);
+        var graph = graphEntity.AddComponent(new NodeGraph());
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var action = graph.AddNode(GraphNodeKind.Action, 100, 0);
+        action.Action = ActionKind.OpenDoor;
+        action.TargetName = "Puerta";
+        start.Next = action.Id;
+        GraphDebugger.RunToNodeId = action.Id;
+
+        var runtime = new SceneRuntime();
+        runtime.Play(scene);
+
+        try
+        {
+            runtime.Tick(0.05f);
+            Assert.False(door.Open);
+            Assert.Equal(action.Id, graph.DebugCursor);
+            Assert.Null(GraphDebugger.RunToNodeId);
+        }
+        finally
+        {
+            GraphDebugger.RunToNodeId = null;
+            runtime.Stop();
+        }
+    }
 }

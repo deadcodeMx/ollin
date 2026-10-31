@@ -60,6 +60,7 @@ public sealed class NodeGraphWindow : Window
     private readonly List<Line> _guideLines = new();
     private bool _snapNodes = true;
     private bool _stepMode;
+    private bool _moveHiddenMembers;
     private StackPanel? _quickActions;
     private double _snapSize = 10d;
 
@@ -71,6 +72,10 @@ public sealed class NodeGraphWindow : Window
         _history = _graph.History;
         _historyKey = $"{_viewModel.ScenePath ?? "sin-guardar"}|{entity.Id}";
         _historyStore.Load(_historyKey, entity.Id, _history, _graph.Breakpoints);
+        _stepMode = _graph.StepModeEnabled;
+        _graph.StepModeEnabled = _stepMode;
+        GraphDebugger.StepMode = _stepMode;
+        MigrateLegacyGroups();
         Title = $"Grafo de nodos — {entity.Name}";
         Width = 1220;
         Height = 760;
@@ -113,7 +118,9 @@ public sealed class NodeGraphWindow : Window
             _debugTimer.Stop();
             _historyStore.Save(_historyKey, entity.Id, _history, _graph.Breakpoints);
             GraphDebugger.BreakpointHit -= OnBreakpointHit;
+            _graph.StepModeEnabled = _stepMode;
             GraphDebugger.StepMode = false;
+            GraphDebugger.RunToNodeId = null;
             WindowsMouseLock.Suspended = false;
         };
         Activated += (_, _) =>
@@ -223,6 +230,8 @@ public sealed class NodeGraphWindow : Window
         AddMore("Distribuir V", () => Distribute(false));
         AddMore("Separar H", () => Separate(true));
         AddMore("Separar V", () => Separate(false));
+        AddMore("Ejecutar hasta seleccionado", RunToSelected);
+        AddMore("Mover hijos ocultos", ToggleMoveHidden);
         AddMore("Modo paso", ToggleStepMode);
         var snapItem = new MenuItem { Header = _snapNodes ? "Rejilla: activada" : "Rejilla: desactivada" };
         snapItem.Click += (_, _) =>
@@ -366,6 +375,7 @@ public sealed class NodeGraphWindow : Window
     private void ToggleStepMode()
     {
         _stepMode = !_stepMode;
+        _graph.StepModeEnabled = _stepMode;
         GraphDebugger.StepMode = _stepMode;
         _status.Text = _stepMode
             ? "Modo paso activo: la partida se pausa en cada nodo."
@@ -393,6 +403,50 @@ public sealed class NodeGraphWindow : Window
 
         MarkChanged();
         Render();
+    }
+
+    private void RunToSelected()
+    {
+        if (_selected is null) return;
+        GraphDebugger.RunToNodeId = _selected.Id;
+        _status.Text = "Ejecutando hasta el nodo seleccionado…";
+
+        if (_viewModel.IsPlaying && _viewModel.IsPaused)
+        {
+            _viewModel.TogglePause();
+        }
+    }
+
+    private void ToggleMoveHidden()
+    {
+        _moveHiddenMembers = !_moveHiddenMembers;
+        _status.Text = _moveHiddenMembers
+            ? "Los grupos plegados moverán también a sus hijos ocultos."
+            : "Los grupos plegados moverán solo el grupo.";
+    }
+
+    private void MigrateLegacyGroups()
+    {
+        var migrated = false;
+
+        foreach (var group in _graph.Nodes.Where(node => node.Kind == GraphNodeKind.Group).OrderBy(node => node.GroupWidth * node.GroupHeight))
+        {
+            if (_graph.Nodes.Any(node => node.ParentGroupId == group.Id)) continue;
+
+            foreach (var node in _graph.Nodes.Where(node =>
+                         node.Id != group.Id && node.ParentGroupId is null &&
+                         node.X >= group.X && node.X <= group.X + group.GroupWidth &&
+                         node.Y >= group.Y && node.Y <= group.Y + group.GroupHeight))
+            {
+                node.ParentGroupId = group.Id;
+                migrated = true;
+            }
+        }
+
+        if (migrated)
+        {
+            _viewModel.MarkDirty("grupos-migrados");
+        }
     }
 
     private void StepGraph()
@@ -798,6 +852,41 @@ public sealed class NodeGraphWindow : Window
                         Foreground = new SolidColorBrush(Color.Parse("#D6DCE8")),
                         TextWrapping = TextWrapping.Wrap,
                     });
+                }
+            }
+
+            if (_graph.DebugFrames.Count > 0)
+            {
+                _inspector.Children.Add(new TextBlock
+                {
+                    Text = "Variables por nodo",
+                    FontSize = 10,
+                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Margin = new Thickness(0, 6, 0, 0),
+                });
+
+                foreach (var frame in _graph.DebugFrames.TakeLast(3).Reverse())
+                {
+                    if (_graph.Find(frame.NodeId) is not { } frameNode) continue;
+
+                    _inspector.Children.Add(new TextBlock
+                    {
+                        Text = $"{KindLabel(frameNode)} · {NodeSummary(frameNode)}",
+                        FontSize = 9.5,
+                        FontWeight = FontWeight.Bold,
+                        Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+                        TextWrapping = TextWrapping.Wrap,
+                    });
+
+                    foreach (var (key, value) in frame.Variables.Take(4))
+                    {
+                        _inspector.Children.Add(new TextBlock
+                        {
+                            Text = $"    {key} = {value}",
+                            FontSize = 9.5,
+                            Foreground = new SolidColorBrush(Color.Parse("#AAB4C4")),
+                        });
+                    }
                 }
             }
 
@@ -1383,12 +1472,9 @@ public sealed class NodeGraphWindow : Window
             }
         }
 
-        if (node.Kind == GraphNodeKind.Group)
+        if (node.Kind == GraphNodeKind.Group && (!node.Collapsed || _moveHiddenMembers))
         {
-            foreach (var member in _graph.Nodes.Where(member =>
-                         member.Id != node.Id && member.Kind != GraphNodeKind.Group &&
-                         member.X >= node.X && member.X <= node.X + node.GroupWidth &&
-                         member.Y >= node.Y && member.Y <= node.Y + node.GroupHeight))
+            foreach (var member in MembersOf(node).Where(member => _moveHiddenMembers || !IsHidden(member)))
             {
                 _dragPositions[member.Id] = (member.X, member.Y);
             }
