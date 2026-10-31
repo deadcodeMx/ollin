@@ -110,4 +110,25 @@ public class GraphDisabledLinkTests
             runtime.Stop();
         }
     }
+    [Fact]
+    public void ElHistorialSeLimitaPorCantidadDeArchivos()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "ollin-graph-limit", Guid.NewGuid().ToString("N"));
+
+        try
+        {
+            var store = new GraphHistoryStore(root, maxFiles: 2);
+
+            for (var i = 0; i < 4; i++)
+            {
+                store.Save("escena.ollin.json", Guid.NewGuid(), new NodeGraphHistory());
+            }
+
+            Assert.True(Directory.GetFiles(root, "*.json").Length <= 2);
+        }
+        finally
+        {
+            if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+        }
+    }
 }

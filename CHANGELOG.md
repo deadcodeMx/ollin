@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.44.0] — 2026-10-31
+
+### Cambiado
+
+- Distribución H/V con separación uniforme entre tarjetas.
+- Etiqueta `DESACTIVADA` en conexiones deshabilitadas.
+- Límite de archivos del historial (500) además de la limpieza por edad.
+- 1 prueba nueva: 200 en total.
+
 ## [0.43.0] — 2026-10-31
 
 ### Cambiado

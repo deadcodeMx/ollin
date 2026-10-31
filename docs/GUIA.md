@@ -867,3 +867,9 @@ error de sintaxis.
 - Acciones secundarias (Ajustar, Ordenar, Paso, Distribuir H/V) están en **Más ▾**.
 - En ventanas muy estrechas la barra se desplaza horizontalmente.
 - Rejilla, tamaño de rejilla y búsqueda siguen visibles.
+
+## 41. Cierre de limitaciones de 0.41 (0.44)
+
+- **Distribuir H/V** usa separación uniforme entre tarjetas, no solo posiciones.
+- **Conexiones deshabilitadas** muestran la etiqueta `DESACTIVADA`.
+- **Historial**: limpieza por antigüedad (30 días) y por cantidad (máx. 500 archivos).

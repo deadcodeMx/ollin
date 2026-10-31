@@ -1,20 +1,21 @@
-## Ollin 0.43.0 beta — barra del grafo en una línea
+## Ollin 0.44.0 beta — cierre de limitaciones de 0.41
 
 ### Incluye
 
-- Barra del grafo en **una sola fila**.
-- Menú **Más ▾** para acciones secundarias.
-- Desplazamiento horizontal en ventanas estrechas.
-- **199 pruebas automatizadas**.
+- **Distribución uniforme** entre tarjetas.
+- Etiqueta **DESACTIVADA** en conexiones deshabilitadas.
+- Historial limitado a **500 archivos** y 30 días.
+- **200 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 0.43.0 y abre el grafo de **Guía**.
-2. Reduce el ancho de la ventana: la barra debe seguir en una línea.
-3. Usa **Más ▾** para Ajustar, Ordenar, Paso y Distribuir.
-4. Desplaza la barra horizontalmente si hace falta.
+1. Instala 0.44.0 y abre el grafo.
+2. Selecciona tres nodos de distinto ancho y usa **Distribuir H**.
+3. Deshabilita una conexión: debe verse gris y con `DESACTIVADA`.
+4. Abre/cierra el grafo varias veces y revisa `graph-history`.
 
 ### Limitaciones
 
-- En ventanas muy estrechas algunas acciones quedan tras el desplazamiento.
-- El menú **Más** añade un clic a las acciones secundarias.
+- La distribución usa el orden visual actual.
+- La etiqueta puede solaparse en conexiones muy cortas.
+- El límite de historial es por número de archivos, no por tamaño en MB.

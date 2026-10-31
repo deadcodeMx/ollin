@@ -353,20 +353,30 @@ public sealed class NodeGraphWindow : Window
             return;
         }
 
+        var sizes = selected.Select(NodeSize).ToList();
         var first = horizontal ? selected[0].X : selected[0].Y;
-        var last = horizontal ? selected[^1].X : selected[^1].Y;
-        var step = (last - first) / (selected.Count - 1);
+        var last = horizontal ? selected[^1].X + (float)sizes[^1].Width : selected[^1].Y + (float)sizes[^1].Height;
+        var totalSize = horizontal ? (float)sizes.Sum(size => size.Width) : (float)sizes.Sum(size => size.Height);
+        var gap = (last - first - totalSize) / (selected.Count - 1);
+        var cursor = first;
 
-        for (var i = 1; i < selected.Count - 1; i++)
+        foreach (var (node, size) in selected.Zip(sizes))
         {
-            if (horizontal) selected[i].X = first + step * i;
-            else selected[i].Y = first + step * i;
+            if (horizontal)
+            {
+                node.X = cursor;
+                cursor += (float)size.Width + gap;
+            }
+            else
+            {
+                node.Y = cursor;
+                cursor += (float)size.Height + gap;
+            }
         }
 
         MarkChanged();
         Render();
     }
-
     private void AutoLayout()
     {
         var events = _graph.Nodes.Where(node => node.Kind == GraphNodeKind.Event).ToList();
@@ -812,13 +822,14 @@ public sealed class NodeGraphWindow : Window
     {
         var target = _graph.Find(targetId);
 
-        if (target is null)
+        if (target is null || IsHidden(target))
         {
             return;
         }
 
         var yOffset = port switch { "true" => 92, "false" => 116, _ => 52 };
-        var color = port switch
+        var disabled = source.DisabledPorts.Contains(port);
+        var color = disabled ? Color.Parse("#6B7280") : port switch
         {
             "true" => Color.Parse("#47B8A8"),
             "false" => Color.Parse("#E05B5B"),
@@ -835,8 +846,20 @@ public sealed class NodeGraphWindow : Window
         };
         line.ContextMenu = ConnectionMenu(source.Id, port);
         _canvas.Children.Add(line);
-    }
 
+        if (disabled)
+        {
+            var label = new TextBlock
+            {
+                Text = "DESACTIVADA",
+                FontSize = 8,
+                Foreground = new SolidColorBrush(Color.Parse("#9CA3AF")),
+            };
+            Canvas.SetLeft(label, (source.X + 200 + target.X) / 2);
+            Canvas.SetTop(label, (source.Y + yOffset + target.Y + 24) / 2 - 6);
+            _canvas.Children.Add(label);
+        }
+    }
     private Control BuildNodeCard(GraphNode node)
     {
         if (node.Kind == GraphNodeKind.Group)
