@@ -30,6 +30,7 @@ public static class GraphEditing
         Once = node.Once,
         GroupWidth = node.GroupWidth,
         GroupHeight = node.GroupHeight,
+        Collapsed = node.Collapsed,
         Next = keepLinks ? node.Next : null,
         TrueNext = keepLinks ? node.TrueNext : null,
         FalseNext = keepLinks ? node.FalseNext : null,

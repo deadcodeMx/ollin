@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.42.0] — 2026-10-31
+
+### Añadido
+
+- **Paso a paso real**: ejecuta un nodo desde el breakpoint.
+- **Grupos plegables**: ocultan sus nodos y conexiones.
+- **Anidación visual**: grupos dentro de grupos se pliegan con el padre.
+- 1 prueba nueva: 199 en total.
+
 ## [0.41.0] — 2026-10-31
 
 ### Añadido

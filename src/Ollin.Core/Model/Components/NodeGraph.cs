@@ -62,6 +62,8 @@ public sealed class GraphNode
 
     public float GroupHeight { get; set; } = 160f;
 
+    public bool Collapsed { get; set; }
+
     public float Radius { get; set; } = 2.5f;
 
     public float Interval { get; set; } = 3f;
@@ -111,6 +113,7 @@ public sealed class GraphNode
         Once = Once,
         GroupWidth = GroupWidth,
         GroupHeight = GroupHeight,
+        Collapsed = Collapsed,
         DisabledPorts = new HashSet<string>(DisabledPorts),
     };
 }
@@ -131,6 +134,9 @@ public sealed class NodeGraph : Component, ITickable
 
     [JsonIgnore]
     public Guid? LastNodeId { get; private set; }
+
+    [JsonIgnore]
+    public Guid? DebugCursor { get; private set; }
 
     [JsonIgnore]
     public List<Guid> ExecutionHistory { get; } = new();
@@ -222,12 +228,17 @@ public sealed class NodeGraph : Component, ITickable
                 node.Done = true;
             }
 
-            if (RecordExecution(node.Id)) return;
+            if (RecordExecution(node.Id))
+            {
+                DebugCursor = node.Id;
+                return;
+            }
+
             Execute(scene, player, Link(node, "next"));
         }
     }
 
-    private void Execute(Scenes.Scene scene, Entity? player, Guid? start)
+    private void Execute(Scenes.Scene scene, Entity? player, Guid? start, bool singleStep = false, bool ignoreBreakpoint = false)
     {
         var current = start;
         var steps = 0;
@@ -241,30 +252,59 @@ public sealed class NodeGraph : Component, ITickable
                 return;
             }
 
-            if (RecordExecution(node.Id)) return;
+            if (RecordExecution(node.Id, !(ignoreBreakpoint && steps == 1)))
+            {
+                DebugCursor = current;
+                return;
+            }
+
+            Guid? next;
 
             if (node.Kind == GraphNodeKind.Condition)
             {
-                current = ConditionMet(node, player) ? Link(node, "true") : Link(node, "false");
-                continue;
+                next = ConditionMet(node, player) ? Link(node, "true") : Link(node, "false");
             }
-
-            if (node.Kind == GraphNodeKind.Action)
+            else
             {
-                if (node.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.ToggleFlag)
+                if (node.Kind == GraphNodeKind.Action)
                 {
-                    ApplyVariable(node, player);
+                    if (node.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.ToggleFlag)
+                    {
+                        ApplyVariable(node, player);
+                    }
+                    else
+                    {
+                        ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount);
+                    }
                 }
-                else
-                {
-                    ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount);
-                }
+
+                next = Link(node, "next");
             }
 
-            current = Link(node, "next");
+            if (singleStep)
+            {
+                DebugCursor = next;
+                return;
+            }
+
+            current = next;
         }
+
+        DebugCursor = null;
     }
 
+    /// <summary>Avanza un nodo desde el breakpoint actual.</summary>
+    public bool StepOnce(Scenes.Scene scene, Entity? player)
+    {
+        if (DebugCursor is not { } cursor)
+        {
+            return false;
+        }
+
+        DebugCursor = null;
+        Execute(scene, player, cursor, singleStep: true, ignoreBreakpoint: true);
+        return true;
+    }
     /// <summary>Destino de un puerto, respetando conexiones deshabilitadas.</summary>
     public Guid? Link(GraphNode node, string port)
     {
@@ -298,7 +338,7 @@ public sealed class NodeGraph : Component, ITickable
         };
     }
 
-    private bool RecordExecution(Guid nodeId)
+    private bool RecordExecution(Guid nodeId, bool honorBreakpoint = true)
     {
         LastNodeId = nodeId;
         ExecutionHistory.Add(nodeId);
@@ -308,7 +348,7 @@ public sealed class NodeGraph : Component, ITickable
             ExecutionHistory.RemoveAt(0);
         }
 
-        return GraphDebugger.Raise(this, nodeId);
+        return honorBreakpoint && GraphDebugger.Raise(this, nodeId);
     }
 
     private static void ApplyVariable(GraphNode node, Entity? player)

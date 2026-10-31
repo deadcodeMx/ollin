@@ -419,6 +419,19 @@ public sealed partial class MainViewModel : ObservableObject
         }
     }
 
+    public bool StepGraph(NodeGraph graph)
+    {
+        var stepped = _runtime.StepGraph(graph);
+
+        if (stepped)
+        {
+            OnPropertyChanged(nameof(IsPaused));
+            OnPropertyChanged(nameof(PlayStateText));
+        }
+
+        return stepped;
+    }
+
     public void TogglePause()
     {
         if (!IsPlaying)

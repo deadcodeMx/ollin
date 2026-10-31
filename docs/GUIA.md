@@ -851,3 +851,12 @@ error de sintaxis.
 - **Breakpoints persistentes** en el sidecar del historial.
 - **Historial versionado** y limpieza automática de entradas de más de 30 días.
 - **Borde rojo en vivo** mientras se escribe una expresión inválida.
+
+## 39. Grafo: paso a paso y grupos plegables (0.42)
+
+- **Breakpoint**: pausa antes de ejecutar el nodo marcado.
+- **Paso**: botón en la barra del grafo; ejecuta un solo nodo desde el breakpoint.
+- **Grupo plegable**: casilla **Plegado** en el inspector; oculta los nodos contenidos
+  y sus conexiones.
+- **Grupos anidados visualmente**: un grupo dentro de otro se oculta al plegar el padre.
+- El paso conserva el runtime en pausa; al reanudar sigue la partida.

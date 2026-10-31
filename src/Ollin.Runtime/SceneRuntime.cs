@@ -375,6 +375,20 @@ public sealed class SceneRuntime
         }
     }
 
+    /// <summary>Ejecuta un solo nodo del grafo desde el breakpoint actual.</summary>
+    public bool StepGraph(NodeGraph graph)
+    {
+        if (!IsPaused || _scene is null)
+        {
+            return false;
+        }
+
+        var player = _scene.Entities.FirstOrDefault(entity =>
+            entity.Active && entity.Tags.Any(tag => tag.Equals("player", StringComparison.OrdinalIgnoreCase)));
+
+        return graph.StepOnce(_scene, player);
+    }
+
     public void TogglePause()
     {
         if (!IsPlaying)

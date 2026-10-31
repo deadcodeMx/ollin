@@ -192,6 +192,7 @@ public sealed class NodeGraphWindow : Window
         toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1)));
         toolbar.Children.Add(ToolButton("Ajustar", () => SetZoom(0.75)));
         toolbar.Children.Add(ToolButton("Ordenar", AutoLayout));
+        toolbar.Children.Add(ToolButton("Paso", StepGraph));
         toolbar.Children.Add(ToolButton("Distribuir H", () => Distribute(true)));
         toolbar.Children.Add(ToolButton("Distribuir V", () => Distribute(false)));
         var snapCheck = new CheckBox { Content = "Rejilla", IsChecked = true, FontSize = 10.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) };
@@ -313,6 +314,15 @@ public sealed class NodeGraphWindow : Window
     }
 
     private void UpdateZoomText() => _zoomText.Text = $"{_zoom * 100:0}%";
+
+    private void StepGraph()
+    {
+        if (_viewModel.StepGraph(_graph))
+        {
+            _activeNodeId = _graph.LastNodeId;
+            Render();
+        }
+    }
 
     private void Distribute(bool horizontal)
     {
@@ -733,13 +743,21 @@ public sealed class NodeGraphWindow : Window
         Render();
     }
 
+    private bool IsHidden(GraphNode node)
+    {
+        return _graph.Nodes.Any(group =>
+            group.Kind == GraphNodeKind.Group && group.Collapsed && group.Id != node.Id &&
+            node.X >= group.X && node.X <= group.X + group.GroupWidth &&
+            node.Y >= group.Y && node.Y <= group.Y + group.GroupHeight);
+    }
+
     private void Render()
     {
         Validate();
         _canvas.Children.Clear();
         _nodeCards.Clear();
 
-        foreach (var node in _graph.Nodes)
+        foreach (var node in _graph.Nodes.Where(node => !IsHidden(node)))
         {
             if (node.Next is { } next)
             {
@@ -753,12 +771,12 @@ public sealed class NodeGraphWindow : Window
             }
         }
 
-        foreach (var node in _graph.Nodes.Where(node => node.Kind == GraphNodeKind.Group))
+        foreach (var node in _graph.Nodes.Where(node => node.Kind == GraphNodeKind.Group && !IsHidden(node)))
         {
             _canvas.Children.Add(BuildNodeCard(node));
         }
 
-        foreach (var node in _graph.Nodes.Where(node => node.Kind != GraphNodeKind.Group))
+        foreach (var node in _graph.Nodes.Where(node => node.Kind != GraphNodeKind.Group && !IsHidden(node)))
         {
             _canvas.Children.Add(BuildNodeCard(node));
         }
@@ -809,7 +827,7 @@ public sealed class NodeGraphWindow : Window
             var group = new Border
             {
                 Width = node.GroupWidth,
-                Height = node.GroupHeight,
+                Height = node.Collapsed ? 40 : node.GroupHeight,
                 Background = new SolidColorBrush(Color.Parse("#30151B24")),
                 BorderBrush = new SolidColorBrush(Color.Parse(_selectedIds.Contains(node.Id) ? "#FFFFFF" : "#8B94A7")),
                 BorderThickness = new Thickness(_selectedIds.Contains(node.Id) ? 2 : 1),
@@ -819,7 +837,7 @@ public sealed class NodeGraphWindow : Window
             Canvas.SetTop(group, node.Y);
             var groupHeader = new TextBlock
             {
-                Text = "GRUPO · " + node.Message,
+                Text = (node.Collapsed ? "▸ GRUPO · " : "▾ GRUPO · ") + node.Message,
                 FontSize = 11,
                 FontWeight = FontWeight.Bold,
                 Foreground = new SolidColorBrush(Color.Parse("#AAB4C4")),
@@ -995,7 +1013,7 @@ public sealed class NodeGraphWindow : Window
 
         var selection = new Rect(left, top, Math.Max(1, right - left), Math.Max(1, bottom - top));
 
-        foreach (var node in _graph.Nodes)
+        foreach (var node in _graph.Nodes.Where(node => !IsHidden(node)))
         {
             var size = NodeSize(node);
             var bounds = new Rect(node.X, node.Y, size.Width, size.Height);
@@ -1280,6 +1298,19 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
             menu.Items.Add(go);
         }
 
+        if (node is not null)
+        {
+            var disabled = node.DisabledPorts.Contains(port);
+            var toggle = new MenuItem { Header = disabled ? "Habilitar conexión" : "Deshabilitar conexión" };
+            toggle.Click += (_, _) =>
+            {
+                if (!node.DisabledPorts.Remove(port)) node.DisabledPorts.Add(port);
+                MarkChanged();
+                Render();
+            };
+            menu.Items.Add(toggle);
+        }
+
         var delete = new MenuItem { Header = "Eliminar conexión" };
         delete.Click += (_, _) => ClearConnection(nodeId, port);
         menu.Items.Add(delete);
@@ -1349,6 +1380,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
             _inspector.Children.Add(Number(node.GroupWidth, 80, value => { node.GroupWidth = (float)value; MarkChanged(); Render(); }));
             _inspector.Children.Add(Label("Alto"));
             _inspector.Children.Add(Number(node.GroupHeight, 60, value => { node.GroupHeight = (float)value; MarkChanged(); Render(); }));
+            _inspector.Children.Add(Check("Plegado", node.Collapsed, value => { node.Collapsed = value; MarkChanged(); Render(); }));
             _inspector.Children.Add(DeleteButton(node));
             _inspector.Children.Add(BreakpointButton(node));
             AddValidationPanel();
