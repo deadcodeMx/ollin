@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.45.0] — 2026-10-31
+
+### Añadido
+
+- Modo paso sin breakpoint (pausa en cada nodo).
+- Paternidad explícita de grupos con Agrupar/Desagrupar.
+- Arrastrar un grupo plegado ya no mueve miembros ocultos.
+- 2 pruebas nuevas: 202 en total.
+
 ## [0.44.0] — 2026-10-31
 
 ### Cambiado

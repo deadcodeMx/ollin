@@ -5,9 +5,12 @@ public static class GraphDebugger
 {
     public static event Action<NodeGraph, Guid>? BreakpointHit;
 
+    /// <summary>Pausa en cada nodo, aunque no haya breakpoint.</summary>
+    public static bool StepMode { get; set; }
+
     public static bool Raise(NodeGraph graph, Guid nodeId)
     {
-        if (!graph.Breakpoints.Contains(nodeId))
+        if (!StepMode && !graph.Breakpoints.Contains(nodeId))
         {
             return false;
         }

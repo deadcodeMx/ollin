@@ -59,6 +59,7 @@ public sealed class NodeGraphWindow : Window
     private HashSet<Guid> _marqueeBase = new();
     private readonly List<Line> _guideLines = new();
     private bool _snapNodes = true;
+    private bool _stepMode;
     private double _snapSize = 10d;
 
     public NodeGraphWindow(MainViewModel viewModel, Entity entity)
@@ -107,6 +108,7 @@ public sealed class NodeGraphWindow : Window
             _debugTimer.Stop();
             _historyStore.Save(_historyKey, entity.Id, _history, _graph.Breakpoints);
             GraphDebugger.BreakpointHit -= OnBreakpointHit;
+            GraphDebugger.StepMode = false;
             WindowsMouseLock.Suspended = false;
         };
         Activated += (_, _) =>
@@ -204,6 +206,7 @@ public sealed class NodeGraphWindow : Window
         AddMore("Paso", StepGraph);
         AddMore("Distribuir H", () => Distribute(true));
         AddMore("Distribuir V", () => Distribute(false));
+        AddMore("Modo paso", ToggleStepMode);
         more.Flyout = moreFlyout;
         toolbar.Children.Add(more);
         var snapCheck = new CheckBox { Content = "Rejilla", IsChecked = true, FontSize = 10.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) };
@@ -331,6 +334,38 @@ public sealed class NodeGraphWindow : Window
     }
 
     private void UpdateZoomText() => _zoomText.Text = $"{_zoom * 100:0}%";
+
+    private void ToggleStepMode()
+    {
+        _stepMode = !_stepMode;
+        GraphDebugger.StepMode = _stepMode;
+        _status.Text = _stepMode
+            ? "Modo paso activo: la partida se pausa en cada nodo."
+            : "Modo paso desactivado.";
+    }
+
+    private void GroupSelected(GraphNode group)
+    {
+        foreach (var node in _graph.Nodes.Where(node => _selectedIds.Contains(node.Id) && node.Id != group.Id))
+        {
+            node.ParentGroupId = group.Id;
+        }
+
+        group.Collapsed = false;
+        MarkChanged();
+        Render();
+    }
+
+    private void Ungroup(GraphNode group)
+    {
+        foreach (var node in _graph.Nodes.Where(node => node.ParentGroupId == group.Id))
+        {
+            node.ParentGroupId = null;
+        }
+
+        MarkChanged();
+        Render();
+    }
 
     private void StepGraph()
     {
@@ -772,12 +807,65 @@ public sealed class NodeGraphWindow : Window
 
     private bool IsHidden(GraphNode node)
     {
+        if (node.ParentGroupId is { } parent)
+        {
+            var guard = 0;
+
+            while (parent != Guid.Empty && guard++ < 32)
+            {
+                var group = _graph.Find(parent);
+
+                if (group is null)
+                {
+                    break;
+                }
+
+                if (group.Collapsed)
+                {
+                    return true;
+                }
+
+                parent = group.ParentGroupId ?? Guid.Empty;
+            }
+
+            return false;
+        }
+
         return _graph.Nodes.Any(group =>
             group.Kind == GraphNodeKind.Group && group.Collapsed && group.Id != node.Id &&
             node.X >= group.X && node.X <= group.X + group.GroupWidth &&
             node.Y >= group.Y && node.Y <= group.Y + group.GroupHeight);
     }
 
+    private List<GraphNode> MembersOf(GraphNode group)
+    {
+        var members = new List<GraphNode>();
+        var seen = new HashSet<Guid> { group.Id };
+        var queue = new Queue<Guid>();
+        queue.Enqueue(group.Id);
+
+        while (queue.Count > 0)
+        {
+            var parentId = queue.Dequeue();
+
+            foreach (var child in _graph.Nodes.Where(node => node.ParentGroupId == parentId))
+            {
+                if (!seen.Add(child.Id)) continue;
+                members.Add(child);
+                queue.Enqueue(child.Id);
+            }
+        }
+
+        foreach (var legacy in _graph.Nodes.Where(node =>
+                     node.ParentGroupId is null && node.Id != group.Id && node.Kind != GraphNodeKind.Group &&
+                     node.X >= group.X && node.X <= group.X + group.GroupWidth &&
+                     node.Y >= group.Y && node.Y <= group.Y + group.GroupHeight))
+        {
+            members.Add(legacy);
+        }
+
+        return members;
+    }
     private void Render()
     {
         Validate();
@@ -1421,6 +1509,12 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
             _inspector.Children.Add(Label("Alto"));
             _inspector.Children.Add(Number(node.GroupHeight, 60, value => { node.GroupHeight = (float)value; MarkChanged(); Render(); }));
             _inspector.Children.Add(Check("Plegado", node.Collapsed, value => { node.Collapsed = value; MarkChanged(); Render(); }));
+            var groupSelected = new Button { Content = "Agrupar seleccionados", HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 6, 0, 0) };
+            groupSelected.Click += (_, _) => GroupSelected(node);
+            _inspector.Children.Add(groupSelected);
+            var ungroup = new Button { Content = "Desagrupar", HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 4, 0, 0) };
+            ungroup.Click += (_, _) => Ungroup(node);
+            _inspector.Children.Add(ungroup);
             _inspector.Children.Add(DeleteButton(node));
             _inspector.Children.Add(BreakpointButton(node));
             AddValidationPanel();

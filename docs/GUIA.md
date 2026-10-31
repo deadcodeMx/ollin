@@ -873,3 +873,12 @@ error de sintaxis.
 - **Distribuir H/V** usa separación uniforme entre tarjetas, no solo posiciones.
 - **Conexiones deshabilitadas** muestran la etiqueta `DESACTIVADA`.
 - **Historial**: limpieza por antigüedad (30 días) y por cantidad (máx. 500 archivos).
+
+## 42. Modo paso y grupos con paternidad explícita (0.45)
+
+- **Modo paso** en **Más ▾**: la partida se pausa en cada nodo, sin breakpoint.
+- **Paso** ejecuta un nodo y vuelve a pausar en el siguiente.
+- **Agrupar seleccionados** asigna `ParentGroupId` explícito a los nodos.
+- **Desagrupar** elimina la pertenencia directa.
+- Al plegar un grupo se ocultan sus hijos y los nodos anidados.
+- Arrastrar un grupo **plegado** ya no mueve a sus miembros ocultos.

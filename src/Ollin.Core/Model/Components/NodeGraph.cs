@@ -64,6 +64,9 @@ public sealed class GraphNode
 
     public bool Collapsed { get; set; }
 
+    /// <summary>Grupo contenedor explícito (opcional).</summary>
+    public Guid? ParentGroupId { get; set; }
+
     public float Radius { get; set; } = 2.5f;
 
     public float Interval { get; set; } = 3f;
@@ -114,6 +117,7 @@ public sealed class GraphNode
         GroupWidth = GroupWidth,
         GroupHeight = GroupHeight,
         Collapsed = Collapsed,
+        ParentGroupId = ParentGroupId,
         DisabledPorts = new HashSet<string>(DisabledPorts),
     };
 }
@@ -159,6 +163,7 @@ public sealed class NodeGraph : Component, ITickable
             if (node.Next == id) node.Next = null;
             if (node.TrueNext == id) node.TrueNext = null;
             if (node.FalseNext == id) node.FalseNext = null;
+            if (node.ParentGroupId == id) node.ParentGroupId = null;
         }
     }
 
