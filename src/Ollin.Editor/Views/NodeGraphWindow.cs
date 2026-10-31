@@ -21,7 +21,9 @@ public sealed class NodeGraphWindow : Window
     private readonly NodeGraph _graph;
     private readonly Canvas _canvas = new();
     private readonly LayoutTransformControl _canvasTransform = new();
-    private readonly NodeGraphHistory _history = new();
+    private readonly NodeGraphHistory _history;
+    private readonly GraphHistoryStore _historyStore = new();
+    private readonly string _historyKey;
     private readonly List<GraphIssue> _issues = new();
     private readonly TextBlock _zoomText = new() { FontSize = 11, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0) };
     private readonly DispatcherTimer _debugTimer;
@@ -31,6 +33,7 @@ public sealed class NodeGraphWindow : Window
     private readonly Dictionary<Guid, Border> _nodeCards = new();
     private readonly Dictionary<Guid, (double X, double Y)> _dragPositions = new();
     private Guid? _activeNodeId;
+    private string _lastSignature = string.Empty;
     private double _zoom = 1.0;
     private ScrollViewer? _scroller;
     private TextBox? _searchBox;
@@ -54,6 +57,9 @@ public sealed class NodeGraphWindow : Window
         _viewModel = viewModel;
         _entity = entity;
         _graph = entity.GetComponent<NodeGraph>()!;
+        _history = _graph.History;
+        _historyKey = $"{_viewModel.ScenePath ?? "sin-guardar"}|{entity.Id}";
+        _historyStore.Load(_historyKey, entity.Id, _history);
         Title = $"Grafo de nodos — {entity.Name}";
         Width = 1220;
         Height = 760;
@@ -86,9 +92,12 @@ public sealed class NodeGraphWindow : Window
         _debugTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(120) };
         _debugTimer.Tick += (_, _) => PollDebug();
         _debugTimer.Start();
+        GraphDebugger.BreakpointHit += OnBreakpointHit;
         Closed += (_, _) =>
         {
             _debugTimer.Stop();
+            _historyStore.Save(_historyKey, entity.Id, _history);
+            GraphDebugger.BreakpointHit -= OnBreakpointHit;
             WindowsMouseLock.Suspended = false;
         };
         Activated += (_, _) =>
@@ -129,6 +138,8 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: dañar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Damage));
         AddPalette(panel, "Acción: curar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Heal));
         AddPalette(panel, "Acción: teletransportar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Teleport));
+        AddPalette(panel, "Comentario", AddComment);
+        AddPalette(panel, "Grupo", AddGroup);
 
         return new ScrollViewer { Content = panel };
     }
@@ -372,6 +383,28 @@ public sealed class NodeGraphWindow : Window
         Render();
     }
 
+    private void AddComment()
+    {
+        var node = _graph.AddNode(GraphNodeKind.Comment, 70 + _graph.Nodes.Count * 20, 70 + _graph.Nodes.Count * 20);
+        node.Message = "Comentario";
+        _selected = node;
+        _selectedIds.Clear();
+        _selectedIds.Add(node.Id);
+        MarkChanged();
+        Render();
+    }
+
+    private void AddGroup()
+    {
+        var node = _graph.AddNode(GraphNodeKind.Group, 60 + _graph.Nodes.Count * 16, 60 + _graph.Nodes.Count * 16);
+        node.Message = "Grupo";
+        _selected = node;
+        _selectedIds.Clear();
+        _selectedIds.Add(node.Id);
+        MarkChanged();
+        Render();
+    }
+
     private void MarkChanged()
     {
         if (_lastCommitted is not null)
@@ -483,6 +516,14 @@ public sealed class NodeGraphWindow : Window
 
     private void PollDebug()
     {
+        if (_dragNode is null && _lastSignature.Length > 0 && _lastSignature != GraphSignature())
+        {
+            _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
+            if (_selected is not null && _graph.Find(_selected.Id) is null) _selected = null;
+            Render();
+            return;
+        }
+
         if (!_viewModel.IsPlaying)
         {
             if (_activeNodeId is not null)
@@ -603,6 +644,58 @@ public sealed class NodeGraphWindow : Window
     }
 
 
+    private string GraphSignature()
+    {
+        var builder = new System.Text.StringBuilder();
+
+        foreach (var node in _graph.Nodes.OrderBy(node => node.Id))
+        {
+            builder.Append(node.Id).Append('|')
+                .Append((int)node.Kind).Append('|')
+                .Append((int)node.Event).Append('|')
+                .Append((int)node.Condition).Append('|')
+                .Append((int)node.Action).Append('|')
+                .Append(node.X).Append('|').Append(node.Y).Append('|')
+                .Append(node.TargetName).Append('|').Append(node.Message).Append('|')
+                .Append(node.ItemId).Append('|').Append(node.VariableName).Append('|')
+                .Append(node.Expression).Append('|').Append(node.GroupWidth).Append('|')
+                .Append(node.GroupHeight).Append('|').Append(node.Next).Append('|')
+                .Append(node.TrueNext).Append('|').Append(node.FalseNext).Append(';');
+        }
+
+        return builder.ToString();
+    }
+
+    private void OnBreakpointHit(NodeGraph graph, Guid nodeId)
+    {
+        if (!ReferenceEquals(graph, _graph))
+        {
+            return;
+        }
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            _activeNodeId = nodeId;
+
+            if (_viewModel.IsPlaying && !_viewModel.IsPaused)
+            {
+                _viewModel.TogglePause();
+            }
+
+            Render();
+        }, DispatcherPriority.Background);
+    }
+
+    private void ToggleBreakpoint(GraphNode node)
+    {
+        if (!_graph.Breakpoints.Remove(node.Id))
+        {
+            _graph.Breakpoints.Add(node.Id);
+        }
+
+        Render();
+    }
+
     private void Render()
     {
         Validate();
@@ -623,7 +716,12 @@ public sealed class NodeGraphWindow : Window
             }
         }
 
-        foreach (var node in _graph.Nodes)
+        foreach (var node in _graph.Nodes.Where(node => node.Kind == GraphNodeKind.Group))
+        {
+            _canvas.Children.Add(BuildNodeCard(node));
+        }
+
+        foreach (var node in _graph.Nodes.Where(node => node.Kind != GraphNodeKind.Group))
         {
             _canvas.Children.Add(BuildNodeCard(node));
         }
@@ -635,6 +733,7 @@ public sealed class NodeGraphWindow : Window
             ? $"Selecciona un nodo. Usa Conectar y el encabezado destino. Validación: {errors} errores, {warnings} avisos."
             : "Selecciona el nodo destino para conectar la salida.";
         Title = $"Grafo de nodos — {_entity.Name} ({_graph.Nodes.Count} nodos)";
+        _lastSignature = GraphSignature();
     }
 
     private void DrawLink(GraphNode source, Guid targetId, string port)
@@ -675,19 +774,50 @@ public sealed class NodeGraphWindow : Window
 
     private Control BuildNodeCard(GraphNode node)
     {
+        if (node.Kind == GraphNodeKind.Group)
+        {
+            var group = new Border
+            {
+                Width = node.GroupWidth,
+                Height = node.GroupHeight,
+                Background = new SolidColorBrush(Color.Parse("#30151B24")),
+                BorderBrush = new SolidColorBrush(Color.Parse(_selectedIds.Contains(node.Id) ? "#FFFFFF" : "#8B94A7")),
+                BorderThickness = new Thickness(_selectedIds.Contains(node.Id) ? 2 : 1),
+                CornerRadius = new CornerRadius(8),
+            };
+            Canvas.SetLeft(group, node.X);
+            Canvas.SetTop(group, node.Y);
+            var groupHeader = new TextBlock
+            {
+                Text = "GRUPO · " + node.Message,
+                FontSize = 11,
+                FontWeight = FontWeight.Bold,
+                Foreground = new SolidColorBrush(Color.Parse("#AAB4C4")),
+                Margin = new Thickness(10, 6),
+            };
+            group.Child = groupHeader;
+            group.PointerPressed += (_, e) => OnNodePressed(node, group, e);
+            group.PointerMoved += (_, e) => OnNodeMoved(node, group, e);
+            group.PointerReleased += (_, e) => OnNodeReleased(node, group, e);
+            _nodeCards[node.Id] = group;
+            return group;
+        }
+
         var kindColor = node.Kind switch
         {
             GraphNodeKind.Event => "#E9A23B",
             GraphNodeKind.Condition => "#5B9CE0",
+            GraphNodeKind.Comment => "#8B94A7",
             _ => "#47B8A8",
         };
 
         var issue = _issues.FirstOrDefault(item => item.Node?.Id == node.Id);
         var active = _viewModel.IsPlaying && _activeNodeId == node.Id;
         var selected = _selectedIds.Contains(node.Id);
+        var breakpoint = _graph.Breakpoints.Contains(node.Id);
         var match = !string.IsNullOrWhiteSpace(_searchText) &&
                     $"{KindLabel(node)} {NodeSummary(node)}".Contains(_searchText, StringComparison.OrdinalIgnoreCase);
-        var borderColor = active ? "#53D6FF" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : match ? "#E9A23B" : selected ? "#FFFFFF" : kindColor;
+        var borderColor = active ? "#53D6FF" : breakpoint ? "#E05BE0" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : match ? "#E9A23B" : selected ? "#FFFFFF" : kindColor;
         var card = new Border
         {
             Width = 200,
@@ -708,7 +838,7 @@ public sealed class NodeGraphWindow : Window
         };
         var headerText = new TextBlock
         {
-            Text = KindLabel(node),
+            Text = breakpoint ? KindLabel(node) + "  ●" : KindLabel(node),
             FontSize = 11,
             FontWeight = FontWeight.Bold,
             Foreground = new SolidColorBrush(Color.Parse(kindColor)),
@@ -740,7 +870,7 @@ public sealed class NodeGraphWindow : Window
             ports.Children.Add(PortButton("Sí →", node, true));
             ports.Children.Add(PortButton("No →", node, false));
         }
-        else
+        else if (node.Kind != GraphNodeKind.Comment)
         {
             ports.Children.Add(PortButton("Conectar →", node, true));
         }
@@ -843,6 +973,17 @@ public sealed class NodeGraphWindow : Window
             if (_graph.Find(id) is { } selected)
             {
                 _dragPositions[id] = (selected.X, selected.Y);
+            }
+        }
+
+        if (node.Kind == GraphNodeKind.Group)
+        {
+            foreach (var member in _graph.Nodes.Where(member =>
+                         member.Id != node.Id && member.Kind != GraphNodeKind.Group &&
+                         member.X >= node.X && member.X <= node.X + node.GroupWidth &&
+                         member.Y >= node.Y && member.Y <= node.Y + node.GroupHeight))
+            {
+                _dragPositions[member.Id] = (member.X, member.Y);
             }
         }
 
@@ -954,6 +1095,30 @@ public sealed class NodeGraphWindow : Window
 
         var node = _selected;
 
+        if (node.Kind == GraphNodeKind.Group)
+        {
+            _inspector.Children.Add(Label("Título del grupo"));
+            _inspector.Children.Add(TextInput(node.Message, value => { node.Message = value; MarkChanged(); }));
+            _inspector.Children.Add(Label("Ancho"));
+            _inspector.Children.Add(Number(node.GroupWidth, 80, value => { node.GroupWidth = (float)value; MarkChanged(); Render(); }));
+            _inspector.Children.Add(Label("Alto"));
+            _inspector.Children.Add(Number(node.GroupHeight, 60, value => { node.GroupHeight = (float)value; MarkChanged(); Render(); }));
+            _inspector.Children.Add(DeleteButton(node));
+            _inspector.Children.Add(BreakpointButton(node));
+            AddValidationPanel();
+            return;
+        }
+
+        if (node.Kind == GraphNodeKind.Comment)
+        {
+            _inspector.Children.Add(Label("Comentario"));
+            _inspector.Children.Add(TextInput(node.Message, value => { node.Message = value; MarkChanged(); }));
+            _inspector.Children.Add(DeleteButton(node));
+            _inspector.Children.Add(BreakpointButton(node));
+            AddValidationPanel();
+            return;
+        }
+
         if (node.Kind == GraphNodeKind.Event)
         {
             _inspector.Children.Add(Label("Evento"));
@@ -1056,7 +1221,35 @@ public sealed class NodeGraphWindow : Window
             Render();
         };
         _inspector.Children.Add(delete);
+        _inspector.Children.Add(BreakpointButton(node));
         AddValidationPanel();
+    }
+
+    private Button DeleteButton(GraphNode node)
+    {
+        var button = new Button { Content = "Eliminar nodo", HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 12, 0, 0) };
+        button.Click += (_, _) =>
+        {
+            _graph.RemoveNode(node.Id);
+            _selected = null;
+            _selectedIds.Clear();
+            MarkChanged();
+            Render();
+        };
+        return button;
+    }
+
+    private Button BreakpointButton(GraphNode node)
+    {
+        var active = _graph.Breakpoints.Contains(node.Id);
+        var button = new Button
+        {
+            Content = active ? "Quitar breakpoint" : "Poner breakpoint",
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            Margin = new Thickness(0, 6, 0, 0),
+        };
+        button.Click += (_, _) => ToggleBreakpoint(node);
+        return button;
     }
 
     private static TextBlock Label(string text) => new()
@@ -1118,11 +1311,18 @@ public sealed class NodeGraphWindow : Window
     {
         GraphNodeKind.Event => "EVENTO",
         GraphNodeKind.Condition => "CONDICIÓN",
+        GraphNodeKind.Comment => "COMENTARIO",
+        GraphNodeKind.Group => "GRUPO",
         _ => "ACCIÓN",
     };
 
     private static string NodeSummary(GraphNode node)
     {
+        if (node.Kind is GraphNodeKind.Comment or GraphNodeKind.Group)
+        {
+            return node.Message;
+        }
+
         if (node.Kind == GraphNodeKind.Event)
         {
             return node.Event switch

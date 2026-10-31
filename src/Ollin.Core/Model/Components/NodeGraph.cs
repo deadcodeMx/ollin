@@ -10,6 +10,8 @@ public enum GraphNodeKind
     Event,
     Condition,
     Action,
+    Comment,
+    Group,
 }
 
 public enum GraphEventKind
@@ -56,6 +58,10 @@ public sealed class GraphNode
 
     public string Expression { get; set; } = "1";
 
+    public float GroupWidth { get; set; } = 280f;
+
+    public float GroupHeight { get; set; } = 160f;
+
     public float Radius { get; set; } = 2.5f;
 
     public float Interval { get; set; } = 3f;
@@ -100,6 +106,8 @@ public sealed class GraphNode
         Amount = Amount,
         Threshold = Threshold,
         Once = Once,
+        GroupWidth = GroupWidth,
+        GroupHeight = GroupHeight,
     };
 }
 
@@ -110,6 +118,12 @@ public sealed class GraphNode
 public sealed class NodeGraph : Component, ITickable
 {
     public List<GraphNode> Nodes { get; set; } = new();
+
+    [JsonIgnore]
+    public NodeGraphHistory History { get; } = new();
+
+    [JsonIgnore]
+    public HashSet<Guid> Breakpoints { get; } = new();
 
     [JsonIgnore]
     public Guid? LastNodeId { get; private set; }
@@ -204,7 +218,7 @@ public sealed class NodeGraph : Component, ITickable
                 node.Done = true;
             }
 
-            RecordExecution(node.Id);
+            if (RecordExecution(node.Id)) return;
             Execute(scene, player, node.Next);
         }
     }
@@ -223,7 +237,7 @@ public sealed class NodeGraph : Component, ITickable
                 return;
             }
 
-            RecordExecution(node.Id);
+            if (RecordExecution(node.Id)) return;
 
             if (node.Kind == GraphNodeKind.Condition)
             {
@@ -267,7 +281,7 @@ public sealed class NodeGraph : Component, ITickable
         };
     }
 
-    private void RecordExecution(Guid nodeId)
+    private bool RecordExecution(Guid nodeId)
     {
         LastNodeId = nodeId;
         ExecutionHistory.Add(nodeId);
@@ -276,6 +290,8 @@ public sealed class NodeGraph : Component, ITickable
         {
             ExecutionHistory.RemoveAt(0);
         }
+
+        return GraphDebugger.Raise(this, nodeId);
     }
 
     private static void ApplyVariable(GraphNode node, Entity? player)

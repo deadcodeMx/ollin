@@ -1,28 +1,25 @@
-## Ollin 0.37.0 beta — pulido del editor de grafo
+## Ollin 0.38.0 beta — historial persistente, grupos y breakpoints
 
 ### Incluye
 
-- **Zoom centrado en el cursor** y **paneo con botón central**.
-- **Validación semántica** de variables y funciones.
-- **Historial de ejecución** de los últimos 24 nodos.
-- **Búsqueda** de nodos y **auto-layout**.
-- **Pointer lock suspendido** al activar el grafo durante la partida.
-- **191 pruebas automatizadas**.
+- **Historial persistente** del grafo entre cierres.
+- **Sincronización** con cambios externos de la escena.
+- **Comentarios** y **grupos visuales** arrastrables.
+- **Breakpoints** que pausan la partida al alcanzar un nodo.
+- **194 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 0.37.0 y abre el demo.
-2. Abre **Guía → Grafo**.
-3. Usa Ctrl+rueda sobre un nodo: el zoom debe acercarse a ese punto.
-4. Arrastra con el botón central para paneo.
-5. Prueba **Buscar nodo** y **Ordenar**.
-6. Escribe `foo(1)` o una variable no definida y revisa VALIDACIÓN.
-7. Reproduce y activa la ventana del grafo: el cursor debe quedar libre.
+1. Instala 0.38.0 y abre el demo.
+2. Abre **Guía → Grafo**, mueve/edita nodos y cierra la ventana.
+3. Vuelve a abrir el grafo: el historial debe conservarse.
+4. Añade un **Comentario** o un **Grupo** y arrástralo.
+5. Pon un **breakpoint** en una acción, reproduce y comprueba que la partida se pausa.
 
 ### Limitaciones
 
-- La validación semántica no conoce variables escritas por componentes/scripts.
-- El historial de ejecución es en memoria (24 nodos) y no tiene breakpoints ni paso a paso.
-- No hay grupos/comentarios de nodos.
-- El auto-layout es BFS simple y puede solapar ramas.
-- La búsqueda resalta, no filtra ni salta al nodo.
+- El historial se guarda por escena/entidad; si cambia la ruta de la escena, se pierde.
+- El historial no se limpia automáticamente y no está versionado.
+- Los grupos son visuales: no hay plegado, anidación ni pertenencia persistente.
+- No hay **paso a paso** ni inspección de variables por nodo; solo breakpoints.
+- La sincronización externa se sondea cada 120 ms.

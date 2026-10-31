@@ -809,3 +809,13 @@ deben recordar que el padre se suma al renderizar.
 Variables como `enemigos_muertos`, escritas por componentes (por ejemplo `Health`),
 pueden aparecer como “Variable no definida” si el grafo no las asigna; es un aviso, no un
 error de sintaxis.
+
+## 35. Grafo persistente, grupos y breakpoints (0.38)
+
+- **Historial persistente**: se guarda en `%LOCALAPPDATA%\Ollin\graph-history` y sobrevive
+  al cierre de la ventana y de la aplicación.
+- **Sincronización externa**: la ventana detecta cambios de la escena y recarga el grafo.
+- **Comentarios**: nodos de texto que no se ejecutan.
+- **Grupos visuales**: caja arrastrable; al mover el grupo se mueven los nodos contenidos.
+- **Breakpoints**: botón en el inspector; al ejecutarse el nodo, la partida se pausa.
+- El pointer lock se libera mientras el grafo está activo.

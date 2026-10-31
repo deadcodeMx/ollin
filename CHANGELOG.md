@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.38.0] — 2026-10-31
+
+### Añadido
+
+- Historial del grafo persistente en `%LOCALAPPDATA%\Ollin\graph-history`.
+- Sincronización de la ventana con cambios externos de escena.
+- Nodos de **comentario** y **grupo visual** (mueve nodos contenidos).
+- **Breakpoints** que pausan la partida.
+- 3 pruebas nuevas: 194 en total.
+
 ## [0.37.0] — 2026-10-31
 
 ### Añadido

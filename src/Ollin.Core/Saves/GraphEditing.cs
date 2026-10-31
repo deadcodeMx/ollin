@@ -28,6 +28,8 @@ public static class GraphEditing
         Amount = node.Amount,
         Threshold = node.Threshold,
         Once = node.Once,
+        GroupWidth = node.GroupWidth,
+        GroupHeight = node.GroupHeight,
         Next = keepLinks ? node.Next : null,
         TrueNext = keepLinks ? node.TrueNext : null,
         FalseNext = keepLinks ? node.FalseNext : null,
@@ -58,6 +60,10 @@ public sealed class NodeGraphHistory
 {
     private readonly Stack<GraphSnapshot> _undo = new();
     private readonly Stack<GraphSnapshot> _redo = new();
+
+    public IReadOnlyList<GraphSnapshot> UndoSnapshots => _undo.ToList();
+
+    public IReadOnlyList<GraphSnapshot> RedoSnapshots => _redo.ToList();
 
     public bool CanUndo => _undo.Count > 0;
 
@@ -105,6 +111,14 @@ public sealed class NodeGraphHistory
         return true;
     }
 
+    public void Replace(IEnumerable<GraphSnapshot> undo, IEnumerable<GraphSnapshot> redo)
+    {
+        _undo.Clear();
+        _redo.Clear();
+        foreach (var snapshot in undo.Reverse()) _undo.Push(snapshot);
+        foreach (var snapshot in redo.Reverse()) _redo.Push(snapshot);
+    }
+
     public void Clear()
     {
         _undo.Clear();
@@ -140,6 +154,11 @@ public static class GraphValidator
 
         foreach (var node in graph.Nodes)
         {
+            if (node.Kind is GraphNodeKind.Comment or GraphNodeKind.Group)
+            {
+                continue;
+            }
+
             if (node.Next is { } next) incoming.Add(next);
             if (node.TrueNext is { } yes) incoming.Add(yes);
             if (node.FalseNext is { } no) incoming.Add(no);
@@ -208,7 +227,7 @@ public static class GraphValidator
             }
         }
 
-        foreach (var node in graph.Nodes.Where(node => node.Kind != GraphNodeKind.Event && !incoming.Contains(node.Id)))
+        foreach (var node in graph.Nodes.Where(node => node.Kind is not (GraphNodeKind.Event or GraphNodeKind.Comment or GraphNodeKind.Group) && !incoming.Contains(node.Id)))
         {
             issues.Add(new GraphIssue(node, "Nodo sin conexión de entrada.", false));
         }
