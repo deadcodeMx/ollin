@@ -35,6 +35,9 @@ public sealed class PlayerWindow : Window
     private CheckBox? _fullscreenCheck;
     private StackPanel? _optionsPanel;
     private StackPanel? _mainPanel;
+    private ComboBox? _slotCombo;
+    private int _saveSlot = 1;
+    private DispatcherTimer? _autosaveTimer;
 
     public PlayerWindow(LoadedGame game)
     {
@@ -203,6 +206,9 @@ public sealed class PlayerWindow : Window
         _viewModel.StartPlayback();
         Activate();
         _surface.Focus();
+        _autosaveTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(45) };
+        _autosaveTimer.Tick += (_, _) => Autosave();
+        _autosaveTimer.Start();
     }
 
     private Grid BuildPauseOverlay()
@@ -240,6 +246,19 @@ public sealed class PlayerWindow : Window
 
         _mainPanel = new StackPanel { Spacing = 8 };
         _mainPanel.Children.Add(MakeButton("Continuar", () => SetPaused(false)));
+        _slotCombo = new ComboBox
+        {
+            ItemsSource = new[] { "Ranura 1", "Ranura 2", "Ranura 3" },
+            SelectedIndex = 0,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            FontSize = 12,
+        };
+        _slotCombo.SelectionChanged += (_, _) =>
+        {
+            _saveSlot = Math.Clamp(_slotCombo.SelectedIndex + 1, 1, 3);
+            if (_saveStatus is not null) _saveStatus.Text = $"Ranura {_saveSlot} seleccionada";
+        };
+        _mainPanel.Children.Add(_slotCombo);
         _mainPanel.Children.Add(MakeButton("Guardar partida", SaveToFile));
         _mainPanel.Children.Add(MakeButton("Cargar partida", LoadFromFile));
         _mainPanel.Children.Add(MakeButton("Opciones", () =>
@@ -357,7 +376,7 @@ public sealed class PlayerWindow : Window
                 "Ollin",
                 "Saves");
             var name = string.Concat(_manifest.ProjectName.Where(char.IsLetterOrDigit));
-            return Path.Combine(folder, $"{(name.Length == 0 ? "juego" : name)}.json");
+            return Path.Combine(folder, $"{(name.Length == 0 ? "juego" : name)}-slot{_saveSlot}.json");
         }
     }
 
@@ -366,6 +385,37 @@ public sealed class PlayerWindow : Window
         "Ollin",
         "player-settings.json");
 
+    private string AutosavePath
+    {
+        get
+        {
+            var folder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Ollin",
+                "Saves");
+            var name = string.Concat(_manifest.ProjectName.Where(char.IsLetterOrDigit));
+            return Path.Combine(folder, $"{(name.Length == 0 ? "juego" : name)}-slot{_saveSlot}-auto.json");
+        }
+    }
+
+    private void Autosave()
+    {
+        if (!_started || _paused || !_viewModel.IsPlaying)
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(AutosavePath) ?? ".");
+            _viewModel.SaveGameTo(AutosavePath);
+            Ollin.Core.Hud.HudHost.ShowMessage("Autoguardado", 1.5f);
+        }
+        catch
+        {
+            // El autoguardado no debe interrumpir la partida.
+        }
+    }
     private void SaveToFile()
     {
         Directory.CreateDirectory(Path.GetDirectoryName(SavePath) ?? ".");

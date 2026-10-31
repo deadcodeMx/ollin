@@ -100,6 +100,7 @@
           <Button Classes="tool" Content="Suelo" Click="OnBrushFloor" ToolTip.Tip="Pincel: colocar suelo 3D" />
           <ToggleButton Classes="tool" Content="Imán" Click="OnSnapToggle" ToolTip.Tip="Ajustar a la rejilla" />
           <Button Classes="tool" Content="Serie x4" Click="OnDuplicateSeries" ToolTip.Tip="Duplicar la selección 4 veces en fila" />
+          <Button Classes="tool" Content="Grafo" Click="OnOpenGraph" ToolTip.Tip="Abrir el grafo de nodos de la entidad seleccionada" />
           <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
           <Button Classes="tool accent" Content="▶  Reproducir" Click="OnPlay"
                   IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
@@ -185,6 +186,7 @@
                               <MenuItem Header="Peligro 3D" Tag="hazard3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Teletransporte" Tag="teleporter3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Seguidor 3D" Tag="follower3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Grafo de nodos" Tag="nodegraph" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Script" Tag="script" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Rotador" Tag="rotator" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Oscilador" Tag="oscillator" Click="OnRemoveComponentFromMenu" />
@@ -503,6 +505,7 @@
                             <MenuItem Header="Peligro 3D" Click="OnAddHazard3D" />
                             <MenuItem Header="Teletransporte" Click="OnAddTeleporter3D" />
                             <MenuItem Header="Seguidor 3D" Click="OnAddFollower3D" />
+                            <MenuItem Header="Grafo de nodos" Click="OnAddNodeGraph" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                             <MenuItem Header="Script" Click="OnAddScriptComponent" />
@@ -947,6 +950,7 @@
                 <ScrollViewer>
                   <StackPanel Margin="8" Spacing="5">
                     <TextBlock Classes="section" Text="ARMA FPS" />
+                    <Button Content="Añadir arma a la ranura libre" Click="OnAddWeaponSlot" FontSize="11" HorizontalAlignment="Stretch" />
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Daño" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponDamage, Mode=TwoWay}" Increment="5" Minimum="0.1" FormatString="0.##" />
@@ -969,7 +973,7 @@
                     </Grid>
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Ranura" VerticalAlignment="Center" Classes="hint" />
-                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponSlot, Mode=TwoWay}" Increment="1" Minimum="1" Maximum="3" FormatString="0" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponSlotIndex, Mode=TwoWay}" Increment="1" Minimum="1" Maximum="3" FormatString="0" />
                     </Grid>
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Cargador" VerticalAlignment="Center" Classes="hint" />
@@ -1270,7 +1274,11 @@
                       <TextBlock Text="Separación" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding SeriesSpacing, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" />
                     </Grid>
-                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Usa Pared/Suelo en la barra y haz clic en el viewport. Serie x4 usa estos valores." />
+                    <TextBlock Text="Textura pared" Classes="hint" Margin="0,5,0,0" />
+                    <ComboBox ItemsSource="{Binding BrushTextures}" SelectedItem="{Binding BrushTexture, Mode=TwoWay}" HorizontalAlignment="Stretch" FontSize="11" />
+                    <TextBlock Text="Textura suelo" Classes="hint" Margin="0,5,0,0" />
+                    <ComboBox ItemsSource="{Binding BrushTextures}" SelectedItem="{Binding BrushFloorTexture, Mode=TwoWay}" HorizontalAlignment="Stretch" FontSize="11" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Usa Pared/Suelo en la barra y haz clic en el viewport. La caja verde es la vista previa; Serie x4 usa estos valores." />
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>

@@ -1,0 +1,263 @@
+using System.Text.Json.Serialization;
+using Ollin.Core.Input;
+
+namespace Ollin.Core.Model.Components;
+
+public enum GraphNodeKind
+{
+    Event,
+    Condition,
+    Action,
+}
+
+public enum GraphEventKind
+{
+    OnStart,
+    OnTimer,
+    OnPlayerEnter,
+    OnInteract,
+    OnPlayerDeath,
+}
+
+public enum GraphConditionKind
+{
+    Always,
+    HasItem,
+    HealthBelow,
+}
+
+/// <summary>Nodo de un grafo visual de ejecución.</summary>
+public sealed class GraphNode
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    public GraphNodeKind Kind { get; set; } = GraphNodeKind.Action;
+
+    public GraphEventKind Event { get; set; } = GraphEventKind.OnStart;
+
+    public GraphConditionKind Condition { get; set; } = GraphConditionKind.Always;
+
+    public ActionKind Action { get; set; } = ActionKind.Message;
+
+    public float X { get; set; }
+
+    public float Y { get; set; }
+
+    public string TargetName { get; set; } = string.Empty;
+
+    public string Message { get; set; } = "¡Hola!";
+
+    public string ItemId { get; set; } = "llave";
+
+    public float Radius { get; set; } = 2.5f;
+
+    public float Interval { get; set; } = 3f;
+
+    public float Amount { get; set; } = 20f;
+
+    public float Threshold { get; set; } = 50f;
+
+    public bool Once { get; set; } = true;
+
+    public Guid? Next { get; set; }
+
+    public Guid? TrueNext { get; set; }
+
+    public Guid? FalseNext { get; set; }
+
+    [JsonIgnore]
+    internal bool Done { get; set; }
+
+    [JsonIgnore]
+    internal bool Inside { get; set; }
+
+    [JsonIgnore]
+    internal float Timer { get; set; }
+
+    public GraphNode Clone() => new()
+    {
+        Id = Guid.NewGuid(),
+        Kind = Kind,
+        Event = Event,
+        Condition = Condition,
+        Action = Action,
+        X = X + 30f,
+        Y = Y + 30f,
+        TargetName = TargetName,
+        Message = Message,
+        ItemId = ItemId,
+        Radius = Radius,
+        Interval = Interval,
+        Amount = Amount,
+        Threshold = Threshold,
+        Once = Once,
+    };
+}
+
+/// <summary>
+/// Grafo visual ilimitado: eventos que inician una cadena de condiciones y acciones.
+/// Se edita en el editor de nodos y se ejecuta en el runtime sin código.
+/// </summary>
+public sealed class NodeGraph : Component, ITickable
+{
+    public List<GraphNode> Nodes { get; set; } = new();
+
+    public GraphNode AddNode(GraphNodeKind kind, float x, float y)
+    {
+        var node = new GraphNode { Kind = kind, X = x, Y = y };
+        Nodes.Add(node);
+        return node;
+    }
+
+    public GraphNode? Find(Guid? id) => id is null ? null : Nodes.FirstOrDefault(node => node.Id == id);
+
+    public void RemoveNode(Guid id)
+    {
+        Nodes.RemoveAll(node => node.Id == id);
+
+        foreach (var node in Nodes)
+        {
+            if (node.Next == id) node.Next = null;
+            if (node.TrueNext == id) node.TrueNext = null;
+            if (node.FalseNext == id) node.FalseNext = null;
+        }
+    }
+
+    public void OnUpdate(float deltaTime)
+    {
+        if (Owner?.Scene is not { } scene)
+        {
+            return;
+        }
+
+        var player = ActionExecutor.FindPlayer(scene);
+
+        foreach (var node in Nodes.ToList())
+        {
+            if (node.Kind != GraphNodeKind.Event || (node.Done && (node.Once || node.Event == GraphEventKind.OnStart)))
+            {
+                continue;
+            }
+
+            var fire = false;
+
+            switch (node.Event)
+            {
+                case GraphEventKind.OnStart:
+                    fire = true;
+                    node.Done = true;
+                    break;
+
+                case GraphEventKind.OnTimer:
+                    node.Timer -= deltaTime;
+
+                    if (node.Timer <= 0f)
+                    {
+                        node.Timer = MathF.Max(0.25f, node.Interval);
+                        fire = true;
+                    }
+                    break;
+
+                case GraphEventKind.OnPlayerEnter:
+                {
+                    var inside = player is not null &&
+                                 System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position) <= node.Radius;
+
+                    if (inside && !node.Inside) fire = true;
+                    node.Inside = inside;
+                    break;
+                }
+
+                case GraphEventKind.OnInteract:
+                    fire = player is not null &&
+                           System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position) <= node.Radius &&
+                           InputState.WasKeyPressed(KeyCode.E);
+                    break;
+
+                case GraphEventKind.OnPlayerDeath:
+                    fire = player?.GetComponent<Health>() is { IsDead: true };
+                    break;
+            }
+
+            if (!fire)
+            {
+                continue;
+            }
+
+            if (node.Once)
+            {
+                node.Done = true;
+            }
+
+            Execute(scene, player, node.Next);
+        }
+    }
+
+    private void Execute(Scenes.Scene scene, Entity? player, Guid? start)
+    {
+        var current = start;
+        var steps = 0;
+
+        while (current is not null && steps++ < 128)
+        {
+            var node = Find(current);
+
+            if (node is null)
+            {
+                return;
+            }
+
+            if (node.Kind == GraphNodeKind.Condition)
+            {
+                current = ConditionMet(node, player) ? node.TrueNext : node.FalseNext;
+                continue;
+            }
+
+            if (node.Kind == GraphNodeKind.Action)
+            {
+                ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount);
+            }
+
+            current = node.Next;
+        }
+    }
+
+    private static bool ConditionMet(GraphNode node, Entity? player)
+    {
+        if (player is null)
+        {
+            return node.Condition == GraphConditionKind.Always;
+        }
+
+        return node.Condition switch
+        {
+            GraphConditionKind.HasItem => player.GetComponent<Inventory>()?.Has(node.ItemId, 1) == true,
+            GraphConditionKind.HealthBelow => player.GetComponent<Health>() is { } health && health.Current <= node.Threshold,
+            _ => true,
+        };
+    }
+
+    public override Component CloneFor(Entity newOwner)
+    {
+        var copy = new NodeGraph { Owner = newOwner };
+        var map = new Dictionary<Guid, Guid>();
+
+        foreach (var node in Nodes)
+        {
+            var clone = node.Clone();
+            map[node.Id] = clone.Id;
+            copy.Nodes.Add(clone);
+        }
+
+        for (var i = 0; i < Nodes.Count; i++)
+        {
+            var source = Nodes[i];
+            var clone = copy.Nodes[i];
+            clone.Next = source.Next is { } next && map.TryGetValue(next, out var mapped) ? mapped : null;
+            clone.TrueNext = source.TrueNext is { } t && map.TryGetValue(t, out var tm) ? tm : null;
+            clone.FalseNext = source.FalseNext is { } f && map.TryGetValue(f, out var fm) ? fm : null;
+        }
+
+        return copy;
+    }
+}

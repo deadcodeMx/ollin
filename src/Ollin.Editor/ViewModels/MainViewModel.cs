@@ -302,6 +302,17 @@ public sealed partial class MainViewModel : ObservableObject
 
     public float SeriesSpacing { get; set; } = 0.2f;
 
+    public string BrushTexture { get; set; } = "assets/textures/wall.png";
+
+    public string BrushFloorTexture { get; set; } = "assets/textures/floor.png";
+
+    public IReadOnlyList<string> BrushTextures { get; } = new[]
+    {
+        "assets/textures/wall.png",
+        "assets/textures/floor.png",
+        "assets/textures/ceiling.png",
+    };
+
     public string ProjectRoot
     {
         get => _projectRoot;
@@ -1110,7 +1121,7 @@ public sealed partial class MainViewModel : ObservableObject
             Color = floor ? new Vector3(0.3f, 0.27f, 0.22f) : new Vector3(0.58f, 0.55f, 0.5f),
             Collides = !floor,
             BaseY = 0f,
-            TexturePath = floor ? "assets/textures/floor.png" : "assets/textures/wall.png",
+            TexturePath = floor ? BrushFloorTexture : BrushTexture,
             TextureScale = 2f,
         });
 
@@ -1156,6 +1167,41 @@ public sealed partial class MainViewModel : ObservableObject
         IsDirty = true;
         CommitEdit($"Duplicar serie x{count}");
         OnPropertyChanged(nameof(EntityCountText));
+        RequestRedraw();
+    }
+
+    /// <summary>Añade otra arma a la entidad seleccionada, en la siguiente ranura libre.</summary>
+    public void AddWeaponToSelected()
+    {
+        if (IsPlaying || Selected is null)
+        {
+            return;
+        }
+
+        var entity = Selected.Entity;
+        var weapons = entity.Components.OfType<Weapon>().ToList();
+        var slot = Enumerable.Range(1, 3).FirstOrDefault(value => weapons.All(weapon => weapon.Slot != value));
+
+        if (slot == 0)
+        {
+            StatusMessage = "Ya hay tres armas en esta entidad";
+            return;
+        }
+
+        var weapon = new Weapon
+        {
+            Name = slot == 1 ? "Pistola" : slot == 2 ? "Escopeta" : "Rifle",
+            Slot = slot,
+            Ammo = 12,
+            MagazineSize = 12,
+            ReserveAmmo = 48,
+        };
+        entity.AddComponent(weapon);
+        RebuildTree();
+        Selected = FindNode(entity.Id);
+        Selected!.WeaponSlotIndex = slot;
+        IsDirty = true;
+        CommitEdit("Añadir arma");
         RequestRedraw();
     }
 

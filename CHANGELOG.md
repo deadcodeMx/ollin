@@ -17,6 +17,23 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.29.1] — 2026-10-31
+
+### Corregido
+
+- El evento «al iniciar» del grafo de nodos y del script visual se ejecuta una sola vez,
+  aunque la regla esté marcada como repetible.
+
+## [0.29.0] — 2026-10-31
+
+### Añadido
+
+- **Grafo de nodos ilimitado** con editor de canvas, conexiones, condiciones y ramas.
+- **Vista previa del pincel** 3D y selección de textura/tamaño con el ratón.
+- **Editor de armas por ranuras** con selector 1/2/3 y botón para añadir armas.
+- **Tres ranuras de guardado** y **autoguardado cada 45 s** en el juego exportado.
+- 2 pruebas nuevas: 152 en total.
+
 ## [0.28.0] — 2026-10-31
 
 ### Añadido

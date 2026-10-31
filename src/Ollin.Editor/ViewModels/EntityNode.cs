@@ -2087,7 +2087,31 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasWeapon => Entity.GetComponent<Weapon>() is not null;
 
-    public Weapon? WeaponState => Entity.GetComponent<Weapon>();
+    private int _weaponSlotIndex = 1;
+
+    public int WeaponSlotIndex
+    {
+        get => _weaponSlotIndex;
+        set
+        {
+            _weaponSlotIndex = Math.Clamp(value, 1, 3);
+            OnPropertyChanged();
+            foreach (var name in new[]
+            {
+                nameof(WeaponState), nameof(WeaponName), nameof(WeaponDamage), nameof(WeaponRange),
+                nameof(WeaponCooldown), nameof(WeaponAmmo), nameof(WeaponAutomatic), nameof(WeaponSlot),
+                nameof(WeaponMagazine), nameof(WeaponReserve), nameof(WeaponReload),
+                nameof(WeaponProjectile), nameof(WeaponProjectileSpeed),
+            })
+            {
+                OnPropertyChanged(name);
+            }
+        }
+    }
+
+    public Weapon? WeaponState =>
+        Entity.Components.OfType<Weapon>().FirstOrDefault(weapon => weapon.Slot == WeaponSlotIndex)
+        ?? Entity.GetComponent<Weapon>();
 
     public decimal WeaponDamage
     {

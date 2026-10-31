@@ -110,7 +110,7 @@ public sealed class VisualScript : Component, ITickable
         {
             var rule = Rules[index];
 
-            if (rule.Once && rule.Done)
+            if (rule.Done && (rule.Once || rule.Event == ScriptEvent.OnStart))
             {
                 continue;
             }
@@ -126,6 +126,7 @@ public sealed class VisualScript : Component, ITickable
             {
                 case ScriptEvent.OnStart:
                     fire = true;
+                    rule.Done = true;
                     break;
 
                 case ScriptEvent.OnTimer:

@@ -151,6 +151,10 @@ principio a fin.
 - [x] Botones, triggers, generadores y checkpoints.
 - [x] Script visual por reglas (evento, condición, acción).
 - [x] Peligro, teletransporte y seguidor 3D.
+- [x] Grafo de nodos visual ilimitado.
+- [x] Vista previa del pincel y texturas con el ratón.
+- [x] Editor de armas por ranuras.
+- [x] Guardado por ranuras y autoguardado.
 - [x] Audio posicional básico (atenuación por distancia).
 
 **Por qué:** permite hacer juegos con estética retro estilo PS1/Doom con el renderer y el flujo actuales, y

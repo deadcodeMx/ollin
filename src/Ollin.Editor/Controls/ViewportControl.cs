@@ -61,7 +61,63 @@ public sealed class ViewportControl : OpenGlControlBase
 
     public Gizmo3DMode Gizmo3DMode { get; set; } = Gizmo3DMode.Move;
 
-    public Brush3DMode Brush3DMode { get; set; } = Brush3DMode.None;
+    private Brush3DMode _brush3DMode;
+
+    public Brush3DMode Brush3DMode
+    {
+        get => _brush3DMode;
+        set
+        {
+            _brush3DMode = value;
+            BrushPreview = null;
+            RequestNextFrameRendering();
+        }
+    }
+
+    public BrushPreview3D? BrushPreview { get; set; }
+
+    /// <summary>Actualiza la caja fantasma que sigue al puntero con el pincel activo.</summary>
+    public void UpdateBrushPreview(Avalonia.Point position)
+    {
+        if (_viewModel is null || _viewModel.IsPlaying || _viewModel.ActiveCamera3D is not { } camera ||
+            Brush3DMode == Brush3DMode.None)
+        {
+            BrushPreview = null;
+            RequestNextFrameRendering();
+            return;
+        }
+
+        var (width, height, scaling) = GetPixelSizeWithScaling();
+        var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
+
+        if (!RayPlane(camera.Eye, camera.RayDirection(screen, width, height), 0f, out var point))
+        {
+            BrushPreview = null;
+            RequestNextFrameRendering();
+            return;
+        }
+
+        var step = MathF.Max(0.1f, SnapStep);
+        var x = MathF.Round(point.X / step) * step;
+        var z = MathF.Round(point.Z / step) * step;
+
+        if (Brush3DMode == Brush3DMode.Floor)
+        {
+            var size = MathF.Max(0.5f, _viewModel.BrushFloorSize);
+            BrushPreview = new BrushPreview3D(new Vector3(x, 0.04f, z), new Vector3(size, 0.08f, size));
+        }
+        else
+        {
+            var wallWidth = MathF.Max(0.2f, _viewModel.BrushWidth);
+            var wallHeight = MathF.Max(0.2f, _viewModel.BrushHeight);
+            var wallDepth = MathF.Max(0.1f, _viewModel.BrushDepth);
+            BrushPreview = new BrushPreview3D(
+                new Vector3(x, wallHeight * 0.5f, z),
+                new Vector3(wallWidth, wallHeight, wallDepth));
+        }
+
+        RequestNextFrameRendering();
+    }
 
     public bool Snap3D { get; set; }
 
@@ -232,7 +288,7 @@ public sealed class ViewportControl : OpenGlControlBase
 
             if (_viewModel.ActiveCamera3D is { } camera3D)
             {
-                _renderer.RenderFrame3D(_viewModel.Scene, camera3D, width, height, _viewModel.IsPlaying ? null : _viewModel.Selected?.Id, Gizmo3DMode);
+                _renderer.RenderFrame3D(_viewModel.Scene, camera3D, width, height, _viewModel.IsPlaying ? null : _viewModel.Selected?.Id, Gizmo3DMode, _viewModel.IsPlaying ? null : BrushPreview);
             }
             else
             {

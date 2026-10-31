@@ -44,6 +44,7 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.Hazard3D), "hazard3d")]
 [JsonDerivedType(typeof(Components.Teleporter3D), "teleporter3d")]
 [JsonDerivedType(typeof(Components.Follower3D), "follower3d")]
+[JsonDerivedType(typeof(Components.NodeGraph), "nodegraph")]
 public abstract class Component
 {
     /// <summary>Entidad propietaria (no se serializa).</summary>

@@ -594,3 +594,39 @@ falta escribir código.
 La pestaña **Nivel** define ancho, alto, fondo del pincel, tamaño del suelo y los valores
 de **Serie x4** (cantidad y separación). Las herramientas **Pared**, **Suelo**, **Imán** y
 **Serie x4** están en la barra superior.
+
+## 25. Grafo de nodos, pincel visual, armas y guardado (0.29)
+
+### Grafo de nodos ilimitado
+Selecciona una entidad y pulsa **Grafo** en la barra (o añade **Grafo de nodos**).
+El editor tiene:
+
+- Paleta con eventos, condiciones y acciones.
+- Canvas con nodos arrastrables y conexiones.
+- **Conectar →** en una salida y luego clic en el encabezado del nodo destino.
+- Condiciones con ramas **Sí** y **No**.
+- Panel derecho para editar el nodo seleccionado y eliminarlo.
+
+Nodos disponibles: inicio, temporizador, entrar, pulsar E, muerte; condiciones de objeto
+o vida; y todas las acciones (mensaje, puerta, activar, generar, checkpoint, ganar, dañar,
+curar, teletransportar). No hay límite de nodos.
+
+### Pincel con vista previa
+La pestaña **Nivel** permite elegir:
+
+- Ancho, alto, fondo y tamaño de suelo.
+- **Textura de pared** y **textura de suelo** con el ratón.
+- Cantidad y separación de la serie.
+
+Al activar **Pared** o **Suelo**, una caja verde sigue al puntero y muestra exactamente
+dónde se colocará.
+
+### Editor de armas por ranuras
+La pestaña **Arma** tiene un selector de **ranura 1/2/3**. Cada ranura se edita por
+separado (nombre, daño, cargador, reserva, recarga, proyectil). El botón **Añadir arma**
+crea la siguiente ranura libre. En el juego, **1/2/3** cambia de arma.
+
+### Guardado por ranuras y autoguardado
+En la pausa del juego exportado hay **tres ranuras** de guardado/carga y un
+**autoguardado cada 45 s**. Los archivos van a `%APPDATA%\Ollin\Saves` con el nombre del
+juego y la ranura.

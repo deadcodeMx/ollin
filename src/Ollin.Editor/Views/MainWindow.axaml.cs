@@ -875,6 +875,8 @@ public partial class MainWindow : Window
 
     private void OnAddWeapon(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "weapon");
 
+    private void OnAddWeaponSlot(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AddWeaponToSelected();
+
     private void OnAddPickup(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "pickup");
 
     private void OnAddDoor(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "door");
@@ -900,6 +902,20 @@ public partial class MainWindow : Window
     private void OnAddTeleporter3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "teleporter3d");
 
     private void OnAddFollower3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "follower3d");
+
+    private void OnAddNodeGraph(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "nodegraph");
+
+    private void OnOpenGraph(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected is not { } selected) return;
+        var entity = selected.Entity;
+        if (entity.GetComponent<Ollin.Core.Model.Components.NodeGraph>() is null)
+        {
+            entity.AddComponent(new Ollin.Core.Model.Components.NodeGraph());
+            ViewModel.MarkDirty("grafo");
+        }
+        new NodeGraphWindow(ViewModel, entity).ShowDialog(this);
+    }
 
     private void OnRemoveComponentFromMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {

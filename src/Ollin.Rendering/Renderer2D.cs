@@ -395,7 +395,7 @@ public sealed class Renderer2D : IDisposable
     /// Frame del puente 2.5D: cámara en perspectiva, paredes de caja y sprites
     /// billboard ordenados de lejos a cerca (pintor). Sin búfer de profundidad.
     /// </summary>
-    public void RenderFrame3D(Scene scene, Camera3D camera, int width, int height, Guid? selectedEntityId = null, Gizmo3DMode gizmoMode = Gizmo3DMode.Move)
+    public void RenderFrame3D(Scene scene, Camera3D camera, int width, int height, Guid? selectedEntityId = null, Gizmo3DMode gizmoMode = Gizmo3DMode.Move, BrushPreview3D? brushPreview = null)
     {
         if (width <= 0 || height <= 0)
         {
@@ -440,7 +440,54 @@ public sealed class Renderer2D : IDisposable
             DrawGizmo3D(scene, camera, selected, width, height, gizmoMode);
         }
 
+        if (brushPreview is { } preview)
+        {
+            DrawBrushPreview3D(camera, preview, width, height);
+        }
+
         _batch.End();
+    }
+
+    private void DrawBrushPreview3D(Camera3D camera, BrushPreview3D preview, int width, int height)
+    {
+        var half = preview.Size * 0.5f;
+        var center = preview.Center;
+        var corners = new[]
+        {
+            center + new Vector3(-half.X, -half.Y, -half.Z),
+            center + new Vector3(half.X, -half.Y, -half.Z),
+            center + new Vector3(half.X, -half.Y, half.Z),
+            center + new Vector3(-half.X, -half.Y, half.Z),
+            center + new Vector3(-half.X, half.Y, -half.Z),
+            center + new Vector3(half.X, half.Y, -half.Z),
+            center + new Vector3(half.X, half.Y, half.Z),
+            center + new Vector3(-half.X, half.Y, half.Z),
+        };
+
+        var screen = new Vector2[8];
+        var ok = new bool[8];
+
+        for (var i = 0; i < 8; i++)
+        {
+            ok[i] = camera.Project(corners[i], width, height, out screen[i], out _);
+        }
+
+        var edges = new[]
+        {
+            (0, 1), (1, 2), (2, 3), (3, 0),
+            (4, 5), (5, 6), (6, 7), (7, 4),
+            (0, 4), (1, 5), (2, 6), (3, 7),
+        };
+
+        var color = new Vector4(0.35f, 0.95f, 0.65f, 0.85f);
+
+        foreach (var (a, b) in edges)
+        {
+            if (ok[a] && ok[b])
+            {
+                _batch.DrawLine(_whiteTexture, screen[a], screen[b], 2f, color);
+            }
+        }
     }
 
     private static Matrix4x4 Build3DViewProjection(Camera3D camera, int width, int height)
