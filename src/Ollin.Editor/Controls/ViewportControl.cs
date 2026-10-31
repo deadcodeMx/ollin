@@ -215,6 +215,28 @@ public sealed class ViewportControl : OpenGlControlBase
         _timer.Start();
     }
 
+    private void UpdateMouseLock()
+    {
+        if (TopLevel.GetTopLevel(this) is not Window window)
+        {
+            WindowsMouseLock.Disable();
+            return;
+        }
+
+        var wantsLock = _viewModel is { IsPlaying: true, IsPaused: false, IsGameOverVisible: false } &&
+                        window.IsActive;
+
+        if (wantsLock)
+        {
+            WindowsMouseLock.Enable(window);
+            WindowsMouseLock.Update(window);
+        }
+        else
+        {
+            WindowsMouseLock.Disable();
+        }
+    }
+
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         _timer?.Stop();

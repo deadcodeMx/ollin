@@ -862,9 +862,18 @@
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsRun, Mode=TwoWay}" Increment="0.1" Minimum="1" FormatString="0.##" />
                     </Grid>
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
-                      <TextBlock Text="Sensibilidad" VerticalAlignment="Center" Classes="hint" />
-                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsSensitivity, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                      <TextBlock Text="Sens. X" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsSensitivityX, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
                     </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Sens. Y" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsSensitivityY, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Suavizado" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsSmoothing, Mode=TwoWay}" Increment="0.05" Minimum="0" Maximum="0.95" FormatString="0.##" />
+                    </Grid>
+                    <CheckBox Content="Invertir eje Y" IsChecked="{Binding Selected.FpsInvertY, Mode=TwoWay}" FontSize="11.5" />
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsRadius, Mode=TwoWay}" Increment="0.05" Minimum="0.05" FormatString="0.##" />

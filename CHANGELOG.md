@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.31.1] — 2026-10-31
+
+### Añadido
+
+- **Bloqueo del puntero** al jugar y en el modo reproducir; el cursor se oculta.
+- **Recentrado** automático al entrar al viewport o reanudar.
+- **Invertir eje Y**, **sensibilidad horizontal/vertical** y **suavizado de cámara**.
+- Opciones correspondientes en el menú de pausa del juego exportado.
+- Pruebas de ejes, inversión, sensibilidad y suavizado: 163 en total.
+
 ## [0.31.0] — 2026-10-31
 
 ### Añadido

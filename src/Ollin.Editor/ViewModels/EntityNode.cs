@@ -984,6 +984,10 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(FpsSpeed));
         OnPropertyChanged(nameof(FpsRun));
         OnPropertyChanged(nameof(FpsSensitivity));
+        OnPropertyChanged(nameof(FpsSensitivityX));
+        OnPropertyChanged(nameof(FpsSensitivityY));
+        OnPropertyChanged(nameof(FpsInvertY));
+        OnPropertyChanged(nameof(FpsSmoothing));
         OnPropertyChanged(nameof(FpsRadius));
         OnPropertyChanged(nameof(Ai3DTargetTag));
         OnPropertyChanged(nameof(Ai3DSpeed));
@@ -1932,6 +1936,50 @@ public sealed class EntityNode : ObservableObject
             Fps.MouseSensitivity = MathF.Max(0.0001f, (float)value / 1000f);
             OnPropertyChanged();
             _owner.MarkDirty();
+        }
+    }
+
+    public decimal FpsSensitivityX
+    {
+        get => (decimal)((Fps?.MouseSensitivityX ?? 0.0022f) * 1000f);
+        set
+        {
+            if (Fps is null) return;
+            Fps.MouseSensitivityX = MathF.Max(0.0001f, (float)value / 1000f);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal FpsSensitivityY
+    {
+        get => (decimal)((Fps?.MouseSensitivityY ?? 0.0022f) * 1000f);
+        set
+        {
+            if (Fps is null) return;
+            Fps.MouseSensitivityY = MathF.Max(0.0001f, (float)value / 1000f);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool FpsInvertY
+    {
+        get => Fps?.InvertY ?? false;
+        set
+        {
+            if (Fps is null || Fps.InvertY == value) return;
+            Fps.InvertY = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal FpsSmoothing
+    {
+        get => (decimal)(Fps?.LookSmoothing ?? 0f);
+        set
+        {
+            if (Fps is null) return;
+            var next = Math.Clamp((float)value, 0f, 0.95f);
+            if (MathF.Abs(Fps.LookSmoothing - next) < 0.001f) return;
+            Fps.LookSmoothing = next; OnPropertyChanged(); _owner.MarkDirty();
         }
     }
 

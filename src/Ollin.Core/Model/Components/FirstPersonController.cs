@@ -13,7 +13,25 @@ public sealed class FirstPersonController : Component, ITickable
 
     public float RunMultiplier { get; set; } = 1.75f;
 
-    public float MouseSensitivity { get; set; } = 0.0022f;
+    public float MouseSensitivityX { get; set; } = 0.0022f;
+
+    public float MouseSensitivityY { get; set; } = 0.0022f;
+
+    /// <summary>Compatibilidad con scripts antiguos: ajusta ambos ejes.</summary>
+    public float MouseSensitivity
+    {
+        get => MouseSensitivityX;
+        set
+        {
+            MouseSensitivityX = value;
+            MouseSensitivityY = value;
+        }
+    }
+
+    public bool InvertY { get; set; }
+
+    /// <summary>0 = sin suavizado; valores altos suavizan el giro.</summary>
+    public float LookSmoothing { get; set; }
 
     public float CollisionRadius { get; set; } = 0.35f;
 
@@ -28,6 +46,9 @@ public sealed class FirstPersonController : Component, ITickable
 
     private bool _lookInitialized;
     private float _lookWarmup;
+    private float _targetYaw;
+    private float _targetPitch;
+    private bool _targetInitialized;
 
     public void OnUpdate(float deltaTime)
     {
@@ -49,22 +70,46 @@ public sealed class FirstPersonController : Component, ITickable
             _lookWarmup = MathF.Max(0f, LookWarmupSeconds);
         }
 
+        if (!_targetInitialized)
+        {
+            _targetInitialized = true;
+            _targetYaw = camera.Yaw;
+            _targetPitch = camera.Pitch;
+        }
+
         if (_lookWarmup > 0f)
         {
             _lookWarmup -= deltaTime;
+
+            if (MouseLook.IsLocked)
+            {
+                MouseLook.ConsumeDelta();
+            }
         }
         else if (LookWithMouse)
         {
-            var delta = InputState.MouseDelta;
+            var delta = MouseLook.IsLocked ? MouseLook.ConsumeDelta() : InputState.MouseDelta;
 
-            if (delta.LengthSquared() <= 40000f)
+            if (MouseLook.IsLocked || delta.LengthSquared() <= 40000f)
             {
-                camera.Yaw += delta.X * MouseSensitivity;
-                camera.Pitch = System.Math.Clamp(
-                    camera.Pitch - delta.Y * MouseSensitivity,
+                _targetYaw += delta.X * MouseSensitivityX;
+                _targetPitch = System.Math.Clamp(
+                    _targetPitch - delta.Y * MouseSensitivityY * (InvertY ? -1f : 1f),
                     MinPitch,
                     MaxPitch);
             }
+        }
+
+        if (LookSmoothing <= 0f)
+        {
+            camera.Yaw = _targetYaw;
+            camera.Pitch = _targetPitch;
+        }
+        else
+        {
+            var alpha = 1f - MathF.Exp(-deltaTime * 30f * (1f - System.Math.Clamp(LookSmoothing, 0f, 0.95f)));
+            camera.Yaw += (_targetYaw - camera.Yaw) * alpha;
+            camera.Pitch += (_targetPitch - camera.Pitch) * alpha;
         }
 
         var forwardInput = 0f;

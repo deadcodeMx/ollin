@@ -675,3 +675,20 @@ usa el ZIP del demo incluido en la página de la release.
 
 Controles: **WASD + ratón**, **1/2/3** armas, **R** recargar, **E** interactuar,
 **Esc** pausa.
+
+## 28. Ratón y cámara FPS (0.31.1)
+
+Al reproducir, el juego **bloquea el puntero** y oculta el cursor:
+- El ratón gira la cámara y no puede salir de la ventana.
+- **Esc** abre la pausa; el cursor vuelve a aparecer para usar el menú.
+- Al continuar, el puntero se recentra y se vuelve a bloquear.
+- En el editor, el bloqueo se activa solo mientras se reproduce la escena.
+
+Ajustes por entidad en **FPS**:
+- **Sens. X** y **Sens. Y** separadas.
+- **Invertir eje Y**.
+- **Suavizado** de cámara (0 = directo).
+
+En el juego exportado, **Opciones** incluye sensibilidad horizontal, vertical, invertir Y y
+suavizado, además de volumen y pantalla completa. La configuración se guarda en
+`%APPDATA%\Ollin\player-settings.json`.

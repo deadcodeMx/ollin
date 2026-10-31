@@ -31,7 +31,10 @@ public sealed class PlayerWindow : Window
     private bool _paused;
     private TextBlock? _saveStatus;
     private Slider? _volumeSlider;
-    private Slider? _sensitivitySlider;
+    private Slider? _sensitivityXSlider;
+    private Slider? _sensitivityYSlider;
+    private Slider? _smoothingSlider;
+    private CheckBox? _invertYCheck;
     private CheckBox? _fullscreenCheck;
     private StackPanel? _optionsPanel;
     private StackPanel? _mainPanel;
@@ -94,6 +97,8 @@ public sealed class PlayerWindow : Window
         content.Children.Add(_pauseOverlay);
         Content = content;
         LoadSettings();
+
+        Closed += (_, _) => WindowsMouseLock.Disable();
 
         Opened += (_, _) =>
         {
@@ -299,21 +304,71 @@ public sealed class PlayerWindow : Window
 
         _optionsPanel.Children.Add(new TextBlock
         {
-            Text = "Sensibilidad del ratón",
+            Text = "Sensibilidad horizontal",
             FontSize = 12,
             Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")),
             Margin = new Thickness(0, 6, 0, 0),
         });
-        _sensitivitySlider = new Slider { Minimum = 0.0004, Maximum = 0.006, Value = 0.0022, Width = 290 };
-        _sensitivitySlider.PropertyChanged += (_, args) =>
+        _sensitivityXSlider = new Slider { Minimum = 0.0004, Maximum = 0.006, Value = 0.0022, Width = 290 };
+        _sensitivityXSlider.PropertyChanged += (_, args) =>
         {
             if (args.Property == Slider.ValueProperty)
             {
-                ApplySensitivity((float)_sensitivitySlider.Value);
+                ApplyLookSettings();
                 SaveSettings();
             }
         };
-        _optionsPanel.Children.Add(_sensitivitySlider);
+        _optionsPanel.Children.Add(_sensitivityXSlider);
+
+        _optionsPanel.Children.Add(new TextBlock
+        {
+            Text = "Sensibilidad vertical",
+            FontSize = 12,
+            Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")),
+            Margin = new Thickness(0, 6, 0, 0),
+        });
+        _sensitivityYSlider = new Slider { Minimum = 0.0004, Maximum = 0.006, Value = 0.0022, Width = 290 };
+        _sensitivityYSlider.PropertyChanged += (_, args) =>
+        {
+            if (args.Property == Slider.ValueProperty)
+            {
+                ApplyLookSettings();
+                SaveSettings();
+            }
+        };
+        _optionsPanel.Children.Add(_sensitivityYSlider);
+
+        _invertYCheck = new CheckBox
+        {
+            Content = "Invertir eje Y",
+            FontSize = 12,
+            Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")),
+            Margin = new Thickness(0, 6, 0, 0),
+        };
+        _invertYCheck.IsCheckedChanged += (_, _) =>
+        {
+            ApplyLookSettings();
+            SaveSettings();
+        };
+        _optionsPanel.Children.Add(_invertYCheck);
+
+        _optionsPanel.Children.Add(new TextBlock
+        {
+            Text = "Suavizado de cámara",
+            FontSize = 12,
+            Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")),
+            Margin = new Thickness(0, 6, 0, 0),
+        });
+        _smoothingSlider = new Slider { Minimum = 0, Maximum = 0.95, Value = 0, Width = 290 };
+        _smoothingSlider.PropertyChanged += (_, args) =>
+        {
+            if (args.Property == Slider.ValueProperty)
+            {
+                ApplyLookSettings();
+                SaveSettings();
+            }
+        };
+        _optionsPanel.Children.Add(_smoothingSlider);
 
         _fullscreenCheck = new CheckBox
         {
@@ -444,13 +499,21 @@ public sealed class PlayerWindow : Window
         _surface.Focus();
     }
 
-    private void ApplySensitivity(float value)
+    private void ApplyLookSettings()
     {
+        var x = _sensitivityXSlider is null ? 0.0022f : (float)_sensitivityXSlider.Value;
+        var y = _sensitivityYSlider is null ? 0.0022f : (float)_sensitivityYSlider.Value;
+        var invert = _invertYCheck?.IsChecked == true;
+        var smoothing = _smoothingSlider is null ? 0f : (float)_smoothingSlider.Value;
+
         foreach (var entity in _viewModel.Scene.Entities)
         {
             foreach (var controller in entity.Components.OfType<FirstPersonController>())
             {
-                controller.MouseSensitivity = value;
+                controller.MouseSensitivityX = x;
+                controller.MouseSensitivityY = y;
+                controller.InvertY = invert;
+                controller.LookSmoothing = smoothing;
             }
         }
     }
@@ -458,7 +521,10 @@ public sealed class PlayerWindow : Window
     private sealed class PlayerSettings
     {
         public float Volume { get; set; } = 0.8f;
-        public float Sensitivity { get; set; } = 0.0022f;
+        public float SensitivityX { get; set; } = 0.0022f;
+        public float SensitivityY { get; set; } = 0.0022f;
+        public bool InvertY { get; set; }
+        public float Smoothing { get; set; }
         public bool Fullscreen { get; set; }
     }
 
@@ -474,9 +540,12 @@ public sealed class PlayerWindow : Window
             Audio.MasterVolume = settings.Volume;
 
             if (_volumeSlider is not null) _volumeSlider.Value = settings.Volume;
-            if (_sensitivitySlider is not null) _sensitivitySlider.Value = settings.Sensitivity;
+            if (_sensitivityXSlider is not null) _sensitivityXSlider.Value = settings.SensitivityX;
+            if (_sensitivityYSlider is not null) _sensitivityYSlider.Value = settings.SensitivityY;
+            if (_invertYCheck is not null) _invertYCheck.IsChecked = settings.InvertY;
+            if (_smoothingSlider is not null) _smoothingSlider.Value = settings.Smoothing;
             if (_fullscreenCheck is not null) _fullscreenCheck.IsChecked = settings.Fullscreen;
-            ApplySensitivity(settings.Sensitivity);
+            ApplyLookSettings();
 
             if (settings.Fullscreen)
             {
@@ -497,7 +566,10 @@ public sealed class PlayerWindow : Window
             var settings = new PlayerSettings
             {
                 Volume = _volumeSlider is null ? Audio.MasterVolume : (float)_volumeSlider.Value,
-                Sensitivity = _sensitivitySlider is null ? 0.0022f : (float)_sensitivitySlider.Value,
+                SensitivityX = _sensitivityXSlider is null ? 0.0022f : (float)_sensitivityXSlider.Value,
+                SensitivityY = _sensitivityYSlider is null ? 0.0022f : (float)_sensitivityYSlider.Value,
+                InvertY = _invertYCheck?.IsChecked == true,
+                Smoothing = _smoothingSlider is null ? 0f : (float)_smoothingSlider.Value,
                 Fullscreen = _fullscreenCheck?.IsChecked == true,
             };
             File.WriteAllText(SettingsPath, JsonSerializer.Serialize(settings));
