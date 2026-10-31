@@ -136,6 +136,31 @@ public sealed class NavGrid3D
             }
         }
 
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active ||
+                entity.GetComponent<CylinderCollider3D>() is not { Enabled: true, Collides: true } cylinder ||
+                cylinder.BaseY > 1.4f)
+            {
+                continue;
+            }
+
+            var center = entity.Transform.Position;
+
+            for (var z = 0; z < grid.Height; z++)
+            {
+                for (var x = 0; x < grid.Width; x++)
+                {
+                    var point = grid.CellToWorld(x, z);
+
+                    if (Vector2.Distance(point, center) <= cylinder.Radius + agentRadius)
+                    {
+                        grid._blocked[z * grid.Width + x] = true;
+                    }
+                }
+            }
+        }
+
         return grid;
     }
 

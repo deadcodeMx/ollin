@@ -37,7 +37,7 @@ pruebas en verde y documentada aquí.
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
 | 4 | Cerrar el 2D | ✅ |
 | 5 | Herramientas de juego 2D (luces, narrativa, sistemas, HUD) | 🚧 |
-| 6 | 2.5D (puente) | 🚧 núcleo jugable |
+| 6 | 2.5D (puente) | ✅ completada |
 | 7 | 3D | ⏳ |
 | 8 | Producto: build, guardado, opciones | ⏳ |
 
@@ -132,13 +132,14 @@ principio a fin.
 
 ---
 
-## Etapa 6 — 2.5D: el puente (esfuerzo: M)
+## Etapa 6 — 2.5D: el puente (completada)
 
 **Objetivo:** probar el lenguaje del 3D sin reescribir el motor.
 
 - [x] Escena con profundidad: sprites/billboards en un espacio 3D.
 - [x] Cámara en primera persona con mirada y movimiento.
-- [x] Colisiones 3D de cajas para paredes y puertas.`n- [ ] Cilindros de colisión.
+- [x] Colisiones 3D de cajas para paredes y puertas.
+- [x] Cilindros de colisión para pilares y columnas.
 - [x] Orden de billboards por profundidad (algoritmo del pintor).
 - [x] Iluminación por objeto y niebla de distancia.
 - [x] Gizmos 3D para seleccionar, mover, rotar (Y) y escalar entidades.
@@ -156,6 +157,7 @@ principio a fin.
 - [x] Editor de armas por ranuras.
 - [x] Guardado por ranuras y autoguardado.
 - [x] Variables, contadores, flags y expresiones en el grafo.
+- [x] Demo técnico jugable y exportable.
 - [x] Audio posicional básico (atenuación por distancia).
 
 **Por qué:** permite hacer juegos con estética retro estilo PS1/Doom con el renderer y el flujo actuales, y

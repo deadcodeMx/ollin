@@ -17,6 +17,21 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.31.0] — 2026-10-31
+
+### Añadido
+
+- **Demo técnico 2.5D** jugable: tres armas, tres enemigos, jefe, llave, puerta,
+  checkpoint, lava, portal, botiquín, contador de bajas y victoria/derrota.
+- Plantilla **Demo técnico 2.5D** en el diálogo de proyecto nuevo.
+- **Contador de bajas** automático con `Health.DeathVariable` y **VariableHud**.
+- **Colisión cilíndrica** para pilares, integrada en jugador, IA y navegación.
+- 3 pruebas nuevas: 159 en total.
+
+### Cerrado
+
+- **Etapa 6 (2.5D)** completada: núcleo jugable, herramientas y demo exportable.
+
 ## [0.30.0] — 2026-10-31
 
 ### Añadido

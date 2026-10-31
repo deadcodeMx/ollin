@@ -160,6 +160,7 @@ public sealed class Follower3D : Component, ITickable
 
         next.X = MoveAxis(next, step.X, horizontal: true, walls);
         next.Y = MoveAxis(next, step.Y, horizontal: false, walls);
+        next = CylinderCollision.Resolve(scene, next, CollisionRadius, 1.1f);
         Owner.Transform.Position = next;
     }
 

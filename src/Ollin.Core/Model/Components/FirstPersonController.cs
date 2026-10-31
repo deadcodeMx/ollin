@@ -26,6 +26,9 @@ public sealed class FirstPersonController : Component, ITickable
     /// <summary>Ignora el ratón al arrancar para evitar giros por el salto del puntero.</summary>
     public float LookWarmupSeconds { get; set; } = 0.8f;
 
+    private bool _lookInitialized;
+    private float _lookWarmup;
+
     public void OnUpdate(float deltaTime)
     {
         if (Owner?.Scene is not { } scene || deltaTime <= 0f)
@@ -40,14 +43,28 @@ public sealed class FirstPersonController : Component, ITickable
             return;
         }
 
-        if (LookWithMouse)
+        if (!_lookInitialized)
+        {
+            _lookInitialized = true;
+            _lookWarmup = MathF.Max(0f, LookWarmupSeconds);
+        }
+
+        if (_lookWarmup > 0f)
+        {
+            _lookWarmup -= deltaTime;
+        }
+        else if (LookWithMouse)
         {
             var delta = InputState.MouseDelta;
-            camera.Yaw += delta.X * MouseSensitivity;
-            camera.Pitch = System.Math.Clamp(
-                camera.Pitch - delta.Y * MouseSensitivity,
-                MinPitch,
-                MaxPitch);
+
+            if (delta.LengthSquared() <= 40000f)
+            {
+                camera.Yaw += delta.X * MouseSensitivity;
+                camera.Pitch = System.Math.Clamp(
+                    camera.Pitch - delta.Y * MouseSensitivity,
+                    MinPitch,
+                    MaxPitch);
+            }
         }
 
         var forwardInput = 0f;
@@ -81,6 +98,7 @@ public sealed class FirstPersonController : Component, ITickable
 
         position.X = MoveAxis(position, move.X, horizontal: true, camera, walls);
         position.Y = MoveAxis(position, move.Y, horizontal: false, camera, walls);
+        position = CylinderCollision.Resolve(scene, position, CollisionRadius, camera.Height);
         Owner.Transform.Position = position;
     }
 

@@ -79,7 +79,7 @@ public static class ProjectService
         var scene = StarterProject.CreateScene(template);
         Serialization.SceneSerializer.Save(scene, project.StartSceneFullPath);
 
-        if (template != ProjectTemplate.Corridor)
+        if (template is not (ProjectTemplate.Corridor or ProjectTemplate.TechnicalDemo))
         {
         var (scriptFile, scriptSource) = StarterProject.ScriptFor(template);
         File.WriteAllText(Path.Combine(root, "scripts", scriptFile), scriptSource);

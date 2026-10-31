@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Text.Json.Serialization;
 using Ollin.Core.Hud;
+using Ollin.Core.Saves;
 
 namespace Ollin.Core.Model.Components;
 
@@ -21,6 +22,10 @@ public sealed class Health : Component, ITickable
 
     public float InvulnerabilitySeconds { get; set; } = 0.15f;
 
+    public string DeathVariable { get; set; } = string.Empty;
+
+    public float DeathVariableAmount { get; set; } = 1f;
+
     [JsonIgnore]
     public bool IsDead => Current <= 0f;
 
@@ -36,9 +41,18 @@ public sealed class Health : Component, ITickable
         Current = MathF.Max(0f, Current - amount);
         _cooldown = MathF.Max(0f, InvulnerabilitySeconds);
 
-        if (Current <= 0f && DeactivateOnDeath && Owner is not null)
+        if (Current <= 0f)
         {
-            Owner.Active = false;
+            if (!string.IsNullOrWhiteSpace(DeathVariable))
+            {
+                var state = GameStateHost.Current ??= new GameState();
+                state.SetNumber(DeathVariable, state.GetNumber(DeathVariable) + DeathVariableAmount);
+            }
+
+            if (DeactivateOnDeath && Owner is not null)
+            {
+                Owner.Active = false;
+            }
         }
     }
 
@@ -75,6 +89,8 @@ public sealed class Health : Component, ITickable
         HudLabel = HudLabel,
         HudColor = HudColor,
         InvulnerabilitySeconds = InvulnerabilitySeconds,
+        DeathVariable = DeathVariable,
+        DeathVariableAmount = DeathVariableAmount,
         Owner = newOwner,
     };
 }

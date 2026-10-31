@@ -659,3 +659,19 @@ También puedes usar `vida`, `vidamax`, `vidas`, `min(...)`, `max(...)`.
 5. Rama **Sí** → abrir puerta o ganar.
 
 Las variables se guardan en la partida; al cargar, los contadores y flags continúan.
+
+## 27. Demo técnico de la etapa 6
+
+La plantilla **Demo técnico 2.5D** es un nivel completo para probar el motor:
+
+- Jugador con **tres armas** (pistola, escopeta y rifle), recarga y reaparición.
+- Tres enemigos con IA y navegación A\*: dos Sombras y un **Guardián**.
+- **Llave**, puerta cerrada, **checkpoint**, **lava**, **portal**, **botiquín** y **trigger**.
+- **Contador de bajas** visible en el HUD y variables del grafo.
+- Victoria al eliminar a los tres enemigos; derrota al quedarse sin vidas.
+
+Para crearlo: **Proyecto → Nuevo → Demo técnico 2.5D**. Para jugarlo desde la release,
+usa el ZIP del demo incluido en la página de la release.
+
+Controles: **WASD + ratón**, **1/2/3** armas, **R** recargar, **E** interactuar,
+**Esc** pausa.
