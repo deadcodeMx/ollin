@@ -1,4 +1,4 @@
-# Beta 6.50.0 de Ollin
+# Beta 6.51.0 de Ollin
 
 Compilación de prueba para instalar y usar el motor fuera del repositorio. Cierra la
 etapa 6 del roadmap (2.5D, grafo visual y pulido del editor).
@@ -30,7 +30,7 @@ etapa 6 del roadmap (2.5D, grafo visual y pulido del editor).
 
 ## Instalar
 
-1. Ejecuta `Ollin-Setup-6.50.0-beta.exe`.
+1. Ejecuta `Ollin-Setup-6.51.0-beta.exe`.
 2. Pulsa **Instalar**. Se copia en `%LOCALAPPDATA%\Ollin`.
 3. Se crean accesos directos en el escritorio y en el menú Inicio.
 4. Abre Ollin y elige un proyecto en el lanzador, o crea uno con la plantilla
@@ -85,7 +85,7 @@ dotnet publish tools/Ollin.Setup -c Release -r win-x64 --self-contained false `
 ## Prueba automática del instalador
 
 ```powershell
-$setup = "dist/installer/Ollin-Setup-6.50.0-beta.exe"
+$setup = "dist/installer/Ollin-Setup-6.51.0-beta.exe"
 Start-Process $setup -ArgumentList "--silent" -Wait
 Start-Process "$env:LOCALAPPDATA/Ollin/Desinstalar.exe" -ArgumentList "--uninstall --silent" -Wait
 ```

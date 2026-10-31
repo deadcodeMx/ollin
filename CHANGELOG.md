@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.51.0] — 2026-10-31
+
+### Cambiado
+
+- Acciones rápidas visibles también por debajo de 1080 px.
+- En compacto, copiar/pegar/borrar y zoom pasan a **Más** o atajos.
+- Conexiones desactivadas cortas muestran `OFF`.
+- 204 pruebas automatizadas.
+
 ## [6.50.0] — 2026-10-31
 
 ### Cambiado

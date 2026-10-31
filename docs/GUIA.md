@@ -938,3 +938,11 @@ error de sintaxis.
 - Después de la final: **1.1, 1.2…** para mejoras leves; **2.0** para
   integraciones grandes.
 - La demo técnica ya no se publica con las versiones.
+
+## 49. Cierre de limitaciones de 0.48 (6.51)
+
+- **Acciones rápidas visibles en cualquier ancho**: en compacto se ocultan
+  copiar/pegar/borrar y el zoom, disponibles en **Más** o por atajo.
+- **Conexiones desactivadas cortas** muestran `OFF` en la línea.
+- **Distribuir H/V** iguala huecos; **Separar H/V** conserva los existentes.
+- El historial mantiene el tope por archivos/MB y elimina lo más antiguo.

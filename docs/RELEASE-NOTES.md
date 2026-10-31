@@ -1,27 +1,22 @@
-## Ollin Beta 6.50.0 — etapa 6
+## Ollin Beta 6.51.0 — cierre de limitaciones de 0.48
 
 ### Incluye
 
-- Cierre de la **etapa 6**: 2.5D, transformaciones de mundo, grafo visual y pulido del editor.
+- **Acciones rápidas visibles en cualquier ancho**.
+- En compacto se ocultan copiar/pegar/borrar y zoom; quedan en **Más** o atajos.
+- Conexiones desactivadas cortas muestran **OFF**.
+- **Separar H/V** conserva huecos; **Distribuir H/V** los iguala.
 - **204 pruebas automatizadas**.
-- Editor de grafo con marquee, grupos, breakpoints, paso a paso, historial persistente y atajos.
-- Instalador único; **la demo técnica ya no se publica**.
 
-### Nuevo esquema de versiones
+### Cómo probarlo
 
-- **6.50**: beta de la etapa 6.
-- **6.51, 6.52…**: arreglos de limitaciones, bugs y mejoras.
-- **1.0**: versión completa con todas las etapas.
-- Después de la final: **1.1, 1.2…** para mejoras leves; **2.0** para integraciones grandes.
-
-### Cómo instalar
-
-1. Ejecuta `Ollin-Setup-6.50.0-beta.exe`.
-2. Pulsa **Instalar**.
-3. Abre Ollin y crea un proyecto.
+1. Instala 6.51.0 y abre el grafo.
+2. Reduce la ventana: las acciones rápidas siguen visibles.
+3. Deshabilita una conexión corta: debe mostrar `OFF`.
+4. Usa **Separar** y **Distribuir** para comparar.
 
 ### Limitaciones
 
-- La demo técnica no se distribuye.
-- La barra compacta oculta acciones rápidas por debajo de 1080 px; usa atajos.
-- Sigue pendiente el paso atrás en el grafo.
+- En compacto, copiar/pegar/borrar y zoom requieren **Más** o atajos.
+- La demo técnica no se publica.
+- No hay paso atrás.

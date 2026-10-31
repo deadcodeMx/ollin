@@ -63,6 +63,8 @@ public sealed class NodeGraphWindow : Window
     private bool _stepMode;
     private bool _moveHiddenMembers;
     private StackPanel? _quickActions;
+    private StackPanel? _editActions;
+    private StackPanel? _zoomControls;
     private double _snapSize = 10d;
 
     public NodeGraphWindow(MainViewModel viewModel, Entity entity)
@@ -106,7 +108,11 @@ public sealed class NodeGraphWindow : Window
         Content = root;
         SizeChanged += (_, _) =>
         {
-            if (_quickActions is not null) _quickActions.IsVisible = Bounds.Width >= 1080;
+            var compact = Bounds.Width < 1080;
+            if (_quickActions is not null) _quickActions.IsVisible = true;
+            if (_editActions is not null) _editActions.IsVisible = !compact;
+            if (_zoomControls is not null) _zoomControls.IsVisible = !compact;
+            if (_searchBox is not null && !_searchBox.IsFocused) _searchBox.Width = compact ? 60 : 76;
         };
         Render();
         _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id, _selectedIds);
@@ -200,22 +206,29 @@ public sealed class NodeGraphWindow : Window
         };
         toolbar.Children.Add(ToolButton("↶", Undo, "Deshacer (Ctrl+Z)"));
         toolbar.Children.Add(ToolButton("↷", Redo, "Rehacer (Ctrl+Y)"));
-        toolbar.Children.Add(ToolButton("⧉", CopySelected, "Copiar (Ctrl+C)"));
-        toolbar.Children.Add(ToolButton("📋", Paste, "Pegar (Ctrl+V)"));
-        toolbar.Children.Add(ToolButton("✕", DeleteSelected, "Borrar selección (Supr)"));
-        toolbar.Children.Add(ToolButton("−", () => ZoomBy(-0.1), "Alejar"));
-        toolbar.Children.Add(ToolButton("1:1", () => SetZoom(1.0), "Zoom 100% (1:1)"));
-        toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1), "Acercar"));
+
+        var edit = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2 };
+        edit.Children.Add(ToolButton("⧉", CopySelected, "Copiar (Ctrl+C)"));
+        edit.Children.Add(ToolButton("📋", Paste, "Pegar (Ctrl+V)"));
+        edit.Children.Add(ToolButton("✕", DeleteSelected, "Borrar selección (Supr)"));
+        _editActions = edit;
+        toolbar.Children.Add(edit);
+
+        var zoom = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2 };
+        zoom.Children.Add(ToolButton("−", () => ZoomBy(-0.1), "Alejar"));
+        zoom.Children.Add(ToolButton("1:1", () => SetZoom(1.0), "Zoom 100% (1:1)"));
+        zoom.Children.Add(ToolButton("+", () => ZoomBy(0.1), "Acercar"));
+        _zoomControls = zoom;
+        toolbar.Children.Add(zoom);
+
         var quick = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2 };
         quick.Children.Add(ToolButton("⤢", () => SetZoom(0.75), "Ajustar (Ctrl+0)"));
         quick.Children.Add(ToolButton("⇅", AutoLayout, "Ordenar (Ctrl+Shift+O)"));
         quick.Children.Add(ToolButton("⏭", StepGraph, "Paso (F8)"));
         quick.Children.Add(ToolButton("↔", () => Distribute(true), "Distribuir H (Ctrl+Shift+H)"));
         quick.Children.Add(ToolButton("↕", () => Distribute(false), "Distribuir V (Ctrl+Shift+V)"));
-        quick.IsVisible = Width >= 1080;
         _quickActions = quick;
         toolbar.Children.Add(quick);
-
         var more = new Button { Content = "Más ▾", FontSize = 10.5, Padding = new Thickness(6, 3) };
         var moreFlyout = new MenuFlyout();
         void AddMore(string header, Action action)
@@ -224,6 +237,9 @@ public sealed class NodeGraphWindow : Window
             item.Click += (_, _) => action();
             moreFlyout.Items.Add(item);
         }
+        AddMore("Copiar (Ctrl+C)", CopySelected);
+        AddMore("Pegar (Ctrl+V)", Paste);
+        AddMore("Borrar (Supr)", DeleteSelected);
         AddMore("Ajustar (Ctrl+0)", () => SetZoom(0.75));
         AddMore("Ordenar (Ctrl+Shift+O)", AutoLayout);
         AddMore("Paso (F8)", StepGraph);
@@ -259,7 +275,7 @@ public sealed class NodeGraphWindow : Window
             Render();
         };
         _searchBox.GotFocus += (_, _) => _searchBox.Width = 170;
-        _searchBox.LostFocus += (_, _) => _searchBox.Width = 76;
+        _searchBox.LostFocus += (_, _) => _searchBox.Width = Bounds.Width < 1080 ? 60 : 76;
         toolbar.Children.Add(_searchBox);
         UpdateZoomText();
 
@@ -1116,11 +1132,11 @@ public sealed class NodeGraphWindow : Window
         var dy = target.Y + 24 - (source.Y + yOffset);
         var length = MathF.Sqrt(dx * dx + dy * dy);
 
-        if (disabled && length >= 110)
+        if (disabled)
         {
             var label = new TextBlock
             {
-                Text = "DESACTIVADA",
+                Text = length >= 110 ? "DESACTIVADA" : "OFF",
                 FontSize = 8,
                 Foreground = new SolidColorBrush(Color.Parse("#9CA3AF")),
                 Background = new SolidColorBrush(Color.Parse("#10131A")),
