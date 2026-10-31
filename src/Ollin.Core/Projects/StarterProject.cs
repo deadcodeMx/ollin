@@ -263,10 +263,10 @@ public static class StarterProject
         camera.AddComponent(new FirstPersonController { Speed = 3.6f });
         camera.AddComponent(new ScriptComponent { ScriptPath = "scripts/Pasillo.cs", ClassName = "Pasillo" });
 
-        AddWall(scene, "Suelo", new Vector2(0f, 13f), new Vector3(9f, 0.2f, 26f), new Vector3(0.3f, 0.27f, 0.22f), false);
-        AddWall(scene, "Techo", new Vector2(0f, 13f), new Vector3(9f, 0.2f, 26f), new Vector3(0.3f, 0.29f, 0.33f), false, 3.6f);
-        AddWall(scene, "Pared izquierda", new Vector2(-4.3f, 13f), new Vector3(0.4f, 3.6f, 26f), new Vector3(0.58f, 0.55f, 0.5f), true);
-        AddWall(scene, "Pared derecha", new Vector2(4.3f, 13f), new Vector3(0.4f, 3.6f, 26f), new Vector3(0.58f, 0.55f, 0.5f), true);
+        AddWall(scene, "Suelo", new Vector2(0f, 13f), new Vector3(9f, 0.2f, 26f), new Vector3(0.3f, 0.27f, 0.22f), false, 0f, "assets/textures/floor.png", 2.2f);
+        AddWall(scene, "Techo", new Vector2(0f, 13f), new Vector3(9f, 0.2f, 26f), new Vector3(0.3f, 0.29f, 0.33f), false, 3.6f, "assets/textures/ceiling.png", 2.4f);
+        AddWall(scene, "Pared izquierda", new Vector2(-4.3f, 13f), new Vector3(0.4f, 3.6f, 26f), new Vector3(0.58f, 0.55f, 0.5f), true, 0f, "assets/textures/wall.png", 2.5f);
+        AddWall(scene, "Pared derecha", new Vector2(4.3f, 13f), new Vector3(0.4f, 3.6f, 26f), new Vector3(0.58f, 0.55f, 0.5f), true, 0f, "assets/textures/wall.png", 2.5f);
         AddWall(scene, "Muro final", new Vector2(0f, 26f), new Vector3(9f, 3.6f, 0.4f), new Vector3(0.36f, 0.35f, 0.34f), true);
         AddWall(scene, "Puerta", new Vector2(0f, 16f), new Vector3(3f, 3f, 0.35f), new Vector3(0.72f, 0.42f, 0.2f), true);
 
@@ -315,7 +315,7 @@ public static class StarterProject
         return scene;
     }
 
-    private static void AddWall(Scene scene, string name, Vector2 position, Vector3 size, Vector3 color, bool collides, float baseY = 0f)
+    private static void AddWall(Scene scene, string name, Vector2 position, Vector3 size, Vector3 color, bool collides, float baseY = 0f, string? texture = null, float textureScale = 2f)
     {
         var wall = scene.Create(name, position);
         wall.AddComponent(new Wall3D
@@ -324,6 +324,8 @@ public static class StarterProject
             Color = color,
             Collides = collides,
             BaseY = baseY,
+            TexturePath = texture,
+            TextureScale = textureScale,
         });
     }
 

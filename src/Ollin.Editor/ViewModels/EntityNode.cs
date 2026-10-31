@@ -1821,6 +1821,19 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public decimal WallTextureScale
+    {
+        get => (decimal)(Wall3D?.TextureScale ?? 1f);
+        set
+        {
+            if (Wall3D is null || MathF.Abs(Wall3D.TextureScale - (float)value) < 0.001f) return;
+            Wall3D.TextureScale = MathF.Max(0.05f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
     public bool WallVisible
     {
         get => Wall3D?.Visible ?? true;

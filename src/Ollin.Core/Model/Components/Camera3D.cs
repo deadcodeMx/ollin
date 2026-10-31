@@ -89,6 +89,15 @@ public sealed class Camera3D : Component
         return true;
     }
 
+    /// <summary>Dirección del rayo que pasa por un punto de la pantalla.</summary>
+    public Vector3 RayDirection(Vector2 screen, int width, int height)
+    {
+        var focal = FocalLength(height);
+        var x = (screen.X - width * 0.5f) / focal;
+        var y = -(screen.Y - height * 0.5f) / focal;
+        return Vector3.Normalize(Forward + Right * x + Up * y);
+    }
+
     /// <summary>Píxeles de pantalla por unidad de mundo a una profundidad dada.</summary>
     public float ScaleAt(float depth, int viewportHeight) =>
         FocalLength(viewportHeight) / MathF.Max(0.0001f, depth);

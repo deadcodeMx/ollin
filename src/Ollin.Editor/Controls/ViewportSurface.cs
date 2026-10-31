@@ -15,6 +15,7 @@ public sealed class ViewportSurface : Border
     private bool _panning;
     private bool _painting;
     private bool _gizmoDragging;
+    private bool _gizmo3DDragging;
     private Point _lastPointer;
     private IPointer? _capturedPointer;
 
@@ -55,6 +56,25 @@ public sealed class ViewportSurface : Border
             e.Pointer.Capture(this);
             Viewport.PaintAt(position);
             e.Handled = true;
+            return;
+        }
+
+        if (Viewport.ViewModel?.ActiveCamera3D is not null)
+        {
+            if (point.Properties.IsLeftButtonPressed)
+            {
+                Viewport.Select3DAt(position);
+
+                if (Viewport.Begin3DDrag(position))
+                {
+                    _gizmo3DDragging = true;
+                    _capturedPointer = e.Pointer;
+                    e.Pointer.Capture(this);
+                }
+
+                e.Handled = true;
+            }
+
             return;
         }
 
@@ -99,6 +119,13 @@ public sealed class ViewportSurface : Border
             Viewport.UpdateMouseButton(0, current.Properties.IsLeftButtonPressed);
             Viewport.UpdateMouseButton(1, current.Properties.IsRightButtonPressed);
             Viewport.UpdateMouseButton(2, current.Properties.IsMiddleButtonPressed);
+            e.Handled = true;
+            return;
+        }
+
+        if (_gizmo3DDragging)
+        {
+            Viewport.Update3DDrag(e.GetPosition(this), e.KeyModifiers.HasFlag(KeyModifiers.Control));
             e.Handled = true;
             return;
         }

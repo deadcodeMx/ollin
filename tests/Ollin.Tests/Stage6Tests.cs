@@ -156,3 +156,19 @@ public class Wall3DBaseTests
         Assert.Equal(3.8f, wall.Bounds.Max.Y, 3);
     }
 }
+public class Camera3DRayTests
+{
+    [Fact]
+    public void ElRayoDelCentroApuntaHaciaDelante()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Cam", Vector2.Zero);
+        var camera = entity.AddComponent(new Camera3D());
+
+        var direction = camera.RayDirection(new Vector2(400f, 300f), 800, 600);
+
+        Assert.Equal(0f, direction.X, 3);
+        Assert.Equal(0f, direction.Y, 3);
+        Assert.Equal(1f, direction.Z, 3);
+    }
+}

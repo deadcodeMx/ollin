@@ -15,6 +15,9 @@ public sealed class Wall3D : Component
 
     public string? TexturePath { get; set; }
 
+    /// <summary>Unidades de mundo por repetición de la textura.</summary>
+    public float TextureScale { get; set; } = 1f;
+
     public bool Visible { get; set; } = true;
 
     public bool Collides { get; set; } = true;

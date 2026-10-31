@@ -1,21 +1,21 @@
-## Ollin 0.22.1 beta — profundidad y pulido del 2.5D
+## Ollin 0.23.0 beta — texturas y gizmos 3D
 
 ### Incluye
 
-- **Búfer de profundidad** para la geometría 3D: paredes, suelos, techos y sprites se
-  ocluyen correctamente.
-- **Altura base** en las cajas 3D para hacer techos y plataformas.
-- Corredor de ejemplo con suelo, techo y dos luces.
-- Cámara más estable al entrar al viewport.
+- Texturas repetidas en paredes, suelos y techos con **Escala textura**.
+- Texturas de ejemplo incluidas en `assets/textures/`.
+- **Gizmo 3D** en el viewport: clic para seleccionar, arrastre para mover en el plano,
+  Ctrl para ajustar y deshacer.
+- Corredor de ejemplo con ladrillo, losas y paneles.
+- 128 pruebas automatizadas.
 
 ### Cómo probarlo
 
-1. Instala 0.22.1.
-2. Crea un proyecto **2.5D (pasillo)** o abre el existente.
-3. Reproduce: WASD + ratón, E para abrir la puerta.
-4. Exporta y comprueba que el juego empaquetado mantiene el 2.5D.
+1. Instala 0.23.0 y crea un proyecto **2.5D (pasillo)**.
+2. En modo edición, haz clic en una pared y arrástrala con el gizmo.
+3. Reproduce y exporta como siempre.
 
 ### Limitaciones
 
-- Paredes de color liso; sin cilindros, gizmos 3D ni IA 3D todavía.
-- Estética retro deliberadamente sobria.
+- Gizmos de rotación y escala 3D pendientes.
+- Sin cilindros ni IA 3D.

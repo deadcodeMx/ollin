@@ -46,6 +46,10 @@ public sealed class ViewportControl : OpenGlControlBase
     private float _gizmoStartRotation;
     private float _gizmoStartAngle;
     private float _gizmoStartDistance = 1f;
+    private bool _gizmo3DDragging;
+    private Vector3 _gizmo3DStartPlane;
+    private Vector2 _gizmo3DStartPosition;
+    private int _gizmo3DAxis;
 
     public ViewportControl()
     {
@@ -180,7 +184,7 @@ public sealed class ViewportControl : OpenGlControlBase
 
             if (_viewModel.ActiveCamera3D is { } camera3D)
             {
-                _renderer.RenderFrame3D(_viewModel.Scene, camera3D, width, height);
+                _renderer.RenderFrame3D(_viewModel.Scene, camera3D, width, height, _viewModel.IsPlaying ? null : _viewModel.Selected?.Id);
             }
             else
             {
@@ -258,6 +262,198 @@ public sealed class ViewportControl : OpenGlControlBase
     {
         var scaling = (float)(TopLevel.GetTopLevel(this)?.RenderScaling ?? 1.0);
         return ((int)Math.Max(1, Bounds.Width * scaling), (int)Math.Max(1, Bounds.Height * scaling), scaling);
+    }
+
+    public bool IsGizmo3DDragging => _gizmo3DDragging;
+
+    /// <summary>Selecciona una entidad del modo 2.5D lanzando un rayo desde la cámara.</summary>
+    public void Select3DAt(Point position)
+    {
+        if (_viewModel?.ActiveCamera3D is not { } camera)
+        {
+            return;
+        }
+
+        var (width, height, scaling) = GetPixelSizeWithScaling();
+        var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
+        var origin = camera.Eye;
+        var direction = camera.RayDirection(screen, width, height);
+
+        Entity? hit = null;
+        var best = float.MaxValue;
+
+        foreach (var entity in _viewModel.Scene.Entities)
+        {
+            if (!entity.Active)
+            {
+                continue;
+            }
+
+            if (entity.GetComponent<Wall3D>() is { Enabled: true, Visible: true } wall &&
+                RayBox(origin, direction, wall.Bounds.Min, wall.Bounds.Max, out var t) && t < best)
+            {
+                hit = entity;
+                best = t;
+                continue;
+            }
+
+            if (entity.GetComponent<SpriteRenderer>() is { Enabled: true, Visible: true } sprite)
+            {
+                var center = new Vector3(entity.Transform.Position.X, sprite.Size.Y * 0.5f, entity.Transform.Position.Y);
+
+                if (!camera.Project(center, width, height, out var projected, out var depth))
+                {
+                    continue;
+                }
+
+                if (Vector2.Distance(screen, projected) <= 30f && depth < best)
+                {
+                    hit = entity;
+                    best = depth;
+                }
+            }
+        }
+
+        _viewModel.Select(hit);
+        RequestNextFrameRendering();
+    }
+
+    /// <summary>Comienza a arrastrar la entidad seleccionada sobre el plano 3D.</summary>
+    public bool Begin3DDrag(Point position)
+    {
+        if (_viewModel?.Selected is null || _viewModel.ActiveCamera3D is not { } camera)
+        {
+            return false;
+        }
+
+        var (width, height, scaling) = GetPixelSizeWithScaling();
+        var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
+        var planeY = _viewModel.Selected.Entity.GetComponent<Wall3D>()?.BaseY ?? 0f;
+
+        if (!RayPlane(camera.Eye, camera.RayDirection(screen, width, height), planeY, out var point))
+        {
+            return false;
+        }
+
+        _gizmo3DDragging = true;
+        _gizmo3DStartPlane = point;
+        _gizmo3DStartPosition = _viewModel.Selected.Entity.Transform.Position;
+        _gizmo3DAxis = 0;
+        return true;
+    }
+
+    /// <summary>Aplica el arrastre 3D en el plano del suelo.</summary>
+    public void Update3DDrag(Point position, bool snap)
+    {
+        if (!_gizmo3DDragging || _viewModel?.Selected is null || _viewModel.ActiveCamera3D is not { } camera)
+        {
+            return;
+        }
+
+        var (width, height, scaling) = GetPixelSizeWithScaling();
+        var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
+        var planeY = _viewModel.Selected.Entity.GetComponent<Wall3D>()?.BaseY ?? 0f;
+
+        if (!RayPlane(camera.Eye, camera.RayDirection(screen, width, height), planeY, out var point))
+        {
+            return;
+        }
+
+        var delta = new Vector2(point.X - _gizmo3DStartPlane.X, point.Z - _gizmo3DStartPlane.Z);
+        var next = _gizmo3DStartPosition + delta;
+
+        if (snap)
+        {
+            next = new Vector2(MathF.Round(next.X * 4f) / 4f, MathF.Round(next.Y * 4f) / 4f);
+        }
+
+        if (_gizmo3DAxis == 1)
+        {
+            next.Y = _gizmo3DStartPosition.Y;
+        }
+        else if (_gizmo3DAxis == 2)
+        {
+            next.X = _gizmo3DStartPosition.X;
+        }
+
+        _viewModel.Selected.Entity.Transform.Position = next;
+        _viewModel.NotifySceneEdited();
+        RequestNextFrameRendering();
+    }
+
+    public void End3DDrag()
+    {
+        if (!_gizmo3DDragging)
+        {
+            return;
+        }
+
+        _gizmo3DDragging = false;
+        _viewModel?.CommitEdit("Mover entidad 3D");
+    }
+
+    private static bool RayPlane(Vector3 origin, Vector3 direction, float planeY, out Vector3 point)
+    {
+        point = Vector3.Zero;
+
+        if (MathF.Abs(direction.Y) < 0.0001f)
+        {
+            return false;
+        }
+
+        var t = (planeY - origin.Y) / direction.Y;
+
+        if (t < 0f)
+        {
+            return false;
+        }
+
+        point = origin + direction * t;
+        return true;
+    }
+
+    private static bool RayBox(Vector3 origin, Vector3 direction, Vector3 min, Vector3 max, out float distance)
+    {
+        distance = 0f;
+        var near = 0f;
+        var far = float.PositiveInfinity;
+
+        for (var axis = 0; axis < 3; axis++)
+        {
+            var o = axis == 0 ? origin.X : axis == 1 ? origin.Y : origin.Z;
+            var d = axis == 0 ? direction.X : axis == 1 ? direction.Y : direction.Z;
+            var lo = axis == 0 ? min.X : axis == 1 ? min.Y : min.Z;
+            var hi = axis == 0 ? max.X : axis == 1 ? max.Y : max.Z;
+
+            if (MathF.Abs(d) < 0.000001f)
+            {
+                if (o < lo || o > hi)
+                {
+                    return false;
+                }
+
+                continue;
+            }
+
+            var t0 = (lo - o) / d;
+            var t1 = (hi - o) / d;
+
+            if (t0 > t1)
+            {
+                (t0, t1) = (t1, t0);
+            }
+
+            near = MathF.Max(near, t0);
+            far = MathF.Min(far, t1);
+
+            if (near > far)
+            {
+                return false;
+            }
+        }
+
+        distance = near;
+        return true;
     }
 
     /// <summary>Selecciona la entidad bajo un punto del viewport (coordenadas locales).</summary>

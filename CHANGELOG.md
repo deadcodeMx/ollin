@@ -17,6 +17,17 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.23.0] — 2026-10-31
+
+### Añadido
+
+- **Texturas repetidas** en paredes, suelos y techos: `TextureScale` y UV con wrapping
+  `Repeat`; texturas de ejemplo `wall.png`, `floor.png` y `ceiling.png`.
+- **Gizmo 3D**: selección por rayo y arrastre en el plano del suelo con ejes X/Y/Z,
+  ajuste con Ctrl y deshacer.
+- Corredor de ejemplo con paredes de ladrillo, suelo de losas y techo de paneles.
+- 1 prueba nueva: 128 en total.
+
 ## [0.22.1] — 2026-10-31
 
 ### Añadido

@@ -395,7 +395,7 @@ public sealed class Renderer2D : IDisposable
     /// Frame del puente 2.5D: cámara en perspectiva, paredes de caja y sprites
     /// billboard ordenados de lejos a cerca (pintor). Sin búfer de profundidad.
     /// </summary>
-    public void RenderFrame3D(Scene scene, Camera3D camera, int width, int height)
+    public void RenderFrame3D(Scene scene, Camera3D camera, int width, int height, Guid? selectedEntityId = null)
     {
         if (width <= 0 || height <= 0)
         {
@@ -434,6 +434,12 @@ public sealed class Renderer2D : IDisposable
         _batch.Begin(screenProjection);
         var center = new Vector2(width * 0.5f, height * 0.5f);
         _batch.DrawRect(_whiteTexture, center, new Vector2(3f, 3f), new Vector4(0.95f, 0.95f, 0.95f, 0.55f));
+
+        if (selectedEntityId is { } id && scene.Find(id) is { } selected)
+        {
+            DrawGizmo3D(scene, camera, selected, width, height);
+        }
+
         _batch.End();
     }
 
@@ -453,6 +459,47 @@ public sealed class Renderer2D : IDisposable
             0f, 0f, 2f * far * near / (near - far), 0f);
 
         return view * projection;
+    }
+
+    private void DrawGizmo3D(Scene scene, Camera3D camera, Entity entity, int width, int height)
+    {
+        var center = entity.GetComponent<Wall3D>() is { } wall
+            ? wall.Center
+            : entity.GetComponent<SpriteRenderer>() is { } sprite
+                ? new Vector3(entity.Transform.Position.X, sprite.Size.Y * 0.5f, entity.Transform.Position.Y)
+                : new Vector3(entity.Transform.Position.X, 0f, entity.Transform.Position.Y);
+
+        if (entity.GetComponent<Camera3D>() is { } cam)
+        {
+            center = cam.Eye;
+        }
+
+        var axis = 1.2f;
+        var xTip = center + new Vector3(axis, 0f, 0f);
+        var zTip = center + new Vector3(0f, 0f, axis);
+        var yTip = center + new Vector3(0f, axis, 0f);
+
+        if (!camera.Project(center, width, height, out var centerScreen, out _))
+        {
+            return;
+        }
+
+        DrawAxis(centerScreen, xTip, new Vector4(0.95f, 0.35f, 0.3f, 1f));
+        DrawAxis(centerScreen, zTip, new Vector4(0.35f, 0.6f, 1f, 1f));
+        DrawAxis(centerScreen, yTip, new Vector4(0.4f, 0.95f, 0.5f, 1f));
+
+        _batch.DrawRect(_whiteTexture, centerScreen, new Vector2(6f, 6f), new Vector4(1f, 0.85f, 0.3f, 0.9f));
+
+        void DrawAxis(Vector2 from, Vector3 tip, Vector4 color)
+        {
+            if (!camera.Project(tip, width, height, out var to, out _))
+            {
+                return;
+            }
+
+            _batch.DrawLine(_whiteTexture, from, to, 2.5f, color);
+            _batch.DrawRect(_whiteTexture, to, new Vector2(7f, 7f), color);
+        }
     }
 
     private void DrawWalls3D(Scene scene, Camera3D camera)
@@ -501,8 +548,12 @@ public sealed class Renderer2D : IDisposable
             {
                 var center = (p0 + p1 + p2 + p3) * 0.25f;
                 var color = ApplyLight3D(scene, camera, baseColor, center);
+                var tile = MathF.Max(0.01f, wall.TextureScale);
+                var u = Vector3.Distance(p0, p1) / tile;
+                var v = Vector3.Distance(p1, p2) / tile;
+
                 _batch3D.DrawQuad(texture, p0, p1, p2, p3,
-                    new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f),
+                    new Vector2(0f, 0f), new Vector2(u, 0f), new Vector2(u, v), new Vector2(0f, v),
                     color);
             }
         }

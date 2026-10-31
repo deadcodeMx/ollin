@@ -141,6 +141,7 @@ principio a fin.
 - [x] Colisiones 3D de cajas para paredes y puertas.`n- [ ] Cilindros de colisión.
 - [x] Orden de billboards por profundidad (algoritmo del pintor).
 - [x] Iluminación por objeto y niebla de distancia.
+- [x] Gizmo 3D para seleccionar y mover entidades en el viewport.
 - [x] Audio posicional básico (atenuación por distancia).
 
 **Por qué:** permite hacer juegos con estética retro estilo PS1/Doom con el renderer y el flujo actuales, y
