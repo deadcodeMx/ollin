@@ -25,7 +25,10 @@ public sealed class NodeGraphWindow : Window
     private readonly TextBlock _zoomText = new() { FontSize = 11, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0) };
     private readonly DispatcherTimer _debugTimer;
     private GraphSnapshot? _lastCommitted;
-    private GraphNode? _clipboard;
+    private List<GraphNode> _clipboard = new();
+    private readonly HashSet<Guid> _selectedIds = new();
+    private readonly Dictionary<Guid, Border> _nodeCards = new();
+    private readonly Dictionary<Guid, (double X, double Y)> _dragPositions = new();
     private Guid? _activeNodeId;
     private double _zoom = 1.0;
     private readonly StackPanel _inspector = new() { Spacing = 6, Margin = new Thickness(10) };
@@ -131,6 +134,16 @@ public sealed class NodeGraphWindow : Window
         _canvas.Width = 2400;
         _canvas.Height = 1600;
         _canvas.Background = new SolidColorBrush(Color.Parse("#10131A"));
+        _canvas.PointerPressed += (_, e) =>
+        {
+            if (ReferenceEquals(e.Source, _canvas))
+            {
+                _selected = null;
+                _selectedIds.Clear();
+                Render();
+                e.Handled = true;
+            }
+        };
         _canvasTransform.Child = _canvas;
         _canvasTransform.LayoutTransform = new ScaleTransform(_zoom, _zoom);
 
@@ -236,6 +249,8 @@ public sealed class NodeGraphWindow : Window
     {
         if (!_history.Undo(_graph, _selected?.Id, out var selectedId)) return;
         _selected = selectedId is { } id ? _graph.Find(id) : null;
+        _selectedIds.Clear();
+        if (_selected is not null) _selectedIds.Add(_selected.Id);
         _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
         _viewModel.MarkDirty("grafo-nodos");
         Render();
@@ -245,31 +260,64 @@ public sealed class NodeGraphWindow : Window
     {
         if (!_history.Redo(_graph, _selected?.Id, out var selectedId)) return;
         _selected = selectedId is { } id ? _graph.Find(id) : null;
+        _selectedIds.Clear();
+        if (_selected is not null) _selectedIds.Add(_selected.Id);
         _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
         _viewModel.MarkDirty("grafo-nodos");
         Render();
     }
     private void CopySelected()
     {
-        if (_selected is null) return;
-        _clipboard = GraphEditing.CloneNode(_selected, keepLinks: false);
-        _status.Text = $"Nodo copiado: {KindLabel(_selected)}";
+        var nodes = _graph.Nodes.Where(node => _selectedIds.Contains(node.Id)).ToList();
+
+        if (nodes.Count == 0 && _selected is not null)
+        {
+            nodes.Add(_selected);
+        }
+
+        if (nodes.Count == 0) return;
+        _clipboard = nodes.Select(node => GraphEditing.CloneNode(node, keepLinks: true)).ToList();
+        _status.Text = nodes.Count == 1 ? "Nodo copiado" : $"{nodes.Count} nodos copiados";
     }
 
     private void Paste()
     {
-        if (_clipboard is null) return;
-        var copy = GraphEditing.Paste(_clipboard);
-        _graph.Nodes.Add(copy);
-        _selected = copy;
+        if (_clipboard.Count == 0) return;
+        var map = new Dictionary<Guid, Guid>();
+        var copies = _clipboard.Select(node =>
+        {
+            var copy = GraphEditing.CloneNode(node, keepLinks: true);
+            copy.Id = Guid.NewGuid();
+            copy.X += 30;
+            copy.Y += 30;
+            map[node.Id] = copy.Id;
+            return copy;
+        }).ToList();
+
+        foreach (var copy in copies)
+        {
+            copy.Next = copy.Next is { } next && map.TryGetValue(next, out var mappedNext) ? mappedNext : null;
+            copy.TrueNext = copy.TrueNext is { } yes && map.TryGetValue(yes, out var mappedYes) ? mappedYes : null;
+            copy.FalseNext = copy.FalseNext is { } no && map.TryGetValue(no, out var mappedNo) ? mappedNo : null;
+            _graph.Nodes.Add(copy);
+        }
+
+        _selectedIds.Clear();
+        foreach (var copy in copies) _selectedIds.Add(copy.Id);
+        _selected = copies.FirstOrDefault();
         MarkChanged();
         Render();
     }
 
     private void DeleteSelected()
     {
-        if (_selected is null) return;
-        _graph.RemoveNode(_selected.Id);
+        var ids = _selectedIds.Count > 0
+            ? _selectedIds.ToList()
+            : _selected is null ? new List<Guid>() : new List<Guid> { _selected.Id };
+
+        if (ids.Count == 0) return;
+        foreach (var id in ids) _graph.RemoveNode(id);
+        _selectedIds.Clear();
         _selected = null;
         _linkSource = null;
         MarkChanged();
@@ -283,6 +331,14 @@ public sealed class NodeGraphWindow : Window
 
         if (control && e.Key == Key.Z) { Undo(); e.Handled = true; }
         else if (control && e.Key == Key.Y) { Redo(); e.Handled = true; }
+        else if (control && e.Key == Key.A)
+        {
+            _selectedIds.Clear();
+            foreach (var node in _graph.Nodes) _selectedIds.Add(node.Id);
+            _selected = _graph.Nodes.FirstOrDefault();
+            Render();
+            e.Handled = true;
+        }
         else if (control && e.Key == Key.C) { CopySelected(); e.Handled = true; }
         else if (control && e.Key == Key.V) { Paste(); e.Handled = true; }
         else if (e.Key == Key.Delete) { DeleteSelected(); e.Handled = true; }
@@ -390,6 +446,7 @@ public sealed class NodeGraphWindow : Window
     {
         Validate();
         _canvas.Children.Clear();
+        _nodeCards.Clear();
 
         foreach (var node in _graph.Nodes)
         {
@@ -441,7 +498,16 @@ public sealed class NodeGraphWindow : Window
             StartPoint = new Point(source.X + 200, source.Y + yOffset),
             EndPoint = new Point(target.X, target.Y + 24),
             Stroke = new SolidColorBrush(color),
-            StrokeThickness = 2,
+            StrokeThickness = 3,
+            Tag = new LinkRef(source.Id, port),
+        };
+        line.PointerPressed += (_, e) =>
+        {
+            if (e.GetCurrentPoint(line).Properties.IsRightButtonPressed)
+            {
+                ClearConnection(source.Id, port);
+                e.Handled = true;
+            }
         };
         _canvas.Children.Add(line);
     }
@@ -457,13 +523,14 @@ public sealed class NodeGraphWindow : Window
 
         var issue = _issues.FirstOrDefault(item => item.Node?.Id == node.Id);
         var active = _viewModel.IsPlaying && _activeNodeId == node.Id;
-        var borderColor = active ? "#53D6FF" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : node == _selected ? "#FFFFFF" : kindColor;
+        var selected = _selectedIds.Contains(node.Id);
+        var borderColor = active ? "#53D6FF" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : selected ? "#FFFFFF" : kindColor;
         var card = new Border
         {
             Width = 200,
             Background = new SolidColorBrush(Color.Parse("#1A1F29")),
             BorderBrush = new SolidColorBrush(Color.Parse(borderColor)),
-            BorderThickness = new Thickness(active ? 3 : node == _selected ? 2 : 1),
+            BorderThickness = new Thickness(active ? 3 : selected ? 2 : 1),
             CornerRadius = new CornerRadius(6),
         };
         Canvas.SetLeft(card, node.X);
@@ -517,6 +584,7 @@ public sealed class NodeGraphWindow : Window
 
         content.Children.Add(ports);
         card.Child = content;
+        _nodeCards[node.Id] = card;
         return card;
     }
 
@@ -533,7 +601,18 @@ public sealed class NodeGraphWindow : Window
             _linkSource = node;
             _linkTrue = trueBranch;
             _selected = node;
+            _selectedIds.Clear();
+            _selectedIds.Add(node.Id);
             Render();
+        };
+        button.PointerPressed += (_, e) =>
+        {
+            if (e.GetCurrentPoint(button).Properties.IsRightButtonPressed)
+            {
+                var port = node.Kind == GraphNodeKind.Condition ? (trueBranch ? "true" : "false") : "next";
+                ClearConnection(node.Id, port);
+                e.Handled = true;
+            }
         };
         return button;
     }
@@ -554,15 +633,57 @@ public sealed class NodeGraphWindow : Window
 
             _linkSource = null;
             _selected = node;
+            _selectedIds.Clear();
+            _selectedIds.Add(node.Id);
             MarkChanged();
             Render();
             e.Handled = true;
             return;
         }
 
+        var additive = e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Shift);
+
+        if (additive)
+        {
+            if (!_selectedIds.Add(node.Id))
+            {
+                _selectedIds.Remove(node.Id);
+
+                if (_selected == node)
+                {
+                    _selected = _graph.Nodes.FirstOrDefault(item => _selectedIds.Contains(item.Id));
+                }
+            }
+            else
+            {
+                _selected = node;
+            }
+
+            e.Handled = true;
+            Render();
+            return;
+        }
+
+        if (!_selectedIds.Contains(node.Id))
+        {
+            _selectedIds.Clear();
+            _selectedIds.Add(node.Id);
+        }
+
         _selected = node;
         _dragCard = card;
         _dragNode = node;
+        _dragPositions.Clear();
+
+        foreach (var id in _selectedIds)
+        {
+            if (_graph.Find(id) is { } selected)
+            {
+                _dragPositions[id] = (selected.X, selected.Y);
+            }
+        }
+
+        _dragPositions[node.Id] = (node.X, node.Y);
         _dragStart = e.GetPosition(_canvas);
         _dragX = node.X;
         _dragY = node.Y;
@@ -579,10 +700,26 @@ public sealed class NodeGraphWindow : Window
         }
 
         var position = e.GetPosition(_canvas);
-        node.X = (float)Math.Max(0, _dragX + position.X - _dragStart.X);
-        node.Y = (float)Math.Max(0, _dragY + position.Y - _dragStart.Y);
-        Canvas.SetLeft(card, node.X);
-        Canvas.SetTop(card, node.Y);
+        var dx = position.X - _dragStart.X;
+        var dy = position.Y - _dragStart.Y;
+
+        foreach (var (id, start) in _dragPositions)
+        {
+            if (_graph.Find(id) is not { } selected)
+            {
+                continue;
+            }
+
+            selected.X = (float)Math.Max(0, start.X + dx);
+            selected.Y = (float)Math.Max(0, start.Y + dy);
+
+            if (_nodeCards.TryGetValue(id, out var selectedCard))
+            {
+                Canvas.SetLeft(selectedCard, selected.X);
+                Canvas.SetTop(selectedCard, selected.Y);
+            }
+        }
+
         e.Handled = true;
     }
 
@@ -592,10 +729,29 @@ public sealed class NodeGraphWindow : Window
         {
             _dragNode = null;
             _dragCard = null;
+            _dragPositions.Clear();
             e.Pointer.Capture(null);
             MarkChanged();
             Render();
         }
+    }
+    private void ClearConnection(Guid nodeId, string port)
+    {
+        if (_graph.Find(nodeId) is not { } node)
+        {
+            return;
+        }
+
+        switch (port)
+        {
+            case "true": node.TrueNext = null; break;
+            case "false": node.FalseNext = null; break;
+            default: node.Next = null; break;
+        }
+
+        _linkSource = null;
+        MarkChanged();
+        Render();
     }
 
     private void RenderInspector()
@@ -608,6 +764,17 @@ public sealed class NodeGraphWindow : Window
             FontWeight = FontWeight.Bold,
             Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
         });
+
+        if (_selectedIds.Count > 1)
+        {
+            _inspector.Children.Add(new TextBlock
+            {
+                Text = $"{_selectedIds.Count} nodos seleccionados · Ctrl+C/V o Supr",
+                FontSize = 10.5,
+                Foreground = new SolidColorBrush(Color.Parse("#53D6FF")),
+                TextWrapping = TextWrapping.Wrap,
+            });
+        }
 
         if (_selected is null)
         {
@@ -834,5 +1001,5 @@ public sealed class NodeGraphWindow : Window
             _ => $"Teletransportar a {target}",
         };
     }
-
+    private sealed record LinkRef(Guid NodeId, string Port);
 }

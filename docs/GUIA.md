@@ -783,3 +783,14 @@ Las entidades hijas ya usan la posición de mundo en el modo 2.5D:
 
 `Transform.Position` sigue siendo la posición **local**; los scripts que la modifiquen
 deben recordar que el padre se suma al renderizar.
+
+## 33. Grafo: selección múltiple, conexiones y expresiones (0.36)
+
+- **Selección múltiple**: Ctrl+clic o Shift+clic sobre encabezados; Ctrl+A selecciona todo.
+- **Mover varios**: arrastra cualquiera de los nodos seleccionados y se mueven todos.
+- **Copiar/pegar grupo**: Ctrl+C / Ctrl+V conserva conexiones internas del grupo.
+- **Borrar conexiones**: clic derecho sobre una línea o sobre el botón de salida
+  (`Conectar`, `Sí`, `No`). No es necesario reemplazar la conexión.
+- **Validación de expresiones**: el panel marca errores de sintaxis como `2 +`,
+  paréntesis sin cerrar o caracteres inválidos.
+- Las expresiones se validan al abrir/refrescar el grafo; un error no ejecuta la acción.

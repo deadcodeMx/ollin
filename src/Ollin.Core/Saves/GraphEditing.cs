@@ -1,5 +1,6 @@
 using Ollin.Core.Model.Components;
 using Ollin.Core.Scenes;
+using Ollin.Core.Scripting;
 
 namespace Ollin.Core.Saves;
 
@@ -166,17 +167,26 @@ public static class GraphValidator
                         issues.Add(new GraphIssue(node, "Falta el nombre de la variable.", true));
                     }
 
-                    if (node.Action != ActionKind.ToggleFlag && string.IsNullOrWhiteSpace(node.Expression))
+                    if (node.Action != ActionKind.ToggleFlag)
                     {
-                        issues.Add(new GraphIssue(node, "Falta la expresión de la variable.", true));
+                        var expressionError = ExpressionEvaluator.Validate(node.Expression);
+
+                        if (expressionError is not null)
+                        {
+                            issues.Add(new GraphIssue(node, $"Expresión inválida: {expressionError}", true));
+                        }
                     }
                 }
             }
 
-            if (node.Kind == GraphNodeKind.Condition && node.Condition == GraphConditionKind.Expression &&
-                string.IsNullOrWhiteSpace(node.Expression))
+            if (node.Kind == GraphNodeKind.Condition && node.Condition == GraphConditionKind.Expression)
             {
-                issues.Add(new GraphIssue(node, "La condición de expresión está vacía.", true));
+                var expressionError = ExpressionEvaluator.Validate(node.Expression);
+
+                if (expressionError is not null)
+                {
+                    issues.Add(new GraphIssue(node, $"Expresión inválida: {expressionError}", true));
+                }
             }
         }
 

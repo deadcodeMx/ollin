@@ -1,24 +1,27 @@
-## Ollin 0.35.0 beta — transformaciones de mundo en 2.5D
+## Ollin 0.36.0 beta — selección múltiple y expresiones
 
 ### Incluye
 
-- Entidades hijas 2.5D renderizadas, iluminadas y colisionadas en **posición de mundo**.
-- Cámara, IA, seguidor, navegación A* y recogibles usan mundo.
-- Gizmo de mover para hijos: centro de mundo y conversión a local.
-- `Scene.SetWorldPosition` y `Scene.WorldDistance`.
-- **182 pruebas automatizadas**.
+- **Selección múltiple** de nodos con Ctrl/Shift; Ctrl+A selecciona todo.
+- **Mover varios nodos** arrastrando cualquiera de los seleccionados.
+- **Copiar/pegar grupos** con sus conexiones internas.
+- **Clic derecho** en una conexión o salida para borrarla.
+- **Validación de sintaxis** de expresiones.
+- **187 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 0.35.0 y abre el demo.
-2. Crea una entidad padre y arrastra otra entidad dentro de ella.
-3. Mueve al padre: el hijo debe renderizarse y colisionar en la posición correcta.
-4. Selecciona al hijo y muévelo con el gizmo: debe moverse respecto al padre.
-5. Coloca un recogible hijo y comprueba que se recoge al pasar cerca.
+1. Instala 0.36.0 y abre el demo.
+2. Selecciona **Guía** y pulsa **Grafo**.
+3. Ctrl+clic en varios nodos y arrastra uno: se mueven todos.
+4. Ctrl+C / Ctrl+V pega el grupo.
+5. Clic derecho sobre una línea para borrar la conexión.
+6. Escribe una expresión inválida como `2 +` y revisa **VALIDACIÓN**.
 
 ### Limitaciones
 
-- La rotación/escala del padre no se combina aún con `Wall3D.Yaw` ni con el tamaño de
-  la caja; solo se compone la posición.
-- `Height` de cámara y `BaseY` de pared siguen siendo valores propios, no heredados.
-- Los scripts que escriben `Transform.Position` trabajan en local.
+- La selección múltiple es por Ctrl/Shift; no hay lazo de selección.
+- El historial restaura la selección principal, no todo el grupo.
+- Copiar/pegar conserva solo conexiones internas del grupo.
+- El borrado de conexiones no tiene menú contextual; es clic derecho directo.
+- La validación detecta sintaxis, no variables no definidas ni errores semánticos.

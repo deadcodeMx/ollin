@@ -21,23 +21,44 @@ public static class ExpressionEvaluator
 {
     public static object Evaluate(string expression, ExpressionContext context)
     {
+        TryEvaluate(expression, context, out var value, out _);
+        return value;
+    }
+
+    /// <summary>Evalúa y devuelve un error de sintaxis en lugar de silenciarlo.</summary>
+    public static bool TryEvaluate(string expression, ExpressionContext context, out object value, out string? error)
+    {
         try
         {
             var tokens = Tokenize(expression);
             var parser = new Parser(tokens, context);
-            var value = parser.ParseExpression();
+            value = parser.ParseExpression();
 
             if (parser.HasMore)
             {
-                throw new FormatException("Sobran tokens en la expresión");
+                throw new FormatException("Sobran tokens en la expresión.");
             }
 
-            return value;
+            error = null;
+            return true;
         }
-        catch
+        catch (Exception exception)
         {
-            return 0f;
+            value = 0f;
+            error = exception.Message;
+            return false;
         }
+    }
+
+    /// <summary>Valida la sintaxis sin necesitar una partida en curso.</summary>
+    public static string? Validate(string expression)
+    {
+        if (string.IsNullOrWhiteSpace(expression))
+        {
+            return "La expresión está vacía.";
+        }
+
+        return TryEvaluate(expression, new ExpressionContext(), out _, out var error) ? null : error;
     }
 
     public static bool EvaluateBool(string expression, ExpressionContext context) =>

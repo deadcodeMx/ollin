@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.36.0] — 2026-10-31
+
+### Añadido
+
+- **Selección múltiple** de nodos con Ctrl/Shift y **mover varios** a la vez.
+- **Copiar/pegar grupos** conservando conexiones internas.
+- **Borrar conexiones con clic derecho** sobre línea o salida.
+- **Validación de sintaxis de expresiones** en el grafo.
+- 5 pruebas nuevas: 187 en total.
+
 ## [0.35.0] — 2026-10-31
 
 ### Añadido
