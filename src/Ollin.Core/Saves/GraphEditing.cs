@@ -126,6 +126,16 @@ public static class GraphValidator
             issues.Add(new GraphIssue(null, "El grafo no tiene ningún evento de entrada.", true));
         }
 
+        var knownVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var actionNode in graph.Nodes.Where(node => node.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.ToggleFlag))
+        {
+            if (!string.IsNullOrWhiteSpace(actionNode.VariableName))
+            {
+                knownVariables.Add(actionNode.VariableName);
+            }
+        }
+
         var incoming = new HashSet<Guid>();
 
         foreach (var node in graph.Nodes)
@@ -175,6 +185,10 @@ public static class GraphValidator
                         {
                             issues.Add(new GraphIssue(node, $"Expresión inválida: {expressionError}", true));
                         }
+                        else
+                        {
+                            ValidateSemantics(node, node.Expression, knownVariables, issues);
+                        }
                     }
                 }
             }
@@ -187,6 +201,10 @@ public static class GraphValidator
                 {
                     issues.Add(new GraphIssue(node, $"Expresión inválida: {expressionError}", true));
                 }
+                else
+                {
+                    ValidateSemantics(node, node.Expression, knownVariables, issues);
+                }
             }
         }
 
@@ -197,6 +215,32 @@ public static class GraphValidator
 
         DetectCycles(graph, issues);
         return issues;
+    }
+
+    private static readonly HashSet<string> SystemIdentifiers = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "vida", "health", "vidamax", "healthmax", "vidas", "lives",
+    };
+
+    private static readonly HashSet<string> KnownFunctions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "has", "tiene", "min", "max",
+    };
+
+    private static void ValidateSemantics(GraphNode node, string expression, HashSet<string> knownVariables, List<GraphIssue> issues)
+    {
+        var analysis = ExpressionEvaluator.Analyze(expression);
+
+        foreach (var function in analysis.Functions.Where(function => !KnownFunctions.Contains(function)))
+        {
+            issues.Add(new GraphIssue(node, $"Función desconocida: {function}.", true));
+        }
+
+        foreach (var identifier in analysis.Identifiers.Where(identifier =>
+                     !SystemIdentifiers.Contains(identifier) && !knownVariables.Contains(identifier)))
+        {
+            issues.Add(new GraphIssue(node, $"Variable no definida: {identifier}.", false));
+        }
     }
 
     private static void CheckLink(NodeGraph graph, GraphNode node, Guid? target, string label, List<GraphIssue> issues)

@@ -9,6 +9,7 @@ using Ollin.Core.Saves;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
 using Ollin.Editor.ViewModels;
+using Ollin.Editor.Controls;
 
 namespace Ollin.Editor.Views;
 
@@ -31,6 +32,12 @@ public sealed class NodeGraphWindow : Window
     private readonly Dictionary<Guid, (double X, double Y)> _dragPositions = new();
     private Guid? _activeNodeId;
     private double _zoom = 1.0;
+    private ScrollViewer? _scroller;
+    private TextBox? _searchBox;
+    private string _searchText = string.Empty;
+    private bool _panning;
+    private Point _panStart;
+    private Vector _panOffset;
     private readonly StackPanel _inspector = new() { Spacing = 6, Margin = new Thickness(10) };
     private readonly TextBlock _status = new() { FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#AAB4C4")), Margin = new Thickness(8) };
     private GraphNode? _selected;
@@ -79,7 +86,17 @@ public sealed class NodeGraphWindow : Window
         _debugTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(120) };
         _debugTimer.Tick += (_, _) => PollDebug();
         _debugTimer.Start();
-        Closed += (_, _) => _debugTimer.Stop();
+        Closed += (_, _) =>
+        {
+            _debugTimer.Stop();
+            WindowsMouseLock.Suspended = false;
+        };
+        Activated += (_, _) =>
+        {
+            WindowsMouseLock.Suspended = true;
+            WindowsMouseLock.Disable();
+        };
+        Deactivated += (_, _) => WindowsMouseLock.Suspended = false;
         AddHandler(KeyDownEvent, OnGraphKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
     }
 
@@ -162,6 +179,14 @@ public sealed class NodeGraphWindow : Window
         toolbar.Children.Add(ToolButton("100%", () => SetZoom(1.0)));
         toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1)));
         toolbar.Children.Add(ToolButton("Ajustar", () => SetZoom(0.75)));
+        toolbar.Children.Add(ToolButton("Ordenar", AutoLayout));
+        _searchBox = new TextBox { Watermark = "Buscar nodo…", Width = 140, FontSize = 10.5, Margin = new Thickness(8, 0, 0, 0) };
+        _searchBox.TextChanged += (_, _) =>
+        {
+            _searchText = _searchBox.Text ?? string.Empty;
+            Render();
+        };
+        toolbar.Children.Add(_searchBox);
         toolbar.Children.Add(_zoomText);
         UpdateZoomText();
 
@@ -171,11 +196,41 @@ public sealed class NodeGraphWindow : Window
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
         };
+        _scroller = scroller;
         scroller.PointerWheelChanged += (_, e) =>
         {
             if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
             {
-                ZoomBy(e.Delta.Y > 0 ? 0.1 : -0.1);
+                ZoomAt(_zoom + (e.Delta.Y > 0 ? 0.1 : -0.1), e.GetPosition(scroller));
+                e.Handled = true;
+            }
+        };
+        scroller.PointerPressed += (_, e) =>
+        {
+            if (e.GetCurrentPoint(scroller).Properties.IsMiddleButtonPressed)
+            {
+                _panning = true;
+                _panStart = e.GetPosition(scroller);
+                _panOffset = scroller.Offset;
+                e.Pointer.Capture(scroller);
+                e.Handled = true;
+            }
+        };
+        scroller.PointerMoved += (_, e) =>
+        {
+            if (!_panning || e.Pointer.Captured != scroller) return;
+            var delta = e.GetPosition(scroller) - _panStart;
+            scroller.Offset = new Vector(
+                Math.Max(0, _panOffset.X - delta.X),
+                Math.Max(0, _panOffset.Y - delta.Y));
+            e.Handled = true;
+        };
+        scroller.PointerReleased += (_, e) =>
+        {
+            if (_panning)
+            {
+                _panning = false;
+                e.Pointer.Capture(null);
                 e.Handled = true;
             }
         };
@@ -198,12 +253,94 @@ public sealed class NodeGraphWindow : Window
 
     private void SetZoom(double zoom)
     {
-        _zoom = Math.Clamp(zoom, 0.35, 2.0);
+        var anchor = _scroller is null
+            ? new Point(0, 0)
+            : new Point(_scroller.Bounds.Width / 2, _scroller.Bounds.Height / 2);
+        ZoomAt(zoom, anchor);
+    }
+
+    private void ZoomAt(double zoom, Point anchor)
+    {
+        var next = Math.Clamp(zoom, 0.35, 2.0);
+
+        if (Math.Abs(next - _zoom) < 0.0001)
+        {
+            return;
+        }
+
+        if (_scroller is null)
+        {
+            _zoom = next;
+            _canvasTransform.LayoutTransform = new ScaleTransform(_zoom, _zoom);
+            UpdateZoomText();
+            return;
+        }
+
+        var old = _zoom;
+        var logical = new Point(
+            (_scroller.Offset.X + anchor.X) / old,
+            (_scroller.Offset.Y + anchor.Y) / old);
+        _zoom = next;
         _canvasTransform.LayoutTransform = new ScaleTransform(_zoom, _zoom);
-        UpdateZoomText();
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            _scroller.Offset = new Vector(
+                Math.Max(0, logical.X * _zoom - anchor.X),
+                Math.Max(0, logical.Y * _zoom - anchor.Y));
+            UpdateZoomText();
+        }, DispatcherPriority.Background);
     }
 
     private void UpdateZoomText() => _zoomText.Text = $"{_zoom * 100:0}%";
+
+    private void AutoLayout()
+    {
+        var events = _graph.Nodes.Where(node => node.Kind == GraphNodeKind.Event).ToList();
+        var placed = new HashSet<Guid>();
+        var column = 0;
+        var row = 0;
+
+        foreach (var start in events)
+        {
+            var queue = new Queue<(GraphNode Node, int Depth)>();
+            queue.Enqueue((start, 0));
+
+            while (queue.Count > 0)
+            {
+                var (node, depth) = queue.Dequeue();
+
+                if (!placed.Add(node.Id))
+                {
+                    continue;
+                }
+
+                node.X = 40 + depth * 260;
+                node.Y = 40 + row * 140;
+                row++;
+
+                foreach (var id in new[] { node.Next, node.TrueNext, node.FalseNext }.Where(id => id is not null))
+                {
+                    if (_graph.Find(id) is { } next && !placed.Contains(next.Id))
+                    {
+                        queue.Enqueue((next, depth + 1));
+                    }
+                }
+            }
+
+            column++;
+        }
+
+        foreach (var node in _graph.Nodes.Where(node => !placed.Contains(node.Id)))
+        {
+            node.X = 40 + column * 260;
+            node.Y = 40 + row * 140;
+            row++;
+        }
+
+        MarkChanged();
+        Render();
+    }
 
     private Control BuildInspectorArea()
     {
@@ -426,6 +563,30 @@ public sealed class NodeGraphWindow : Window
                 TextWrapping = TextWrapping.Wrap,
             });
 
+            if (_graph.ExecutionHistory.Count > 0)
+            {
+                _inspector.Children.Add(new TextBlock
+                {
+                    Text = "Últimos nodos",
+                    FontSize = 10,
+                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Margin = new Thickness(0, 6, 0, 0),
+                });
+
+                foreach (var historyId in _graph.ExecutionHistory.TakeLast(5).Reverse())
+                {
+                    if (_graph.Find(historyId) is not { } historyNode) continue;
+
+                    _inspector.Children.Add(new TextBlock
+                    {
+                        Text = $"  {KindLabel(historyNode)} · {NodeSummary(historyNode)}",
+                        FontSize = 10,
+                        Foreground = new SolidColorBrush(Color.Parse("#D6DCE8")),
+                        TextWrapping = TextWrapping.Wrap,
+                    });
+                }
+            }
+
             if (GameStateHost.Current is { } state)
             {
                 foreach (var (key, value) in state.Values.Take(8))
@@ -524,7 +685,9 @@ public sealed class NodeGraphWindow : Window
         var issue = _issues.FirstOrDefault(item => item.Node?.Id == node.Id);
         var active = _viewModel.IsPlaying && _activeNodeId == node.Id;
         var selected = _selectedIds.Contains(node.Id);
-        var borderColor = active ? "#53D6FF" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : selected ? "#FFFFFF" : kindColor;
+        var match = !string.IsNullOrWhiteSpace(_searchText) &&
+                    $"{KindLabel(node)} {NodeSummary(node)}".Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+        var borderColor = active ? "#53D6FF" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : match ? "#E9A23B" : selected ? "#FFFFFF" : kindColor;
         var card = new Border
         {
             Width = 200,

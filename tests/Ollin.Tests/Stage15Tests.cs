@@ -73,4 +73,65 @@ public class ExpressionSyntaxTests
         Assert.True(history.Undo(graph, node.Id, out _));
         Assert.Single(graph.Nodes);
     }
+    [Fact]
+    public void ElAnalizadorSeparaVariablesYFunciones()
+    {
+        var analysis = ExpressionEvaluator.Analyze("contador >= 3 && tiene(\"llave\")");
+
+        Assert.Contains("contador", analysis.Identifiers);
+        Assert.Contains("tiene", analysis.Functions);
+    }
+
+    [Fact]
+    public void ElValidadorAvisaDeVariableNoDefinida()
+    {
+        var scene = new Scene();
+        var graph = new NodeGraph();
+        var eventNode = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var condition = graph.AddNode(GraphNodeKind.Condition, 100, 0);
+        condition.Condition = GraphConditionKind.Expression;
+        condition.Expression = "contador >= 3";
+        eventNode.Next = condition.Id;
+
+        var issues = GraphValidator.Validate(graph, scene);
+
+        Assert.Contains(issues, issue => !issue.IsError && issue.Message.Contains("Variable no definida"));
+    }
+
+    [Fact]
+    public void ElValidadorAceptaUnaVariableDefinidaPorUnaAccion()
+    {
+        var scene = new Scene();
+        var graph = new NodeGraph();
+        var eventNode = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var set = graph.AddNode(GraphNodeKind.Action, 100, 0);
+        set.Action = ActionKind.SetVariable;
+        set.VariableName = "contador";
+        set.Expression = "0";
+        var condition = graph.AddNode(GraphNodeKind.Condition, 200, 0);
+        condition.Condition = GraphConditionKind.Expression;
+        condition.Expression = "contador >= 1";
+        eventNode.Next = set.Id;
+        set.Next = condition.Id;
+
+        var issues = GraphValidator.Validate(graph, scene);
+
+        Assert.DoesNotContain(issues, issue => issue.Message.Contains("Variable no definida"));
+    }
+
+    [Fact]
+    public void ElValidadorRechazaFuncionesDesconocidas()
+    {
+        var scene = new Scene();
+        var graph = new NodeGraph();
+        var eventNode = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var condition = graph.AddNode(GraphNodeKind.Condition, 100, 0);
+        condition.Condition = GraphConditionKind.Expression;
+        condition.Expression = "foo(1) > 0";
+        eventNode.Next = condition.Id;
+
+        var issues = GraphValidator.Validate(graph, scene);
+
+        Assert.Contains(issues, issue => issue.IsError && issue.Message.Contains("Función desconocida"));
+    }
 }

@@ -20,8 +20,16 @@ public static class WindowsMouseLock
 
     public static bool IsEnabled => _enabled;
 
+    /// <summary>Permite que otra ventana (como el editor de grafo) use el cursor.</summary>
+    public static bool Suspended { get; set; }
+
     public static void Enable(Window window)
     {
+        if (Suspended)
+        {
+            return;
+        }
+
         if (_enabled && ReferenceEquals(_window, window))
         {
             return;
@@ -78,6 +86,12 @@ public static class WindowsMouseLock
 
     public static void Update(Window window)
     {
+        if (Suspended)
+        {
+            Disable();
+            return;
+        }
+
         if (!_enabled || !ReferenceEquals(_window, window))
         {
             return;

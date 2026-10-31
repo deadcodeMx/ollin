@@ -1,27 +1,28 @@
-## Ollin 0.36.0 beta — selección múltiple y expresiones
+## Ollin 0.37.0 beta — pulido del editor de grafo
 
 ### Incluye
 
-- **Selección múltiple** de nodos con Ctrl/Shift; Ctrl+A selecciona todo.
-- **Mover varios nodos** arrastrando cualquiera de los seleccionados.
-- **Copiar/pegar grupos** con sus conexiones internas.
-- **Clic derecho** en una conexión o salida para borrarla.
-- **Validación de sintaxis** de expresiones.
-- **187 pruebas automatizadas**.
+- **Zoom centrado en el cursor** y **paneo con botón central**.
+- **Validación semántica** de variables y funciones.
+- **Historial de ejecución** de los últimos 24 nodos.
+- **Búsqueda** de nodos y **auto-layout**.
+- **Pointer lock suspendido** al activar el grafo durante la partida.
+- **191 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 0.36.0 y abre el demo.
-2. Selecciona **Guía** y pulsa **Grafo**.
-3. Ctrl+clic en varios nodos y arrastra uno: se mueven todos.
-4. Ctrl+C / Ctrl+V pega el grupo.
-5. Clic derecho sobre una línea para borrar la conexión.
-6. Escribe una expresión inválida como `2 +` y revisa **VALIDACIÓN**.
+1. Instala 0.37.0 y abre el demo.
+2. Abre **Guía → Grafo**.
+3. Usa Ctrl+rueda sobre un nodo: el zoom debe acercarse a ese punto.
+4. Arrastra con el botón central para paneo.
+5. Prueba **Buscar nodo** y **Ordenar**.
+6. Escribe `foo(1)` o una variable no definida y revisa VALIDACIÓN.
+7. Reproduce y activa la ventana del grafo: el cursor debe quedar libre.
 
 ### Limitaciones
 
-- La selección múltiple es por Ctrl/Shift; no hay lazo de selección.
-- El historial restaura la selección principal, no todo el grupo.
-- Copiar/pegar conserva solo conexiones internas del grupo.
-- El borrado de conexiones no tiene menú contextual; es clic derecho directo.
-- La validación detecta sintaxis, no variables no definidas ni errores semánticos.
+- La validación semántica no conoce variables escritas por componentes/scripts.
+- El historial de ejecución es en memoria (24 nodos) y no tiene breakpoints ni paso a paso.
+- No hay grupos/comentarios de nodos.
+- El auto-layout es BFS simple y puede solapar ramas.
+- La búsqueda resalta, no filtra ni salta al nodo.

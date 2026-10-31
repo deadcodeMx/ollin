@@ -794,3 +794,18 @@ deben recordar que el padre se suma al renderizar.
 - **Validación de expresiones**: el panel marca errores de sintaxis como `2 +`,
   paréntesis sin cerrar o caracteres inválidos.
 - Las expresiones se validan al abrir/refrescar el grafo; un error no ejecuta la acción.
+
+## 34. Grafo: limitaciones de 0.32 resueltas (0.37)
+
+- **Zoom centrado en el cursor** con Ctrl+rueda.
+- **Paneo con botón central** arrastrando el canvas.
+- **Validación semántica**: funciones desconocidas y variables no definidas.
+- **Historial de ejecución** de los últimos 24 nodos.
+- **Búsqueda** de nodos por texto, con resaltado.
+- **Auto-layout** con el botón **Ordenar** (recorrido desde los eventos).
+- **Pointer lock suspendido** mientras el grafo está activo: se puede usar el ratón en el
+  editor durante la partida.
+
+Variables como `enemigos_muertos`, escritas por componentes (por ejemplo `Health`),
+pueden aparecer como “Variable no definida” si el grafo no las asigna; es un aviso, no un
+error de sintaxis.

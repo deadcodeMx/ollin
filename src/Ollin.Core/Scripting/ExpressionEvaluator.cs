@@ -26,6 +26,49 @@ public static class ExpressionEvaluator
     }
 
     /// <summary>Evalúa y devuelve un error de sintaxis en lugar de silenciarlo.</summary>
+    /// <summary>Identificadores y funciones usadas en una expresión (para validación).</summary>
+    public sealed record ExpressionAnalysis(IReadOnlyList<string> Identifiers, IReadOnlyList<string> Functions);
+
+    public static ExpressionAnalysis Analyze(string expression)
+    {
+        var identifiers = new List<string>();
+        var functions = new List<string>();
+
+        try
+        {
+            var tokens = Tokenize(expression);
+
+            for (var i = 0; i < tokens.Count - 1; i++)
+            {
+                if (tokens[i].Kind != TokenKind.Identifier)
+                {
+                    continue;
+                }
+
+                var name = tokens[i].Text;
+
+                if (name is "true" or "True" or "false" or "False")
+                {
+                    continue;
+                }
+
+                if (tokens[i + 1].Kind == TokenKind.Operator && tokens[i + 1].Text == "(")
+                {
+                    functions.Add(name);
+                }
+                else
+                {
+                    identifiers.Add(name);
+                }
+            }
+        }
+        catch
+        {
+            // El error de sintaxis lo reporta Validate.
+        }
+
+        return new ExpressionAnalysis(identifiers, functions);
+    }
     public static bool TryEvaluate(string expression, ExpressionContext context, out object value, out string? error)
     {
         try

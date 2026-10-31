@@ -17,6 +17,18 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.37.0] — 2026-10-31
+
+### Añadido
+
+- Zoom del grafo centrado en el cursor.
+- Paneo con botón central.
+- Validación semántica: funciones desconocidas y variables no definidas.
+- Historial de ejecución de los últimos 24 nodos.
+- Búsqueda de nodos con resaltado y auto-layout.
+- Pointer lock suspendido mientras el grafo está activo.
+- 4 pruebas nuevas: 191 en total.
+
 ## [0.36.0] — 2026-10-31
 
 ### Añadido

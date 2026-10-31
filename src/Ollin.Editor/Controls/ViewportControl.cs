@@ -225,7 +225,7 @@ public sealed class ViewportControl : OpenGlControlBase
         }
 
         var wantsLock = _viewModel is { IsPlaying: true, IsPaused: false, IsGameOverVisible: false } &&
-                        window.IsActive;
+                        window.IsActive && !WindowsMouseLock.Suspended;
 
         if (wantsLock)
         {
