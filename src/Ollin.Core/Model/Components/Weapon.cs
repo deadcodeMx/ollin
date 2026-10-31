@@ -10,6 +10,10 @@ namespace Ollin.Core.Model.Components;
 /// </summary>
 public sealed class Weapon : Component, ITickable
 {
+    public string Name { get; set; } = "Pistola";
+
+    public int Slot { get; set; } = 1;
+
     public float Damage { get; set; } = 34f;
 
     public float Range { get; set; } = 30f;
@@ -23,7 +27,25 @@ public sealed class Weapon : Component, ITickable
 
     public bool ShowAmmoOnHud { get; set; }
 
+    public bool IsProjectile { get; set; }
+
+    public float ProjectileSpeed { get; set; } = 18f;
+
+    public float ProjectileSize { get; set; } = 0.25f;
+
+    public string? ProjectileTexture { get; set; }
+
+    public int MagazineSize { get; set; }
+
+    public int ReserveAmmo { get; set; } = -1;
+
+    public float ReloadSeconds { get; set; } = 1.2f;
+
+    public bool AutoReload { get; set; } = true;
+
     private float _cooldown;
+    private float _reloadTimer;
+    private bool _reloading;
 
     public void OnUpdate(float deltaTime)
     {
@@ -32,17 +54,43 @@ public sealed class Weapon : Component, ITickable
             _cooldown -= deltaTime;
         }
 
+        if (_reloading)
+        {
+            _reloadTimer -= deltaTime;
+
+            if (_reloadTimer <= 0f)
+            {
+                FinishReload();
+            }
+        }
+
         if (Owner?.Scene is not { } scene)
         {
             return;
+        }
+
+        if (Owner.GetComponent<WeaponGroup>() is { } group && group.ActiveSlot != Slot)
+        {
+            return;
+        }
+
+        if (InputState.WasKeyPressed(KeyCode.R) && !_reloading && MagazineSize > 0 && Ammo < MagazineSize)
+        {
+            StartReload();
         }
 
         var pressed = Automatic
             ? InputState.IsMouseButtonDown(0)
             : InputState.WasMouseButtonPressed(0);
 
-        if (!pressed || _cooldown > 0f || Ammo == 0)
+        if (!pressed || _cooldown > 0f || _reloading)
         {
+            return;
+        }
+
+        if (Ammo == 0)
+        {
+            StartReload();
             return;
         }
 
@@ -59,6 +107,11 @@ public sealed class Weapon : Component, ITickable
         if (Ammo > 0)
         {
             Ammo--;
+
+            if (Ammo == 0 && AutoReload)
+            {
+                StartReload();
+            }
         }
 
         if (ShowAmmoOnHud)
@@ -67,9 +120,48 @@ public sealed class Weapon : Component, ITickable
         }
     }
 
+    public void StartReload()
+    {
+        if (MagazineSize <= 0 || Ammo >= MagazineSize || ReserveAmmo == 0 || _reloading)
+        {
+            return;
+        }
+
+        _reloading = true;
+        _reloadTimer = MathF.Max(0.1f, ReloadSeconds);
+        HudHost.ShowMessage("Recargando…", ReloadSeconds);
+    }
+
+    private void FinishReload()
+    {
+        _reloading = false;
+        var needed = MagazineSize - System.Math.Max(0, Ammo);
+        var available = ReserveAmmo < 0 ? needed : System.Math.Min(needed, ReserveAmmo);
+        Ammo = System.Math.Max(0, Ammo) + available;
+
+        if (ReserveAmmo > 0)
+        {
+            ReserveAmmo -= available;
+        }
+    }
+
     /// <summary>Dispara una vez (también disponible para scripts).</summary>
     public bool Fire(Scenes.Scene scene, Camera3D camera)
     {
+        if (IsProjectile)
+        {
+            Projectile.Spawn(
+                scene,
+                new Vector2(camera.Eye.X, camera.Eye.Z),
+                new Vector2(camera.Forward.X, camera.Forward.Z),
+                Damage,
+                Owner?.Id ?? Guid.Empty,
+                ProjectileSpeed,
+                ProjectileSize,
+                ProjectileTexture);
+            return true;
+        }
+
         var origin = camera.Eye;
         var direction = camera.Forward;
         var nearest = Range;
@@ -182,6 +274,16 @@ public sealed class Weapon : Component, ITickable
         Ammo = Ammo,
         Automatic = Automatic,
         ShowAmmoOnHud = ShowAmmoOnHud,
+        Name = Name,
+        Slot = Slot,
+        IsProjectile = IsProjectile,
+        ProjectileSpeed = ProjectileSpeed,
+        ProjectileSize = ProjectileSize,
+        ProjectileTexture = ProjectileTexture,
+        MagazineSize = MagazineSize,
+        ReserveAmmo = ReserveAmmo,
+        ReloadSeconds = ReloadSeconds,
+        AutoReload = AutoReload,
         Owner = newOwner,
     };
 }

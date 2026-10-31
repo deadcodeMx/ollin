@@ -1,5 +1,6 @@
 using System.Numerics;
 using Ollin.Core.Model;
+using Ollin.Core.Navigation;
 using Ollin.Core.Model.Components;
 using Ollin.Core.Projects;
 using Ollin.Core.Serialization;
@@ -100,5 +101,18 @@ public class AiAgent3DTests
                 Directory.Delete(parent, recursive: true);
             }
         }
+    }
+    [Fact]
+    public void LaRejillaEncuentraUnCaminoAlrededorDeUnaPared()
+    {
+        var scene = new Scene();
+        var wall = scene.Create("Muro", new Vector2(0f, 3f));
+        wall.AddComponent(new Wall3D { Size = new Vector3(9f, 3f, 0.4f), Collides = true });
+
+        var grid = NavGrid3D.Build(scene, 0.5f, 0.4f);
+
+        Assert.True(grid.TryFindPath(new Vector2(0f, 0f), new Vector2(0f, 6f), out var path));
+        Assert.True(path.Count > 2, string.Join(" | ", path));
+        Assert.Contains(path, point => point.X > 4f);
     }
 }

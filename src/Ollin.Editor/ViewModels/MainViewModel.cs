@@ -1081,6 +1081,64 @@ public sealed partial class MainViewModel : ObservableObject
         RequestRedraw();
     }
 
+    /// <summary>Crea una pared o un suelo 3D en la posición indicada por el pincel.</summary>
+    public void AddBrush3D(Vector2 position, bool floor)
+    {
+        if (IsPlaying)
+        {
+            return;
+        }
+
+        var entity = Scene.Create(floor ? "Suelo 3D" : "Pared 3D", position);
+        entity.AddComponent(new Wall3D
+        {
+            Size = floor ? new Vector3(6f, 0.2f, 6f) : new Vector3(4f, 3f, 0.4f),
+            Color = floor ? new Vector3(0.3f, 0.27f, 0.22f) : new Vector3(0.58f, 0.55f, 0.5f),
+            Collides = !floor,
+            BaseY = 0f,
+            TexturePath = floor ? "assets/textures/floor.png" : "assets/textures/wall.png",
+            TextureScale = 2f,
+        });
+
+        RebuildTree();
+        Select(entity);
+        IsDirty = true;
+        CommitEdit(floor ? "Pincel: suelo 3D" : "Pincel: pared 3D");
+        OnPropertyChanged(nameof(EntityCountText));
+        RequestRedraw();
+    }
+
+    /// <summary>Duplica la selección varias veces en fila (una sola entrada de deshacer).</summary>
+    public void DuplicateSelectedSeries(int count = 4)
+    {
+        if (IsPlaying || Selected is null || count <= 0)
+        {
+            return;
+        }
+
+        var original = Selected.Entity;
+        var step = original.GetComponent<Wall3D>() is { } wall
+            ? MathF.Max(1f, wall.Size.X + 0.2f)
+            : 2f;
+        Entity? last = null;
+
+        for (var i = 1; i <= count; i++)
+        {
+            var copy = original.Clone();
+            copy.Name = $"{original.Name} {i + 1}";
+            copy.Transform.Position = original.Transform.Position + new Vector2(step * i, 0f);
+            Scene.Add(copy);
+            last = copy;
+        }
+
+        RebuildTree();
+        if (last is not null) Select(last);
+        IsDirty = true;
+        CommitEdit($"Duplicar serie x{count}");
+        OnPropertyChanged(nameof(EntityCountText));
+        RequestRedraw();
+    }
+
     public void DuplicateSelected()
     {
         if (IsPlaying || Selected is null)

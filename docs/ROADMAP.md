@@ -144,6 +144,11 @@ principio a fin.
 - [x] Gizmos 3D para seleccionar, mover, rotar (Y) y escalar entidades.
 - [x] IA 3D de patrulla y persecución con visión y memoria.
 - [x] Comportamientos sin código: salud, arma, recogible, puerta, reglas y mensaje.
+- [x] Navegación A* para enemigos.
+- [x] Pincel de paredes/suelos, imán y duplicar serie.
+- [x] Proyectiles, armas múltiples, munición y reaparición.
+- [x] Pausa, opciones y guardado en el juego exportado.
+- [x] Botones, triggers, generadores y checkpoints.
 - [x] Audio posicional básico (atenuación por distancia).
 
 **Por qué:** permite hacer juegos con estética retro estilo PS1/Doom con el renderer y el flujo actuales, y

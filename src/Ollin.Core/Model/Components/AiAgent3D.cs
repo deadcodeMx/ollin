@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Text.Json.Serialization;
+using Ollin.Core.Navigation;
 
 namespace Ollin.Core.Model.Components;
 
@@ -28,6 +29,12 @@ public sealed class AiAgent3D : Component, ITickable
 
     public float AttackCooldown { get; set; } = 1.2f;
 
+    public bool UseNavigation { get; set; } = true;
+
+    public float NavCellSize { get; set; } = 0.5f;
+
+    public float NavRefreshSeconds { get; set; } = 0.6f;
+
     [JsonIgnore]
     public bool IsChasing { get; private set; }
 
@@ -42,6 +49,11 @@ public sealed class AiAgent3D : Component, ITickable
     private Vector2 _lastKnown;
     private Vector2 _patrolTarget;
     private float _attackTimer;
+    private NavGrid3D? _nav;
+    private List<Vector2>? _path;
+    private int _pathIndex;
+    private Vector2 _pathTarget;
+    private float _navTimer;
 
     public void OnUpdate(float deltaTime)
     {
@@ -98,6 +110,40 @@ public sealed class AiAgent3D : Component, ITickable
             }
 
             desired = _patrolTarget;
+        }
+
+        if (visible)
+        {
+            _path = null;
+        }
+        else if (UseNavigation)
+        {
+            _navTimer -= deltaTime;
+
+            if (_nav is null || _navTimer <= 0f)
+            {
+                _nav = NavGrid3D.Build(scene, NavCellSize, CollisionRadius);
+                _navTimer = MathF.Max(0.1f, NavRefreshSeconds);
+                _path = null;
+            }
+
+            if (_path is null || _pathIndex >= _path.Count || Vector2.Distance(_pathTarget, desired) > 0.6f)
+            {
+                _path = _nav.TryFindPath(position, desired, out var found) ? found : null;
+                _pathIndex = 0;
+                _pathTarget = desired;
+            }
+
+            while (_path is not null && _pathIndex < _path.Count &&
+                   Vector2.Distance(position, _path[_pathIndex]) < 0.35f)
+            {
+                _pathIndex++;
+            }
+
+            if (_path is not null && _pathIndex < _path.Count)
+            {
+                desired = _path[_pathIndex];
+            }
         }
 
         var toTarget = desired - position;
@@ -230,6 +276,9 @@ public sealed class AiAgent3D : Component, ITickable
         AttackDamage = AttackDamage,
         AttackRange = AttackRange,
         AttackCooldown = AttackCooldown,
+        UseNavigation = UseNavigation,
+        NavCellSize = NavCellSize,
+        NavRefreshSeconds = NavRefreshSeconds,
         Owner = newOwner,
     };
 }

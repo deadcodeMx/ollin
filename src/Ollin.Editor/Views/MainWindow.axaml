@@ -96,6 +96,10 @@
           <Button Classes="tool" Content="Mover" Click="OnGizmoMove" ToolTip.Tip="Gizmo 3D: mover (tecla 1)" />
           <Button Classes="tool" Content="Rotar" Click="OnGizmoRotate" ToolTip.Tip="Gizmo 3D: rotar alrededor de Y (tecla 2)" />
           <Button Classes="tool" Content="Escalar" Click="OnGizmoScale" ToolTip.Tip="Gizmo 3D: escalar (tecla 3)" />
+          <Button Classes="tool" Content="Pared" Click="OnBrushWall" ToolTip.Tip="Pincel: colocar pared 3D" />
+          <Button Classes="tool" Content="Suelo" Click="OnBrushFloor" ToolTip.Tip="Pincel: colocar suelo 3D" />
+          <ToggleButton Classes="tool" Content="Imán" Click="OnSnapToggle" ToolTip.Tip="Ajustar a la rejilla" />
+          <Button Classes="tool" Content="Serie x4" Click="OnDuplicateSeries" ToolTip.Tip="Duplicar la selección 4 veces en fila" />
           <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
           <Button Classes="tool accent" Content="▶  Reproducir" Click="OnPlay"
                   IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
@@ -172,6 +176,11 @@
                               <MenuItem Header="Puerta" Tag="door" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Reglas" Tag="rules" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Mensaje inicial" Tag="intro" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Reaparición" Tag="respawn" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Botón 3D" Tag="button3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Trigger 3D" Tag="trigger3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Generador" Tag="spawner3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Checkpoint" Tag="checkpoint3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Script" Tag="script" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Rotador" Tag="rotator" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Oscilador" Tag="oscillator" Click="OnRemoveComponentFromMenu" />
@@ -481,6 +490,11 @@
                             <MenuItem Header="Puerta" Click="OnAddDoor" />
                             <MenuItem Header="Reglas de juego" Click="OnAddRules" />
                             <MenuItem Header="Mensaje inicial" Click="OnAddIntro" />
+                            <MenuItem Header="Reaparición" Click="OnAddRespawn" />
+                            <MenuItem Header="Botón 3D" Click="OnAddButton3D" />
+                            <MenuItem Header="Trigger 3D" Click="OnAddTrigger3D" />
+                            <MenuItem Header="Generador" Click="OnAddSpawner3D" />
+                            <MenuItem Header="Checkpoint" Click="OnAddCheckpoint3D" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                             <MenuItem Header="Script" Click="OnAddScriptComponent" />
@@ -941,6 +955,31 @@
                       <TextBlock Text="Munición" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponAmmo, Mode=TwoWay}" Increment="1" Minimum="-1" FormatString="0" />
                     </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Nombre" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.WeaponName, Mode=TwoWay}" Watermark="Pistola" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Ranura" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponSlot, Mode=TwoWay}" Increment="1" Minimum="1" Maximum="3" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Cargador" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponMagazine, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Reserva" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponReserve, Mode=TwoWay}" Increment="6" Minimum="-1" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Recarga (s)" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponReload, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <CheckBox Content="Proyectil" IsChecked="{Binding Selected.WeaponProjectile, Mode=TwoWay}" FontSize="11.5" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Vel. proyectil" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponProjectileSpeed, Mode=TwoWay}" Increment="1" Minimum="1" FormatString="0.##" />
+                    </Grid>
                     <CheckBox Content="Automática (mantener clic)" IsChecked="{Binding Selected.WeaponAutomatic, Mode=TwoWay}" FontSize="11.5" />
                     <TextBlock Classes="hint" TextWrapping="Wrap" Text="Clic izquierdo desde la cámara FPS. Munición -1 = infinita." />
                   </StackPanel>
@@ -1032,6 +1071,107 @@
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.IntroDuration, Mode=TwoWay}" Increment="0.5" Minimum="0.5" FormatString="0.##" />
                     </Grid>
                     <TextBlock Classes="hint" TextWrapping="Wrap" Text="Se muestra al empezar la partida, sin necesidad de scripts." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Reaparición" IsVisible="{Binding Selected.HasRespawn}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="REAPARICIÓN" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Vidas" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.RespawnLives, Mode=TwoWay}" Increment="1" Minimum="1" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Espera (s)" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.RespawnSeconds, Mode=TwoWay}" Increment="0.25" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Al morir reaparece en el último checkpoint. Las reglas no dan derrota mientras queden vidas." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Botón 3D" IsVisible="{Binding Selected.HasButton}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="BOTÓN 3D" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Objetivo" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.ButtonTarget, Mode=TwoWay}" Watermark="Puerta" />
+                    </Grid>
+                    <ComboBox SelectedIndex="{Binding Selected.ButtonActionIndex, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                      <ComboBoxItem Content="Mensaje" /><ComboBoxItem Content="Abrir puerta" />
+                      <ComboBoxItem Content="Activar" /><ComboBoxItem Content="Desactivar" />
+                      <ComboBoxItem Content="Generar" /><ComboBoxItem Content="Checkpoint" />
+                      <ComboBoxItem Content="Ganar" />
+                    </ComboBox>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.ButtonRadius, Mode=TwoWay}" Increment="0.25" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <TextBox Text="{Binding Selected.ButtonMessage, Mode=TwoWay}" Watermark="Mensaje al usarlo" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Se activa con E cuando el jugador está cerca." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Trigger" IsVisible="{Binding Selected.HasTrigger}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="TRIGGER 3D" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Objetivo" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.TriggerTarget, Mode=TwoWay}" Watermark="Puerta" />
+                    </Grid>
+                    <ComboBox SelectedIndex="{Binding Selected.TriggerActionIndex, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                      <ComboBoxItem Content="Mensaje" /><ComboBoxItem Content="Abrir puerta" />
+                      <ComboBoxItem Content="Activar" /><ComboBoxItem Content="Desactivar" />
+                      <ComboBoxItem Content="Generar" /><ComboBoxItem Content="Checkpoint" />
+                      <ComboBoxItem Content="Ganar" />
+                    </ComboBox>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.TriggerRadius, Mode=TwoWay}" Increment="0.25" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <TextBox Text="{Binding Selected.TriggerMessage, Mode=TwoWay}" Watermark="Mensaje" />
+                    <CheckBox Content="Solo una vez" IsChecked="{Binding Selected.TriggerOnce, Mode=TwoWay}" FontSize="11.5" />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Generador" IsVisible="{Binding Selected.HasSpawner}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="GENERADOR" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Plantilla" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.SpawnerTemplate, Mode=TwoWay}" Watermark="Sombra refuerzo" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Intervalo" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.SpawnerInterval, Mode=TwoWay}" Increment="0.5" Minimum="0.5" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Máximo" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.SpawnerMax, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0" />
+                    </Grid>
+                    <CheckBox Content="Automático" IsChecked="{Binding Selected.SpawnerAuto, Mode=TwoWay}" FontSize="11.5" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Clona una entidad plantilla (normalmente inactiva)." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Checkpoint" IsVisible="{Binding Selected.HasCheckpoint}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="CHECKPOINT" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.CheckpointRadius, Mode=TwoWay}" Increment="0.25" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <TextBox Text="{Binding Selected.CheckpointMessage, Mode=TwoWay}" Watermark="Punto de control" />
+                    <CheckBox Content="Cura al activarse" IsChecked="{Binding Selected.CheckpointHeal, Mode=TwoWay}" FontSize="11.5" />
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>

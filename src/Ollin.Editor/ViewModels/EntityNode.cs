@@ -2375,4 +2375,275 @@ public sealed class EntityNode : ObservableObject
             Ai3D.AttackCooldown = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
         }
     }
+
+    public string WeaponName
+    {
+        get => WeaponState?.Name ?? "Pistola";
+        set
+        {
+            if (WeaponState is null || WeaponState.Name == value) return;
+            WeaponState.Name = string.IsNullOrWhiteSpace(value) ? "Arma" : value.Trim();
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal WeaponSlot
+    {
+        get => WeaponState?.Slot ?? 1;
+        set
+        {
+            if (WeaponState is null || WeaponState.Slot == (int)value) return;
+            WeaponState.Slot = Math.Clamp((int)value, 1, 3); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal WeaponMagazine
+    {
+        get => WeaponState?.MagazineSize ?? 0;
+        set
+        {
+            if (WeaponState is null || WeaponState.MagazineSize == (int)value) return;
+            WeaponState.MagazineSize = Math.Max(0, (int)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal WeaponReserve
+    {
+        get => WeaponState?.ReserveAmmo ?? -1;
+        set
+        {
+            if (WeaponState is null || WeaponState.ReserveAmmo == (int)value) return;
+            WeaponState.ReserveAmmo = (int)value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal WeaponReload
+    {
+        get => (decimal)(WeaponState?.ReloadSeconds ?? 1.2f);
+        set
+        {
+            if (WeaponState is null || MathF.Abs(WeaponState.ReloadSeconds - (float)value) < 0.01f) return;
+            WeaponState.ReloadSeconds = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool WeaponProjectile
+    {
+        get => WeaponState?.IsProjectile ?? false;
+        set
+        {
+            if (WeaponState is null || WeaponState.IsProjectile == value) return;
+            WeaponState.IsProjectile = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal WeaponProjectileSpeed
+    {
+        get => (decimal)(WeaponState?.ProjectileSpeed ?? 18f);
+        set
+        {
+            if (WeaponState is null || MathF.Abs(WeaponState.ProjectileSpeed - (float)value) < 0.01f) return;
+            WeaponState.ProjectileSpeed = MathF.Max(1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasRespawn => Entity.GetComponent<Respawn>() is not null;
+
+    public Respawn? RespawnState => Entity.GetComponent<Respawn>();
+
+    public decimal RespawnLives
+    {
+        get => RespawnState?.Lives ?? 3;
+        set
+        {
+            if (RespawnState is null || RespawnState.Lives == (int)value) return;
+            RespawnState.Lives = Math.Max(1, (int)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal RespawnSeconds
+    {
+        get => (decimal)(RespawnState?.RespawnSeconds ?? 1.5f);
+        set
+        {
+            if (RespawnState is null || MathF.Abs(RespawnState.RespawnSeconds - (float)value) < 0.01f) return;
+            RespawnState.RespawnSeconds = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasButton => Entity.GetComponent<Button3D>() is not null;
+
+    public Button3D? ButtonState => Entity.GetComponent<Button3D>();
+
+    public string ButtonTarget
+    {
+        get => ButtonState?.TargetName ?? string.Empty;
+        set
+        {
+            if (ButtonState is null || ButtonState.TargetName == value) return;
+            ButtonState.TargetName = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public int ButtonActionIndex
+    {
+        get => (int)(ButtonState?.Action ?? ActionKind.Message);
+        set
+        {
+            if (ButtonState is null || (int)ButtonState.Action == value) return;
+            ButtonState.Action = (ActionKind)Math.Clamp(value, 0, 6); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal ButtonRadius
+    {
+        get => (decimal)(ButtonState?.Radius ?? 2.5f);
+        set
+        {
+            if (ButtonState is null || MathF.Abs(ButtonState.Radius - (float)value) < 0.01f) return;
+            ButtonState.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string ButtonMessage
+    {
+        get => ButtonState?.Message ?? string.Empty;
+        set
+        {
+            if (ButtonState is null || ButtonState.Message == value) return;
+            ButtonState.Message = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasTrigger => Entity.GetComponent<Trigger3D>() is not null;
+
+    public Trigger3D? TriggerState => Entity.GetComponent<Trigger3D>();
+
+    public string TriggerTarget
+    {
+        get => TriggerState?.TargetName ?? string.Empty;
+        set
+        {
+            if (TriggerState is null || TriggerState.TargetName == value) return;
+            TriggerState.TargetName = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public int TriggerActionIndex
+    {
+        get => (int)(TriggerState?.Action ?? ActionKind.Message);
+        set
+        {
+            if (TriggerState is null || (int)TriggerState.Action == value) return;
+            TriggerState.Action = (ActionKind)Math.Clamp(value, 0, 6); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal TriggerRadius
+    {
+        get => (decimal)(TriggerState?.Radius ?? 2f);
+        set
+        {
+            if (TriggerState is null || MathF.Abs(TriggerState.Radius - (float)value) < 0.01f) return;
+            TriggerState.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string TriggerMessage
+    {
+        get => TriggerState?.Message ?? string.Empty;
+        set
+        {
+            if (TriggerState is null || TriggerState.Message == value) return;
+            TriggerState.Message = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool TriggerOnce
+    {
+        get => TriggerState?.Once ?? true;
+        set
+        {
+            if (TriggerState is null || TriggerState.Once == value) return;
+            TriggerState.Once = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasSpawner => Entity.GetComponent<Spawner3D>() is not null;
+
+    public Spawner3D? SpawnerState => Entity.GetComponent<Spawner3D>();
+
+    public string SpawnerTemplate
+    {
+        get => SpawnerState?.TemplateName ?? string.Empty;
+        set
+        {
+            if (SpawnerState is null || SpawnerState.TemplateName == value) return;
+            SpawnerState.TemplateName = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal SpawnerInterval
+    {
+        get => (decimal)(SpawnerState?.Interval ?? 4f);
+        set
+        {
+            if (SpawnerState is null || MathF.Abs(SpawnerState.Interval - (float)value) < 0.01f) return;
+            SpawnerState.Interval = MathF.Max(0.5f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal SpawnerMax
+    {
+        get => SpawnerState?.MaxAlive ?? 3;
+        set
+        {
+            if (SpawnerState is null || SpawnerState.MaxAlive == (int)value) return;
+            SpawnerState.MaxAlive = Math.Max(0, (int)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool SpawnerAuto
+    {
+        get => SpawnerState?.AutoStart ?? true;
+        set
+        {
+            if (SpawnerState is null || SpawnerState.AutoStart == value) return;
+            SpawnerState.AutoStart = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasCheckpoint => Entity.GetComponent<Checkpoint3D>() is not null;
+
+    public Checkpoint3D? CheckpointState => Entity.GetComponent<Checkpoint3D>();
+
+    public decimal CheckpointRadius
+    {
+        get => (decimal)(CheckpointState?.Radius ?? 2f);
+        set
+        {
+            if (CheckpointState is null || MathF.Abs(CheckpointState.Radius - (float)value) < 0.01f) return;
+            CheckpointState.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string CheckpointMessage
+    {
+        get => CheckpointState?.Message ?? string.Empty;
+        set
+        {
+            if (CheckpointState is null || CheckpointState.Message == value) return;
+            CheckpointState.Message = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool CheckpointHeal
+    {
+        get => CheckpointState?.Heal ?? true;
+        set
+        {
+            if (CheckpointState is null || CheckpointState.Heal == value) return;
+            CheckpointState.Heal = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
 }

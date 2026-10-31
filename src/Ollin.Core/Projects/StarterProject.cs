@@ -270,14 +270,37 @@ public static class StarterProject
             ShowOnHud = true,
             HudLabel = "Vida",
         });
+        camera.AddComponent(new WeaponGroup { ActiveSlot = 1 });
         camera.AddComponent(new Weapon
         {
-            Damage = 40f,
+            Name = "Pistola",
+            Slot = 1,
+            Damage = 24f,
             Range = 25f,
-            Cooldown = 0.3f,
-            Ammo = -1,
+            Cooldown = 0.25f,
+            Ammo = 12,
+            MagazineSize = 12,
+            ReserveAmmo = 48,
+            ReloadSeconds = 1.1f,
             Automatic = true,
         });
+        camera.AddComponent(new Weapon
+        {
+            Name = "Escopeta",
+            Slot = 2,
+            Damage = 55f,
+            Range = 18f,
+            Cooldown = 0.8f,
+            Ammo = 6,
+            MagazineSize = 6,
+            ReserveAmmo = 18,
+            ReloadSeconds = 1.6f,
+            Automatic = false,
+            IsProjectile = true,
+            ProjectileSpeed = 16f,
+            ProjectileSize = 0.35f,
+        });
+        camera.AddComponent(new Respawn { Lives = 3, RespawnSeconds = 1.5f });
         camera.AddComponent(new Inventory { Capacity = 8 });
         camera.AddComponent(new WinLoseRules
         {
@@ -382,6 +405,34 @@ public static class StarterProject
             Quantity = 1,
             Radius = 1.3f,
             Message = "Has encontrado la llave",
+        });
+
+        var checkpoint = scene.Create("Punto de control", new Vector2(0f, 12f));
+        checkpoint.AddComponent(new Checkpoint3D { Radius = 2.5f, Message = "Punto de control" });
+
+        var trigger = scene.Create("Aviso Sombra", new Vector2(0f, 8f));
+        trigger.AddComponent(new Trigger3D
+        {
+            Radius = 3f,
+            Action = ActionKind.Message,
+            Message = "¡La Sombra está cerca!",
+            Once = true,
+        });
+
+        var button = scene.Create("Botón puerta", new Vector2(2.6f, -3f));
+        button.AddComponent(new SpriteRenderer
+        {
+            TexturePath = "assets/sprites/crate.png",
+            Size = new Vector2(0.5f, 0.5f),
+            Tint = new Vector4(0.4f, 0.9f, 0.6f, 1f),
+            SortingOrder = 11,
+        });
+        button.AddComponent(new Button3D
+        {
+            Radius = 2f,
+            TargetName = "Puerta",
+            Action = ActionKind.OpenDoor,
+            Message = "Puerta abierta desde el botón",
         });
 
         var coin = scene.Create("Moneda", new Vector2(-2.2f, 20f));

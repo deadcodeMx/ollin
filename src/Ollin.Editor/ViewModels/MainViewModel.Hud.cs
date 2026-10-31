@@ -272,6 +272,60 @@ public sealed partial class MainViewModel
         }
     }
 
+    /// <summary>Guarda la partida en una ruta concreta (juego exportado).</summary>
+    public void SaveGameTo(string path)
+    {
+        if (!IsPlaying)
+        {
+            StatusMessage = "Reproduce la escena para guardar la partida";
+            return;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(path) ?? ".");
+            SaveService.Save(Scene, path, ScenePath, "Partida", _runtime.GameState);
+            StatusMessage = "Partida guardada";
+            Log.Info($"Partida guardada: {path}", "Guardado");
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"No se pudo guardar la partida: {exception.Message}", "Guardado");
+            StatusMessage = "Error al guardar la partida";
+        }
+    }
+
+    /// <summary>Carga una partida desde una ruta concreta y continúa jugando.</summary>
+    public void LoadGameFrom(string path)
+    {
+        try
+        {
+            if (!File.Exists(path))
+            {
+                StatusMessage = "No hay ninguna partida guardada";
+                return;
+            }
+
+            var save = SaveService.Load(path);
+
+            if (IsPlaying)
+            {
+                StopPlay();
+            }
+
+            LoadScene(save.Scene!, save.ScenePath);
+            _runtime.GameState.CopyFrom(save.State);
+            StartPlay(keepState: true);
+            StatusMessage = "Partida cargada";
+            Log.Info($"Partida cargada: {path}", "Guardado");
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"No se pudo cargar la partida: {exception.Message}", "Guardado");
+            StatusMessage = "Error al cargar la partida";
+        }
+    }
+
     private void ResetHudState()
     {
         _hudSignature = string.Empty;

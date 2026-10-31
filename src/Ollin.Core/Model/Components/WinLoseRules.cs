@@ -38,9 +38,14 @@ public sealed class WinLoseRules : Component, ITickable
 
         if (LoseWhenPlayerDead && playerHealth is { IsDead: true })
         {
-            Finished = true;
-            HudHost.GameOver(LoseMessage);
-            return;
+            var respawn = player?.GetComponent<Respawn>();
+
+            if (respawn is not { CanRespawn: true })
+            {
+                Finished = true;
+                HudHost.GameOver(LoseMessage);
+                return;
+            }
         }
 
         if (!WinWhenEnemiesDead)

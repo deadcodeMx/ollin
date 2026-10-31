@@ -17,6 +17,20 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.27.0] — 2026-10-31
+
+### Añadido
+
+- **Navegación A\*** para la IA 3D: rejilla desde paredes, desvío de obstáculos y
+  actualización periódica.
+- **Herramientas de nivel**: pincel de pared/suelo, imán de rejilla y duplicar serie x4.
+- **Combate ampliado**: proyectiles, dos armas con ranuras, cargador, reserva y recarga.
+- **Reaparición** con vidas y checkpoints; las reglas respetan las vidas restantes.
+- **Menú de pausa** en el juego exportado con opciones (volumen, sensibilidad, pantalla
+  completa) y guardado/carga persistente.
+- **Botones, triggers, generadores y checkpoints** como componentes sin código.
+- 7 pruebas nuevas: 145 en total.
+
 ## [0.26.2] — 2026-10-31
 
 ### Corregido

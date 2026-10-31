@@ -529,3 +529,41 @@ Flujo típico sin programar:
 
 Para tu propio nivel: coloca cajas 3D, asigna texturas, añade un enemigo con IA 3D +
 Salud, coloca una llave y una puerta, y pon las Reglas en la cámara. No hace falta C#.
+
+## 23. Navegación, nivel, combate y pausa (0.27)
+
+### Navegación A*
+La IA 3D usa una rejilla derivada de las paredes y **A\*** para rodear obstáculos cuando
+no hay línea de vista. Se activa con `UseNavigation` (por defecto) y se ajusta con
+`NavCellSize` y `NavRefreshSeconds`. Las puertas abiertas dejan de bloquear la rejilla.
+
+### Herramientas de nivel
+- **Pared / Suelo**: activa el pincel y haz clic en el viewport 3D para colocar cajas
+  con textura y tamaño por defecto. Vuelve a pulsar para desactivarlo.
+- **Imán**: ajusta mover/escalar/colocar a la rejilla (`SnapStep`, 0.5 por defecto).
+- **Serie x4**: duplica la selección cuatro veces en fila, en una sola operación de
+  deshacer.
+
+### Combate
+- **Dos armas** en la cámara: Pistola (ranura 1) y Escopeta (ranura 2), con **1/2** para
+  cambiar, **R** para recargar y cargador + reserva.
+- **Proyectiles**: la escopeta lanza un proyectil que choca con paredes y daña salud.
+- **Reaparición**: el jugador tiene 3 vidas y reaparece en el último **Checkpoint**.
+  Las reglas no dan derrota mientras queden vidas.
+
+### Pausa, opciones y guardado (juego exportado)
+- **Esc** o el botón **II Pausa** abre el menú.
+- **Continuar**, **Guardar partida**, **Cargar partida**, **Opciones** y **Salir**.
+- Opciones: volumen, sensibilidad del ratón y pantalla completa.
+- Las partidas se guardan en `%APPDATA%\Ollin\Saves\<juego>.json`; la configuración en
+  `%APPDATA%\Ollin\player-settings.json`.
+
+### Más comportamientos
+| Componente | Uso |
+| --- | --- |
+| **Botón 3D** | Se pulsa con E y ejecuta una acción sobre otra entidad |
+| **Trigger 3D** | Ejecuta una acción al entrar en su radio |
+| **Generador** | Clona una entidad plantilla cada cierto tiempo |
+| **Checkpoint** | Actualiza el punto de reaparición y cura |
+
+Acciones disponibles: mensaje, abrir puerta, activar, desactivar, generar, checkpoint y ganar.

@@ -373,6 +373,17 @@ public partial class MainWindow : Window
 
     private void OnGizmoScale(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Scale);
 
+    private void OnBrushWall(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        ViewportHost.Viewport.Brush3DMode = ViewportHost.Viewport.Brush3DMode == Controls.Brush3DMode.Wall ? Controls.Brush3DMode.None : Controls.Brush3DMode.Wall;
+
+    private void OnBrushFloor(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        ViewportHost.Viewport.Brush3DMode = ViewportHost.Viewport.Brush3DMode == Controls.Brush3DMode.Floor ? Controls.Brush3DMode.None : Controls.Brush3DMode.Floor;
+
+    private void OnSnapToggle(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        ViewportHost.Viewport.Snap3D = (sender as Avalonia.Controls.Primitives.ToggleButton)?.IsChecked == true;
+
+    private void OnDuplicateSeries(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.DuplicateSelectedSeries(4);
+
     // ---------- Ayuda ----------
 
     private void OnAbout(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -871,6 +882,16 @@ public partial class MainWindow : Window
     private void OnAddRules(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "rules");
 
     private void OnAddIntro(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "intro");
+
+    private void OnAddRespawn(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "respawn");
+
+    private void OnAddButton3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "button3d");
+
+    private void OnAddTrigger3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "trigger3d");
+
+    private void OnAddSpawner3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "spawner3d");
+
+    private void OnAddCheckpoint3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "checkpoint3d");
 
     private void OnRemoveComponentFromMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {

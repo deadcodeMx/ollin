@@ -61,6 +61,37 @@ public sealed class ViewportControl : OpenGlControlBase
 
     public Gizmo3DMode Gizmo3DMode { get; set; } = Gizmo3DMode.Move;
 
+    public Brush3DMode Brush3DMode { get; set; } = Brush3DMode.None;
+
+    public bool Snap3D { get; set; }
+
+    public float SnapStep { get; set; } = 0.5f;
+
+    /// <summary>Coloca una pared o suelo en el punto del plano del suelo bajo el puntero.</summary>
+    public void PlaceBrush3D(Avalonia.Point position)
+    {
+        if (_viewModel is null || _viewModel.IsPlaying || _viewModel.ActiveCamera3D is not { } camera ||
+            Brush3DMode == Brush3DMode.None)
+        {
+            return;
+        }
+
+        var (width, height, scaling) = GetPixelSizeWithScaling();
+        var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
+
+        if (!RayPlane(camera.Eye, camera.RayDirection(screen, width, height), 0f, out var point))
+        {
+            return;
+        }
+
+        var step = MathF.Max(0.1f, SnapStep);
+        var snapped = new Vector2(
+            MathF.Round(point.X / step) * step,
+            MathF.Round(point.Z / step) * step);
+
+        _viewModel.AddBrush3D(snapped, Brush3DMode == Brush3DMode.Floor);
+    }
+
     /// <summary>Cambia el modo del gizmo 3D y redibuja.</summary>
     public void SetGizmo3DMode(Gizmo3DMode mode)
     {
@@ -422,7 +453,7 @@ public sealed class ViewportControl : OpenGlControlBase
                 var delta = (screen.X - _gizmo3DStartScreen.X) * 0.006f;
                 var rotation = _gizmo3DStartYaw + delta;
 
-                if (snap)
+                if (snap || Snap3D)
                 {
                     const float step = MathF.PI / 12f;
                     rotation = MathF.Round(rotation / step) * step;
@@ -448,7 +479,7 @@ public sealed class ViewportControl : OpenGlControlBase
             {
                 var factor = 1f + (screen.X - _gizmo3DStartScreen.X) / 200f;
 
-                if (snap)
+                if (snap || Snap3D)
                 {
                     factor = MathF.Round(factor * 10f) / 10f;
                 }
@@ -490,9 +521,10 @@ public sealed class ViewportControl : OpenGlControlBase
                 var delta = new Vector2(point.X - _gizmo3DStartPlane.X, point.Z - _gizmo3DStartPlane.Z);
                 var next = _gizmo3DStartPosition + delta;
 
-                if (snap)
+                if (snap || Snap3D)
                 {
-                    next = new Vector2(MathF.Round(next.X * 4f) / 4f, MathF.Round(next.Y * 4f) / 4f);
+                    var step = MathF.Max(0.1f, SnapStep);
+                    next = new Vector2(MathF.Round(next.X / step) * step, MathF.Round(next.Y / step) * step);
                 }
 
                 if (_gizmo3DAxis == 1)
