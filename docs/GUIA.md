@@ -914,3 +914,18 @@ error de sintaxis.
 - **Mover hijos ocultos** opcional al arrastrar un grupo plegado.
 - **Variables por nodo** en el panel de depuración (últimos 3 nodos).
 - El **modo paso** se conserva al cerrar y reabrir el grafo.
+
+## 47. Atajos, accesibilidad y buscador (0.50)
+
+- Atajos:
+  - `Ctrl+Z` deshacer, `Ctrl+Y` rehacer.
+  - `Ctrl+C` / `Ctrl+V` copiar/pegar.
+  - `Ctrl+F` buscar y expandir el buscador.
+  - `Ctrl+0` ajustar.
+  - `Ctrl+Shift+O` ordenar.
+  - `Ctrl+Shift+H` / `Ctrl+Shift+V` distribuir.
+  - `F8` paso.
+  - `Esc` limpia la búsqueda.
+- Los iconos tienen **nombre de accesibilidad** además del tooltip.
+- El buscador se amplía al enfocarse y vuelve a su tamaño compacto.
+- El zoom 100 % se muestra como **1:1**.

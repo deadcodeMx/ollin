@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.50.0] — 2026-10-31
+
+### Añadido
+
+- Atajos para buscar, ajustar, ordenar, distribuir y paso.
+- Nombres de accesibilidad en los iconos.
+- Buscador expandible con Ctrl+F; Esc limpia.
+- Zoom 100 % como 1:1.
+- 204 pruebas automatizadas.
+
 ## [0.49.0] — 2026-10-31
 
 ### Añadido

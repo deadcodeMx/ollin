@@ -11,6 +11,7 @@ using Ollin.Core.Model.Components;
 using Ollin.Editor.ViewModels;
 using Ollin.Editor.Controls;
 using Ollin.Core.Scripting;
+using Avalonia.Automation;
 
 namespace Ollin.Editor.Views;
 
@@ -203,14 +204,14 @@ public sealed class NodeGraphWindow : Window
         toolbar.Children.Add(ToolButton("📋", Paste, "Pegar (Ctrl+V)"));
         toolbar.Children.Add(ToolButton("✕", DeleteSelected, "Borrar selección (Supr)"));
         toolbar.Children.Add(ToolButton("−", () => ZoomBy(-0.1), "Alejar"));
-        toolbar.Children.Add(ToolButton("100%", () => SetZoom(1.0), "Zoom 100%"));
+        toolbar.Children.Add(ToolButton("1:1", () => SetZoom(1.0), "Zoom 100% (1:1)"));
         toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1), "Acercar"));
         var quick = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2 };
-        quick.Children.Add(ToolButton("⤢", () => SetZoom(0.75), "Ajustar"));
-        quick.Children.Add(ToolButton("⇅", AutoLayout, "Ordenar"));
-        quick.Children.Add(ToolButton("⏭", StepGraph, "Paso"));
-        quick.Children.Add(ToolButton("↔", () => Distribute(true), "Distribuir H"));
-        quick.Children.Add(ToolButton("↕", () => Distribute(false), "Distribuir V"));
+        quick.Children.Add(ToolButton("⤢", () => SetZoom(0.75), "Ajustar (Ctrl+0)"));
+        quick.Children.Add(ToolButton("⇅", AutoLayout, "Ordenar (Ctrl+Shift+O)"));
+        quick.Children.Add(ToolButton("⏭", StepGraph, "Paso (F8)"));
+        quick.Children.Add(ToolButton("↔", () => Distribute(true), "Distribuir H (Ctrl+Shift+H)"));
+        quick.Children.Add(ToolButton("↕", () => Distribute(false), "Distribuir V (Ctrl+Shift+V)"));
         quick.IsVisible = Width >= 1080;
         _quickActions = quick;
         toolbar.Children.Add(quick);
@@ -223,11 +224,11 @@ public sealed class NodeGraphWindow : Window
             item.Click += (_, _) => action();
             moreFlyout.Items.Add(item);
         }
-        AddMore("Ajustar", () => SetZoom(0.75));
-        AddMore("Ordenar", AutoLayout);
-        AddMore("Paso", StepGraph);
-        AddMore("Distribuir H", () => Distribute(true));
-        AddMore("Distribuir V", () => Distribute(false));
+        AddMore("Ajustar (Ctrl+0)", () => SetZoom(0.75));
+        AddMore("Ordenar (Ctrl+Shift+O)", AutoLayout);
+        AddMore("Paso (F8)", StepGraph);
+        AddMore("Distribuir H (Ctrl+Shift+H)", () => Distribute(true));
+        AddMore("Distribuir V (Ctrl+Shift+V)", () => Distribute(false));
         AddMore("Separar H", () => Separate(true));
         AddMore("Separar V", () => Separate(false));
         AddMore("Ejecutar hasta seleccionado", RunToSelected);
@@ -257,6 +258,8 @@ public sealed class NodeGraphWindow : Window
             _searchText = _searchBox.Text ?? string.Empty;
             Render();
         };
+        _searchBox.GotFocus += (_, _) => _searchBox.Width = 170;
+        _searchBox.LostFocus += (_, _) => _searchBox.Width = 76;
         toolbar.Children.Add(_searchBox);
         UpdateZoomText();
 
@@ -324,6 +327,7 @@ public sealed class NodeGraphWindow : Window
         var button = new Button { Content = text, FontSize = 10.5, Padding = new Thickness(6, 3), MinWidth = 28 };
         button.Click += (_, _) => action();
         ToolTip.SetTip(button, tooltip ?? text);
+        AutomationProperties.SetName(button, tooltip ?? text);
         return button;
     }
 
@@ -725,6 +729,7 @@ public sealed class NodeGraphWindow : Window
     {
         if (e.Source is TextBox) return;
         var control = e.KeyModifiers.HasFlag(KeyModifiers.Control);
+        var shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
 
         if (control && e.Key == Key.Z) { Undo(); e.Handled = true; }
         else if (control && e.Key == Key.Y) { Redo(); e.Handled = true; }
@@ -739,6 +744,24 @@ public sealed class NodeGraphWindow : Window
         else if (control && e.Key == Key.C) { CopySelected(); e.Handled = true; }
         else if (control && e.Key == Key.V) { Paste(); e.Handled = true; }
         else if (e.Key == Key.Delete) { DeleteSelected(); e.Handled = true; }
+        else if (control && e.Key == Key.F)
+        {
+            _searchBox?.Focus();
+            _searchBox?.SelectAll();
+            e.Handled = true;
+        }
+        else if (control && e.Key == Key.D0) { SetZoom(0.75); e.Handled = true; }
+        else if (control && shift && e.Key == Key.O) { AutoLayout(); e.Handled = true; }
+        else if (control && shift && e.Key == Key.H) { Distribute(true); e.Handled = true; }
+        else if (control && shift && e.Key == Key.V) { Distribute(false); e.Handled = true; }
+        else if (e.Key == Key.F8) { StepGraph(); e.Handled = true; }
+        else if (e.Key == Key.Escape && _searchBox is not null)
+        {
+            _searchBox.Text = string.Empty;
+            _searchText = string.Empty;
+            Render();
+            e.Handled = true;
+        }
     }
 
     private void PollDebug()

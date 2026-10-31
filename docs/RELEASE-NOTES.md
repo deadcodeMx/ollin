@@ -1,24 +1,27 @@
-## Ollin 0.49.0 beta — cierre de limitaciones de 0.45
+## Ollin 0.50.0 beta — atajos y accesibilidad del grafo
 
 ### Incluye
 
-- **Ejecutar hasta seleccionado**.
-- **Migración** de grupos antiguos a paternidad explícita.
-- **Mover hijos ocultos** opcional al arrastrar grupos plegados.
-- **Variables por nodo** en la depuración.
-- **Modo paso persistente** al reabrir el grafo.
+- Atajos `Ctrl+F`, `Ctrl+0`, `Ctrl+Shift+O/H/V`, `F8` y `Esc`.
+- Nombres de accesibilidad en los iconos.
+- Buscador expandible al enfocar.
+- Zoom 100 % como **1:1**.
 - **204 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 0.49.0 y abre el grafo.
-2. Selecciona un nodo y usa **Más ▾ → Ejecutar hasta seleccionado**.
-3. Abre un grupo antiguo: sus nodos pasan a pertenencia explícita.
-4. Activa **Mover hijos ocultos** y arrastra un grupo plegado.
-5. Reproduce con modo paso y revisa **Variables por nodo**.
+1. Instala 0.50.0 y abre el grafo.
+2. Pulsa `Ctrl+F` y escribe; el buscador se amplía.
+3. Pulsa `Esc` para limpiar.
+4. Usa `Ctrl+0`, `Ctrl+Shift+O`, `Ctrl+Shift+H/V`, `F8`.
+5. Pasa el cursor por los iconos para ver los atajos.
 
 ### Limitaciones
 
-- No hay paso atrás.
-- La migración de grupos no entra en el historial de deshacer.
-- Las variables por nodo son una foto antes de ejecutar la acción.
+- Los atajos se descubren por tooltip o por **Más**.
+- El buscador expandido puede apretar la barra al enfocarse.
+- No se ha validado con lector de pantalla real.
+
+### Nota
+
+La demo técnica ya no se publica con esta versión. Solo se distribuye el instalador.
