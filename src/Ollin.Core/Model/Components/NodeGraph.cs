@@ -111,6 +111,9 @@ public sealed class NodeGraph : Component, ITickable
 {
     public List<GraphNode> Nodes { get; set; } = new();
 
+    [JsonIgnore]
+    public Guid? LastNodeId { get; private set; }
+
     public GraphNode AddNode(GraphNodeKind kind, float x, float y)
     {
         var node = new GraphNode { Kind = kind, X = x, Y = y };
@@ -198,6 +201,7 @@ public sealed class NodeGraph : Component, ITickable
                 node.Done = true;
             }
 
+            LastNodeId = node.Id;
             Execute(scene, player, node.Next);
         }
     }
@@ -215,6 +219,8 @@ public sealed class NodeGraph : Component, ITickable
             {
                 return;
             }
+
+            LastNodeId = node.Id;
 
             if (node.Kind == GraphNodeKind.Condition)
             {

@@ -36,6 +36,7 @@ public class NodeGraphTests
         {
             runtime.Tick(0.05f);
             Assert.True(door.Open);
+            Assert.Equal(action.Id, graph.LastNodeId);
         }
         finally
         {

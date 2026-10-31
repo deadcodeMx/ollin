@@ -176,6 +176,19 @@ public partial class MainWindow : Window
             Avalonia.Threading.Dispatcher.UIThread.Post(vm.StartPlayback, Avalonia.Threading.DispatcherPriority.Background);
         }
 
+        if (Environment.GetCommandLineArgs().Any(arg => arg.Equals("--graph", StringComparison.OrdinalIgnoreCase)))
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                var entity = vm.Scene.Entities.FirstOrDefault(item => item.GetComponent<Ollin.Core.Model.Components.NodeGraph>() is not null);
+
+                if (entity is not null)
+                {
+                    vm.Select(entity);
+                    new NodeGraphWindow(vm, entity).Show(this);
+                }
+            }, Avalonia.Threading.DispatcherPriority.Background);
+        }
         if (Environment.GetCommandLineArgs().Any(arg => arg.Equals("--game", StringComparison.OrdinalIgnoreCase)))
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(OpenGameWindow, Avalonia.Threading.DispatcherPriority.Background);
@@ -914,7 +927,7 @@ public partial class MainWindow : Window
             entity.AddComponent(new Ollin.Core.Model.Components.NodeGraph());
             ViewModel.MarkDirty("grafo");
         }
-        new NodeGraphWindow(ViewModel, entity).ShowDialog(this);
+        new NodeGraphWindow(ViewModel, entity).Show(this);
     }
 
     private void OnRemoveComponentFromMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

@@ -17,6 +17,19 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.32.0] — 2026-10-31
+
+### Añadido
+
+- **Deshacer/rehacer** en el editor de grafo (instantáneas, hasta 80 pasos).
+- **Copiar/pegar** de nodos con Ctrl+C / Ctrl+V.
+- **Zoom** del canvas (35%–200%), botones y Ctrl+rueda.
+- **Validación automática**: enlaces rotos, eventos sin salida, objetivos inexistentes,
+  variables incompletas y ciclos.
+- **Depuración visual**: nodo activo en cian y variables en vivo.
+- Ventana del grafo no modal para observar la ejecución.
+- 163 pruebas automatizadas.
+
 ## [0.31.1] — 2026-10-31
 
 ### Añadido

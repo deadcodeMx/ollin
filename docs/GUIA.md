@@ -692,3 +692,37 @@ Ajustes por entidad en **FPS**:
 En el juego exportado, **Opciones** incluye sensibilidad horizontal, vertical, invertir Y y
 suavizado, además de volumen y pantalla completa. La configuración se guarda en
 `%APPDATA%\Ollin\player-settings.json`.
+
+## 29. Editor de grafo: historial, zoom y depuración (0.32)
+
+### Historial
+- **Deshacer** y **Rehacer** con los botones del grafo o **Ctrl+Z / Ctrl+Y**.
+- El historial guarda hasta 80 instantáneas del grafo.
+- Cubre crear, borrar, mover, conectar, pegar y cambiar propiedades.
+
+### Copiar y pegar
+- **Copiar** / **Pegar** con los botones o **Ctrl+C / Ctrl+V**.
+- Se copia el nodo seleccionado, sin sus conexiones, y se pega desplazado.
+
+### Zoom
+- Botones **− / 100% / + / Ajustar** y **Ctrl + rueda**.
+- El zoom va de 35% a 200%.
+- El lienzo se desplaza con las barras del ScrollViewer.
+
+### Validación
+El panel derecho muestra avisos y errores automáticamente:
+- grafo sin eventos;
+- eventos sin salida;
+- condiciones sin rama Sí/No;
+- acciones que necesitan objetivo;
+- objetivos que no existen en la escena;
+- variables sin nombre o expresión;
+- enlaces rotos;
+- ciclos de ejecución.
+
+Los nodos con error se marcan en rojo y los avisos en ámbar.
+
+### Depuración visual
+- Mientras se reproduce, el **último nodo ejecutado** se resalta en cian.
+- El panel muestra las variables actuales de la partida.
+- La ventana del grafo ya no es modal: puede quedarse abierta mientras se reproduce.
