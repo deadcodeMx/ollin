@@ -21,6 +21,11 @@ public sealed class AudioSource : Component
 
     public float FadeIn { get; set; }
 
+    /// <summary>Atenúa el volumen con la distancia a la cámara 3D.</summary>
+    public bool Spatial { get; set; }
+
+    public float MaxDistance { get; set; } = 12f;
+
     public override Component CloneFor(Entity newOwner) => new AudioSource
     {
         Enabled = Enabled,
@@ -30,6 +35,8 @@ public sealed class AudioSource : Component
         PlayOnStart = PlayOnStart,
         Music = Music,
         FadeIn = FadeIn,
+        Spatial = Spatial,
+        MaxDistance = MaxDistance,
         Owner = newOwner,
     };
 }

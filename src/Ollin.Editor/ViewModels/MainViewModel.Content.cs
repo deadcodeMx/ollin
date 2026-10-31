@@ -289,6 +289,21 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new AiAgent());
                 break;
 
+            case "camera3d":
+                if (entity.HasComponent<Camera3D>()) { added = false; break; }
+                entity.AddComponent(new Camera3D());
+                break;
+
+            case "wall3d":
+                if (entity.HasComponent<Wall3D>()) { added = false; break; }
+                entity.AddComponent(new Wall3D());
+                break;
+
+            case "fps":
+                if (entity.HasComponent<FirstPersonController>()) { added = false; break; }
+                entity.AddComponent(new FirstPersonController());
+                break;
+
             case "rotator":
                 if (entity.HasComponent<RotatorComponent>()) { added = false; break; }
                 entity.AddComponent(new RotatorComponent());

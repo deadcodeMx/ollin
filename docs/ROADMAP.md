@@ -37,7 +37,7 @@ pruebas en verde y documentada aquí.
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
 | 4 | Cerrar el 2D | ✅ |
 | 5 | Herramientas de juego 2D (luces, narrativa, sistemas, HUD) | 🚧 |
-| 6 | 2.5D (puente) | ⏳ |
+| 6 | 2.5D (puente) | 🚧 núcleo jugable |
 | 7 | 3D | ⏳ |
 | 8 | Producto: build, guardado, opciones | ⏳ |
 
@@ -136,12 +136,12 @@ principio a fin.
 
 **Objetivo:** probar el lenguaje del 3D sin reescribir el motor.
 
-- [ ] Escena con profundidad: sprites y billboards colocados en un espacio 3D.
-- [ ] Cámara en primera persona con mirada y movimiento.
-- [ ] Colisiones 3D simples (cajas y cilindros) para paredes y puertas.
-- [ ] Profundidad y orden correcto de billboards.
-- [ ] Iluminación por vértice o por objeto + niebla de distancia.
-- [ ] Audio posicional básico.
+- [x] Escena con profundidad: sprites/billboards en un espacio 3D.
+- [x] Cámara en primera persona con mirada y movimiento.
+- [x] Colisiones 3D de cajas para paredes y puertas.`n- [ ] Cilindros de colisión.
+- [x] Orden de billboards por profundidad (algoritmo del pintor).
+- [x] Iluminación por objeto y niebla de distancia.
+- [x] Audio posicional básico (atenuación por distancia).
 
 **Por qué:** permite hacer juegos con estética retro estilo PS1/Doom con el renderer y el flujo actuales, y
 descubrir los problemas de cámara, colisión y profundidad antes de invertir en 3D real.

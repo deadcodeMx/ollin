@@ -473,3 +473,32 @@ necesita la carpeta `player/` junto al ejecutable; el instalador ya la incluye.
 **Limitaciones honestas**: esto protege el código fuente de miradas casuales, pero no es
 DRM infalible: un usuario con conocimientos puede decompilar el ensamblado o inspeccionar
 la carpeta temporal. Las claves van dentro del ejecutable.
+
+## 21. Modo 2.5D en primera persona
+
+La etapa 6 añade un puente 2.5D sobre el renderer 2D. El mundo usa el plano **X/Z**:
+la **X** del transform es el ancho y la **Y** la profundidad; la altura de los ojos se
+configura en la cámara.
+
+Componentes:
+
+- **Cámara 3D**: FOV, altura de ojos, giro (Yaw), inclinación (Pitch), fondo, niebla de
+  distancia y luz ambiente. Si existe una cámara 3D activa, el viewport cambia solo a
+  primera persona.
+- **Controlador FPS**: WASD/flechas para moverse, ratón para mirar, **Shift** para
+  correr y colisión contra cajas 3D. Añádelo a la misma entidad que la cámara.
+- **Pared 3D**: caja con ancho, alto, profundidad, color/textura y opción de colisión.
+  Sirve para paredes, puertas, suelos y techos (las cajas finas sin colisión hacen de
+  suelo/techo).
+
+Atajos del flujo:
+
+1. Crea un proyecto con la plantilla **2.5D (pasillo)**.
+2. Pulsa **Reproducir** y muévete con WASD; el ratón mira.
+3. La puerta se abre con **E** al acercarte.
+4. Exporta el juego como siempre: el HUD y los diálogos también aparecen.
+
+**Limitaciones de esta primera entrega**: el orden de dibujado es por profundidad
+(pintor, sin búfer de profundidad), las paredes son cajas de color liso, aún no hay
+cilindros, gizmos 3D en el viewport ni IA 3D. Está pensado para pasillos y estética
+retro tipo PS1/Doom.

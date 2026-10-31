@@ -17,6 +17,20 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.22.0] — 2026-10-31
+
+### Añadido
+
+- **Núcleo 2.5D**: `Camera3D` con perspectiva, niebla y ambiente; `Wall3D` (cajas para
+  paredes, suelos y puertas); `FirstPersonController` (WASD + ratón + colisión).
+- Renderer de billboards/walls con proyección en perspectiva, orden por profundidad,
+  iluminación por objeto y niebla.
+- **Audio posicional** básico (`AudioSource.Spatial` con atenuación por distancia).
+- Plantilla **2.5D (pasillo)** con puerta interactiva (E), enemigo sprite y ambiente.
+- Pestañas del inspector para Cámara 3D, Pared 3D y Controlador FPS.
+- Serialización de `Vector3` en escenas (necesaria para las cajas 3D).
+- 6 pruebas nuevas: 126 en total.
+
 ## [0.21.0] — 2026-10-30
 
 ### Añadido

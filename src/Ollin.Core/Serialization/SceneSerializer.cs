@@ -29,6 +29,7 @@ public static class SceneSerializer
 
         options.Converters.Add(new Vector2JsonConverter());
         options.Converters.Add(new Vector4JsonConverter());
+        options.Converters.Add(new Vector3JsonConverter());
         options.Converters.Add(new JsonStringEnumConverter());
         return options;
     }

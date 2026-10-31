@@ -98,6 +98,13 @@ public sealed class Scene
 
     public Vector2 GetWorldPosition(Entity entity) => GetWorldMatrix(entity).Translation.AsVector2();
 
+    /// <summary>Cámara 3D principal, si la escena usa el modo 2.5D.</summary>
+    public Camera3D? GetMainCamera3D() =>
+        Entities
+            .Where(entity => entity.Active)
+            .Select(entity => entity.GetComponent<Camera3D>())
+            .FirstOrDefault(camera => camera is { Enabled: true, IsMain: true });
+
     public Camera2D? GetMainCamera() =>
         Entities.Select(e => e.GetComponent<Camera2D>())
             .FirstOrDefault(c => c is { Enabled: true, IsMain: true });

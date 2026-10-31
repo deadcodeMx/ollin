@@ -66,6 +66,7 @@ herramientas cómodas, arranque rápido y alcance contenido. El plan completo es
 | 3 | Scripting en C# con Roslyn, `Input`/`Time` y recarga en caliente | ✅ |
 | 4 | Animación, tilemaps, física, audio, prefabs, proyectos y herramientas | ✅ |
 | 5 | Herramientas de juego 2D: luces, triggers, diálogos, inventario, IA, día/noche | ✅ |
+| 6 | 2.5D: cámara FPS, cajas 3D, niebla y audio posicional | 🚧 núcleo jugable |
 | 6 | 2.5D: sprites en espacio 3D con cámara en primera persona | ⏳ |
 | 7 | 3D: mallas glTF, luces y sombras, física, navmesh, editor 3D | ⏳ |
 | 8 | Producto: build, guardado, opciones, perfilador, localización | ⏳ |
@@ -204,6 +205,8 @@ docs/                Arquitectura, roadmap y guía de publicación en GitHub
   jerarquía, ventana de juego aparte y **proyecto de tutorial**.
 - **Exportar juego**: un único `.exe` + `game.pak` cifrado con escenas, assets y
   scripts compilados; pantalla de inicio y marca de agua opcionales.
+- **Modo 2.5D**: cámara y controlador en primera persona, paredes de caja, niebla,
+  luces por objeto y audio posicional; plantilla «2.5D (pasillo)».
 
 ## Edición cómoda (estilo Unity/Godot)
 

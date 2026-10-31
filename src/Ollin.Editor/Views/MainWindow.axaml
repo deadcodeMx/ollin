@@ -159,6 +159,9 @@
                               <MenuItem Header="Estadísticas" Tag="stats" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Día/Noche" Tag="daynight" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="IA" Tag="ai" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Cámara 3D" Tag="camera3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Pared 3D" Tag="wall3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Controlador FPS" Tag="fps" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Script" Tag="script" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Rotador" Tag="rotator" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Oscilador" Tag="oscillator" Click="OnRemoveComponentFromMenu" />
@@ -458,6 +461,9 @@
                             <MenuItem Header="Estadísticas" Click="OnAddStats" />
                             <MenuItem Header="Día/Noche" Click="OnAddDayNight" />
                             <MenuItem Header="IA (agente)" Click="OnAddAi" />
+                            <MenuItem Header="Cámara 3D" Click="OnAddCamera3D" />
+                            <MenuItem Header="Pared 3D" Click="OnAddWall3D" />
+                            <MenuItem Header="Controlador FPS" Click="OnAddFps" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                             <MenuItem Header="Script" Click="OnAddScriptComponent" />
@@ -710,6 +716,107 @@
                     </Grid>
                     <TextBlock Classes="hint" TextWrapping="Wrap"
                                Text="Patrulla alrededor de su posición inicial y persigue al objetivo al verlo. Usa A* si hay un tilemap con 'Colisiona'." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Cámara 3D" IsVisible="{Binding Selected.HasCamera3D}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="CÁMARA 3D · 2.5D" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="FOV" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Camera3DFov, Mode=TwoWay}" Increment="1" Minimum="20" Maximum="140" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Altura ojos" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Camera3DHeight, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Giro (Y)" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Camera3DYaw, Mode=TwoWay}" Increment="5" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Inclinación" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Camera3DPitch, Mode=TwoWay}" Increment="5" Minimum="-80" Maximum="80" FormatString="0" />
+                    </Grid>
+                    <CheckBox Content="Niebla de distancia" IsChecked="{Binding Selected.Camera3DFogEnabled, Mode=TwoWay}" FontSize="11.5" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Niebla desde" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Camera3DFogStart, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Niebla hasta" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Camera3DFogEnd, Mode=TwoWay}" Increment="1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Fondo" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.Camera3DBackgroundHex, Mode=TwoWay}" Watermark="#0A0C14" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Color niebla" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.Camera3DFogHex, Mode=TwoWay}" Watermark="#141722" />
+                    </Grid>
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="La X del transform es ancho y la Y es profundidad. Añade un Controlador FPS a la misma entidad." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Pared 3D" IsVisible="{Binding Selected.HasWall3D}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="CAJA 3D" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Ancho" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WallWidthInput, Mode=TwoWay}" Increment="0.5" Minimum="0.05" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Alto" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WallHeight, Mode=TwoWay}" Increment="0.5" Minimum="0.05" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Profundidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WallDepth, Mode=TwoWay}" Increment="0.5" Minimum="0.05" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Color" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.WallColorHex, Mode=TwoWay}" Watermark="#8A8F9C" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Textura" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.WallTexture, Mode=TwoWay}" Watermark="assets/sprites/tiles.png" />
+                    </Grid>
+                    <CheckBox Content="Visible" IsChecked="{Binding Selected.WallVisible, Mode=TwoWay}" FontSize="11.5" />
+                    <CheckBox Content="Colisiona" IsChecked="{Binding Selected.WallCollides, Mode=TwoWay}" FontSize="11.5" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="La base descansa en el suelo (Y = 0). Usa cajas finas para suelos y techos sin colisión." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="FPS" IsVisible="{Binding Selected.HasFps}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="CONTROLADOR FPS" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsSpeed, Mode=TwoWay}" Increment="0.5" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Correr (x)" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsRun, Mode=TwoWay}" Increment="0.1" Minimum="1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Sensibilidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsSensitivity, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.FpsRadius, Mode=TwoWay}" Increment="0.05" Minimum="0.05" FormatString="0.##" />
+                    </Grid>
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="WASD/flechas para moverte, ratón para mirar, Shift para correr. Colisiona con las cajas 3D." />
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>

@@ -74,3 +74,37 @@ public sealed class Vector4JsonConverter : JsonConverter<Vector4>
         writer.WriteEndArray();
     }
 }
+/// <summary>Serializa Vector3 como [x, y, z].</summary>
+public sealed class Vector3JsonConverter : JsonConverter<Vector3>
+{
+    public override Vector3 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.StartArray)
+        {
+            reader.Read();
+            var x = reader.GetSingle();
+            reader.Read();
+            var y = reader.GetSingle();
+            reader.Read();
+            var z = reader.GetSingle();
+            reader.Read();
+            return new Vector3(x, y, z);
+        }
+
+        using var document = JsonDocument.ParseValue(ref reader);
+        var root = document.RootElement;
+        return new Vector3(
+            root.TryGetProperty("x", out var px) ? px.GetSingle() : 0f,
+            root.TryGetProperty("y", out var py) ? py.GetSingle() : 0f,
+            root.TryGetProperty("z", out var pz) ? pz.GetSingle() : 0f);
+    }
+
+    public override void Write(Utf8JsonWriter writer, Vector3 value, JsonSerializerOptions options)
+    {
+        writer.WriteStartArray();
+        writer.WriteNumberValue(value.X);
+        writer.WriteNumberValue(value.Y);
+        writer.WriteNumberValue(value.Z);
+        writer.WriteEndArray();
+    }
+}

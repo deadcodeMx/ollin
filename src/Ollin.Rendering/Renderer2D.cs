@@ -388,6 +388,254 @@ public sealed class Renderer2D : IDisposable
 
     /// <summary>Esquinas del sprite en mundo: TL, TR, BR, BL.</summary>
     /// <summary>Desplazamiento de un sprite con paralaje respecto a la cámara.</summary>
+    /// <summary>
+    /// Frame del puente 2.5D: cámara en perspectiva, paredes de caja y sprites
+    /// billboard ordenados de lejos a cerca (pintor). Sin búfer de profundidad.
+    /// </summary>
+    public void RenderFrame3D(Scene scene, Camera3D camera, int width, int height)
+    {
+        if (width <= 0 || height <= 0)
+        {
+            return;
+        }
+
+        _gl.Viewport(0, 0, (uint)width, (uint)height);
+        _gl.ClearColor(camera.Background.X, camera.Background.Y, camera.Background.Z, 1f);
+        _gl.Clear(ClearBufferMask.ColorBufferBit);
+
+        var screenProjection = Matrix4x4.CreateOrthographicOffCenter(0f, width, height, 0f, -1f, 1f);
+        _batch.Begin(screenProjection);
+
+        Draw3DBackground(camera, width, height);
+        Draw3DFloorGrid(camera, width, height);
+
+        var items = new List<Draw3DItem>();
+        CollectWallFaces(scene, camera, width, height, items);
+        CollectBillboards(scene, camera, width, height, items);
+
+        items.Sort((a, b) => b.Depth.CompareTo(a.Depth));
+
+        foreach (var item in items)
+        {
+            _batch.DrawQuad(
+                item.Texture,
+                item.Corners[0], item.Corners[1], item.Corners[2], item.Corners[3],
+                new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f),
+                item.Color);
+        }
+
+        // Punto de mira discreto.
+        var center = new Vector2(width * 0.5f, height * 0.5f);
+        _batch.DrawRect(_whiteTexture, center, new Vector2(3f, 3f), new Vector4(0.95f, 0.95f, 0.95f, 0.55f));
+
+        _batch.End();
+    }
+
+    private void Draw3DBackground(Camera3D camera, int width, int height)
+    {
+        var eye = camera.Eye;
+        var horizontal = new Vector3(MathF.Sin(camera.Yaw), 0f, MathF.Cos(camera.Yaw));
+        var horizon = height * 0.5f;
+
+        if (camera.Project(eye + horizontal * 120f, width, height, out var horizonPoint, out _))
+        {
+            horizon = Math.Clamp(horizonPoint.Y, 0f, height);
+        }
+
+        var sky = new Vector4(
+            MathF.Min(1f, camera.Background.X * 1.35f + 0.03f),
+            MathF.Min(1f, camera.Background.Y * 1.35f + 0.03f),
+            MathF.Min(1f, camera.Background.Z * 1.35f + 0.05f),
+            1f);
+
+        var floor = new Vector4(
+            camera.FogColor.X * 0.95f,
+            camera.FogColor.Y * 0.95f,
+            camera.FogColor.Z * 1.05f,
+            1f);
+
+        _batch.DrawQuad(_whiteTexture,
+            new Vector2(0f, 0f), new Vector2(width, 0f), new Vector2(width, horizon), new Vector2(0f, horizon),
+            new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f),
+            sky);
+
+        _batch.DrawQuad(_whiteTexture,
+            new Vector2(0f, horizon), new Vector2(width, horizon), new Vector2(width, height), new Vector2(0f, height),
+            new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f),
+            floor);
+    }
+
+    private void Draw3DFloorGrid(Camera3D camera, int width, int height)
+    {
+        var color = new Vector4(
+            camera.FogColor.X + 0.08f,
+            camera.FogColor.Y + 0.08f,
+            camera.FogColor.Z + 0.1f,
+            0.28f);
+
+        for (var z = 2; z <= 32; z += 2)
+        {
+            if (camera.Project(new Vector3(-4.5f, 0f, z), width, height, out var left, out _) &&
+                camera.Project(new Vector3(4.5f, 0f, z), width, height, out var right, out _))
+            {
+                _batch.DrawLine(_whiteTexture, left, right, 1f, color);
+            }
+        }
+
+        for (var x = -4; x <= 4; x += 1)
+        {
+            if (camera.Project(new Vector3(x, 0f, 1f), width, height, out var near, out _) &&
+                camera.Project(new Vector3(x, 0f, 32f), width, height, out var far, out _))
+            {
+                _batch.DrawLine(_whiteTexture, near, far, 1f, new Vector4(color.X, color.Y, color.Z, color.W * 0.55f));
+            }
+        }
+    }
+
+    private void CollectWallFaces(Scene scene, Camera3D camera, int width, int height, List<Draw3DItem> items)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<Wall3D>() is not { Enabled: true, Visible: true } wall)
+            {
+                continue;
+            }
+
+            var (min, max) = wall.Bounds;
+            var texture = string.IsNullOrWhiteSpace(wall.TexturePath) ? null : ResolveTexture(wall.TexturePath);
+            var baseColor = new Vector4(wall.Color.X, wall.Color.Y, wall.Color.Z, 1f);
+
+            AddFace(new Vector3(0f, 0f, 1f),
+                new Vector3(min.X, max.Y, max.Z), new Vector3(max.X, max.Y, max.Z),
+                new Vector3(max.X, min.Y, max.Z), new Vector3(min.X, min.Y, max.Z));
+
+            AddFace(new Vector3(0f, 0f, -1f),
+                new Vector3(max.X, max.Y, min.Z), new Vector3(min.X, max.Y, min.Z),
+                new Vector3(min.X, min.Y, min.Z), new Vector3(max.X, min.Y, min.Z));
+
+            AddFace(new Vector3(1f, 0f, 0f),
+                new Vector3(max.X, max.Y, max.Z), new Vector3(max.X, max.Y, min.Z),
+                new Vector3(max.X, min.Y, min.Z), new Vector3(max.X, min.Y, max.Z));
+
+            AddFace(new Vector3(-1f, 0f, 0f),
+                new Vector3(min.X, max.Y, min.Z), new Vector3(min.X, max.Y, max.Z),
+                new Vector3(min.X, min.Y, max.Z), new Vector3(min.X, min.Y, min.Z));
+
+            AddFace(new Vector3(0f, 1f, 0f),
+                new Vector3(min.X, max.Y, max.Z), new Vector3(max.X, max.Y, max.Z),
+                new Vector3(max.X, max.Y, min.Z), new Vector3(min.X, max.Y, min.Z));
+
+            AddFace(new Vector3(0f, -1f, 0f),
+                new Vector3(min.X, min.Y, min.Z), new Vector3(max.X, min.Y, min.Z),
+                new Vector3(max.X, min.Y, max.Z), new Vector3(min.X, min.Y, max.Z));
+
+            void AddFace(Vector3 normal, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+            {
+                var faceCenter = (p0 + p1 + p2 + p3) * 0.25f;
+
+                if (Vector3.Dot(normal, camera.Eye - faceCenter) <= 0f)
+                {
+                    return;
+                }
+
+                if (!camera.Project(p0, width, height, out var s0, out var d0) ||
+                    !camera.Project(p1, width, height, out var s1, out var d1) ||
+                    !camera.Project(p2, width, height, out var s2, out var d2) ||
+                    !camera.Project(p3, width, height, out var s3, out var d3))
+                {
+                    return;
+                }
+
+                var depth = (d0 + d1 + d2 + d3) * 0.25f;
+
+                if (depth > camera.Far)
+                {
+                    return;
+                }
+
+                var color = ApplyLighting(scene, camera, baseColor, faceCenter, depth);
+                items.Add(new Draw3DItem(depth, new[] { s0, s1, s2, s3 }, texture, color));
+            }
+        }
+    }
+
+    private void CollectBillboards(Scene scene, Camera3D camera, int width, int height, List<Draw3DItem> items)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<SpriteRenderer>() is not { Enabled: true, Visible: true } sprite)
+            {
+                continue;
+            }
+
+            var center = new Vector3(
+                entity.Transform.Position.X,
+                sprite.Size.Y * 0.5f,
+                entity.Transform.Position.Y);
+
+            if (!camera.Project(center, width, height, out var screen, out var depth) || depth > camera.Far)
+            {
+                continue;
+            }
+
+            var scale = camera.ScaleAt(depth, height);
+            var halfWidth = sprite.Size.X * scale * 0.5f;
+            var halfHeight = sprite.Size.Y * scale * 0.5f;
+
+            var topLeft = new Vector2(screen.X - halfWidth, screen.Y - halfHeight);
+            var topRight = new Vector2(screen.X + halfWidth, screen.Y - halfHeight);
+            var bottomRight = new Vector2(screen.X + halfWidth, screen.Y + halfHeight);
+            var bottomLeft = new Vector2(screen.X - halfWidth, screen.Y + halfHeight);
+
+            var texture = string.IsNullOrWhiteSpace(sprite.TexturePath) ? null : ResolveTexture(sprite.TexturePath);
+            var tint = sprite.Tint;
+            var color = ApplyLighting(scene, camera, tint, center, depth);
+
+            items.Add(new Draw3DItem(depth, new[] { topLeft, topRight, bottomRight, bottomLeft }, texture, color));
+        }
+    }
+
+    private Vector4 ApplyLighting(Scene scene, Camera3D camera, Vector4 baseColor, Vector3 position, float depth)
+    {
+        var light = new Vector3(camera.Ambient.X, camera.Ambient.Y, camera.Ambient.Z);
+
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<Light2D>() is not { Enabled: true } lamp)
+            {
+                continue;
+            }
+
+            var lampPosition = new Vector3(entity.Transform.Position.X, 1.6f, entity.Transform.Position.Y);
+            var distance = Vector3.Distance(lampPosition, position);
+
+            if (distance >= lamp.Radius)
+            {
+                continue;
+            }
+
+            var intensity = lamp.CurrentIntensity > 0f ? lamp.CurrentIntensity : lamp.Intensity;
+            var falloff = 1f - distance / MathF.Max(0.01f, lamp.Radius);
+            light += new Vector3(lamp.Color.X, lamp.Color.Y, lamp.Color.Z) * (intensity * falloff);
+        }
+
+        var color = new Vector4(
+            baseColor.X * light.X,
+            baseColor.Y * light.Y,
+            baseColor.Z * light.Z,
+            baseColor.W);
+
+        if (camera.FogEnabled && camera.FogEnd > camera.FogStart)
+        {
+            var fog = Math.Clamp((depth - camera.FogStart) / (camera.FogEnd - camera.FogStart), 0f, 1f);
+            color = Vector4.Lerp(color, new Vector4(camera.FogColor.X, camera.FogColor.Y, camera.FogColor.Z, color.W), fog * 0.9f);
+        }
+
+        return color;
+    }
+
+    private readonly record struct Draw3DItem(float Depth, Vector2[] Corners, Texture2D? Texture, Vector4 Color);
+
     public static Vector2 ParallaxOffset(Vector2 cameraPosition, float parallax) =>
         cameraPosition * (1f - Math.Clamp(parallax, 0f, 1f));
 

@@ -32,6 +32,7 @@ public sealed class SceneRuntime
     private readonly DialogueRunner _dialogue = new();
     private readonly HudModel _hud = new();
     private readonly GameState _gameState = new();
+    private readonly List<(AudioSource Source, int Handle)> _spatialAudio = new();
     private bool _skipDialogueAdvance;
     private Scene? _scene;
     private ScriptWorkspace? _scriptsWorkspace;
@@ -303,7 +304,7 @@ public sealed class SceneRuntime
             }
         }
     }
-    private static void StartAudio(Scene scene)
+    private void StartAudio(Scene scene)
     {
         foreach (var entity in scene.Entities)
         {
@@ -328,6 +329,42 @@ public sealed class SceneRuntime
             {
                 GameAudio.Fade(handle, source.Volume, source.FadeIn);
             }
+
+            if (handle >= 0 && source.Spatial)
+            {
+                _spatialAudio.Add((source, handle));
+            }
+        }
+    }
+
+    /// <summary>Atenúa los sonidos posicionales según la cámara 3D.</summary>
+    private void UpdateSpatialAudio()
+    {
+        if (_scene is null || _spatialAudio.Count == 0)
+        {
+            return;
+        }
+
+        var camera = _scene.GetMainCamera3D();
+
+        if (camera is null)
+        {
+            return;
+        }
+
+        var eye = new Vector2(camera.Eye.X, camera.Eye.Z);
+
+        foreach (var (source, handle) in _spatialAudio)
+        {
+            if (source.Owner is null || !source.Enabled)
+            {
+                continue;
+            }
+
+            var position = source.Owner.Transform.Position;
+            var distance = Vector2.Distance(eye, position);
+            var falloff = System.Math.Clamp(1f - distance / MathF.Max(0.01f, source.MaxDistance), 0f, 1f);
+            GameAudio.SetVolume(handle, source.Volume * falloff * falloff);
         }
     }
 
@@ -355,6 +392,7 @@ public sealed class SceneRuntime
 
         StopScripts();
         GameAudio.StopAll();
+        _spatialAudio.Clear();
 
         var restored = SceneSerializer.Deserialize(_snapshot);
         var elapsed = Elapsed;
@@ -428,6 +466,7 @@ public sealed class SceneRuntime
         UpdateCoroutines(dt);
         UpdateCameraFollow(dt);
         ApplyDayNight();
+        UpdateSpatialAudio();
         UpdateInteractions();
 
         // Cierra el cuadro de entrada: calcula flancos y delta del ratón.

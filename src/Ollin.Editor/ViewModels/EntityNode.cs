@@ -1620,4 +1620,268 @@ public sealed class EntityNode : ObservableObject
     public string AiStatus => Ai is null ? string.Empty : Ai.IsChasing ? "Persiguiendo" : "Patrullando";
 
     public void RefreshAiStatus() => OnPropertyChanged(nameof(AiStatus));
+
+    public bool HasCamera3D => Entity.GetComponent<Camera3D>() is not null;
+
+    public Camera3D? Camera3D => Entity.GetComponent<Camera3D>();
+
+    public decimal Camera3DFov
+    {
+        get => (decimal)(Camera3D?.FovDegrees ?? 70f);
+        set
+        {
+            if (Camera3D is null || MathF.Abs(Camera3D.FovDegrees - (float)value) < 0.01f) return;
+            Camera3D.FovDegrees = Math.Clamp((float)value, 20f, 140f);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal Camera3DHeight
+    {
+        get => (decimal)(Camera3D?.Height ?? 1.7f);
+        set
+        {
+            if (Camera3D is null || MathF.Abs(Camera3D.Height - (float)value) < 0.001f) return;
+            Camera3D.Height = MathF.Max(0.1f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal Camera3DYaw
+    {
+        get => (decimal)((Camera3D?.Yaw ?? 0f) * 180f / MathF.PI);
+        set
+        {
+            if (Camera3D is null) return;
+            Camera3D.Yaw = (float)value * MathF.PI / 180f;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal Camera3DPitch
+    {
+        get => (decimal)((Camera3D?.Pitch ?? 0f) * 180f / MathF.PI);
+        set
+        {
+            if (Camera3D is null) return;
+            Camera3D.Pitch = Math.Clamp((float)value * MathF.PI / 180f, -1.4f, 1.4f);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal Camera3DFogStart
+    {
+        get => (decimal)(Camera3D?.FogStart ?? 6f);
+        set
+        {
+            if (Camera3D is null || MathF.Abs(Camera3D.FogStart - (float)value) < 0.01f) return;
+            Camera3D.FogStart = MathF.Max(0f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal Camera3DFogEnd
+    {
+        get => (decimal)(Camera3D?.FogEnd ?? 28f);
+        set
+        {
+            if (Camera3D is null || MathF.Abs(Camera3D.FogEnd - (float)value) < 0.01f) return;
+            Camera3D.FogEnd = MathF.Max(Camera3D.FogStart + 0.1f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public bool Camera3DFogEnabled
+    {
+        get => Camera3D?.FogEnabled ?? false;
+        set
+        {
+            if (Camera3D is null || Camera3D.FogEnabled == value) return;
+            Camera3D.FogEnabled = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public string Camera3DBackgroundHex
+    {
+        get => ColorUtil.ToHex(Camera3D?.Background ?? Vector4.One);
+        set
+        {
+            if (Camera3D is null) return;
+            Camera3D.Background = ColorUtil.FromHex(value, Camera3D.Background);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public string Camera3DFogHex
+    {
+        get => ColorUtil.ToHex(Camera3D?.FogColor ?? Vector4.One);
+        set
+        {
+            if (Camera3D is null) return;
+            Camera3D.FogColor = ColorUtil.FromHex(value, Camera3D.FogColor);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public bool HasWall3D => Entity.GetComponent<Wall3D>() is not null;
+
+    public Wall3D? Wall3D => Entity.GetComponent<Wall3D>();
+
+    public decimal WallWidth => (decimal)(Wall3D?.Size.X ?? 1f);
+
+    public decimal WallHeight
+    {
+        get => (decimal)(Wall3D?.Size.Y ?? 1f);
+        set
+        {
+            if (Wall3D is null || MathF.Abs(Wall3D.Size.Y - (float)value) < 0.001f) return;
+            Wall3D.Size = new Vector3(Wall3D.Size.X, MathF.Max(0.05f, (float)value), Wall3D.Size.Z);
+            OnPropertyChanged(); OnPropertyChanged(nameof(WallHeight)); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public decimal WallDepth
+    {
+        get => (decimal)(Wall3D?.Size.Z ?? 1f);
+        set
+        {
+            if (Wall3D is null || MathF.Abs(Wall3D.Size.Z - (float)value) < 0.001f) return;
+            Wall3D.Size = new Vector3(Wall3D.Size.X, Wall3D.Size.Y, MathF.Max(0.05f, (float)value));
+            OnPropertyChanged(); OnPropertyChanged(nameof(WallDepth)); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public decimal WallWidthInput
+    {
+        get => (decimal)(Wall3D?.Size.X ?? 1f);
+        set
+        {
+            if (Wall3D is null || MathF.Abs(Wall3D.Size.X - (float)value) < 0.001f) return;
+            Wall3D.Size = new Vector3(MathF.Max(0.05f, (float)value), Wall3D.Size.Y, Wall3D.Size.Z);
+            OnPropertyChanged(); OnPropertyChanged(nameof(WallWidthInput)); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public string WallColorHex
+    {
+        get => ColorUtil.ToHex(Wall3D is null ? Vector4.One : new Vector4(Wall3D.Color, 1f));
+        set
+        {
+            if (Wall3D is null) return;
+            var color = ColorUtil.FromHex(value, new Vector4(Wall3D.Color, 1f));
+            Wall3D.Color = new Vector3(color.X, color.Y, color.Z);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public string WallTexture
+    {
+        get => Wall3D?.TexturePath ?? string.Empty;
+        set
+        {
+            if (Wall3D is null || (Wall3D.TexturePath ?? string.Empty) == value) return;
+            Wall3D.TexturePath = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public bool WallVisible
+    {
+        get => Wall3D?.Visible ?? true;
+        set
+        {
+            if (Wall3D is null || Wall3D.Visible == value) return;
+            Wall3D.Visible = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public bool WallCollides
+    {
+        get => Wall3D?.Collides ?? true;
+        set
+        {
+            if (Wall3D is null || Wall3D.Collides == value) return;
+            Wall3D.Collides = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public bool HasFps => Entity.GetComponent<FirstPersonController>() is not null;
+
+    public FirstPersonController? Fps => Entity.GetComponent<FirstPersonController>();
+
+    public decimal FpsSpeed
+    {
+        get => (decimal)(Fps?.Speed ?? 4f);
+        set
+        {
+            if (Fps is null || MathF.Abs(Fps.Speed - (float)value) < 0.01f) return;
+            Fps.Speed = MathF.Max(0.1f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal FpsRun
+    {
+        get => (decimal)(Fps?.RunMultiplier ?? 1.75f);
+        set
+        {
+            if (Fps is null || MathF.Abs(Fps.RunMultiplier - (float)value) < 0.01f) return;
+            Fps.RunMultiplier = MathF.Max(1f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal FpsSensitivity
+    {
+        get => (decimal)((Fps?.MouseSensitivity ?? 0.0022f) * 1000f);
+        set
+        {
+            if (Fps is null) return;
+            Fps.MouseSensitivity = MathF.Max(0.0001f, (float)value / 1000f);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal FpsRadius
+    {
+        get => (decimal)(Fps?.CollisionRadius ?? 0.35f);
+        set
+        {
+            if (Fps is null || MathF.Abs(Fps.CollisionRadius - (float)value) < 0.001f) return;
+            Fps.CollisionRadius = MathF.Max(0.05f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
 }

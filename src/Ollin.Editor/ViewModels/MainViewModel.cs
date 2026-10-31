@@ -305,6 +305,9 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>Cámara activa: la de la escena o una de respaldo si no existe.</summary>
     public Camera2D ActiveCamera => Scene.GetMainCamera() ?? _fallbackCamera;
 
+    /// <summary>Cámara 3D principal (modo 2.5D), si existe.</summary>
+    public Camera3D? ActiveCamera3D => Scene.GetMainCamera3D();
+
     public Vector2 CameraPosition
     {
         get

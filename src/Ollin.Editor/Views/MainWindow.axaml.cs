@@ -846,6 +846,12 @@ public partial class MainWindow : Window
 
     private void OnAddAi(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "ai");
 
+    private void OnAddCamera3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "camera3d");
+
+    private void OnAddWall3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "wall3d");
+
+    private void OnAddFps(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "fps");
+
     private void OnRemoveComponentFromMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (sender is MenuItem { Tag: string kind } && MenuEntity(sender) is { } node && ViewModel is { } vm)

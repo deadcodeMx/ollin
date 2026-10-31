@@ -177,14 +177,22 @@ public sealed class ViewportControl : OpenGlControlBase
             }
 
             _renderer.ProjectRoot = _viewModel.ProjectRoot;
-            _renderer.RenderFrame(
-                _viewModel.Scene,
-                _viewModel.CameraPosition,
-                _viewModel.ActiveCamera,
-                width,
-                height,
-                _viewModel.Selected?.Id,
-                _viewModel.ShowGrid);
+
+            if (_viewModel.ActiveCamera3D is { } camera3D)
+            {
+                _renderer.RenderFrame3D(_viewModel.Scene, camera3D, width, height);
+            }
+            else
+            {
+                _renderer.RenderFrame(
+                    _viewModel.Scene,
+                    _viewModel.CameraPosition,
+                    _viewModel.ActiveCamera,
+                    width,
+                    height,
+                    _viewModel.Selected?.Id,
+                    _viewModel.ShowGrid);
+            }
 
             if (_hasError)
             {

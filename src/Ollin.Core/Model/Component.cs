@@ -23,6 +23,9 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.Stats), "stats")]
 [JsonDerivedType(typeof(Components.DayNightCycle), "daynight")]
 [JsonDerivedType(typeof(Components.AiAgent), "ai")]
+[JsonDerivedType(typeof(Components.Camera3D), "camera3d")]
+[JsonDerivedType(typeof(Components.Wall3D), "wall3d")]
+[JsonDerivedType(typeof(Components.FirstPersonController), "fps")]
 public abstract class Component
 {
     /// <summary>Entidad propietaria (no se serializa).</summary>
