@@ -890,3 +890,11 @@ error de sintaxis.
 - **Rejilla** y **tamaño de rejilla** están dentro de **Más ▾**.
 - El buscador permanece visible.
 - Los iconos tienen tooltip con su atajo.
+
+## 44. Acciones rápidas del grafo (0.47)
+
+- **Ajustar, Ordenar, Paso y Distribuir H/V** tienen botones directos en la barra.
+- No hace falta abrir **Más** en anchos normales.
+- En ventanas de menos de 1080 px, esas acciones se repliegan en **Más** para
+  mantener una sola fila.
+- Los iconos tienen tooltip.

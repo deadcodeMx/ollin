@@ -1,22 +1,21 @@
-## Ollin 0.46.0 beta — barra compacta sin scroll
+## Ollin 0.47.0 beta — acciones rápidas del grafo
 
 ### Incluye
 
-- Barra en una fila **sin scroll horizontal**.
-- Acciones principales como iconos con tooltip.
-- **Rejilla** y **tamaño** dentro de **Más ▾**.
-- Buscador siempre visible.
+- **Ajustar, Ordenar, Paso y Distribuir H/V** directos en la barra.
+- Sin clic extra en **Más** para anchos normales.
+- Repliegue automático a **Más** en ventanas estrechas.
 - **202 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 0.46.0 y abre el grafo.
-2. Reduce la ventana al mínimo: la barra debe seguir en una fila.
-3. Pasa el cursor por los iconos para ver sus atajos.
-4. Abre **Más ▾** para rejilla, tamaño, ordenar, paso y distribuir.
+1. Instala 0.47.0 y abre el grafo.
+2. Verás iconos directos para ajustar, ordenar, paso y distribuir.
+3. Pasa el cursor para leer el tooltip.
+4. Reduce la ventana por debajo de 1080 px: los iconos se ocultan y quedan en **Más**.
 
 ### Limitaciones
 
-- Las acciones principales son iconos; dependen del tooltip.
-- Las acciones secundarias requieren abrir **Más**.
-- El buscador es más estrecho.
+- Por debajo de 1080 px las acciones vuelven a **Más**.
+- Los iconos dependen del tooltip.
+- No hay atajos de teclado para esas acciones rápidas.

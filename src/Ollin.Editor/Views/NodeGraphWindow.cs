@@ -60,6 +60,7 @@ public sealed class NodeGraphWindow : Window
     private readonly List<Line> _guideLines = new();
     private bool _snapNodes = true;
     private bool _stepMode;
+    private StackPanel? _quickActions;
     private double _snapSize = 10d;
 
     public NodeGraphWindow(MainViewModel viewModel, Entity entity)
@@ -97,6 +98,10 @@ public sealed class NodeGraphWindow : Window
         root.Children.Add(_status);
 
         Content = root;
+        SizeChanged += (_, _) =>
+        {
+            if (_quickActions is not null) _quickActions.IsVisible = Bounds.Width >= 1080;
+        };
         Render();
         _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id, _selectedIds);
         _debugTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(120) };
@@ -193,6 +198,16 @@ public sealed class NodeGraphWindow : Window
         toolbar.Children.Add(ToolButton("−", () => ZoomBy(-0.1), "Alejar"));
         toolbar.Children.Add(ToolButton("100%", () => SetZoom(1.0), "Zoom 100%"));
         toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1), "Acercar"));
+        var quick = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2 };
+        quick.Children.Add(ToolButton("⤢", () => SetZoom(0.75), "Ajustar"));
+        quick.Children.Add(ToolButton("⇅", AutoLayout, "Ordenar"));
+        quick.Children.Add(ToolButton("⏭", StepGraph, "Paso"));
+        quick.Children.Add(ToolButton("↔", () => Distribute(true), "Distribuir H"));
+        quick.Children.Add(ToolButton("↕", () => Distribute(false), "Distribuir V"));
+        quick.IsVisible = Width >= 1080;
+        _quickActions = quick;
+        toolbar.Children.Add(quick);
+
         var more = new Button { Content = "Más ▾", FontSize = 10.5, Padding = new Thickness(6, 3) };
         var moreFlyout = new MenuFlyout();
         void AddMore(string header, Action action)
