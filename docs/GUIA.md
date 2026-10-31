@@ -882,3 +882,11 @@ error de sintaxis.
 - **Desagrupar** elimina la pertenencia directa.
 - Al plegar un grupo se ocultan sus hijos y los nodos anidados.
 - Arrastrar un grupo **plegado** ya no mueve a sus miembros ocultos.
+
+## 43. Barra compacta sin scroll (0.46)
+
+- La barra cabe en una fila sin desplazamiento horizontal.
+- Acciones principales como iconos: deshacer, rehacer, copiar, pegar, borrar.
+- **Rejilla** y **tamaño de rejilla** están dentro de **Más ▾**.
+- El buscador permanece visible.
+- Los iconos tienen tooltip con su atajo.

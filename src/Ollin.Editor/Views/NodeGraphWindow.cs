@@ -182,18 +182,18 @@ public sealed class NodeGraphWindow : Window
         var toolbar = new StackPanel
         {
             Orientation = Orientation.Horizontal,
-            Spacing = 4,
+            Spacing = 3,
             Margin = new Thickness(4, 2),
         };
-        toolbar.Children.Add(ToolButton("Deshacer", Undo));
-        toolbar.Children.Add(ToolButton("Rehacer", Redo));
-        toolbar.Children.Add(ToolButton("Copiar", CopySelected));
-        toolbar.Children.Add(ToolButton("Pegar", Paste));
-        toolbar.Children.Add(ToolButton("Borrar", DeleteSelected));
-        toolbar.Children.Add(ToolButton("−", () => ZoomBy(-0.1)));
-        toolbar.Children.Add(ToolButton("100%", () => SetZoom(1.0)));
-        toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1)));
-        var more = new Button { Content = "Más ▾", FontSize = 10.5, Padding = new Thickness(7, 3) };
+        toolbar.Children.Add(ToolButton("↶", Undo, "Deshacer (Ctrl+Z)"));
+        toolbar.Children.Add(ToolButton("↷", Redo, "Rehacer (Ctrl+Y)"));
+        toolbar.Children.Add(ToolButton("⧉", CopySelected, "Copiar (Ctrl+C)"));
+        toolbar.Children.Add(ToolButton("📋", Paste, "Pegar (Ctrl+V)"));
+        toolbar.Children.Add(ToolButton("✕", DeleteSelected, "Borrar selección (Supr)"));
+        toolbar.Children.Add(ToolButton("−", () => ZoomBy(-0.1), "Alejar"));
+        toolbar.Children.Add(ToolButton("100%", () => SetZoom(1.0), "Zoom 100%"));
+        toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1), "Acercar"));
+        var more = new Button { Content = "Más ▾", FontSize = 10.5, Padding = new Thickness(6, 3) };
         var moreFlyout = new MenuFlyout();
         void AddMore(string header, Action action)
         {
@@ -207,15 +207,25 @@ public sealed class NodeGraphWindow : Window
         AddMore("Distribuir H", () => Distribute(true));
         AddMore("Distribuir V", () => Distribute(false));
         AddMore("Modo paso", ToggleStepMode);
+        var snapItem = new MenuItem { Header = _snapNodes ? "Rejilla: activada" : "Rejilla: desactivada" };
+        snapItem.Click += (_, _) =>
+        {
+            _snapNodes = !_snapNodes;
+            snapItem.Header = _snapNodes ? "Rejilla: activada" : "Rejilla: desactivada";
+        };
+        moreFlyout.Items.Add(snapItem);
+        var sizeMenu = new MenuItem { Header = "Tamaño de rejilla" };
+        foreach (var size in new[] { 5, 10, 15, 20, 25, 30, 40, 50 })
+        {
+            var sizeItem = new MenuItem { Header = $"{size} px" };
+            var value = (double)size;
+            sizeItem.Click += (_, _) => _snapSize = value;
+            sizeMenu.Items.Add(sizeItem);
+        }
+        moreFlyout.Items.Add(sizeMenu);
         more.Flyout = moreFlyout;
         toolbar.Children.Add(more);
-        var snapCheck = new CheckBox { Content = "Rejilla", IsChecked = true, FontSize = 10.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) };
-        snapCheck.IsCheckedChanged += (_, _) => _snapNodes = snapCheck.IsChecked == true;
-        toolbar.Children.Add(snapCheck);
-        var snapSize = new NumericUpDown { Value = 10, Minimum = 2, Maximum = 50, Increment = 1, Width = 70, FontSize = 10.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0) };
-        snapSize.ValueChanged += (_, _) => { if (snapSize.Value is { } value) _snapSize = (double)value; };
-        toolbar.Children.Add(snapSize);
-        _searchBox = new TextBox { Watermark = "Buscar…", Width = 100, FontSize = 10.5, Margin = new Thickness(8, 0, 0, 0) };
+        _searchBox = new TextBox { Watermark = "Buscar…", Width = 76, FontSize = 10.5, Margin = new Thickness(4, 0, 0, 0) };
         _searchBox.TextChanged += (_, _) =>
         {
             _searchText = _searchBox.Text ?? string.Empty;
@@ -283,10 +293,11 @@ public sealed class NodeGraphWindow : Window
         return dock;
     }
 
-    private static Button ToolButton(string text, Action action)
+    private static Button ToolButton(string text, Action action, string? tooltip = null)
     {
-        var button = new Button { Content = text, FontSize = 10.5, Padding = new Thickness(7, 3) };
+        var button = new Button { Content = text, FontSize = 10.5, Padding = new Thickness(6, 3), MinWidth = 28 };
         button.Click += (_, _) => action();
+        ToolTip.SetTip(button, tooltip ?? text);
         return button;
     }
 
