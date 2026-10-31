@@ -14,6 +14,7 @@ using Ollin.Core.Model;
 using Avalonia.Controls.Primitives;
 using Ollin.Core.Input;
 using Ollin.Core.Projects;
+using Ollin.Core.Saves;
 using Ollin.Editor.Controls;
 using Ollin.Editor.ViewModels;
 
@@ -40,6 +41,8 @@ public sealed class PlayerWindow : Window
     private StackPanel? _mainPanel;
     private ComboBox? _slotCombo;
     private int _saveSlot = 1;
+    private readonly SaveSlotService _saves = new();
+    private readonly AutosaveScheduler _autosaveScheduler = new(45d);
     private DispatcherTimer? _autosaveTimer;
 
     public PlayerWindow(LoadedGame game)
@@ -211,8 +214,11 @@ public sealed class PlayerWindow : Window
         _viewModel.StartPlayback();
         Activate();
         _surface.Focus();
-        _autosaveTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(45) };
-        _autosaveTimer.Tick += (_, _) => Autosave();
+        _autosaveTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _autosaveTimer.Tick += (_, _) =>
+        {
+            if (_autosaveScheduler.Tick(1d)) Autosave();
+        };
         _autosaveTimer.Start();
     }
 
@@ -422,36 +428,14 @@ public sealed class PlayerWindow : Window
         _surface.Focus();
     }
 
-    private string SavePath
-    {
-        get
-        {
-            var folder = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Ollin",
-                "Saves");
-            var name = string.Concat(_manifest.ProjectName.Where(char.IsLetterOrDigit));
-            return Path.Combine(folder, $"{(name.Length == 0 ? "juego" : name)}-slot{_saveSlot}.json");
-        }
-    }
+    private string SavePath => _saves.GetPath(_manifest.ProjectName, _saveSlot);
 
     private string SettingsPath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Ollin",
         "player-settings.json");
 
-    private string AutosavePath
-    {
-        get
-        {
-            var folder = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Ollin",
-                "Saves");
-            var name = string.Concat(_manifest.ProjectName.Where(char.IsLetterOrDigit));
-            return Path.Combine(folder, $"{(name.Length == 0 ? "juego" : name)}-slot{_saveSlot}-auto.json");
-        }
-    }
+    private string AutosavePath => _saves.GetPath(_manifest.ProjectName, _saveSlot, autosave: true);
 
     private void Autosave()
     {
@@ -518,25 +502,13 @@ public sealed class PlayerWindow : Window
         }
     }
 
-    private sealed class PlayerSettings
-    {
-        public float Volume { get; set; } = 0.8f;
-        public float SensitivityX { get; set; } = 0.0022f;
-        public float SensitivityY { get; set; } = 0.0022f;
-        public bool InvertY { get; set; }
-        public float Smoothing { get; set; }
-        public bool Fullscreen { get; set; }
-    }
+
 
     private void LoadSettings()
     {
         try
         {
-            var settings = File.Exists(SettingsPath)
-                ? JsonSerializer.Deserialize<PlayerSettings>(File.ReadAllText(SettingsPath))
-                : null;
-
-            settings ??= new PlayerSettings();
+            var settings = PlayerSettings.Load(SettingsPath);
             Audio.MasterVolume = settings.Volume;
 
             if (_volumeSlider is not null) _volumeSlider.Value = settings.Volume;
@@ -572,7 +544,7 @@ public sealed class PlayerWindow : Window
                 Smoothing = _smoothingSlider is null ? 0f : (float)_smoothingSlider.Value,
                 Fullscreen = _fullscreenCheck?.IsChecked == true,
             };
-            File.WriteAllText(SettingsPath, JsonSerializer.Serialize(settings));
+            settings.Save(SettingsPath);
         }
         catch
         {

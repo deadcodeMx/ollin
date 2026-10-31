@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.33.0] — 2026-10-31
+
+### Añadido
+
+- `SaveSlotService`: tres ranuras y autoguardado separado.
+- `AutosaveScheduler` y `PlayerSettings` reutilizables y probados.
+- `GraphEditing`, `NodeGraphHistory` y `GraphValidator` compartidos por el editor.
+- **Smoke test de interfaz** `tools/ui-smoke.ps1`: pausa/reanudación real y ventana del grafo.
+- 8 pruebas nuevas: 171 en total.
+
 ## [0.32.0] — 2026-10-31
 
 ### Añadido

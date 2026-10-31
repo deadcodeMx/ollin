@@ -726,3 +726,30 @@ Los nodos con error se marcan en rojo y los avisos en ámbar.
 - Mientras se reproduce, el **último nodo ejecutado** se resalta en cian.
 - El panel muestra las variables actuales de la partida.
 - La ventana del grafo ya no es modal: puede quedarse abierta mientras se reproduce.
+
+## 30. Pruebas de guardado e interfaz (0.33)
+
+### Guardado
+- Tres ranuras independientes con `SaveSlotService`.
+- Autoguardado separado con sufijo `-auto`.
+- El jugador usa `%APPDATA%\Ollin\Saves\<juego>-slotN.json`.
+- Los ajustes usan `PlayerSettings` y `%APPDATA%\Ollin\player-settings.json`.
+
+### Pruebas automáticas
+- `SaveSlotService`: guardar/cargar ranuras separadas y autoguardado.
+- `AutosaveScheduler`: dispara exactamente cada 45 s.
+- `PlayerSettings`: normaliza volumen, sensibilidad, inversión y suavizado.
+- `NodeGraphHistory`: deshacer/rehacer.
+- `GraphEditing`: copiar/pegar sin enlaces.
+- `GraphValidator`: objetivos ausentes y ciclos.
+- Ratón: delta bloqueado, sensibilidad X/Y, invertir Y y suavizado.
+
+### Smoke test de interfaz
+`tools/ui-smoke.ps1`:
+1. Ejecuta las 171 pruebas.
+2. Abre el demo en el reproductor.
+3. Envía **Esc** dos veces y comprueba pausa/reanudación.
+4. Abre el editor con `--graph` y verifica que aparezca la ventana del grafo.
+
+Requiere una sesión de escritorio de Windows. No sustituye a pruebas de clic en cada
+botón, pero cubre el flujo real de ventana y foco.

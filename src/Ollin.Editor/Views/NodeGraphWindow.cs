@@ -20,9 +20,8 @@ public sealed class NodeGraphWindow : Window
     private readonly NodeGraph _graph;
     private readonly Canvas _canvas = new();
     private readonly LayoutTransformControl _canvasTransform = new();
-    private readonly Stack<GraphSnapshot> _undo = new();
-    private readonly Stack<GraphSnapshot> _redo = new();
-    private readonly List<ValidationIssue> _issues = new();
+    private readonly NodeGraphHistory _history = new();
+    private readonly List<GraphIssue> _issues = new();
     private readonly TextBlock _zoomText = new() { FontSize = 11, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0) };
     private readonly DispatcherTimer _debugTimer;
     private GraphSnapshot? _lastCommitted;
@@ -73,7 +72,7 @@ public sealed class NodeGraphWindow : Window
 
         Content = root;
         Render();
-        _lastCommitted = Capture();
+        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
         _debugTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(120) };
         _debugTimer.Tick += (_, _) => PollDebug();
         _debugTimer.Start();
@@ -227,96 +226,40 @@ public sealed class NodeGraphWindow : Window
     {
         if (_lastCommitted is not null)
         {
-            _undo.Push(_lastCommitted);
-
-            while (_undo.Count > 80)
-            {
-                var keep = _undo.Reverse().Take(80).Reverse().ToList();
-                _undo.Clear();
-                foreach (var item in keep) _undo.Push(item);
-            }
-
-            _redo.Clear();
+            _history.Record(_lastCommitted);
         }
 
-        _lastCommitted = Capture();
+        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
         _viewModel.MarkDirty("grafo-nodos");
     }
-
-    private GraphSnapshot Capture() => new(
-        _graph.Nodes.Select(node => CloneNode(node, keepLinks: true)).ToList(),
-        _selected?.Id);
-
-    private static GraphNode CloneNode(GraphNode node, bool keepLinks) => new()
-    {
-        Id = node.Id,
-        Kind = node.Kind,
-        Event = node.Event,
-        Condition = node.Condition,
-        Action = node.Action,
-        X = node.X,
-        Y = node.Y,
-        TargetName = node.TargetName,
-        Message = node.Message,
-        ItemId = node.ItemId,
-        VariableName = node.VariableName,
-        Expression = node.Expression,
-        Radius = node.Radius,
-        Interval = node.Interval,
-        Amount = node.Amount,
-        Threshold = node.Threshold,
-        Once = node.Once,
-        Next = keepLinks ? node.Next : null,
-        TrueNext = keepLinks ? node.TrueNext : null,
-        FalseNext = keepLinks ? node.FalseNext : null,
-    };
-
-    private void Restore(GraphSnapshot snapshot)
-    {
-        _graph.Nodes = snapshot.Nodes.Select(node => CloneNode(node, keepLinks: true)).ToList();
-        _selected = snapshot.SelectedId is { } id ? _graph.Find(id) : null;
-        _linkSource = null;
-        _activeNodeId = null;
-    }
-
     private void Undo()
     {
-        if (_undo.Count == 0) return;
-        var current = Capture();
-        var target = _undo.Pop();
-        _redo.Push(current);
-        Restore(target);
-        _lastCommitted = Capture();
+        if (!_history.Undo(_graph, _selected?.Id, out var selectedId)) return;
+        _selected = selectedId is { } id ? _graph.Find(id) : null;
+        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
         _viewModel.MarkDirty("grafo-nodos");
         Render();
     }
 
     private void Redo()
     {
-        if (_redo.Count == 0) return;
-        var current = Capture();
-        var target = _redo.Pop();
-        _undo.Push(current);
-        Restore(target);
-        _lastCommitted = Capture();
+        if (!_history.Redo(_graph, _selected?.Id, out var selectedId)) return;
+        _selected = selectedId is { } id ? _graph.Find(id) : null;
+        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
         _viewModel.MarkDirty("grafo-nodos");
         Render();
     }
-
     private void CopySelected()
     {
         if (_selected is null) return;
-        _clipboard = CloneNode(_selected, keepLinks: false);
+        _clipboard = GraphEditing.CloneNode(_selected, keepLinks: false);
         _status.Text = $"Nodo copiado: {KindLabel(_selected)}";
     }
 
     private void Paste()
     {
         if (_clipboard is null) return;
-        var copy = CloneNode(_clipboard, keepLinks: false);
-        copy.Id = Guid.NewGuid();
-        copy.X += 30;
-        copy.Y += 30;
+        var copy = GraphEditing.Paste(_clipboard);
         _graph.Nodes.Add(copy);
         _selected = copy;
         MarkChanged();
@@ -369,120 +312,8 @@ public sealed class NodeGraphWindow : Window
     private void Validate()
     {
         _issues.Clear();
-        var scene = _viewModel.Scene;
-        var events = _graph.Nodes.Count(node => node.Kind == GraphNodeKind.Event);
-
-        if (events == 0)
-        {
-            _issues.Add(new ValidationIssue(null, "El grafo no tiene ningún evento de entrada.", true));
-        }
-
-        var incoming = new HashSet<Guid>();
-
-        foreach (var node in _graph.Nodes)
-        {
-            if (node.Next is { } next) incoming.Add(next);
-            if (node.TrueNext is { } yes) incoming.Add(yes);
-            if (node.FalseNext is { } no) incoming.Add(no);
-
-            CheckLink(node, node.Next, "salida");
-            CheckLink(node, node.TrueNext, "rama Sí");
-            CheckLink(node, node.FalseNext, "rama No");
-
-            if (node.Kind == GraphNodeKind.Event && node.Next is null)
-            {
-                _issues.Add(new ValidationIssue(node, "El evento no está conectado a ninguna acción.", false));
-            }
-
-            if (node.Kind == GraphNodeKind.Condition)
-            {
-                if (node.TrueNext is null) _issues.Add(new ValidationIssue(node, "La condición no tiene rama Sí.", false));
-                if (node.FalseNext is null) _issues.Add(new ValidationIssue(node, "La condición no tiene rama No.", false));
-            }
-
-            if (node.Kind == GraphNodeKind.Action)
-            {
-                if (RequiresTarget(node.Action) && string.IsNullOrWhiteSpace(node.TargetName))
-                {
-                    _issues.Add(new ValidationIssue(node, "La acción necesita un objetivo.", true));
-                }
-                else if (!string.IsNullOrWhiteSpace(node.TargetName) && scene.Find(node.TargetName) is null)
-                {
-                    _issues.Add(new ValidationIssue(node, $"No existe la entidad «{node.TargetName}».", false));
-                }
-
-                if (node.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.ToggleFlag)
-                {
-                    if (string.IsNullOrWhiteSpace(node.VariableName))
-                    {
-                        _issues.Add(new ValidationIssue(node, "Falta el nombre de la variable.", true));
-                    }
-
-                    if (node.Action != ActionKind.ToggleFlag && string.IsNullOrWhiteSpace(node.Expression))
-                    {
-                        _issues.Add(new ValidationIssue(node, "Falta la expresión de la variable.", true));
-                    }
-                }
-            }
-
-            if (node.Kind == GraphNodeKind.Condition && node.Condition == GraphConditionKind.Expression &&
-                string.IsNullOrWhiteSpace(node.Expression))
-            {
-                _issues.Add(new ValidationIssue(node, "La condición de expresión está vacía.", true));
-            }
-        }
-
-        foreach (var node in _graph.Nodes.Where(node => node.Kind != GraphNodeKind.Event && !incoming.Contains(node.Id)))
-        {
-            _issues.Add(new ValidationIssue(node, "Nodo sin conexión de entrada.", false));
-        }
-
-        DetectCycles();
+        _issues.AddRange(GraphValidator.Validate(_graph, _viewModel.Scene));
     }
-
-    private void CheckLink(GraphNode node, Guid? target, string label)
-    {
-        if (target is { } id && _graph.Find(id) is null)
-        {
-            _issues.Add(new ValidationIssue(node, $"La {label} apunta a un nodo inexistente.", true));
-        }
-    }
-
-    private static bool RequiresTarget(ActionKind action) => action is
-        ActionKind.OpenDoor or ActionKind.Activate or ActionKind.Deactivate or
-        ActionKind.Spawn or ActionKind.Teleport or ActionKind.Damage;
-
-    private void DetectCycles()
-    {
-        var state = new Dictionary<Guid, int>();
-
-        foreach (var node in _graph.Nodes)
-        {
-            Walk(node, state);
-        }
-
-        void Walk(GraphNode node, Dictionary<Guid, int> colors)
-        {
-            if (colors.TryGetValue(node.Id, out var color))
-            {
-                if (color == 1)
-                {
-                    _issues.Add(new ValidationIssue(node, "Ciclo detectado: la ejecución puede repetirse sin fin.", true));
-                }
-                return;
-            }
-
-            colors[node.Id] = 1;
-
-            foreach (var id in new[] { node.Next, node.TrueNext, node.FalseNext }.Where(id => id is not null))
-            {
-                if (_graph.Find(id) is { } next) Walk(next, colors);
-            }
-
-            colors[node.Id] = 2;
-        }
-    }
-
     private void AddValidationPanel()
     {
         _inspector.Children.Add(new TextBlock
@@ -510,9 +341,9 @@ public sealed class NodeGraphWindow : Window
             {
                 _inspector.Children.Add(new TextBlock
                 {
-                    Text = (issue.Error ? "• " : "⚠ ") + issue.Message,
+                    Text = (issue.IsError ? "• " : "⚠ ") + issue.Message,
                     FontSize = 10.5,
-                    Foreground = new SolidColorBrush(Color.Parse(issue.Error ? "#E05B5B" : "#E9C46A")),
+                    Foreground = new SolidColorBrush(Color.Parse(issue.IsError ? "#E05B5B" : "#E9C46A")),
                     TextWrapping = TextWrapping.Wrap,
                 });
             }
@@ -580,7 +411,7 @@ public sealed class NodeGraphWindow : Window
         }
 
         RenderInspector();
-        var errors = _issues.Count(issue => issue.Error);
+        var errors = _issues.Count(issue => issue.IsError);
         var warnings = _issues.Count - errors;
         _status.Text = _linkSource is null
             ? $"Selecciona un nodo. Usa Conectar y el encabezado destino. Validación: {errors} errores, {warnings} avisos."
@@ -626,7 +457,7 @@ public sealed class NodeGraphWindow : Window
 
         var issue = _issues.FirstOrDefault(item => item.Node?.Id == node.Id);
         var active = _viewModel.IsPlaying && _activeNodeId == node.Id;
-        var borderColor = active ? "#53D6FF" : issue is { Error: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : node == _selected ? "#FFFFFF" : kindColor;
+        var borderColor = active ? "#53D6FF" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : node == _selected ? "#FFFFFF" : kindColor;
         var card = new Border
         {
             Width = 200,
@@ -1003,7 +834,5 @@ public sealed class NodeGraphWindow : Window
             _ => $"Teletransportar a {target}",
         };
     }
-    private sealed record GraphSnapshot(List<GraphNode> Nodes, Guid? SelectedId);
 
-    private sealed record ValidationIssue(GraphNode? Node, string Message, bool Error);
 }
