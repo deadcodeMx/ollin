@@ -149,6 +149,8 @@ principio a fin.
 - [x] Proyectiles, armas múltiples, munición y reaparición.
 - [x] Pausa, opciones y guardado en el juego exportado.
 - [x] Botones, triggers, generadores y checkpoints.
+- [x] Script visual por reglas (evento, condición, acción).
+- [x] Peligro, teletransporte y seguidor 3D.
 - [x] Audio posicional básico (atenuación por distancia).
 
 **Por qué:** permite hacer juegos con estética retro estilo PS1/Doom con el renderer y el flujo actuales, y

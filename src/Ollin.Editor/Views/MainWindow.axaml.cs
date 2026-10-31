@@ -382,7 +382,7 @@ public partial class MainWindow : Window
     private void OnSnapToggle(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewportHost.Viewport.Snap3D = (sender as Avalonia.Controls.Primitives.ToggleButton)?.IsChecked == true;
 
-    private void OnDuplicateSeries(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.DuplicateSelectedSeries(4);
+    private void OnDuplicateSeries(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.DuplicateSelectedSeries();
 
     // ---------- Ayuda ----------
 
@@ -892,6 +892,14 @@ public partial class MainWindow : Window
     private void OnAddSpawner3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "spawner3d");
 
     private void OnAddCheckpoint3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "checkpoint3d");
+
+    private void OnAddVisualScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "visual");
+
+    private void OnAddHazard3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "hazard3d");
+
+    private void OnAddTeleporter3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "teleporter3d");
+
+    private void OnAddFollower3D(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "follower3d");
 
     private void OnRemoveComponentFromMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {

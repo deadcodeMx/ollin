@@ -13,11 +13,14 @@ public enum ActionKind
     Spawn,
     Checkpoint,
     Win,
+    Damage,
+    Heal,
+    Teleport,
 }
 
 public static class ActionExecutor
 {
-    public static void Execute(Scenes.Scene scene, ActionKind action, string targetName, string message, string playerTag = "player")
+    public static void Execute(Scenes.Scene scene, ActionKind action, string targetName, string message, string playerTag = "player", float amount = 0f)
     {
         if (!string.IsNullOrWhiteSpace(message))
         {
@@ -52,6 +55,21 @@ public static class ActionExecutor
                     player.GetComponent<Respawn>() is { } respawn)
                 {
                     respawn.SetCheckpoint(player.Transform.Position);
+                }
+                break;
+
+            case ActionKind.Damage:
+                target?.GetComponent<Health>()?.TakeDamage(amount > 0f ? amount : 20f);
+                break;
+
+            case ActionKind.Heal:
+                (target ?? FindPlayer(scene, playerTag))?.GetComponent<Health>()?.Heal(amount > 0f ? amount : 20f);
+                break;
+
+            case ActionKind.Teleport:
+                if (target is not null && FindPlayer(scene, playerTag) is { } targetPlayer)
+                {
+                    targetPlayer.Transform.Position = target.Transform.Position;
                 }
                 break;
 

@@ -1,24 +1,24 @@
-## Ollin 0.27.0 beta — navegación, nivel, combate y pausa
+## Ollin 0.28.0 beta — scripting visual y más componentes
 
 ### Incluye
 
-- **IA con A\*** para rodear paredes en laberintos.
-- **Pincel de pared/suelo**, **imán** y **duplicar serie x4** en el editor.
-- **Proyectiles**, **dos armas** (1/2), cargador, reserva y recarga con R.
-- **Reaparición** con 3 vidas y **checkpoints**.
-- **Menú de pausa** en el juego exportado: continuar, guardar, cargar, opciones y salir.
-- **Botones, triggers, generadores y checkpoints** configurables sin código.
-- 145 pruebas automatizadas.
+- **Script visual por reglas**: evento + condición + acción, sin código.
+- **Cuatro reglas** por entidad con objetivo, mensaje, radio y repetición.
+- Acciones nuevas: **dañar**, **curar** y **teletransportar**.
+- Componentes **Peligro 3D**, **Teletransporte** y **Seguidor 3D**.
+- **Pincel configurable**: tamaño de pared/suelo y serie con cantidad y separación.
+- 150 pruebas automatizadas.
 
 ### Cómo probarlo
 
-1. Instala 0.27.0 y crea un proyecto **2.5D (pasillo)**.
-2. En el editor usa **Pared / Suelo / Imán / Serie x4**.
-3. Reproduce: 1/2 cambia de arma, R recarga, E interactúa, Esc abre la pausa.
-4. Guarda y carga desde el menú de pausa.
+1. Instala 0.28.0 y crea un proyecto **2.5D (pasillo)**.
+2. Añade **Script visual** a una entidad y configura una regla (por ejemplo, al iniciar →
+   abrir puerta).
+3. Añade **Peligro 3D** o **Teletransporte** y pruébalo al reproducir.
+4. Ajusta el pincel en la pestaña **Nivel** y coloca paredes o suelos.
 
 ### Limitaciones
 
-- La navegación es por rejilla; niveles muy grandes o rampas siguen fuera de alcance.
-- El inspector edita el arma de la ranura 1; la escopeta viene configurada en la plantilla.
-- Sin nodos visuales: los comportamientos son componentes con campos.
+- El script visual son reglas fijas, no un grafo de nodos.
+- Cuatro reglas por entidad; para lógica muy compleja se sigue necesitando C#.
+- El pincel no tiene previsualización fantasma todavía.

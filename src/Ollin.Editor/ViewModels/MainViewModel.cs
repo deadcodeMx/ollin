@@ -290,6 +290,18 @@ public sealed partial class MainViewModel : ObservableObject
 
     public string ZoomText => $"{ActiveCamera.Zoom * 100f:0}%";
 
+    public float BrushWidth { get; set; } = 4f;
+
+    public float BrushHeight { get; set; } = 3f;
+
+    public float BrushDepth { get; set; } = 0.4f;
+
+    public float BrushFloorSize { get; set; } = 6f;
+
+    public int SeriesCount { get; set; } = 4;
+
+    public float SeriesSpacing { get; set; } = 0.2f;
+
     public string ProjectRoot
     {
         get => _projectRoot;
@@ -1092,7 +1104,9 @@ public sealed partial class MainViewModel : ObservableObject
         var entity = Scene.Create(floor ? "Suelo 3D" : "Pared 3D", position);
         entity.AddComponent(new Wall3D
         {
-            Size = floor ? new Vector3(6f, 0.2f, 6f) : new Vector3(4f, 3f, 0.4f),
+            Size = floor
+                ? new Vector3(MathF.Max(0.5f, BrushFloorSize), 0.2f, MathF.Max(0.5f, BrushFloorSize))
+                : new Vector3(MathF.Max(0.2f, BrushWidth), MathF.Max(0.2f, BrushHeight), MathF.Max(0.1f, BrushDepth)),
             Color = floor ? new Vector3(0.3f, 0.27f, 0.22f) : new Vector3(0.58f, 0.55f, 0.5f),
             Collides = !floor,
             BaseY = 0f,
@@ -1109,7 +1123,13 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     /// <summary>Duplica la selección varias veces en fila (una sola entrada de deshacer).</summary>
-    public void DuplicateSelectedSeries(int count = 4)
+    public void DuplicateSelectedSeries()
+    {
+        var count = Math.Clamp(SeriesCount, 1, 64);
+        DuplicateSelectedSeries(count, SeriesSpacing);
+    }
+
+    private void DuplicateSelectedSeries(int count, float spacing)
     {
         if (IsPlaying || Selected is null || count <= 0)
         {
@@ -1118,8 +1138,8 @@ public sealed partial class MainViewModel : ObservableObject
 
         var original = Selected.Entity;
         var step = original.GetComponent<Wall3D>() is { } wall
-            ? MathF.Max(1f, wall.Size.X + 0.2f)
-            : 2f;
+            ? MathF.Max(0.5f, wall.Size.X + MathF.Max(0f, spacing))
+            : MathF.Max(0.5f, 1.5f + spacing);
         Entity? last = null;
 
         for (var i = 1; i <= count; i++)

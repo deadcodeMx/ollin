@@ -567,3 +567,30 @@ no hay línea de vista. Se activa con `UseNavigation` (por defecto) y se ajusta 
 | **Checkpoint** | Actualiza el punto de reaparición y cura |
 
 Acciones disponibles: mensaje, abrir puerta, activar, desactivar, generar, checkpoint y ganar.
+
+## 24. Scripting visual y componentes de mundo (0.28)
+
+### Script visual por reglas
+Añade **Script visual** a una entidad. Tiene cuatro reglas; cada una combina:
+
+**Evento** → **Condición** → **Acción**.
+
+- Eventos: al iniciar, cada cierto tiempo, al entrar el jugador, al pulsar E o al morir.
+- Condiciones: siempre, tener un objeto o vida por debajo de un valor.
+- Acciones: mensaje, abrir puerta, activar/desactivar, generar, checkpoint, ganar,
+  dañar, curar o teletransportar.
+
+Cada regla tiene objetivo, mensaje, radio, intervalo, cantidad y «solo una vez». No hace
+falta escribir código.
+
+### Componentes nuevos
+| Componente | Uso |
+| --- | --- |
+| **Peligro 3D** | Zona que daña por segundo (lava, pinchos) |
+| **Teletransporte** | Mueve al jugador a una entidad destino al entrar |
+| **Seguidor 3D** | Compañero que sigue al jugador y colisiona con paredes |
+
+### Pincel configurable
+La pestaña **Nivel** define ancho, alto, fondo del pincel, tamaño del suelo y los valores
+de **Serie x4** (cantidad y separación). Las herramientas **Pared**, **Suelo**, **Imán** y
+**Serie x4** están en la barra superior.

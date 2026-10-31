@@ -1,4 +1,4 @@
-# Beta 0.27.0 de Ollin
+# Beta 0.28.0 de Ollin
 
 Compilación de prueba para instalar y usar el motor fuera del repositorio. Cierra la
 etapa 5 del roadmap (herramientas de juego 2D).
@@ -30,7 +30,7 @@ etapa 5 del roadmap (herramientas de juego 2D).
 
 ## Instalar
 
-1. Ejecuta `Ollin-Setup-0.27.0-beta.exe`.
+1. Ejecuta `Ollin-Setup-0.28.0-beta.exe`.
 2. Pulsa **Instalar**. Se copia en `%LOCALAPPDATA%\Ollin`.
 3. Se crean accesos directos en el escritorio y en el menú Inicio.
 4. Abre Ollin y elige un proyecto en el lanzador, o crea uno con la plantilla
@@ -85,7 +85,7 @@ dotnet publish tools/Ollin.Setup -c Release -r win-x64 --self-contained false `
 ## Prueba automática del instalador
 
 ```powershell
-$setup = "dist/installer/Ollin-Setup-0.27.0-beta.exe"
+$setup = "dist/installer/Ollin-Setup-0.28.0-beta.exe"
 Start-Process $setup -ArgumentList "--silent" -Wait
 Start-Process "$env:LOCALAPPDATA/Ollin/Desinstalar.exe" -ArgumentList "--uninstall --silent" -Wait
 ```

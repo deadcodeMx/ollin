@@ -181,6 +181,10 @@
                               <MenuItem Header="Trigger 3D" Tag="trigger3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Generador" Tag="spawner3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Checkpoint" Tag="checkpoint3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Script visual" Tag="visual" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Peligro 3D" Tag="hazard3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Teletransporte" Tag="teleporter3d" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="Seguidor 3D" Tag="follower3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Script" Tag="script" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Rotador" Tag="rotator" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Oscilador" Tag="oscillator" Click="OnRemoveComponentFromMenu" />
@@ -495,6 +499,10 @@
                             <MenuItem Header="Trigger 3D" Click="OnAddTrigger3D" />
                             <MenuItem Header="Generador" Click="OnAddSpawner3D" />
                             <MenuItem Header="Checkpoint" Click="OnAddCheckpoint3D" />
+                            <MenuItem Header="Script visual" Click="OnAddVisualScript" />
+                            <MenuItem Header="Peligro 3D" Click="OnAddHazard3D" />
+                            <MenuItem Header="Teletransporte" Click="OnAddTeleporter3D" />
+                            <MenuItem Header="Seguidor 3D" Click="OnAddFollower3D" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                             <MenuItem Header="Script" Click="OnAddScriptComponent" />
@@ -1174,6 +1182,139 @@
                     <CheckBox Content="Cura al activarse" IsChecked="{Binding Selected.CheckpointHeal, Mode=TwoWay}" FontSize="11.5" />
                   </StackPanel>
                 </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Visual" IsVisible="{Binding Selected.HasVisualScript}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="SCRIPT VISUAL POR REGLAS" />
+                    <ComboBox SelectedIndex="{Binding Selected.VisualRuleIndex, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                      <ComboBoxItem Content="Regla 1" /><ComboBoxItem Content="Regla 2" />
+                      <ComboBoxItem Content="Regla 3" /><ComboBoxItem Content="Regla 4" />
+                    </ComboBox>
+                    <TextBlock Text="Evento" Classes="hint" />
+                    <ComboBox SelectedIndex="{Binding Selected.VisualEventIndex, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                      <ComboBoxItem Content="Al iniciar" /><ComboBoxItem Content="Cada cierto tiempo" />
+                      <ComboBoxItem Content="Al entrar el jugador" /><ComboBoxItem Content="Al pulsar E" />
+                      <ComboBoxItem Content="Al morir el jugador" />
+                    </ComboBox>
+                    <TextBlock Text="Condición" Classes="hint" />
+                    <ComboBox SelectedIndex="{Binding Selected.VisualConditionIndex, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                      <ComboBoxItem Content="Siempre" /><ComboBoxItem Content="Tiene objeto" />
+                      <ComboBoxItem Content="Vida por debajo" />
+                    </ComboBox>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Objeto" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.VisualConditionItem, Mode=TwoWay}" Watermark="llave" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Vida ≤" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.VisualThreshold, Mode=TwoWay}" Increment="5" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <TextBlock Text="Acción" Classes="hint" />
+                    <ComboBox SelectedIndex="{Binding Selected.VisualActionIndex, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                      <ComboBoxItem Content="Mensaje" /><ComboBoxItem Content="Abrir puerta" />
+                      <ComboBoxItem Content="Activar" /><ComboBoxItem Content="Desactivar" />
+                      <ComboBoxItem Content="Generar" /><ComboBoxItem Content="Checkpoint" />
+                      <ComboBoxItem Content="Ganar" /><ComboBoxItem Content="Dañar" />
+                      <ComboBoxItem Content="Curar" /><ComboBoxItem Content="Teletransportar" />
+                    </ComboBox>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Objetivo" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.VisualTarget, Mode=TwoWay}" Watermark="Puerta" />
+                    </Grid>
+                    <TextBox Text="{Binding Selected.VisualMessage, Mode=TwoWay}" Watermark="Mensaje" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.VisualRadius, Mode=TwoWay}" Increment="0.25" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Intervalo" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.VisualInterval, Mode=TwoWay}" Increment="0.5" Minimum="0.25" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Cantidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.VisualAmount, Mode=TwoWay}" Increment="5" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <CheckBox Content="Solo una vez" IsChecked="{Binding Selected.VisualOnce, Mode=TwoWay}" FontSize="11.5" />
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Cuatro reglas por entidad. Sin nodos y sin código." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Nivel">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="PINCEL DE NIVEL" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Ancho" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding BrushWidth, Mode=TwoWay}" Increment="0.5" Minimum="0.2" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Alto" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding BrushHeight, Mode=TwoWay}" Increment="0.5" Minimum="0.2" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Fondo" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding BrushDepth, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Suelo" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding BrushFloorSize, Mode=TwoWay}" Increment="0.5" Minimum="0.5" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Serie" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding SeriesCount, Mode=TwoWay}" Increment="1" Minimum="1" Maximum="64" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Separación" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding SeriesSpacing, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Usa Pared/Suelo en la barra y haz clic en el viewport. Serie x4 usa estos valores." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Peligro" IsVisible="{Binding Selected.HasHazard}">
+                <StackPanel Margin="8" Spacing="5">
+                  <TextBlock Classes="section" Text="PELIGRO 3D" />
+                  <Grid ColumnDefinitions="86,*" Margin="0,1">
+                    <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                    <NumericUpDown Grid.Column="1" Value="{Binding Selected.HazardRadius, Mode=TwoWay}" Increment="0.25" Minimum="0.1" FormatString="0.##" />
+                  </Grid>
+                  <Grid ColumnDefinitions="86,*" Margin="0,1">
+                    <TextBlock Text="Daño/s" VerticalAlignment="Center" Classes="hint" />
+                    <NumericUpDown Grid.Column="1" Value="{Binding Selected.HazardDamage, Mode=TwoWay}" Increment="5" Minimum="0.1" FormatString="0.##" />
+                  </Grid>
+                </StackPanel>
+              </TabItem>
+
+              <TabItem Header="Teletransporte" IsVisible="{Binding Selected.HasTeleporter}">
+                <StackPanel Margin="8" Spacing="5">
+                  <TextBlock Classes="section" Text="TELETRANSPORTE" />
+                  <Grid ColumnDefinitions="86,*" Margin="0,1">
+                    <TextBlock Text="Destino" VerticalAlignment="Center" Classes="hint" />
+                    <TextBox Grid.Column="1" Text="{Binding Selected.TeleporterTarget, Mode=TwoWay}" Watermark="Destino" />
+                  </Grid>
+                  <Grid ColumnDefinitions="86,*" Margin="0,1">
+                    <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                    <NumericUpDown Grid.Column="1" Value="{Binding Selected.TeleporterRadius, Mode=TwoWay}" Increment="0.25" Minimum="0.1" FormatString="0.##" />
+                  </Grid>
+                </StackPanel>
+              </TabItem>
+
+              <TabItem Header="Seguidor" IsVisible="{Binding Selected.HasFollower}">
+                <StackPanel Margin="8" Spacing="5">
+                  <TextBlock Classes="section" Text="SEGUIDOR 3D" />
+                  <Grid ColumnDefinitions="86,*" Margin="0,1">
+                    <TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" />
+                    <NumericUpDown Grid.Column="1" Value="{Binding Selected.FollowerSpeed, Mode=TwoWay}" Increment="0.25" Minimum="0.1" FormatString="0.##" />
+                  </Grid>
+                  <Grid ColumnDefinitions="86,*" Margin="0,1">
+                    <TextBlock Text="Distancia" VerticalAlignment="Center" Classes="hint" />
+                    <NumericUpDown Grid.Column="1" Value="{Binding Selected.FollowerDistance, Mode=TwoWay}" Increment="0.25" Minimum="0.5" FormatString="0.##" />
+                  </Grid>
+                </StackPanel>
               </TabItem>
 
               <TabItem Header="Mundo">

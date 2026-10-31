@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.28.0] — 2026-10-31
+
+### Añadido
+
+- **Scripting visual por reglas**: cuatro reglas por entidad con evento, condición y acción.
+- Nuevas acciones: dañar, curar y teletransportar.
+- Componentes **Peligro 3D**, **Teletransporte** y **Seguidor 3D**.
+- **Pincel configurable**: ancho, alto, fondo, tamaño de suelo y serie con separación.
+- 5 pruebas nuevas: 150 en total.
+
 ## [0.27.0] — 2026-10-31
 
 ### Añadido

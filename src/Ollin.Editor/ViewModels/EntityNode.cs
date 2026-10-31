@@ -2646,4 +2646,218 @@ public sealed class EntityNode : ObservableObject
             CheckpointState.Heal = value; OnPropertyChanged(); _owner.MarkDirty();
         }
     }
+
+    private int _visualRuleIndex;
+
+    public bool HasVisualScript => Entity.GetComponent<VisualScript>() is not null;
+
+    public VisualScript? VisualScriptState => Entity.GetComponent<VisualScript>();
+
+    public ScriptRule? VisualRule => VisualScriptState?.GetRule(_visualRuleIndex);
+
+    public int VisualRuleIndex
+    {
+        get => _visualRuleIndex;
+        set
+        {
+            _visualRuleIndex = Math.Clamp(value, 0, 3);
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(VisualEventIndex));
+            OnPropertyChanged(nameof(VisualConditionIndex));
+            OnPropertyChanged(nameof(VisualActionIndex));
+            OnPropertyChanged(nameof(VisualTarget));
+            OnPropertyChanged(nameof(VisualMessage));
+            OnPropertyChanged(nameof(VisualRadius));
+            OnPropertyChanged(nameof(VisualInterval));
+            OnPropertyChanged(nameof(VisualOnce));
+            OnPropertyChanged(nameof(VisualAmount));
+            OnPropertyChanged(nameof(VisualConditionItem));
+            OnPropertyChanged(nameof(VisualThreshold));
+        }
+    }
+
+    public int VisualEventIndex
+    {
+        get => (int)(VisualRule?.Event ?? ScriptEvent.OnStart);
+        set
+        {
+            if (VisualRule is null || (int)VisualRule.Event == value) return;
+            VisualRule.Event = (ScriptEvent)Math.Clamp(value, 0, 4);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public int VisualConditionIndex
+    {
+        get => (int)(VisualRule?.Condition ?? ScriptCondition.None);
+        set
+        {
+            if (VisualRule is null || (int)VisualRule.Condition == value) return;
+            VisualRule.Condition = (ScriptCondition)Math.Clamp(value, 0, 2);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public int VisualActionIndex
+    {
+        get => (int)(VisualRule?.Action ?? ActionKind.Message);
+        set
+        {
+            if (VisualRule is null || (int)VisualRule.Action == value) return;
+            VisualRule.Action = (ActionKind)Math.Clamp(value, 0, 9);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string VisualTarget
+    {
+        get => VisualRule?.TargetName ?? string.Empty;
+        set
+        {
+            if (VisualRule is null || VisualRule.TargetName == value) return;
+            VisualRule.TargetName = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string VisualMessage
+    {
+        get => VisualRule?.Message ?? string.Empty;
+        set
+        {
+            if (VisualRule is null || VisualRule.Message == value) return;
+            VisualRule.Message = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal VisualRadius
+    {
+        get => (decimal)(VisualRule?.Radius ?? 2.5f);
+        set
+        {
+            if (VisualRule is null || MathF.Abs(VisualRule.Radius - (float)value) < 0.01f) return;
+            VisualRule.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal VisualInterval
+    {
+        get => (decimal)(VisualRule?.Interval ?? 3f);
+        set
+        {
+            if (VisualRule is null || MathF.Abs(VisualRule.Interval - (float)value) < 0.01f) return;
+            VisualRule.Interval = MathF.Max(0.25f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool VisualOnce
+    {
+        get => VisualRule?.Once ?? true;
+        set
+        {
+            if (VisualRule is null || VisualRule.Once == value) return;
+            VisualRule.Once = value; OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal VisualAmount
+    {
+        get => (decimal)(VisualRule?.Amount ?? 20f);
+        set
+        {
+            if (VisualRule is null || MathF.Abs(VisualRule.Amount - (float)value) < 0.01f) return;
+            VisualRule.Amount = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public string VisualConditionItem
+    {
+        get => VisualRule?.ConditionItem ?? "llave";
+        set
+        {
+            if (VisualRule is null || VisualRule.ConditionItem == value) return;
+            VisualRule.ConditionItem = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal VisualThreshold
+    {
+        get => (decimal)(VisualRule?.Threshold ?? 50f);
+        set
+        {
+            if (VisualRule is null || MathF.Abs(VisualRule.Threshold - (float)value) < 0.01f) return;
+            VisualRule.Threshold = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasHazard => Entity.GetComponent<Hazard3D>() is not null;
+
+    public Hazard3D? HazardState => Entity.GetComponent<Hazard3D>();
+
+    public decimal HazardRadius
+    {
+        get => (decimal)(HazardState?.Radius ?? 1.5f);
+        set
+        {
+            if (HazardState is null || MathF.Abs(HazardState.Radius - (float)value) < 0.01f) return;
+            HazardState.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal HazardDamage
+    {
+        get => (decimal)(HazardState?.DamagePerSecond ?? 20f);
+        set
+        {
+            if (HazardState is null || MathF.Abs(HazardState.DamagePerSecond - (float)value) < 0.01f) return;
+            HazardState.DamagePerSecond = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasTeleporter => Entity.GetComponent<Teleporter3D>() is not null;
+
+    public Teleporter3D? TeleporterState => Entity.GetComponent<Teleporter3D>();
+
+    public string TeleporterTarget
+    {
+        get => TeleporterState?.TargetName ?? string.Empty;
+        set
+        {
+            if (TeleporterState is null || TeleporterState.TargetName == value) return;
+            TeleporterState.TargetName = value.Trim(); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal TeleporterRadius
+    {
+        get => (decimal)(TeleporterState?.Radius ?? 1.5f);
+        set
+        {
+            if (TeleporterState is null || MathF.Abs(TeleporterState.Radius - (float)value) < 0.01f) return;
+            TeleporterState.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool HasFollower => Entity.GetComponent<Follower3D>() is not null;
+
+    public Follower3D? FollowerState => Entity.GetComponent<Follower3D>();
+
+    public decimal FollowerSpeed
+    {
+        get => (decimal)(FollowerState?.Speed ?? 2.5f);
+        set
+        {
+            if (FollowerState is null || MathF.Abs(FollowerState.Speed - (float)value) < 0.01f) return;
+            FollowerState.Speed = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal FollowerDistance
+    {
+        get => (decimal)(FollowerState?.FollowDistance ?? 2f);
+        set
+        {
+            if (FollowerState is null || MathF.Abs(FollowerState.FollowDistance - (float)value) < 0.01f) return;
+            FollowerState.FollowDistance = MathF.Max(0.5f, (float)value); OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
 }
