@@ -58,6 +58,7 @@ public sealed class Renderer2D : IDisposable
 
     private readonly GL _gl;
     private readonly SpriteBatch _batch;
+    private readonly SpriteBatch3D _batch3D;
     private readonly Dictionary<string, Texture2D> _textureCache = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _missingTextures = new(StringComparer.OrdinalIgnoreCase);
 
@@ -75,6 +76,7 @@ public sealed class Renderer2D : IDisposable
     {
         _gl = gl;
         _batch = new SpriteBatch(gl);
+        _batch3D = new SpriteBatch3D(gl);
     }
 
     /// <summary>Raíz del proyecto para resolver rutas de texturas relativas.</summary>
@@ -96,6 +98,7 @@ public sealed class Renderer2D : IDisposable
         _whiteTexture = Texture2D.CreateWhite(_gl);
         _checkerTexture = Texture2D.CreateChecker(_gl);
         _batch.Initialize(_program, _uniformMvp, _uniformTexture, _whiteTexture);
+        _batch3D.Initialize(_whiteTexture);
         CreateLightTextures();
 
         _gl.Disable(EnableCap.DepthTest);
@@ -400,37 +403,187 @@ public sealed class Renderer2D : IDisposable
         }
 
         _gl.Viewport(0, 0, (uint)width, (uint)height);
+        _gl.Disable(EnableCap.DepthTest);
         _gl.ClearColor(camera.Background.X, camera.Background.Y, camera.Background.Z, 1f);
-        _gl.Clear(ClearBufferMask.ColorBufferBit);
+        _gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         var screenProjection = Matrix4x4.CreateOrthographicOffCenter(0f, width, height, 0f, -1f, 1f);
         _batch.Begin(screenProjection);
-
         Draw3DBackground(camera, width, height);
-        Draw3DFloorGrid(camera, width, height);
+        _batch.End();
 
-        var items = new List<Draw3DItem>();
-        CollectWallFaces(scene, camera, width, height, items);
-        CollectBillboards(scene, camera, width, height, items);
+        // La geometría 3D usa un búfer de profundidad real.
+        _gl.Clear(ClearBufferMask.DepthBufferBit);
+        _gl.Enable(EnableCap.DepthTest);
+        _gl.DepthFunc(DepthFunction.Less);
+        _gl.DepthMask(true);
 
-        items.Sort((a, b) => b.Depth.CompareTo(a.Depth));
+        var viewProjection = Build3DViewProjection(camera, width, height);
+        _batch3D.Begin(viewProjection);
 
-        foreach (var item in items)
-        {
-            _batch.DrawQuad(
-                item.Texture,
-                item.Corners[0], item.Corners[1], item.Corners[2], item.Corners[3],
-                new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f),
-                item.Color);
-        }
+        DrawWalls3D(scene, camera);
 
-        // Punto de mira discreto.
+        _gl.DepthMask(false);
+        DrawBillboards3D(scene, camera, height);
+        _gl.DepthMask(true);
+
+        _batch3D.End();
+
+        _gl.Disable(EnableCap.DepthTest);
+
+        _batch.Begin(screenProjection);
         var center = new Vector2(width * 0.5f, height * 0.5f);
         _batch.DrawRect(_whiteTexture, center, new Vector2(3f, 3f), new Vector4(0.95f, 0.95f, 0.95f, 0.55f));
-
         _batch.End();
     }
 
+    private static Matrix4x4 Build3DViewProjection(Camera3D camera, int width, int height)
+    {
+        var aspect = width / (float)System.Math.Max(1, height);
+        var view = Matrix4x4.CreateLookAt(camera.Eye, camera.Eye + camera.Forward, camera.Up);
+        var fov = System.Math.Clamp(camera.FovDegrees, 20f, 140f) * (MathF.PI / 180f);
+        var f = 1f / MathF.Tan(fov * 0.5f);
+        var near = MathF.Max(0.01f, camera.Near);
+        var far = MathF.Max(near + 0.1f, camera.Far);
+
+        var projection = new Matrix4x4(
+            f / aspect, 0f, 0f, 0f,
+            0f, f, 0f, 0f,
+            0f, 0f, (far + near) / (near - far), -1f,
+            0f, 0f, 2f * far * near / (near - far), 0f);
+
+        return view * projection;
+    }
+
+    private void DrawWalls3D(Scene scene, Camera3D camera)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<Wall3D>() is not { Enabled: true, Visible: true } wall)
+            {
+                continue;
+            }
+
+            var (min, max) = wall.Bounds;
+            var texture = string.IsNullOrWhiteSpace(wall.TexturePath) ? null : ResolveTexture(wall.TexturePath);
+            var baseColor = new Vector4(wall.Color.X, wall.Color.Y, wall.Color.Z, 1f);
+
+            Add(min.X, min.Y, min.Z, max.X, max.Y, max.Z);
+
+            void Add(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
+            {
+                DrawFace(
+                    new Vector3(minX, maxY, maxZ), new Vector3(maxX, maxY, maxZ),
+                    new Vector3(maxX, minY, maxZ), new Vector3(minX, minY, maxZ));
+
+                DrawFace(
+                    new Vector3(maxX, maxY, minZ), new Vector3(minX, maxY, minZ),
+                    new Vector3(minX, minY, minZ), new Vector3(maxX, minY, minZ));
+
+                DrawFace(
+                    new Vector3(maxX, maxY, maxZ), new Vector3(maxX, maxY, minZ),
+                    new Vector3(maxX, minY, minZ), new Vector3(maxX, minY, maxZ));
+
+                DrawFace(
+                    new Vector3(minX, maxY, minZ), new Vector3(minX, maxY, maxZ),
+                    new Vector3(minX, minY, maxZ), new Vector3(minX, minY, minZ));
+
+                DrawFace(
+                    new Vector3(minX, maxY, maxZ), new Vector3(maxX, maxY, maxZ),
+                    new Vector3(maxX, maxY, minZ), new Vector3(minX, maxY, minZ));
+
+                DrawFace(
+                    new Vector3(minX, minY, minZ), new Vector3(maxX, minY, minZ),
+                    new Vector3(maxX, minY, maxZ), new Vector3(minX, minY, maxZ));
+            }
+
+            void DrawFace(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+            {
+                var center = (p0 + p1 + p2 + p3) * 0.25f;
+                var color = ApplyLight3D(scene, camera, baseColor, center);
+                _batch3D.DrawQuad(texture, p0, p1, p2, p3,
+                    new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f),
+                    color);
+            }
+        }
+    }
+
+    private void DrawBillboards3D(Scene scene, Camera3D camera, int height)
+    {
+        var sprites = new List<(Entity Entity, SpriteRenderer Sprite, Vector3 Center, float Distance)>();
+
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<SpriteRenderer>() is not { Enabled: true, Visible: true } sprite)
+            {
+                continue;
+            }
+
+            var center = new Vector3(entity.Transform.Position.X, sprite.Size.Y * 0.5f, entity.Transform.Position.Y);
+            var distance = Vector3.Distance(center, camera.Eye);
+
+            if (distance <= camera.Near || distance > camera.Far)
+            {
+                continue;
+            }
+
+            sprites.Add((entity, sprite, center, distance));
+        }
+
+        sprites.Sort((a, b) => b.Distance.CompareTo(a.Distance));
+
+        foreach (var (entity, sprite, center, distance) in sprites)
+        {
+            var right = camera.Right * (sprite.Size.X * 0.5f);
+            var up = camera.Up * (sprite.Size.Y * 0.5f);
+            var texture = string.IsNullOrWhiteSpace(sprite.TexturePath) ? null : ResolveTexture(sprite.TexturePath);
+            var color = ApplyLight3D(scene, camera, sprite.Tint, center);
+
+            _batch3D.DrawQuad(texture,
+                center - right + up,
+                center + right + up,
+                center + right - up,
+                center - right - up,
+                new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f),
+                color);
+        }
+    }
+
+    private Vector4 ApplyLight3D(Scene scene, Camera3D camera, Vector4 baseColor, Vector3 position)
+    {
+        var light = new Vector3(camera.Ambient.X, camera.Ambient.Y, camera.Ambient.Z);
+
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<Light2D>() is not { Enabled: true } lamp)
+            {
+                continue;
+            }
+
+            var lampPosition = new Vector3(entity.Transform.Position.X, 1.6f, entity.Transform.Position.Y);
+            var distance = Vector3.Distance(lampPosition, position);
+
+            if (distance >= lamp.Radius)
+            {
+                continue;
+            }
+
+            var intensity = lamp.CurrentIntensity > 0f ? lamp.CurrentIntensity : lamp.Intensity;
+            var falloff = 1f - distance / MathF.Max(0.01f, lamp.Radius);
+            light += new Vector3(lamp.Color.X, lamp.Color.Y, lamp.Color.Z) * (intensity * falloff);
+        }
+
+        var color = new Vector4(baseColor.X * light.X, baseColor.Y * light.Y, baseColor.Z * light.Z, baseColor.W);
+
+        if (camera.FogEnabled && camera.FogEnd > camera.FogStart)
+        {
+            var distance = Vector3.Distance(camera.Eye, position);
+            var fog = Math.Clamp((distance - camera.FogStart) / (camera.FogEnd - camera.FogStart), 0f, 1f);
+            color = Vector4.Lerp(color, new Vector4(camera.FogColor.X, camera.FogColor.Y, camera.FogColor.Z, color.W), fog * 0.9f);
+        }
+
+        return color;
+    }
     private void Draw3DBackground(Camera3D camera, int width, int height)
     {
         var eye = camera.Eye;
@@ -1086,6 +1239,7 @@ public sealed class Renderer2D : IDisposable
         _coneLights.Clear();
         _vignette?.Dispose();
         _batch.Dispose();
+        _batch3D.Dispose();
 
         if (_program != 0)
         {

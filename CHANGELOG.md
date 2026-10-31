@@ -17,6 +17,20 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.22.1] — 2026-10-31
+
+### Añadido
+
+- **Búfer de profundidad real** para la geometría 2.5D (paredes, suelos, techos y
+  billboards) mediante un lote 3D dedicado.
+- **Altura base** en `Wall3D` para colocar techos y plataformas.
+- Corredor de ejemplo con suelo y techo, iluminación cálida/fría y niebla más suave.
+
+### Corregido
+
+- Giros bruscos de cámara al entrar al viewport (delta del ratón limitado).
+- La niebla del corredor tapaba la geometría cercana.
+
 ## [0.22.0] — 2026-10-31
 
 ### Añadido

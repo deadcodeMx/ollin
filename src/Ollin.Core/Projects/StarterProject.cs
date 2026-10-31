@@ -254,17 +254,19 @@ public static class StarterProject
         {
             Height = 1.7f,
             FovDegrees = 72f,
-            FogStart = 5f,
-            FogEnd = 22f,
+            FogStart = 10f,
+            FogEnd = 45f,
             Background = new Vector4(0.03f, 0.04f, 0.06f, 1f),
             FogColor = new Vector4(0.06f, 0.07f, 0.1f, 1f),
-            Ambient = new Vector4(0.4f, 0.4f, 0.46f, 1f),
+            Ambient = new Vector4(0.58f, 0.58f, 0.65f, 1f),
         });
         camera.AddComponent(new FirstPersonController { Speed = 3.6f });
         camera.AddComponent(new ScriptComponent { ScriptPath = "scripts/Pasillo.cs", ClassName = "Pasillo" });
 
-        AddWall(scene, "Pared izquierda", new Vector2(-4.3f, 13f), new Vector3(0.4f, 3.6f, 26f), new Vector3(0.45f, 0.43f, 0.4f), true);
-        AddWall(scene, "Pared derecha", new Vector2(4.3f, 13f), new Vector3(0.4f, 3.6f, 26f), new Vector3(0.45f, 0.43f, 0.4f), true);
+        AddWall(scene, "Suelo", new Vector2(0f, 13f), new Vector3(9f, 0.2f, 26f), new Vector3(0.3f, 0.27f, 0.22f), false);
+        AddWall(scene, "Techo", new Vector2(0f, 13f), new Vector3(9f, 0.2f, 26f), new Vector3(0.3f, 0.29f, 0.33f), false, 3.6f);
+        AddWall(scene, "Pared izquierda", new Vector2(-4.3f, 13f), new Vector3(0.4f, 3.6f, 26f), new Vector3(0.58f, 0.55f, 0.5f), true);
+        AddWall(scene, "Pared derecha", new Vector2(4.3f, 13f), new Vector3(0.4f, 3.6f, 26f), new Vector3(0.58f, 0.55f, 0.5f), true);
         AddWall(scene, "Muro final", new Vector2(0f, 26f), new Vector3(9f, 3.6f, 0.4f), new Vector3(0.36f, 0.35f, 0.34f), true);
         AddWall(scene, "Puerta", new Vector2(0f, 16f), new Vector3(3f, 3f, 0.35f), new Vector3(0.72f, 0.42f, 0.2f), true);
 
@@ -272,7 +274,7 @@ public static class StarterProject
         lamp.AddComponent(new Light2D
         {
             Radius = 11f,
-            Intensity = 1.1f,
+            Intensity = 1.35f,
             Color = new Vector4(1f, 0.78f, 0.45f, 1f),
         });
         lamp.AddComponent(new AudioSource
@@ -282,6 +284,14 @@ public static class StarterProject
             Loop = true,
             Spatial = true,
             MaxDistance = 12f,
+        });
+
+        var lamp2 = scene.Create("Luz final", new Vector2(0f, 20f));
+        lamp2.AddComponent(new Light2D
+        {
+            Radius = 9f,
+            Intensity = 0.8f,
+            Color = new Vector4(0.55f, 0.7f, 1f, 1f),
         });
 
         var enemy = scene.Create("Sombra", new Vector2(0.8f, 9f));
@@ -305,7 +315,7 @@ public static class StarterProject
         return scene;
     }
 
-    private static void AddWall(Scene scene, string name, Vector2 position, Vector3 size, Vector3 color, bool collides)
+    private static void AddWall(Scene scene, string name, Vector2 position, Vector3 size, Vector3 color, bool collides, float baseY = 0f)
     {
         var wall = scene.Create(name, position);
         wall.AddComponent(new Wall3D
@@ -313,6 +323,7 @@ public static class StarterProject
             Size = size,
             Color = color,
             Collides = collides,
+            BaseY = baseY,
         });
     }
 

@@ -19,10 +19,13 @@ public sealed class Wall3D : Component
 
     public bool Collides { get; set; } = true;
 
+    /// <summary>Altura de la base de la caja (para techos y plataformas).</summary>
+    public float BaseY { get; set; }
+
     [JsonIgnore]
     public Vector3 Center => new(
         Owner?.Transform.Position.X ?? 0f,
-        Size.Y * 0.5f,
+        BaseY + Size.Y * 0.5f,
         Owner?.Transform.Position.Y ?? 0f);
 
     [JsonIgnore]

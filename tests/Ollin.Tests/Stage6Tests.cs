@@ -142,3 +142,17 @@ public class CorridorTemplateTests
         }
     }
 }
+public class Wall3DBaseTests
+{
+    [Fact]
+    public void LaAlturaBaseColocaTechosYPlataformas()
+    {
+        var wall = new Wall3D { Size = new Vector3(4f, 0.2f, 4f), BaseY = 3.6f };
+        var entity = new Entity { Transform = { Position = Vector2.Zero } };
+        entity.AddComponent(wall);
+
+        Assert.Equal(3.7f, wall.Center.Y, 3);
+        Assert.Equal(3.6f, wall.Bounds.Min.Y, 3);
+        Assert.Equal(3.8f, wall.Bounds.Max.Y, 3);
+    }
+}

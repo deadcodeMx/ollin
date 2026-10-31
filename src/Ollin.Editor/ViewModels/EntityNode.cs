@@ -1781,6 +1781,19 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public decimal WallBaseY
+    {
+        get => (decimal)(Wall3D?.BaseY ?? 0f);
+        set
+        {
+            if (Wall3D is null || MathF.Abs(Wall3D.BaseY - (float)value) < 0.001f) return;
+            Wall3D.BaseY = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
     public string WallColorHex
     {
         get => ColorUtil.ToHex(Wall3D is null ? Vector4.One : new Vector4(Wall3D.Color, 1f));
