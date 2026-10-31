@@ -1,4 +1,4 @@
-## Ollin Beta 1.50.0 — etapa 6
+## Ollin Beta 6.50.0 — etapa 6
 
 ### Incluye
 
@@ -9,14 +9,14 @@
 
 ### Nuevo esquema de versiones
 
-- **1.50**: beta de la etapa 6.
-- **1.51, 1.52…**: arreglos de limitaciones, bugs y mejoras.
+- **6.50**: beta de la etapa 6.
+- **6.51, 6.52…**: arreglos de limitaciones, bugs y mejoras.
 - **1.0**: versión completa con todas las etapas.
 - Después de la final: **1.1, 1.2…** para mejoras leves; **2.0** para integraciones grandes.
 
 ### Cómo instalar
 
-1. Ejecuta `Ollin-Setup-1.50.0-beta.exe`.
+1. Ejecuta `Ollin-Setup-6.50.0-beta.exe`.
 2. Pulsa **Instalar**.
 3. Abre Ollin y crea un proyecto.
 

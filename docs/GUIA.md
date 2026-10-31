@@ -930,10 +930,10 @@ error de sintaxis.
 - El buscador se amplía al enfocarse y vuelve a su tamaño compacto.
 - El zoom 100 % se muestra como **1:1**.
 
-## 48. Esquema de versiones (1.50)
+## 48. Esquema de versiones (6.50)
 
-- **1.50**: beta de la etapa 6.
-- **1.51, 1.52…**: arreglos de limitaciones, bugs y mejoras dentro de la beta.
+- **6.50**: beta de la etapa 6.
+- **6.51, 6.52…**: arreglos de limitaciones, bugs y mejoras dentro de la beta.
 - **1.0**: versión completa con todas las etapas.
 - Después de la final: **1.1, 1.2…** para mejoras leves; **2.0** para
   integraciones grandes.
