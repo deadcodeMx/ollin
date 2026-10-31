@@ -4,7 +4,7 @@ using Ollin.Core.Scripting;
 
 namespace Ollin.Core.Saves;
 
-public sealed record GraphSnapshot(List<GraphNode> Nodes, Guid? SelectedId);
+public sealed record GraphSnapshot(List<GraphNode> Nodes, Guid? SelectedId, List<Guid>? SelectedIds = null);
 
 /// <summary>Utilidades de edición del grafo: copia, instantáneas e historial.</summary>
 public static class GraphEditing
@@ -35,9 +35,10 @@ public static class GraphEditing
         FalseNext = keepLinks ? node.FalseNext : null,
     };
 
-    public static GraphSnapshot Capture(NodeGraph graph, Guid? selectedId) => new(
+    public static GraphSnapshot Capture(NodeGraph graph, Guid? selectedId, IEnumerable<Guid>? selectedIds = null) => new(
         graph.Nodes.Select(node => CloneNode(node)).ToList(),
-        selectedId);
+        selectedId,
+        selectedIds?.ToList() ?? (selectedId is { } id ? new List<Guid> { id } : new List<Guid>()));
 
     public static Guid? Restore(NodeGraph graph, GraphSnapshot snapshot)
     {
@@ -69,6 +70,8 @@ public sealed class NodeGraphHistory
 
     public bool CanRedo => _redo.Count > 0;
 
+    public GraphSnapshot? LastRestored { get; private set; }
+
     public void Record(GraphSnapshot snapshot)
     {
         _undo.Push(snapshot);
@@ -93,7 +96,8 @@ public sealed class NodeGraphHistory
         }
 
         _redo.Push(GraphEditing.Capture(graph, selectedId));
-        newSelectedId = GraphEditing.Restore(graph, _undo.Pop());
+        LastRestored = _undo.Pop();
+        newSelectedId = GraphEditing.Restore(graph, LastRestored);
         return true;
     }
 
@@ -107,7 +111,8 @@ public sealed class NodeGraphHistory
         }
 
         _undo.Push(GraphEditing.Capture(graph, selectedId));
-        newSelectedId = GraphEditing.Restore(graph, _redo.Pop());
+        LastRestored = _redo.Pop();
+        newSelectedId = GraphEditing.Restore(graph, LastRestored);
         return true;
     }
 

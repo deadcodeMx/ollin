@@ -10,6 +10,7 @@ using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
 using Ollin.Editor.ViewModels;
 using Ollin.Editor.Controls;
+using Ollin.Core.Scripting;
 
 namespace Ollin.Editor.Views;
 
@@ -51,6 +52,13 @@ public sealed class NodeGraphWindow : Window
     private Point _dragStart;
     private double _dragX;
     private double _dragY;
+    private Border? _marquee;
+    private Point _marqueeStart;
+    private bool _marqueeSelecting;
+    private bool _marqueeAdd;
+    private HashSet<Guid> _marqueeBase = new();
+    private readonly List<Line> _guideLines = new();
+    private bool _snapNodes = true;
 
     public NodeGraphWindow(MainViewModel viewModel, Entity entity)
     {
@@ -88,7 +96,7 @@ public sealed class NodeGraphWindow : Window
 
         Content = root;
         Render();
-        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
+        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id, _selectedIds);
         _debugTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(120) };
         _debugTimer.Tick += (_, _) => PollDebug();
         _debugTimer.Start();
@@ -412,16 +420,17 @@ public sealed class NodeGraphWindow : Window
             _history.Record(_lastCommitted);
         }
 
-        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
+        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id, _selectedIds);
         _viewModel.MarkDirty("grafo-nodos");
     }
     private void Undo()
     {
         if (!_history.Undo(_graph, _selected?.Id, out var selectedId)) return;
-        _selected = selectedId is { } id ? _graph.Find(id) : null;
+        _selected = selectedId is { } restoredId ? _graph.Find(restoredId) : null;
         _selectedIds.Clear();
+        foreach (var selectionId in _history.LastRestored?.SelectedIds ?? new List<Guid>()) _selectedIds.Add(selectionId);
         if (_selected is not null) _selectedIds.Add(_selected.Id);
-        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
+        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id, _selectedIds);
         _viewModel.MarkDirty("grafo-nodos");
         Render();
     }
@@ -429,10 +438,11 @@ public sealed class NodeGraphWindow : Window
     private void Redo()
     {
         if (!_history.Redo(_graph, _selected?.Id, out var selectedId)) return;
-        _selected = selectedId is { } id ? _graph.Find(id) : null;
+        _selected = selectedId is { } restoredId ? _graph.Find(restoredId) : null;
         _selectedIds.Clear();
+        foreach (var selectionId in _history.LastRestored?.SelectedIds ?? new List<Guid>()) _selectedIds.Add(selectionId);
         if (_selected is not null) _selectedIds.Add(_selected.Id);
-        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
+        _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id, _selectedIds);
         _viewModel.MarkDirty("grafo-nodos");
         Render();
     }
@@ -466,9 +476,9 @@ public sealed class NodeGraphWindow : Window
 
         foreach (var copy in copies)
         {
-            copy.Next = copy.Next is { } next && map.TryGetValue(next, out var mappedNext) ? mappedNext : null;
-            copy.TrueNext = copy.TrueNext is { } yes && map.TryGetValue(yes, out var mappedYes) ? mappedYes : null;
-            copy.FalseNext = copy.FalseNext is { } no && map.TryGetValue(no, out var mappedNo) ? mappedNo : null;
+            copy.Next = copy.Next is { } next ? (map.TryGetValue(next, out var mappedNext) ? mappedNext : next) : null;
+            copy.TrueNext = copy.TrueNext is { } yes ? (map.TryGetValue(yes, out var mappedYes) ? mappedYes : yes) : null;
+            copy.FalseNext = copy.FalseNext is { } no ? (map.TryGetValue(no, out var mappedNo) ? mappedNo : no) : null;
             _graph.Nodes.Add(copy);
         }
 
@@ -518,7 +528,7 @@ public sealed class NodeGraphWindow : Window
     {
         if (_dragNode is null && _lastSignature.Length > 0 && _lastSignature != GraphSignature())
         {
-            _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id);
+            _lastCommitted = GraphEditing.Capture(_graph, _selected?.Id, _selectedIds);
             if (_selected is not null && _graph.Find(_selected.Id) is null) _selected = null;
             Render();
             return;
@@ -761,14 +771,7 @@ public sealed class NodeGraphWindow : Window
             StrokeThickness = 3,
             Tag = new LinkRef(source.Id, port),
         };
-        line.PointerPressed += (_, e) =>
-        {
-            if (e.GetCurrentPoint(line).Properties.IsRightButtonPressed)
-            {
-                ClearConnection(source.Id, port);
-                e.Handled = true;
-            }
-        };
+        line.ContextMenu = ConnectionMenu(source.Id, port);
         _canvas.Children.Add(line);
     }
 
@@ -898,16 +901,138 @@ public sealed class NodeGraphWindow : Window
             _selectedIds.Add(node.Id);
             Render();
         };
-        button.PointerPressed += (_, e) =>
-        {
-            if (e.GetCurrentPoint(button).Properties.IsRightButtonPressed)
-            {
-                var port = node.Kind == GraphNodeKind.Condition ? (trueBranch ? "true" : "false") : "next";
-                ClearConnection(node.Id, port);
-                e.Handled = true;
-            }
-        };
+        var portName = node.Kind == GraphNodeKind.Condition ? (trueBranch ? "true" : "false") : "next";
+        button.ContextMenu = ConnectionMenu(node.Id, portName);
         return button;
+    }
+
+    private void BeginMarquee(PointerPressedEventArgs e)
+    {
+        if (!e.GetCurrentPoint(_canvas).Properties.IsLeftButtonPressed || !ReferenceEquals(e.Source, _canvas))
+        {
+            return;
+        }
+
+        _marqueeSelecting = true;
+        _marqueeAdd = e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Shift);
+        _marqueeBase = _marqueeAdd ? new HashSet<Guid>(_selectedIds) : new HashSet<Guid>();
+        _marqueeStart = e.GetPosition(_canvas);
+        _marquee = new Border
+        {
+            Background = new SolidColorBrush(Color.Parse("#332E86FF")),
+            BorderBrush = new SolidColorBrush(Color.Parse("#53D6FF")),
+            BorderThickness = new Thickness(1),
+            IsHitTestVisible = false,
+        };
+        Canvas.SetLeft(_marquee, _marqueeStart.X);
+        Canvas.SetTop(_marquee, _marqueeStart.Y);
+        _canvas.Children.Add(_marquee);
+        e.Pointer.Capture(_canvas);
+        e.Handled = true;
+    }
+
+    private void UpdateMarquee(PointerEventArgs e)
+    {
+        if (!_marqueeSelecting || _marquee is null || e.Pointer.Captured != _canvas)
+        {
+            return;
+        }
+
+        var current = e.GetPosition(_canvas);
+        var left = Math.Max(0, Math.Min(_marqueeStart.X, current.X));
+        var top = Math.Max(0, Math.Min(_marqueeStart.Y, current.Y));
+        var width = Math.Abs(current.X - _marqueeStart.X);
+        var height = Math.Abs(current.Y - _marqueeStart.Y);
+        Canvas.SetLeft(_marquee, left);
+        Canvas.SetTop(_marquee, top);
+        _marquee.Width = width;
+        _marquee.Height = height;
+        e.Handled = true;
+    }
+
+    private void EndMarquee(PointerReleasedEventArgs e)
+    {
+        if (!_marqueeSelecting)
+        {
+            return;
+        }
+
+        var current = e.GetPosition(_canvas);
+        var left = Math.Min(_marqueeStart.X, current.X);
+        var right = Math.Max(_marqueeStart.X, current.X);
+        var top = Math.Min(_marqueeStart.Y, current.Y);
+        var bottom = Math.Max(_marqueeStart.Y, current.Y);
+
+        _selectedIds.Clear();
+        foreach (var id in _marqueeBase) _selectedIds.Add(id);
+
+        foreach (var node in _graph.Nodes)
+        {
+            if (node.X >= left && node.X <= right && node.Y >= top && node.Y <= bottom)
+            {
+                _selectedIds.Add(node.Id);
+            }
+        }
+
+        if (_marquee is not null)
+        {
+            _canvas.Children.Remove(_marquee);
+            _marquee = null;
+        }
+
+        _selected = _graph.Nodes.FirstOrDefault(node => _selectedIds.Contains(node.Id));
+        _marqueeSelecting = false;
+        e.Pointer.Capture(null);
+        Render();
+        e.Handled = true;
+    }
+
+    private void DrawGuides()
+    {
+        ClearGuides();
+        var selected = _graph.Nodes.Where(node => _selectedIds.Contains(node.Id)).ToList();
+        var others = _graph.Nodes.Where(node => !_selectedIds.Contains(node.Id)).ToList();
+        var tolerance = 6f;
+
+        foreach (var node in selected)
+        {
+            foreach (var other in others)
+            {
+                if (MathF.Abs(node.X - other.X) <= tolerance)
+                {
+                    AddGuide(new Line
+                    {
+                        StartPoint = new Point(other.X, 0),
+                        EndPoint = new Point(other.X, _canvas.Height),
+                        Stroke = new SolidColorBrush(Color.Parse("#E9A23B")),
+                        StrokeThickness = 1,
+                    });
+                }
+
+                if (MathF.Abs(node.Y - other.Y) <= tolerance)
+                {
+                    AddGuide(new Line
+                    {
+                        StartPoint = new Point(0, other.Y),
+                        EndPoint = new Point(_canvas.Width, other.Y),
+                        Stroke = new SolidColorBrush(Color.Parse("#E9A23B")),
+                        StrokeThickness = 1,
+                    });
+                }
+            }
+        }
+    }
+
+    private void AddGuide(Line line)
+    {
+        _guideLines.Add(line);
+        _canvas.Children.Insert(0, line);
+    }
+
+    private void ClearGuides()
+    {
+        foreach (var line in _guideLines) _canvas.Children.Remove(line);
+        _guideLines.Clear();
     }
 
     private void OnNodePressed(GraphNode node, Border card, PointerPressedEventArgs e)
@@ -988,7 +1113,8 @@ public sealed class NodeGraphWindow : Window
         }
 
         _dragPositions[node.Id] = (node.X, node.Y);
-        _dragStart = e.GetPosition(_canvas);
+        ClearGuides();
+
         _dragX = node.X;
         _dragY = node.Y;
         e.Pointer.Capture(card);
@@ -1017,13 +1143,19 @@ public sealed class NodeGraphWindow : Window
             selected.X = (float)Math.Max(0, start.X + dx);
             selected.Y = (float)Math.Max(0, start.Y + dy);
 
-            if (_nodeCards.TryGetValue(id, out var selectedCard))
+            if (_snapNodes)
+            {
+                selected.X = MathF.Round(selected.X / 10f) * 10f;
+                selected.Y = MathF.Round(selected.Y / 10f) * 10f;
+            }
+if (_nodeCards.TryGetValue(id, out var selectedCard))
             {
                 Canvas.SetLeft(selectedCard, selected.X);
                 Canvas.SetTop(selectedCard, selected.Y);
             }
         }
 
+        DrawGuides();
         e.Handled = true;
     }
 
@@ -1034,11 +1166,39 @@ public sealed class NodeGraphWindow : Window
             _dragNode = null;
             _dragCard = null;
             _dragPositions.Clear();
+            ClearGuides();
             e.Pointer.Capture(null);
             MarkChanged();
             Render();
         }
     }
+    private void AddExpressionError(string expression)
+    {
+        var error = ExpressionEvaluator.Validate(expression);
+
+        if (error is null)
+        {
+            return;
+        }
+
+        _inspector.Children.Add(new TextBlock
+        {
+            Text = error,
+            FontSize = 10,
+            Foreground = new SolidColorBrush(Color.Parse("#E05B5B")),
+            TextWrapping = TextWrapping.Wrap,
+        });
+    }
+
+    private ContextMenu ConnectionMenu(Guid nodeId, string port)
+    {
+        var menu = new ContextMenu();
+        var delete = new MenuItem { Header = "Eliminar conexión" };
+        delete.Click += (_, _) => ClearConnection(nodeId, port);
+        menu.Items.Add(delete);
+        return menu;
+    }
+
     private void ClearConnection(Guid nodeId, string port)
     {
         if (_graph.Find(nodeId) is not { } node)
@@ -1172,6 +1332,7 @@ public sealed class NodeGraphWindow : Window
                     TextWrapping = TextWrapping.Wrap,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 });
+                AddExpressionError(node.Expression);
             }
         }
         else
@@ -1197,6 +1358,7 @@ public sealed class NodeGraphWindow : Window
                 _inspector.Children.Add(TextInput(node.VariableName, value => { node.VariableName = value; MarkChanged(); }));
                 _inspector.Children.Add(Label("Expresión / valor"));
                 _inspector.Children.Add(TextInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
+                AddExpressionError(node.Expression);
                 _inspector.Children.Add(new TextBlock
                 {
                     Text = "contador + 1, true, 3.5…",

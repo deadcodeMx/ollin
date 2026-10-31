@@ -17,6 +17,18 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.39.0] — 2026-10-31
+
+### Añadido
+
+- Selección por **marquee** con Ctrl/Shift.
+- Historial que restaura la **selección múltiple**.
+- Copiar/pegar conserva **enlaces externos**.
+- **Menú contextual** para eliminar conexiones.
+- **Snap a rejilla de 10 px** y **guías de alineación**.
+- Errores de expresión **junto al campo**.
+- 2 pruebas nuevas: 196 en total.
+
 ## [0.38.0] — 2026-10-31
 
 ### Añadido

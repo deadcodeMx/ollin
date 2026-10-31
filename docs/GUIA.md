@@ -819,3 +819,17 @@ error de sintaxis.
 - **Grupos visuales**: caja arrastrable; al mover el grupo se mueven los nodos contenidos.
 - **Breakpoints**: botón en el inspector; al ejecutarse el nodo, la partida se pausa.
 - El pointer lock se libera mientras el grafo está activo.
+
+## 36. Grafo: marquee, guías y enlaces (0.39)
+
+- **Marquee**: arrastra sobre el fondo del canvas para seleccionar varios nodos.
+  Ctrl/Shift añade a la selección existente.
+- **Historial con selección múltiple**: deshacer/rehacer restaura todos los nodos
+  seleccionados, no solo el principal.
+- **Copiar/pegar con enlaces externos**: las conexiones hacia nodos fuera del grupo se
+  conservan.
+- **Menú contextual de conexiones**: clic derecho sobre una línea o salida y elige
+  **Eliminar conexión**.
+- **Snap de nodos**: rejilla de 10 px, activable con **Rejilla**.
+- **Guías de alineación**: líneas ámbar al alinear bordes con otros nodos.
+- **Errores de expresión junto al campo**, además del panel de validación.

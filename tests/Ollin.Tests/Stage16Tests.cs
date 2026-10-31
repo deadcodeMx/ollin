@@ -92,4 +92,30 @@ public class GraphCommentAndBreakpointTests
             runtime.Stop();
         }
     }
+    [Fact]
+    public void ElHistorialRestauraLaSeleccionMultiple()
+    {
+        var graph = new NodeGraph();
+        var a = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var b = graph.AddNode(GraphNodeKind.Action, 100, 0);
+        var history = new NodeGraphHistory();
+        var initial = GraphEditing.Capture(graph, a.Id, new[] { a.Id, b.Id });
+        graph.AddNode(GraphNodeKind.Comment, 200, 0);
+        history.Record(initial);
+
+        Assert.True(history.Undo(graph, a.Id, out _));
+        Assert.Contains(a.Id, history.LastRestored!.SelectedIds!);
+        Assert.Contains(b.Id, history.LastRestored.SelectedIds!);
+    }
+
+    [Fact]
+    public void UnGrupoNoSeValidaComoNodoSuelto()
+    {
+        var graph = new NodeGraph();
+        graph.AddNode(GraphNodeKind.Group, 0, 0);
+
+        var issues = GraphValidator.Validate(graph, new Scene());
+
+        Assert.DoesNotContain(issues, issue => issue.Node?.Kind == GraphNodeKind.Group);
+    }
 }
