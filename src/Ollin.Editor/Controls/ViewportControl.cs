@@ -50,6 +50,23 @@ public sealed class ViewportControl : OpenGlControlBase
     private Vector3 _gizmo3DStartPlane;
     private Vector2 _gizmo3DStartPosition;
     private int _gizmo3DAxis;
+    private float _gizmo3DStartYaw;
+    private float _gizmo3DStartRotation;
+    private float _gizmo3DStartAngle;
+    private Vector2 _gizmo3DStartScreen;
+    private float _gizmo3DStartDistance;
+    private float _gizmo3DStartHeight;
+    private Vector3 _gizmo3DStartWallSize;
+    private Vector2 _gizmo3DStartSpriteSize;
+
+    public Gizmo3DMode Gizmo3DMode { get; set; } = Gizmo3DMode.Move;
+
+    /// <summary>Cambia el modo del gizmo 3D y redibuja.</summary>
+    public void SetGizmo3DMode(Gizmo3DMode mode)
+    {
+        Gizmo3DMode = mode;
+        RequestNextFrameRendering();
+    }
 
     public ViewportControl()
     {
@@ -184,7 +201,7 @@ public sealed class ViewportControl : OpenGlControlBase
 
             if (_viewModel.ActiveCamera3D is { } camera3D)
             {
-                _renderer.RenderFrame3D(_viewModel.Scene, camera3D, width, height, _viewModel.IsPlaying ? null : _viewModel.Selected?.Id);
+                _renderer.RenderFrame3D(_viewModel.Scene, camera3D, width, height, _viewModel.IsPlaying ? null : _viewModel.Selected?.Id, Gizmo3DMode);
             }
             else
             {
@@ -326,23 +343,61 @@ public sealed class ViewportControl : OpenGlControlBase
             return false;
         }
 
+        var entity = _viewModel.Selected.Entity;
         var (width, height, scaling) = GetPixelSizeWithScaling();
         var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
-        var planeY = _viewModel.Selected.Entity.GetComponent<Wall3D>()?.BaseY ?? 0f;
 
-        if (!RayPlane(camera.Eye, camera.RayDirection(screen, width, height), planeY, out var point))
+        if (!TryScreenCenter(entity, camera, width, height, out var centerScreen))
         {
             return false;
         }
 
+        _gizmo3DStartWallSize = entity.GetComponent<Wall3D>()?.Size ?? Vector3.One;
+        _gizmo3DStartSpriteSize = entity.GetComponent<SpriteRenderer>()?.Size ?? Vector2.One;
+        _gizmo3DStartHeight = entity.GetComponent<Camera3D>()?.Height ?? 1.7f;
+        _gizmo3DStartYaw = entity.GetComponent<Wall3D>()?.Yaw ?? entity.GetComponent<Camera3D>()?.Yaw ?? 0f;
+        _gizmo3DStartRotation = entity.Transform.Rotation;
+        _gizmo3DStartDistance = MathF.Max(20f, Vector2.Distance(screen, centerScreen));
+
+        switch (Gizmo3DMode)
+        {
+            case Gizmo3DMode.Rotate:
+
+
+                _gizmo3DStartAngle = MathF.Atan2(screen.Y - centerScreen.Y, screen.X - centerScreen.X);
+                break;
+
+            case Gizmo3DMode.Scale:
+            {
+                var handle = HitAxisHandle(entity, camera, width, height, screen, includeY: true);
+
+                _gizmo3DAxis = handle ?? -1;
+                _gizmo3DStartDistance = MathF.Max(160f, Vector2.Distance(screen, centerScreen));
+                break;
+            }
+
+            default:
+            {
+                var handle = HitAxisHandle(entity, camera, width, height, screen, includeY: false);
+                _gizmo3DAxis = handle switch { 0 => 1, 2 => 2, _ => 0 };
+                var planeY = entity.GetComponent<Wall3D>()?.BaseY ?? 0f;
+
+                if (!RayPlane(camera.Eye, camera.RayDirection(screen, width, height), planeY, out var point))
+                {
+                    return false;
+                }
+
+                _gizmo3DStartPlane = point;
+                break;
+            }
+        }
+
+        _gizmo3DStartPosition = entity.Transform.Position;
+        _gizmo3DStartScreen = screen;
         _gizmo3DDragging = true;
-        _gizmo3DStartPlane = point;
-        _gizmo3DStartPosition = _viewModel.Selected.Entity.Transform.Position;
-        _gizmo3DAxis = 0;
         return true;
     }
 
-    /// <summary>Aplica el arrastre 3D en el plano del suelo.</summary>
     public void Update3DDrag(Point position, bool snap)
     {
         if (!_gizmo3DDragging || _viewModel?.Selected is null || _viewModel.ActiveCamera3D is not { } camera)
@@ -350,33 +405,110 @@ public sealed class ViewportControl : OpenGlControlBase
             return;
         }
 
+        var entity = _viewModel.Selected.Entity;
         var (width, height, scaling) = GetPixelSizeWithScaling();
         var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
-        var planeY = _viewModel.Selected.Entity.GetComponent<Wall3D>()?.BaseY ?? 0f;
 
-        if (!RayPlane(camera.Eye, camera.RayDirection(screen, width, height), planeY, out var point))
+        if (!TryScreenCenter(entity, camera, width, height, out var centerScreen))
         {
             return;
         }
 
-        var delta = new Vector2(point.X - _gizmo3DStartPlane.X, point.Z - _gizmo3DStartPlane.Z);
-        var next = _gizmo3DStartPosition + delta;
-
-        if (snap)
+        switch (Gizmo3DMode)
         {
-            next = new Vector2(MathF.Round(next.X * 4f) / 4f, MathF.Round(next.Y * 4f) / 4f);
+            case Gizmo3DMode.Rotate:
+            {
+                // Arrastre horizontal: predecible incluso si el centro queda lejos.
+                var delta = (screen.X - _gizmo3DStartScreen.X) * 0.006f;
+                var rotation = _gizmo3DStartYaw + delta;
+
+                if (snap)
+                {
+                    const float step = MathF.PI / 12f;
+                    rotation = MathF.Round(rotation / step) * step;
+                }
+
+                if (entity.GetComponent<Wall3D>() is { } wall)
+                {
+                    wall.Yaw = rotation;
+                }
+                else if (entity.GetComponent<Camera3D>() is { } cam)
+                {
+                    cam.Yaw = rotation;
+                }
+                else
+                {
+                    entity.Transform.Rotation = _gizmo3DStartRotation + delta;
+                }
+
+                break;
+            }
+
+            case Gizmo3DMode.Scale:
+            {
+                var factor = 1f + (screen.X - _gizmo3DStartScreen.X) / 200f;
+
+                if (snap)
+                {
+                    factor = MathF.Round(factor * 10f) / 10f;
+                }
+
+                factor = Math.Clamp(factor, 0.05f, 20f);
+
+                if (entity.GetComponent<Wall3D>() is { } wall)
+                {
+                    var size = _gizmo3DStartWallSize;
+
+                    if (_gizmo3DAxis == 0) size.X *= factor;
+                    else if (_gizmo3DAxis == 1) size.Y *= factor;
+                    else if (_gizmo3DAxis == 2) size.Z *= factor;
+                    else size *= factor;
+
+                    wall.Size = size;
+                }
+                else if (entity.GetComponent<SpriteRenderer>() is { } sprite)
+                {
+                    sprite.Size = _gizmo3DStartSpriteSize * factor;
+                }
+                else if (entity.GetComponent<Camera3D>() is { } cam)
+                {
+                    cam.Height = _gizmo3DStartHeight * factor;
+                }
+
+                break;
+            }
+
+            default:
+            {
+                var planeY = entity.GetComponent<Wall3D>()?.BaseY ?? 0f;
+
+                if (!RayPlane(camera.Eye, camera.RayDirection(screen, width, height), planeY, out var point))
+                {
+                    return;
+                }
+
+                var delta = new Vector2(point.X - _gizmo3DStartPlane.X, point.Z - _gizmo3DStartPlane.Z);
+                var next = _gizmo3DStartPosition + delta;
+
+                if (snap)
+                {
+                    next = new Vector2(MathF.Round(next.X * 4f) / 4f, MathF.Round(next.Y * 4f) / 4f);
+                }
+
+                if (_gizmo3DAxis == 1)
+                {
+                    next.Y = _gizmo3DStartPosition.Y;
+                }
+                else if (_gizmo3DAxis == 2)
+                {
+                    next.X = _gizmo3DStartPosition.X;
+                }
+
+                entity.Transform.Position = next;
+                break;
+            }
         }
 
-        if (_gizmo3DAxis == 1)
-        {
-            next.Y = _gizmo3DStartPosition.Y;
-        }
-        else if (_gizmo3DAxis == 2)
-        {
-            next.X = _gizmo3DStartPosition.X;
-        }
-
-        _viewModel.Selected.Entity.Transform.Position = next;
         _viewModel.NotifySceneEdited();
         RequestNextFrameRendering();
     }
@@ -389,9 +521,124 @@ public sealed class ViewportControl : OpenGlControlBase
         }
 
         _gizmo3DDragging = false;
-        _viewModel?.CommitEdit("Mover entidad 3D");
+        var label = Gizmo3DMode switch
+        {
+            Gizmo3DMode.Rotate => "Rotar entidad 3D",
+            Gizmo3DMode.Scale => "Escalar entidad 3D",
+            _ => "Mover entidad 3D",
+        };
+
+        _viewModel?.CommitEdit(label);
     }
 
+    private static float NormalizeAngle(float angle)
+    {
+        while (angle > MathF.PI) angle -= MathF.Tau;
+        while (angle < -MathF.PI) angle += MathF.Tau;
+        return angle;
+    }
+
+    private static bool TryScreenCenter(Entity entity, Camera3D camera, int width, int height, out Vector2 screen)
+    {
+        var center = EntityCenter3D(entity);
+        return camera.Project(center, width, height, out screen, out _);
+    }
+
+    private static Vector3 EntityCenter3D(Entity entity) =>
+        entity.GetComponent<Wall3D>() is { } wall
+            ? wall.Center
+            : entity.GetComponent<SpriteRenderer>() is { } sprite
+                ? new Vector3(entity.Transform.Position.X, sprite.Size.Y * 0.5f, entity.Transform.Position.Y)
+                : entity.GetComponent<Camera3D>() is { } cam
+                    ? cam.Eye
+                    : new Vector3(entity.Transform.Position.X, 0f, entity.Transform.Position.Y);
+
+    private static bool IsNearRing(Entity entity, Camera3D camera, int width, int height, Vector2 screen, out float distance)
+    {
+        distance = float.MaxValue;
+        var center = EntityCenter3D(entity);
+        var previous = Vector2.Zero;
+        var hasPrevious = false;
+
+        for (var i = 0; i <= 48; i++)
+        {
+            var angle = i / 48f * MathF.Tau;
+            var point = center + new Vector3(MathF.Cos(angle) * 1.3f, 0f, MathF.Sin(angle) * 1.3f);
+
+            if (!camera.Project(point, width, height, out var projected, out _))
+            {
+                hasPrevious = false;
+                continue;
+            }
+
+            if (hasPrevious)
+            {
+                distance = MathF.Min(distance, DistanceToSegment(screen, previous, projected));
+            }
+
+            previous = projected;
+            hasPrevious = true;
+        }
+
+        return distance <= 12f;
+    }
+
+    private static int? HitAxisHandle(Entity entity, Camera3D camera, int width, int height, Vector2 screen, bool includeY)
+    {
+        if (!TryScreenCenter(entity, camera, width, height, out var centerScreen))
+        {
+            return null;
+        }
+
+        if (Vector2.Distance(screen, centerScreen) <= 16f)
+        {
+            return -1;
+        }
+
+        var center = EntityCenter3D(entity);
+        var axis = 1.2f;
+
+        for (var i = 0; i < 3; i++)
+        {
+            if (i == 1 && !includeY)
+            {
+                continue;
+            }
+
+            var direction = i switch
+            {
+                0 => new Vector3(axis, 0f, 0f),
+                1 => new Vector3(0f, axis, 0f),
+                _ => new Vector3(0f, 0f, axis),
+            };
+
+            if (!camera.Project(center + direction, width, height, out var tip, out _))
+            {
+                continue;
+            }
+
+            if (DistanceToSegment(screen, centerScreen, tip) <= 10f)
+            {
+                return i;
+            }
+        }
+
+        return null;
+    }
+
+    private static float DistanceToSegment(Vector2 point, Vector2 a, Vector2 b)
+    {
+        var ab = b - a;
+        var lengthSquared = ab.LengthSquared();
+
+        if (lengthSquared < 0.0001f)
+        {
+            return Vector2.Distance(point, a);
+        }
+
+        var t = Math.Clamp(Vector2.Dot(point - a, ab) / lengthSquared, 0f, 1f);
+        return Vector2.Distance(point, a + ab * t);
+    }
     private static bool RayPlane(Vector3 origin, Vector3 direction, float planeY, out Vector3 point)
     {
         point = Vector3.Zero;

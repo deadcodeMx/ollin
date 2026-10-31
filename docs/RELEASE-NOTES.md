@@ -1,21 +1,20 @@
-## Ollin 0.23.0 beta — texturas y gizmos 3D
+## Ollin 0.24.0 beta — gizmos de rotación y escala 3D
 
 ### Incluye
 
-- Texturas repetidas en paredes, suelos y techos con **Escala textura**.
-- Texturas de ejemplo incluidas en `assets/textures/`.
-- **Gizmo 3D** en el viewport: clic para seleccionar, arrastre para mover en el plano,
-  Ctrl para ajustar y deshacer.
-- Corredor de ejemplo con ladrillo, losas y paneles.
-- 128 pruebas automatizadas.
+- Modos de gizmo **Mover / Rotar / Escalar** (botones o teclas 1/2/3).
+- Rotación alrededor de **Y** en paredes y cámara; roll en billboards.
+- Escala por eje o uniforme desde el centro.
+- Cajas 3D rotadas en render y selección, con campo **Giro Y** en el inspector.
+- 129 pruebas automatizadas.
 
 ### Cómo probarlo
 
-1. Instala 0.23.0 y crea un proyecto **2.5D (pasillo)**.
-2. En modo edición, haz clic en una pared y arrástrala con el gizmo.
-3. Reproduce y exporta como siempre.
+1. Instala 0.24.0 y abre un proyecto **2.5D (pasillo)**.
+2. Selecciona una pared y usa **Rotar** o **Escalar**; arrastra en el viewport.
+3. Ctrl ajusta; el cambio entra en deshacer.
 
 ### Limitaciones
 
-- Gizmos de rotación y escala 3D pendientes.
+- Rotación solo alrededor de Y (el motor sigue siendo 2.5D).
 - Sin cilindros ni IA 3D.

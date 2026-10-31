@@ -172,3 +172,20 @@ public class Camera3DRayTests
         Assert.Equal(1f, direction.Z, 3);
     }
 }
+public class Wall3DYawTests
+{
+    [Fact]
+    public void GirarNoventaGradosIntercambiaLosExtremos()
+    {
+        var wall = new Wall3D { Size = new Vector3(2f, 1f, 4f), Yaw = MathF.PI / 2f };
+        var entity = new Entity { Transform = { Position = Vector2.Zero } };
+        entity.AddComponent(wall);
+
+        var (min, max) = wall.Bounds;
+
+        Assert.Equal(-2f, min.X, 3);
+        Assert.Equal(-1f, min.Z, 3);
+        Assert.Equal(2f, max.X, 3);
+        Assert.Equal(1f, max.Z, 3);
+    }
+}

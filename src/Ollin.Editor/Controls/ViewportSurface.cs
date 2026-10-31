@@ -63,13 +63,17 @@ public sealed class ViewportSurface : Border
         {
             if (point.Properties.IsLeftButtonPressed)
             {
-                Viewport.Select3DAt(position);
-
+                // Primero intenta arrastrar el gizmo de la selección actual; si no,
+                // selecciona la entidad bajo el puntero.
                 if (Viewport.Begin3DDrag(position))
                 {
                     _gizmo3DDragging = true;
                     _capturedPointer = e.Pointer;
                     e.Pointer.Capture(this);
+                }
+                else
+                {
+                    Viewport.Select3DAt(position);
                 }
 
                 e.Handled = true;

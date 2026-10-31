@@ -93,6 +93,9 @@
           <Button Classes="tool" Content="⟳ Scripts" Click="OnReloadScripts" ToolTip.Tip="Recompilar scripts" />
           <Button Classes="tool" Content="Centrar" Click="OnResetCamera" />
           <Button Classes="tool" Content="Enfocar" Click="OnFrameSelected" />
+          <Button Classes="tool" Content="Mover" Click="OnGizmoMove" ToolTip.Tip="Gizmo 3D: mover (tecla 1)" />
+          <Button Classes="tool" Content="Rotar" Click="OnGizmoRotate" ToolTip.Tip="Gizmo 3D: rotar alrededor de Y (tecla 2)" />
+          <Button Classes="tool" Content="Escalar" Click="OnGizmoScale" ToolTip.Tip="Gizmo 3D: escalar (tecla 3)" />
           <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
           <Button Classes="tool accent" Content="▶  Reproducir" Click="OnPlay"
                   IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
@@ -779,7 +782,19 @@
                       <TextBlock Text="Profundidad" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.WallDepth, Mode=TwoWay}" Increment="0.5" Minimum="0.05" FormatString="0.##" />
                     </Grid>
+                                        <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Altura base" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WallBaseY, Mode=TwoWay}" Increment="0.5" FormatString="0.##" />
+                    </Grid>
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Giro Y (°)" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WallYaw, Mode=TwoWay}" Increment="5" FormatString="0" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Escala textura" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.WallTextureScale, Mode=TwoWay}" Increment="0.5" Minimum="0.05" FormatString="0.##" />
+                    </Grid>
+<Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Color" VerticalAlignment="Center" Classes="hint" />
                       <TextBox Grid.Column="1" Text="{Binding Selected.WallColorHex, Mode=TwoWay}" Watermark="#8A8F9C" />
                     </Grid>

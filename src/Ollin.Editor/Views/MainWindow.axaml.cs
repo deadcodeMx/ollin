@@ -367,6 +367,12 @@ public partial class MainWindow : Window
 
     private void OnFrameSelected(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.FrameSelected();
 
+    private void OnGizmoMove(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Move);
+
+    private void OnGizmoRotate(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Rotate);
+
+    private void OnGizmoScale(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Scale);
+
     // ---------- Ayuda ----------
 
     private void OnAbout(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -995,6 +1001,30 @@ public partial class MainWindow : Window
         {
             base.OnKeyDown(e);
             return;
+        }
+
+        if (!vm.IsPlaying && vm.ActiveCamera3D is not null)
+        {
+            if (e.Key is Key.D1 or Key.NumPad1)
+            {
+                ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Move);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key is Key.D2 or Key.NumPad2)
+            {
+                ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Rotate);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key is Key.D3 or Key.NumPad3)
+            {
+                ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Scale);
+                e.Handled = true;
+                return;
+            }
         }
 
         // Durante la reproducción el teclado pertenece al juego.

@@ -25,6 +25,9 @@ public sealed class Wall3D : Component
     /// <summary>Altura de la base de la caja (para techos y plataformas).</summary>
     public float BaseY { get; set; }
 
+    /// <summary>Giro alrededor del eje Y en radianes.</summary>
+    public float Yaw { get; set; }
+
     [JsonIgnore]
     public Vector3 Center => new(
         Owner?.Transform.Position.X ?? 0f,
@@ -38,7 +41,13 @@ public sealed class Wall3D : Component
         {
             var center = Center;
             var half = Vector3.Abs(Size) * 0.5f;
-            return (center - half, center + half);
+            var cos = MathF.Abs(MathF.Cos(Yaw));
+            var sin = MathF.Abs(MathF.Sin(Yaw));
+            var extentX = cos * half.X + sin * half.Z;
+            var extentZ = sin * half.X + cos * half.Z;
+            return (
+                new Vector3(center.X - extentX, center.Y - half.Y, center.Z - extentZ),
+                new Vector3(center.X + extentX, center.Y + half.Y, center.Z + extentZ));
         }
     }
 
@@ -48,7 +57,9 @@ public sealed class Wall3D : Component
         Size = Size,
         Color = Color,
         TexturePath = TexturePath,
-        Visible = Visible,
+        TextureScale = TextureScale,
+        BaseY = BaseY,
+        Yaw = Yaw,
         Collides = Collides,
         Owner = newOwner,
     };

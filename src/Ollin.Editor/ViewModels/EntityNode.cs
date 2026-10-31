@@ -969,6 +969,22 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(CameraZoom));
         OnPropertyChanged(nameof(ComponentsSummary));
         OnPropertyChanged(nameof(RotationSpeed));
+        OnPropertyChanged(nameof(WallWidthInput));
+        OnPropertyChanged(nameof(WallHeight));
+        OnPropertyChanged(nameof(WallDepth));
+        OnPropertyChanged(nameof(WallYaw));
+        OnPropertyChanged(nameof(WallBaseY));
+        OnPropertyChanged(nameof(WallTextureScale));
+        OnPropertyChanged(nameof(Camera3DFov));
+        OnPropertyChanged(nameof(Camera3DHeight));
+        OnPropertyChanged(nameof(Camera3DYaw));
+        OnPropertyChanged(nameof(Camera3DPitch));
+        OnPropertyChanged(nameof(Camera3DFogStart));
+        OnPropertyChanged(nameof(Camera3DFogEnd));
+        OnPropertyChanged(nameof(FpsSpeed));
+        OnPropertyChanged(nameof(FpsRun));
+        OnPropertyChanged(nameof(FpsSensitivity));
+        OnPropertyChanged(nameof(FpsRadius));
         OnPropertyChanged(nameof(OscillationAmplitude));
         OnPropertyChanged(nameof(OscillationFrequency));
         OnPropertyChanged(nameof(ScriptPath));
@@ -1788,6 +1804,19 @@ public sealed class EntityNode : ObservableObject
         {
             if (Wall3D is null || MathF.Abs(Wall3D.BaseY - (float)value) < 0.001f) return;
             Wall3D.BaseY = (float)value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    public decimal WallYaw
+    {
+        get => (decimal)((Wall3D?.Yaw ?? 0f) * 180f / MathF.PI);
+        set
+        {
+            if (Wall3D is null) return;
+            Wall3D.Yaw = (float)value * MathF.PI / 180f;
             OnPropertyChanged();
             _owner.MarkDirty();
             _owner.RequestRedraw();

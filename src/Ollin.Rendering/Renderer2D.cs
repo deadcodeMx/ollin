@@ -395,7 +395,7 @@ public sealed class Renderer2D : IDisposable
     /// Frame del puente 2.5D: cámara en perspectiva, paredes de caja y sprites
     /// billboard ordenados de lejos a cerca (pintor). Sin búfer de profundidad.
     /// </summary>
-    public void RenderFrame3D(Scene scene, Camera3D camera, int width, int height, Guid? selectedEntityId = null)
+    public void RenderFrame3D(Scene scene, Camera3D camera, int width, int height, Guid? selectedEntityId = null, Gizmo3DMode gizmoMode = Gizmo3DMode.Move)
     {
         if (width <= 0 || height <= 0)
         {
@@ -437,7 +437,7 @@ public sealed class Renderer2D : IDisposable
 
         if (selectedEntityId is { } id && scene.Find(id) is { } selected)
         {
-            DrawGizmo3D(scene, camera, selected, width, height);
+            DrawGizmo3D(scene, camera, selected, width, height, gizmoMode);
         }
 
         _batch.End();
@@ -461,7 +461,7 @@ public sealed class Renderer2D : IDisposable
         return view * projection;
     }
 
-    private void DrawGizmo3D(Scene scene, Camera3D camera, Entity entity, int width, int height)
+    private void DrawGizmo3D(Scene scene, Camera3D camera, Entity entity, int width, int height, Gizmo3DMode mode)
     {
         var center = entity.GetComponent<Wall3D>() is { } wall
             ? wall.Center
@@ -474,23 +474,33 @@ public sealed class Renderer2D : IDisposable
             center = cam.Eye;
         }
 
-        var axis = 1.2f;
-        var xTip = center + new Vector3(axis, 0f, 0f);
-        var zTip = center + new Vector3(0f, 0f, axis);
-        var yTip = center + new Vector3(0f, axis, 0f);
-
         if (!camera.Project(center, width, height, out var centerScreen, out _))
         {
             return;
         }
 
-        DrawAxis(centerScreen, xTip, new Vector4(0.95f, 0.35f, 0.3f, 1f));
-        DrawAxis(centerScreen, zTip, new Vector4(0.35f, 0.6f, 1f, 1f));
-        DrawAxis(centerScreen, yTip, new Vector4(0.4f, 0.95f, 0.5f, 1f));
+        var axis = 1.2f;
+        var xTip = center + new Vector3(axis, 0f, 0f);
+        var zTip = center + new Vector3(0f, 0f, axis);
+        var yTip = center + new Vector3(0f, axis, 0f);
 
-        _batch.DrawRect(_whiteTexture, centerScreen, new Vector2(6f, 6f), new Vector4(1f, 0.85f, 0.3f, 0.9f));
+        if (mode == Gizmo3DMode.Rotate)
+        {
+            DrawRing(center, 1.3f, new Vector4(0.4f, 0.95f, 0.5f, 1f));
+            DrawAxis(centerScreen, xTip * 0.6f, new Vector4(0.95f, 0.35f, 0.3f, 0.7f), 5f);
+            DrawAxis(centerScreen, zTip * 0.6f, new Vector4(0.35f, 0.6f, 1f, 0.7f), 5f);
+        }
+        else
+        {
+            var tipSize = mode == Gizmo3DMode.Scale ? 10f : 7f;
+            DrawAxis(centerScreen, xTip, new Vector4(0.95f, 0.35f, 0.3f, 1f), tipSize);
+            DrawAxis(centerScreen, zTip, new Vector4(0.35f, 0.6f, 1f, 1f), tipSize);
+            DrawAxis(centerScreen, yTip, new Vector4(0.4f, 0.95f, 0.5f, 1f), tipSize);
+        }
 
-        void DrawAxis(Vector2 from, Vector3 tip, Vector4 color)
+        _batch.DrawRect(_whiteTexture, centerScreen, new Vector2(7f, 7f), new Vector4(1f, 0.85f, 0.3f, 0.9f));
+
+        void DrawAxis(Vector2 from, Vector3 tip, Vector4 color, float tipSize)
         {
             if (!camera.Project(tip, width, height, out var to, out _))
             {
@@ -498,7 +508,33 @@ public sealed class Renderer2D : IDisposable
             }
 
             _batch.DrawLine(_whiteTexture, from, to, 2.5f, color);
-            _batch.DrawRect(_whiteTexture, to, new Vector2(7f, 7f), color);
+            _batch.DrawRect(_whiteTexture, to, new Vector2(tipSize, tipSize), color);
+        }
+
+        void DrawRing(Vector3 origin, float radius, Vector4 color)
+        {
+            var previous = Vector2.Zero;
+            var hasPrevious = false;
+
+            for (var i = 0; i <= 48; i++)
+            {
+                var angle = i / 48f * MathF.Tau;
+                var point = origin + new Vector3(MathF.Cos(angle) * radius, 0f, MathF.Sin(angle) * radius);
+
+                if (!camera.Project(point, width, height, out var screen, out _))
+                {
+                    hasPrevious = false;
+                    continue;
+                }
+
+                if (hasPrevious)
+                {
+                    _batch.DrawLine(_whiteTexture, previous, screen, 2.2f, color);
+                }
+
+                previous = screen;
+                hasPrevious = true;
+            }
         }
     }
 
@@ -511,43 +547,43 @@ public sealed class Renderer2D : IDisposable
                 continue;
             }
 
-            var (min, max) = wall.Bounds;
+            var center = wall.Center;
+            var half = Vector3.Abs(wall.Size) * 0.5f;
+            var cos = MathF.Cos(wall.Yaw);
+            var sin = MathF.Sin(wall.Yaw);
             var texture = string.IsNullOrWhiteSpace(wall.TexturePath) ? null : ResolveTexture(wall.TexturePath);
             var baseColor = new Vector4(wall.Color.X, wall.Color.Y, wall.Color.Z, 1f);
 
-            Add(min.X, min.Y, min.Z, max.X, max.Y, max.Z);
+            Vector3 P(float x, float y, float z) => new(
+                center.X + x * cos + z * sin,
+                center.Y + y,
+                center.Z - x * sin + z * cos);
 
-            void Add(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
-            {
-                DrawFace(
-                    new Vector3(minX, maxY, maxZ), new Vector3(maxX, maxY, maxZ),
-                    new Vector3(maxX, minY, maxZ), new Vector3(minX, minY, maxZ));
+            var p000 = P(-half.X, -half.Y, -half.Z);
+            var p001 = P(-half.X, -half.Y, half.Z);
+            var p010 = P(-half.X, half.Y, -half.Z);
+            var p011 = P(-half.X, half.Y, half.Z);
+            var p100 = P(half.X, -half.Y, -half.Z);
+            var p101 = P(half.X, -half.Y, half.Z);
+            var p110 = P(half.X, half.Y, -half.Z);
+            var p111 = P(half.X, half.Y, half.Z);
 
-                DrawFace(
-                    new Vector3(maxX, maxY, minZ), new Vector3(minX, maxY, minZ),
-                    new Vector3(minX, minY, minZ), new Vector3(maxX, minY, minZ));
-
-                DrawFace(
-                    new Vector3(maxX, maxY, maxZ), new Vector3(maxX, maxY, minZ),
-                    new Vector3(maxX, minY, minZ), new Vector3(maxX, minY, maxZ));
-
-                DrawFace(
-                    new Vector3(minX, maxY, minZ), new Vector3(minX, maxY, maxZ),
-                    new Vector3(minX, minY, maxZ), new Vector3(minX, minY, minZ));
-
-                DrawFace(
-                    new Vector3(minX, maxY, maxZ), new Vector3(maxX, maxY, maxZ),
-                    new Vector3(maxX, maxY, minZ), new Vector3(minX, maxY, minZ));
-
-                DrawFace(
-                    new Vector3(minX, minY, minZ), new Vector3(maxX, minY, minZ),
-                    new Vector3(maxX, minY, maxZ), new Vector3(minX, minY, maxZ));
-            }
-
+            // Cara +Z
+            DrawFace(p011, p111, p101, p001);
+            // Cara -Z
+            DrawFace(p110, p010, p000, p100);
+            // Cara +X
+            DrawFace(p111, p110, p100, p101);
+            // Cara -X
+            DrawFace(p010, p011, p001, p000);
+            // Tapa superior
+            DrawFace(p011, p111, p110, p010);
+            // Tapa inferior
+            DrawFace(p000, p100, p101, p001);
             void DrawFace(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
             {
-                var center = (p0 + p1 + p2 + p3) * 0.25f;
-                var color = ApplyLight3D(scene, camera, baseColor, center);
+                var faceCenter = (p0 + p1 + p2 + p3) * 0.25f;
+                var color = ApplyLight3D(scene, camera, baseColor, faceCenter);
                 var tile = MathF.Max(0.01f, wall.TextureScale);
                 var u = Vector3.Distance(p0, p1) / tile;
                 var v = Vector3.Distance(p1, p2) / tile;
@@ -585,8 +621,20 @@ public sealed class Renderer2D : IDisposable
 
         foreach (var (entity, sprite, center, distance) in sprites)
         {
-            var right = camera.Right * (sprite.Size.X * 0.5f);
-            var up = camera.Up * (sprite.Size.Y * 0.5f);
+            var rightBase = camera.Right;
+            var upBase = camera.Up;
+            var roll = entity.Transform.Rotation;
+
+            if (MathF.Abs(roll) > 0.0001f)
+            {
+                var cos = MathF.Cos(roll);
+                var sin = MathF.Sin(roll);
+                rightBase = camera.Right * cos + camera.Up * sin;
+                upBase = camera.Up * cos - camera.Right * sin;
+            }
+
+            var right = rightBase * (sprite.Size.X * 0.5f);
+            var up = upBase * (sprite.Size.Y * 0.5f);
             var texture = string.IsNullOrWhiteSpace(sprite.TexturePath) ? null : ResolveTexture(sprite.TexturePath);
             var color = ApplyLight3D(scene, camera, sprite.Tint, center);
 

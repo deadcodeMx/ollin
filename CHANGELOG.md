@@ -17,6 +17,17 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.24.0] — 2026-10-31
+
+### Añadido
+
+- **Gizmo 3D de rotación** (alrededor de Y) y **escala** por eje o uniforme.
+- Botones **Mover / Rotar / Escalar** en la barra y atajos **1 / 2 / 3**.
+- `Wall3D.Yaw` con cajas rotadas en el renderer y *bounds* rotados para selección.
+- Rotación de billboards con `Transform.Rotation` (roll).
+- Campo **Giro Y** en el inspector de Pared 3D y refresco de campos 3D.
+- 1 prueba nueva: 129 en total.
+
 ## [0.23.0] — 2026-10-31
 
 ### Añadido
