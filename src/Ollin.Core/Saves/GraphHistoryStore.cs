@@ -15,15 +15,18 @@ public sealed class GraphHistoryStore
         Converters = { new JsonStringEnumConverter() },
     };
 
-    public GraphHistoryStore(string? rootPath = null, int maxFiles = 500)
+    public GraphHistoryStore(string? rootPath = null, int maxFiles = 500, long maxBytes = 20L * 1024 * 1024)
     {
         RootPath = string.IsNullOrWhiteSpace(rootPath)
             ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Ollin", "graph-history")
             : rootPath;
         MaxFiles = System.Math.Max(1, maxFiles);
+        MaxBytes = System.Math.Max(1, maxBytes);
     }
 
     public int MaxFiles { get; }
+
+    public long MaxBytes { get; }
 
     public string RootPath { get; }
 
@@ -99,6 +102,22 @@ public sealed class GraphHistoryStore
         foreach (var file in remaining)
         {
             try { File.Delete(file); removed++; } catch { }
+        }
+
+        var byAge = Directory.EnumerateFiles(RootPath, "*.json")
+            .OrderByDescending(File.GetLastWriteTimeUtc)
+            .ToList();
+        var totalBytes = byAge.Sum(file => new FileInfo(file).Length);
+
+        for (var i = byAge.Count - 1; i >= 0 && totalBytes > MaxBytes; i--)
+        {
+            try
+            {
+                totalBytes -= new FileInfo(byAge[i]).Length;
+                File.Delete(byAge[i]);
+                removed++;
+            }
+            catch { }
         }
 
         return removed;

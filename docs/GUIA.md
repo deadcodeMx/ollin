@@ -898,3 +898,11 @@ error de sintaxis.
 - En ventanas de menos de 1080 px, esas acciones se repliegan en **Más** para
   mantener una sola fila.
 - Los iconos tienen tooltip.
+
+## 45. Cierre de limitaciones de 0.44 (0.48)
+
+- **Separar H/V**: conserva los huecos existentes y solo corrige solapamientos
+  con una separación mínima de 24 px.
+- **Conexiones desactivadas cortas**: no dibujan etiqueta para evitar solape;
+  muestran tooltip y el puerto indica `(off)`.
+- **Historial**: además de 500 archivos y 30 días, límite de **20 MB**.

@@ -221,6 +221,8 @@ public sealed class NodeGraphWindow : Window
         AddMore("Paso", StepGraph);
         AddMore("Distribuir H", () => Distribute(true));
         AddMore("Distribuir V", () => Distribute(false));
+        AddMore("Separar H", () => Separate(true));
+        AddMore("Separar V", () => Separate(false));
         AddMore("Modo paso", ToggleStepMode);
         var snapItem = new MenuItem { Header = _snapNodes ? "Rejilla: activada" : "Rejilla: desactivada" };
         snapItem.Click += (_, _) =>
@@ -438,6 +440,42 @@ public sealed class NodeGraphWindow : Window
         MarkChanged();
         Render();
     }
+    private void Separate(bool horizontal, float minimumGap = 24f)
+    {
+        var selected = _graph.Nodes
+            .Where(node => _selectedIds.Contains(node.Id))
+            .OrderBy(node => horizontal ? node.X : node.Y)
+            .ToList();
+
+        if (selected.Count < 2)
+        {
+            return;
+        }
+
+        for (var i = 1; i < selected.Count; i++)
+        {
+            var previous = selected[i - 1];
+            var previousSize = NodeSize(previous);
+            var previousEnd = horizontal ? previous.X + (float)previousSize.Width : previous.Y + (float)previousSize.Height;
+            var currentStart = horizontal ? selected[i].X : selected[i].Y;
+            var missing = previousEnd + minimumGap - currentStart;
+
+            if (missing <= 0)
+            {
+                continue;
+            }
+
+            for (var j = i; j < selected.Count; j++)
+            {
+                if (horizontal) selected[j].X += missing;
+                else selected[j].Y += missing;
+            }
+        }
+
+        MarkChanged();
+        Render();
+    }
+
     private void AutoLayout()
     {
         var events = _graph.Nodes.Where(node => node.Kind == GraphNodeKind.Event).ToList();
@@ -959,18 +997,25 @@ public sealed class NodeGraphWindow : Window
             Tag = new LinkRef(source.Id, port),
         };
         line.ContextMenu = ConnectionMenu(source.Id, port);
+        ToolTip.SetTip(line, disabled ? "Conexión desactivada" : "Conexión");
         _canvas.Children.Add(line);
 
-        if (disabled)
+        var dx = target.X - (source.X + 200);
+        var dy = target.Y + 24 - (source.Y + yOffset);
+        var length = MathF.Sqrt(dx * dx + dy * dy);
+
+        if (disabled && length >= 110)
         {
             var label = new TextBlock
             {
                 Text = "DESACTIVADA",
                 FontSize = 8,
                 Foreground = new SolidColorBrush(Color.Parse("#9CA3AF")),
+                Background = new SolidColorBrush(Color.Parse("#10131A")),
+                Padding = new Thickness(2, 0),
             };
             Canvas.SetLeft(label, (source.X + 200 + target.X) / 2);
-            Canvas.SetTop(label, (source.Y + yOffset + target.Y + 24) / 2 - 6);
+            Canvas.SetTop(label, (source.Y + yOffset + target.Y + 24) / 2 - 14);
             _canvas.Children.Add(label);
         }
     }
@@ -1101,6 +1146,7 @@ public sealed class NodeGraphWindow : Window
             Render();
         };
         var portName = node.Kind == GraphNodeKind.Condition ? (trueBranch ? "true" : "false") : "next";
+        if (node.DisabledPorts.Contains(portName)) button.Content = text + " (off)";
         button.ContextMenu = ConnectionMenu(node.Id, portName);
         return button;
     }

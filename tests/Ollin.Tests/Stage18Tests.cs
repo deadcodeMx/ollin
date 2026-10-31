@@ -68,4 +68,21 @@ public class GraphStepModeTests
 
         Assert.Equal(group.Id, clone.ParentGroupId);
     }
+    [Fact]
+    public void ElHistorialTambienSeLimitaPorBytes()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "ollin-graph-bytes", Guid.NewGuid().ToString("N"));
+
+        try
+        {
+            var store = new GraphHistoryStore(root, maxFiles: 100, maxBytes: 1);
+            store.Save("escena.ollin.json", Guid.NewGuid(), new NodeGraphHistory());
+
+            Assert.Empty(Directory.GetFiles(root, "*.json"));
+        }
+        finally
+        {
+            if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+        }
+    }
 }

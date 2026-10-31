@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.48.0] — 2026-10-31
+
+### Cambiado
+
+- Separar H/V conserva huecos y corrige solapamientos.
+- Etiquetas desactivadas sin solape; puerto `(off)` y tooltip.
+- Historial limitado también por 20 MB.
+- 1 prueba nueva: 203 en total.
+
 ## [0.47.0] — 2026-10-31
 
 ### Cambiado
