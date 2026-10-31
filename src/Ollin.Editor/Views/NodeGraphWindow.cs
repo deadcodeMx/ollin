@@ -177,38 +177,48 @@ public sealed class NodeGraphWindow : Window
         _canvasTransform.Child = _canvas;
         _canvasTransform.LayoutTransform = new ScaleTransform(_zoom, _zoom);
 
-        var toolbar = new WrapPanel
+        var toolbar = new StackPanel
         {
             Orientation = Orientation.Horizontal,
+            Spacing = 4,
             Margin = new Thickness(4, 2),
         };
         toolbar.Children.Add(ToolButton("Deshacer", Undo));
         toolbar.Children.Add(ToolButton("Rehacer", Redo));
         toolbar.Children.Add(ToolButton("Copiar", CopySelected));
         toolbar.Children.Add(ToolButton("Pegar", Paste));
-        toolbar.Children.Add(ToolButton("Eliminar", DeleteSelected));
+        toolbar.Children.Add(ToolButton("Borrar", DeleteSelected));
         toolbar.Children.Add(ToolButton("−", () => ZoomBy(-0.1)));
         toolbar.Children.Add(ToolButton("100%", () => SetZoom(1.0)));
         toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1)));
-        toolbar.Children.Add(ToolButton("Ajustar", () => SetZoom(0.75)));
-        toolbar.Children.Add(ToolButton("Ordenar", AutoLayout));
-        toolbar.Children.Add(ToolButton("Paso", StepGraph));
-        toolbar.Children.Add(ToolButton("Distribuir H", () => Distribute(true)));
-        toolbar.Children.Add(ToolButton("Distribuir V", () => Distribute(false)));
+        var more = new Button { Content = "Más ▾", FontSize = 10.5, Padding = new Thickness(7, 3) };
+        var moreFlyout = new MenuFlyout();
+        void AddMore(string header, Action action)
+        {
+            var item = new MenuItem { Header = header };
+            item.Click += (_, _) => action();
+            moreFlyout.Items.Add(item);
+        }
+        AddMore("Ajustar", () => SetZoom(0.75));
+        AddMore("Ordenar", AutoLayout);
+        AddMore("Paso", StepGraph);
+        AddMore("Distribuir H", () => Distribute(true));
+        AddMore("Distribuir V", () => Distribute(false));
+        more.Flyout = moreFlyout;
+        toolbar.Children.Add(more);
         var snapCheck = new CheckBox { Content = "Rejilla", IsChecked = true, FontSize = 10.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) };
         snapCheck.IsCheckedChanged += (_, _) => _snapNodes = snapCheck.IsChecked == true;
         toolbar.Children.Add(snapCheck);
         var snapSize = new NumericUpDown { Value = 10, Minimum = 2, Maximum = 50, Increment = 1, Width = 70, FontSize = 10.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0) };
         snapSize.ValueChanged += (_, _) => { if (snapSize.Value is { } value) _snapSize = (double)value; };
         toolbar.Children.Add(snapSize);
-        _searchBox = new TextBox { Watermark = "Buscar nodo…", Width = 140, FontSize = 10.5, Margin = new Thickness(8, 0, 0, 0) };
+        _searchBox = new TextBox { Watermark = "Buscar…", Width = 100, FontSize = 10.5, Margin = new Thickness(8, 0, 0, 0) };
         _searchBox.TextChanged += (_, _) =>
         {
             _searchText = _searchBox.Text ?? string.Empty;
             Render();
         };
         toolbar.Children.Add(_searchBox);
-        toolbar.Children.Add(_zoomText);
         UpdateZoomText();
 
         var scroller = new ScrollViewer
@@ -256,9 +266,16 @@ public sealed class NodeGraphWindow : Window
             }
         };
 
+        var toolbarScroll = new ScrollViewer
+        {
+            Content = toolbar,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+        };
+
         var dock = new DockPanel { LastChildFill = true };
-        DockPanel.SetDock(toolbar, Dock.Top);
-        dock.Children.Add(toolbar);
+        DockPanel.SetDock(toolbarScroll, Dock.Top);
+        dock.Children.Add(toolbarScroll);
         dock.Children.Add(scroller);
         return dock;
     }

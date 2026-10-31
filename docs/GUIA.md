@@ -860,3 +860,10 @@ error de sintaxis.
   y sus conexiones.
 - **Grupos anidados visualmente**: un grupo dentro de otro se oculta al plegar el padre.
 - El paso conserva el runtime en pausa; al reanudar sigue la partida.
+
+## 40. Barra del grafo en una línea (0.43)
+
+- La barra usa una sola fila; **no salta a dos líneas**.
+- Acciones secundarias (Ajustar, Ordenar, Paso, Distribuir H/V) están en **Más ▾**.
+- En ventanas muy estrechas la barra se desplaza horizontalmente.
+- Rejilla, tamaño de rejilla y búsqueda siguen visibles.

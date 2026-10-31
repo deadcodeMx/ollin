@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.43.0] — 2026-10-31
+
+### Cambiado
+
+- La barra del grafo ya no salta a dos líneas.
+- Acciones secundarias movidas al menú **Más ▾**.
+- Barra con desplazamiento horizontal en ventanas estrechas.
+
 ## [0.42.0] — 2026-10-31
 
 ### Añadido
