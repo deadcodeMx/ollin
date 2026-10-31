@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [1.50.0] — 2026-10-31
+
+### Cambiado
+
+- Nuevo esquema de versiones: Beta 1.50.0 para la etapa 6.
+- Próximos arreglos/mejoras: 1.51.0, 1.52.0…
+- La demo técnica deja de publicarse.
+- 204 pruebas automatizadas.
+
 ## [0.50.0] — 2026-10-31
 
 ### Añadido

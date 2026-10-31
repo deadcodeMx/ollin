@@ -1,27 +1,27 @@
-## Ollin 0.50.0 beta — atajos y accesibilidad del grafo
+## Ollin Beta 1.50.0 — etapa 6
 
 ### Incluye
 
-- Atajos `Ctrl+F`, `Ctrl+0`, `Ctrl+Shift+O/H/V`, `F8` y `Esc`.
-- Nombres de accesibilidad en los iconos.
-- Buscador expandible al enfocar.
-- Zoom 100 % como **1:1**.
+- Cierre de la **etapa 6**: 2.5D, transformaciones de mundo, grafo visual y pulido del editor.
 - **204 pruebas automatizadas**.
+- Editor de grafo con marquee, grupos, breakpoints, paso a paso, historial persistente y atajos.
+- Instalador único; **la demo técnica ya no se publica**.
 
-### Cómo probarlo
+### Nuevo esquema de versiones
 
-1. Instala 0.50.0 y abre el grafo.
-2. Pulsa `Ctrl+F` y escribe; el buscador se amplía.
-3. Pulsa `Esc` para limpiar.
-4. Usa `Ctrl+0`, `Ctrl+Shift+O`, `Ctrl+Shift+H/V`, `F8`.
-5. Pasa el cursor por los iconos para ver los atajos.
+- **1.50**: beta de la etapa 6.
+- **1.51, 1.52…**: arreglos de limitaciones, bugs y mejoras.
+- **1.0**: versión completa con todas las etapas.
+- Después de la final: **1.1, 1.2…** para mejoras leves; **2.0** para integraciones grandes.
+
+### Cómo instalar
+
+1. Ejecuta `Ollin-Setup-1.50.0-beta.exe`.
+2. Pulsa **Instalar**.
+3. Abre Ollin y crea un proyecto.
 
 ### Limitaciones
 
-- Los atajos se descubren por tooltip o por **Más**.
-- El buscador expandido puede apretar la barra al enfocarse.
-- No se ha validado con lector de pantalla real.
-
-### Nota
-
-La demo técnica ya no se publica con esta versión. Solo se distribuye el instalador.
+- La demo técnica no se distribuye.
+- La barra compacta oculta acciones rápidas por debajo de 1080 px; usa atajos.
+- Sigue pendiente el paso atrás en el grafo.

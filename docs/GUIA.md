@@ -670,8 +670,8 @@ La plantilla **Demo técnico 2.5D** es un nivel completo para probar el motor:
 - **Contador de bajas** visible en el HUD y variables del grafo.
 - Victoria al eliminar a los tres enemigos; derrota al quedarse sin vidas.
 
-Para crearlo: **Proyecto → Nuevo → Demo técnico 2.5D**. Para jugarlo desde la release,
-usa el ZIP del demo incluido en la página de la release.
+Para crearlo: **Proyecto → Nuevo → Demo técnico 2.5D**. La demo técnica ya no se
+publica como ZIP en las releases; se genera desde el editor.
 
 Controles: **WASD + ratón**, **1/2/3** armas, **R** recargar, **E** interactuar,
 **Esc** pausa.
@@ -929,3 +929,12 @@ error de sintaxis.
 - Los iconos tienen **nombre de accesibilidad** además del tooltip.
 - El buscador se amplía al enfocarse y vuelve a su tamaño compacto.
 - El zoom 100 % se muestra como **1:1**.
+
+## 48. Esquema de versiones (1.50)
+
+- **1.50**: beta de la etapa 6.
+- **1.51, 1.52…**: arreglos de limitaciones, bugs y mejoras dentro de la beta.
+- **1.0**: versión completa con todas las etapas.
+- Después de la final: **1.1, 1.2…** para mejoras leves; **2.0** para
+  integraciones grandes.
+- La demo técnica ya no se publica con las versiones.
