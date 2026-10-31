@@ -30,15 +30,16 @@ public sealed class GraphHistoryStore
         return Path.Combine(RootPath, hash + ".json");
     }
 
-    public void Save(string scenePath, Guid entityId, NodeGraphHistory history)
+    public void Save(string scenePath, Guid entityId, NodeGraphHistory history, IEnumerable<Guid>? breakpoints = null)
     {
         var path = GetPath(scenePath, entityId);
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        var payload = new Payload(history.UndoSnapshots.ToList(), history.RedoSnapshots.ToList());
+        var payload = new Payload(2, history.UndoSnapshots.ToList(), history.RedoSnapshots.ToList(), breakpoints?.ToList() ?? new List<Guid>());
         File.WriteAllText(path, JsonSerializer.Serialize(payload, Options));
+        Cleanup(TimeSpan.FromDays(30));
     }
 
-    public bool Load(string scenePath, Guid entityId, NodeGraphHistory history)
+    public bool Load(string scenePath, Guid entityId, NodeGraphHistory history, ICollection<Guid>? breakpoints = null)
     {
         var path = GetPath(scenePath, entityId);
 
@@ -57,6 +58,13 @@ public sealed class GraphHistoryStore
             }
 
             history.Replace(payload.Undo ?? new List<GraphSnapshot>(), payload.Redo ?? new List<GraphSnapshot>());
+
+            if (breakpoints is not null)
+            {
+                breakpoints.Clear();
+                foreach (var id in payload.Breakpoints ?? new List<Guid>()) breakpoints.Add(id);
+            }
+
             return true;
         }
         catch
@@ -65,5 +73,21 @@ public sealed class GraphHistoryStore
         }
     }
 
-    private sealed record Payload(List<GraphSnapshot>? Undo, List<GraphSnapshot>? Redo);
+    public int Cleanup(TimeSpan maxAge)
+    {
+        if (!Directory.Exists(RootPath)) return 0;
+
+        var cutoff = DateTime.UtcNow - maxAge;
+        var removed = 0;
+
+        foreach (var file in Directory.EnumerateFiles(RootPath, "*.json"))
+        {
+            if (File.GetLastWriteTimeUtc(file) >= cutoff) continue;
+            try { File.Delete(file); removed++; } catch { }
+        }
+
+        return removed;
+    }
+
+    private sealed record Payload(int Version, List<GraphSnapshot>? Undo, List<GraphSnapshot>? Redo, List<Guid>? Breakpoints);
 }

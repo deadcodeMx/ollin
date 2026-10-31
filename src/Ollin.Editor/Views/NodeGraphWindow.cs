@@ -68,7 +68,7 @@ public sealed class NodeGraphWindow : Window
         _graph = entity.GetComponent<NodeGraph>()!;
         _history = _graph.History;
         _historyKey = $"{_viewModel.ScenePath ?? "sin-guardar"}|{entity.Id}";
-        _historyStore.Load(_historyKey, entity.Id, _history);
+        _historyStore.Load(_historyKey, entity.Id, _history, _graph.Breakpoints);
         Title = $"Grafo de nodos — {entity.Name}";
         Width = 1220;
         Height = 760;
@@ -105,7 +105,7 @@ public sealed class NodeGraphWindow : Window
         Closed += (_, _) =>
         {
             _debugTimer.Stop();
-            _historyStore.Save(_historyKey, entity.Id, _history);
+            _historyStore.Save(_historyKey, entity.Id, _history, _graph.Breakpoints);
             GraphDebugger.BreakpointHit -= OnBreakpointHit;
             WindowsMouseLock.Suspended = false;
         };
@@ -192,6 +192,8 @@ public sealed class NodeGraphWindow : Window
         toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1)));
         toolbar.Children.Add(ToolButton("Ajustar", () => SetZoom(0.75)));
         toolbar.Children.Add(ToolButton("Ordenar", AutoLayout));
+        toolbar.Children.Add(ToolButton("Distribuir H", () => Distribute(true)));
+        toolbar.Children.Add(ToolButton("Distribuir V", () => Distribute(false)));
         var snapCheck = new CheckBox { Content = "Rejilla", IsChecked = true, FontSize = 10.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) };
         snapCheck.IsCheckedChanged += (_, _) => _snapNodes = snapCheck.IsChecked == true;
         toolbar.Children.Add(snapCheck);
@@ -311,6 +313,32 @@ public sealed class NodeGraphWindow : Window
     }
 
     private void UpdateZoomText() => _zoomText.Text = $"{_zoom * 100:0}%";
+
+    private void Distribute(bool horizontal)
+    {
+        var selected = _graph.Nodes
+            .Where(node => _selectedIds.Contains(node.Id))
+            .OrderBy(node => horizontal ? node.X : node.Y)
+            .ToList();
+
+        if (selected.Count < 3)
+        {
+            return;
+        }
+
+        var first = horizontal ? selected[0].X : selected[0].Y;
+        var last = horizontal ? selected[^1].X : selected[^1].Y;
+        var step = (last - first) / (selected.Count - 1);
+
+        for (var i = 1; i < selected.Count - 1; i++)
+        {
+            if (horizontal) selected[i].X = first + step * i;
+            else selected[i].Y = first + step * i;
+        }
+
+        MarkChanged();
+        Render();
+    }
 
     private void AutoLayout()
     {
@@ -1082,6 +1110,7 @@ public sealed class NodeGraphWindow : Window
             else
             {
                 _linkSource.Next = node.Id;
+                _linkSource.DisabledPorts.Remove("next");
             }
 
             _linkSource = null;

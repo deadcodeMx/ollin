@@ -1,29 +1,27 @@
-## Ollin 0.40.0 beta — marquee por área y rejilla configurable
+## Ollin 0.41.0 beta — grupos, distribución y conexiones deshabilitadas
 
 ### Incluye
 
-- **Marquee por área completa** de tarjetas y grupos.
-- **Rejilla configurable** de 2 a 50 px.
-- **Guías de borde y centro** al mover nodos.
-- **“Ir al destino”** en el menú contextual de conexiones.
-- **Saneo de enlaces externos** al pegar.
-- **Borde rojo** en expresiones inválidas.
-- **196 pruebas automatizadas**.
+- El **marquee de un grupo** selecciona sus miembros.
+- **Distribuir H / Distribuir V** con separación igual.
+- **Deshabilitar conexión** desde el menú contextual.
+- **Breakpoints persistentes**.
+- **Historial versionado** con limpieza a 30 días.
+- **Borde rojo en vivo** en expresiones.
+- **198 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 0.40.0 y abre el grafo de **Guía**.
-2. Arrastra un rectángulo sobre varias tarjetas completas.
-3. Cambia el tamaño de rejilla y mueve: el snap usa ese valor.
-4. Alinea nodos y observa guías de borde/centro.
-5. Clic derecho en una conexión → **Ir al destino** o eliminar.
-6. Copia un grupo con enlaces externos y pega.
-7. Escribe una expresión inválida: borde rojo y texto.
+1. Instala 0.41.0 y abre el grafo de **Guía**.
+2. Enmarca un grupo: también se seleccionan sus nodos.
+3. Selecciona tres nodos y usa **Distribuir H/V**.
+4. Clic derecho en una conexión → **Deshabilitar conexión**; la línea se vuelve gris.
+5. Pon un breakpoint, cierra y reabre el grafo: debe conservarse.
+6. Escribe una expresión inválida: el borde se pone rojo al instante.
 
 ### Limitaciones
 
-- El marquee selecciona grupos completos, pero no sus miembros.
-- Las guías no distribuyen espacios automáticamente.
-- No hay “deshabilitar conexión”, solo eliminar.
-- El borde rojo se actualiza al perder el foco, no en cada tecla.
-- Sigue sin paso a paso real.
+- La distribución usa el orden actual de los nodos, no su separación previa.
+- No hay paso a paso real.
+- Los grupos no se pliegan ni anidan.
+- La barra del grafo ocupa dos líneas en ventanas estrechas.

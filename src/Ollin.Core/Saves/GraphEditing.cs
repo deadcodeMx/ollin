@@ -33,6 +33,7 @@ public static class GraphEditing
         Next = keepLinks ? node.Next : null,
         TrueNext = keepLinks ? node.TrueNext : null,
         FalseNext = keepLinks ? node.FalseNext : null,
+        DisabledPorts = keepLinks ? new HashSet<string>(node.DisabledPorts) : new(),
     };
 
     public static GraphSnapshot Capture(NodeGraph graph, Guid? selectedId, IEnumerable<Guid>? selectedIds = null) => new(

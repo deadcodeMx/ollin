@@ -842,3 +842,12 @@ error de sintaxis.
 - **“Ir al destino”** en el menú contextual de una conexión.
 - **Copiar/pegar sanea enlaces**: si el destino externo ya no existe, se descarta.
 - **Borde rojo** en campos de expresión inválidos, además del texto.
+
+## 38. Grafo: grupos, distribución y conexiones deshabilitadas (0.41)
+
+- **Marquee sobre un grupo** selecciona también sus nodos contenidos.
+- **Distribuir H / Distribuir V** reparte los nodos seleccionados con separación igual.
+- **Deshabilitar conexión** en el menú contextual: la línea queda gris y no se ejecuta.
+- **Breakpoints persistentes** en el sidecar del historial.
+- **Historial versionado** y limpieza automática de entradas de más de 30 días.
+- **Borde rojo en vivo** mientras se escribe una expresión inválida.

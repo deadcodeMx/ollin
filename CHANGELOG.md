@@ -17,6 +17,18 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.41.0] — 2026-10-31
+
+### Añadido
+
+- El marquee de un grupo selecciona sus miembros.
+- Distribución horizontal/vertical con separación igual.
+- Conexiones deshabilitables (grises, sin ejecución).
+- Breakpoints persistentes en el sidecar.
+- Historial versionado con limpieza a 30 días.
+- Borde rojo en vivo al editar expresiones.
+- 2 pruebas nuevas: 198 en total.
+
 ## [0.40.0] — 2026-10-31
 
 ### Añadido

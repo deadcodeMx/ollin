@@ -78,6 +78,9 @@ public sealed class GraphNode
 
     public Guid? FalseNext { get; set; }
 
+    /// <summary>Puertos deshabilitados: "next", "true" o "false".</summary>
+    public HashSet<string> DisabledPorts { get; set; } = new();
+
     [JsonIgnore]
     internal bool Done { get; set; }
 
@@ -108,6 +111,7 @@ public sealed class GraphNode
         Once = Once,
         GroupWidth = GroupWidth,
         GroupHeight = GroupHeight,
+        DisabledPorts = new HashSet<string>(DisabledPorts),
     };
 }
 
@@ -219,7 +223,7 @@ public sealed class NodeGraph : Component, ITickable
             }
 
             if (RecordExecution(node.Id)) return;
-            Execute(scene, player, node.Next);
+            Execute(scene, player, Link(node, "next"));
         }
     }
 
@@ -241,7 +245,7 @@ public sealed class NodeGraph : Component, ITickable
 
             if (node.Kind == GraphNodeKind.Condition)
             {
-                current = ConditionMet(node, player) ? node.TrueNext : node.FalseNext;
+                current = ConditionMet(node, player) ? Link(node, "true") : Link(node, "false");
                 continue;
             }
 
@@ -257,8 +261,21 @@ public sealed class NodeGraph : Component, ITickable
                 }
             }
 
-            current = node.Next;
+            current = Link(node, "next");
         }
+    }
+
+    /// <summary>Destino de un puerto, respetando conexiones deshabilitadas.</summary>
+    public Guid? Link(GraphNode node, string port)
+    {
+        if (node.DisabledPorts.Contains(port)) return null;
+
+        return port switch
+        {
+            "true" => node.TrueNext,
+            "false" => node.FalseNext,
+            _ => node.Next,
+        };
     }
 
     private static bool ConditionMet(GraphNode node, Entity? player)
