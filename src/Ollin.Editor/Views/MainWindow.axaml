@@ -165,6 +165,7 @@
                               <MenuItem Header="Cámara 3D" Tag="camera3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Pared 3D" Tag="wall3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Controlador FPS" Tag="fps" Click="OnRemoveComponentFromMenu" />
+                              <MenuItem Header="IA 3D" Tag="ai3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Script" Tag="script" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Rotador" Tag="rotator" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Oscilador" Tag="oscillator" Click="OnRemoveComponentFromMenu" />
@@ -467,6 +468,7 @@
                             <MenuItem Header="Cámara 3D" Click="OnAddCamera3D" />
                             <MenuItem Header="Pared 3D" Click="OnAddWall3D" />
                             <MenuItem Header="Controlador FPS" Click="OnAddFps" />
+                            <MenuItem Header="IA 3D" Click="OnAddAi3D" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
                             <MenuItem Header="Script" Click="OnAddScriptComponent" />
@@ -832,6 +834,42 @@
                     </Grid>
                     <TextBlock Classes="hint" TextWrapping="Wrap"
                                Text="WASD/flechas para moverte, ratón para mirar, Shift para correr. Colisiona con las cajas 3D." />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="IA 3D" IsVisible="{Binding Selected.HasAi3D}">
+                <ScrollViewer>
+                  <StackPanel Margin="8" Spacing="5">
+                    <TextBlock Classes="section" Text="AGENTE 2.5D" />
+                    <TextBlock Text="{Binding Selected.Ai3DStatus}" FontSize="12"
+                               Foreground="{DynamicResource Ollin.Accent}" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Objetivo" VerticalAlignment="Center" Classes="hint" />
+                      <TextBox Grid.Column="1" Text="{Binding Selected.Ai3DTargetTag, Mode=TwoWay}" Watermark="player" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Ai3DSpeed, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Visión" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Ai3DVision, Mode=TwoWay}" Increment="0.5" Minimum="0.1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Patrulla" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Ai3DPatrolRadius, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Memoria (s)" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Ai3DMemory, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.Ai3DRadius, Mode=TwoWay}" Increment="0.05" Minimum="0.05" FormatString="0.##" />
+                    </Grid>
+                    <TextBlock Classes="hint" TextWrapping="Wrap"
+                               Text="Patrulla alrededor de su origen, ve al objetivo si hay línea de vista y lo persigue; recuerda su última posición. Colisiona con cajas 3D." />
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>

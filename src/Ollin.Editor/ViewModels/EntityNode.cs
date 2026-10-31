@@ -985,6 +985,13 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(FpsRun));
         OnPropertyChanged(nameof(FpsSensitivity));
         OnPropertyChanged(nameof(FpsRadius));
+        OnPropertyChanged(nameof(Ai3DTargetTag));
+        OnPropertyChanged(nameof(Ai3DSpeed));
+        OnPropertyChanged(nameof(Ai3DVision));
+        OnPropertyChanged(nameof(Ai3DPatrolRadius));
+        OnPropertyChanged(nameof(Ai3DMemory));
+        OnPropertyChanged(nameof(Ai3DRadius));
+        OnPropertyChanged(nameof(Ai3DStatus));
         OnPropertyChanged(nameof(OscillationAmplitude));
         OnPropertyChanged(nameof(OscillationFrequency));
         OnPropertyChanged(nameof(ScriptPath));
@@ -1939,4 +1946,84 @@ public sealed class EntityNode : ObservableObject
             _owner.MarkDirty();
         }
     }
+
+    public bool HasAi3D => Entity.GetComponent<AiAgent3D>() is not null;
+
+    public AiAgent3D? Ai3D => Entity.GetComponent<AiAgent3D>();
+
+    public string Ai3DTargetTag
+    {
+        get => Ai3D?.TargetTag ?? string.Empty;
+        set
+        {
+            if (Ai3D is null || Ai3D.TargetTag == value) return;
+            Ai3D.TargetTag = string.IsNullOrWhiteSpace(value) ? "player" : value.Trim();
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal Ai3DSpeed
+    {
+        get => (decimal)(Ai3D?.Speed ?? 1.6f);
+        set
+        {
+            if (Ai3D is null || MathF.Abs(Ai3D.Speed - (float)value) < 0.001f) return;
+            Ai3D.Speed = MathF.Max(0.1f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal Ai3DVision
+    {
+        get => (decimal)(Ai3D?.VisionRadius ?? 8f);
+        set
+        {
+            if (Ai3D is null || MathF.Abs(Ai3D.VisionRadius - (float)value) < 0.001f) return;
+            Ai3D.VisionRadius = MathF.Max(0.1f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal Ai3DPatrolRadius
+    {
+        get => (decimal)(Ai3D?.PatrolRadius ?? 3f);
+        set
+        {
+            if (Ai3D is null || MathF.Abs(Ai3D.PatrolRadius - (float)value) < 0.001f) return;
+            Ai3D.PatrolRadius = MathF.Max(0f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal Ai3DMemory
+    {
+        get => (decimal)(Ai3D?.MemorySeconds ?? 3f);
+        set
+        {
+            if (Ai3D is null || MathF.Abs(Ai3D.MemorySeconds - (float)value) < 0.01f) return;
+            Ai3D.MemorySeconds = MathF.Max(0f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public decimal Ai3DRadius
+    {
+        get => (decimal)(Ai3D?.CollisionRadius ?? 0.4f);
+        set
+        {
+            if (Ai3D is null || MathF.Abs(Ai3D.CollisionRadius - (float)value) < 0.001f) return;
+            Ai3D.CollisionRadius = MathF.Max(0.05f, (float)value);
+            OnPropertyChanged();
+            _owner.MarkDirty();
+        }
+    }
+
+    public string Ai3DStatus => Ai3D is null ? string.Empty : Ai3D.IsChasing ? "Persiguiendo" : "Patrullando";
+
+    public void RefreshAi3DStatus() => OnPropertyChanged(nameof(Ai3DStatus));
 }

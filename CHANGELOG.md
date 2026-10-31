@@ -17,6 +17,17 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.25.0] — 2026-10-31
+
+### Añadido
+
+- **IA 3D**: `AiAgent3D` con patrulla, visión por radio y línea de vista, persecución
+  con memoria y colisión contra cajas 3D.
+- Enemigo **Sombra** con IA en la plantilla 2.5D; la cámara FPS lleva la etiqueta
+  `player`.
+- Pestaña **IA 3D** en el inspector con estado patrulla/persecución.
+- 3 pruebas nuevas: 132 en total.
+
 ## [0.24.0] — 2026-10-31
 
 ### Añadido

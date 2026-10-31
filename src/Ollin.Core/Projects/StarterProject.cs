@@ -250,6 +250,7 @@ public static class StarterProject
         var scene = new Scene { Name = "Pasillo 2.5D" };
 
         var camera = scene.Create("Cámara FPS", new Vector2(0f, -6f));
+        camera.Tags.Add("player");
         camera.AddComponent(new Camera3D
         {
             Height = 1.7f,
@@ -301,6 +302,14 @@ public static class StarterProject
             Size = new Vector2(1.2f, 1.4f),
             Tint = new Vector4(0.45f, 0.35f, 0.6f, 1f),
             SortingOrder = 10,
+        });
+        enemy.AddComponent(new AiAgent3D
+        {
+            TargetTag = "player",
+            Speed = 1.4f,
+            VisionRadius = 7f,
+            PatrolRadius = 2f,
+            MemorySeconds = 3f,
         });
 
         var coin = scene.Create("Moneda", new Vector2(2.2f, 20f));
