@@ -59,6 +59,7 @@ public sealed class NodeGraphWindow : Window
     private HashSet<Guid> _marqueeBase = new();
     private readonly List<Line> _guideLines = new();
     private bool _snapNodes = true;
+    private double _snapSize = 10d;
 
     public NodeGraphWindow(MainViewModel viewModel, Entity entity)
     {
@@ -170,23 +171,15 @@ public sealed class NodeGraphWindow : Window
         _canvas.Width = 2400;
         _canvas.Height = 1600;
         _canvas.Background = new SolidColorBrush(Color.Parse("#10131A"));
-        _canvas.PointerPressed += (_, e) =>
-        {
-            if (ReferenceEquals(e.Source, _canvas))
-            {
-                _selected = null;
-                _selectedIds.Clear();
-                Render();
-                e.Handled = true;
-            }
-        };
+        _canvas.PointerPressed += (_, e) => BeginMarquee(e);
+        _canvas.PointerMoved += (_, e) => UpdateMarquee(e);
+        _canvas.PointerReleased += (_, e) => EndMarquee(e);
         _canvasTransform.Child = _canvas;
         _canvasTransform.LayoutTransform = new ScaleTransform(_zoom, _zoom);
 
-        var toolbar = new StackPanel
+        var toolbar = new WrapPanel
         {
             Orientation = Orientation.Horizontal,
-            Spacing = 4,
             Margin = new Thickness(4, 2),
         };
         toolbar.Children.Add(ToolButton("Deshacer", Undo));
@@ -199,6 +192,12 @@ public sealed class NodeGraphWindow : Window
         toolbar.Children.Add(ToolButton("+", () => ZoomBy(0.1)));
         toolbar.Children.Add(ToolButton("Ajustar", () => SetZoom(0.75)));
         toolbar.Children.Add(ToolButton("Ordenar", AutoLayout));
+        var snapCheck = new CheckBox { Content = "Rejilla", IsChecked = true, FontSize = 10.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) };
+        snapCheck.IsCheckedChanged += (_, _) => _snapNodes = snapCheck.IsChecked == true;
+        toolbar.Children.Add(snapCheck);
+        var snapSize = new NumericUpDown { Value = 10, Minimum = 2, Maximum = 50, Increment = 1, Width = 70, FontSize = 10.5, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0) };
+        snapSize.ValueChanged += (_, _) => { if (snapSize.Value is { } value) _snapSize = (double)value; };
+        toolbar.Children.Add(snapSize);
         _searchBox = new TextBox { Watermark = "Buscar nodo…", Width = 140, FontSize = 10.5, Margin = new Thickness(8, 0, 0, 0) };
         _searchBox.TextChanged += (_, _) =>
         {
@@ -476,9 +475,9 @@ public sealed class NodeGraphWindow : Window
 
         foreach (var copy in copies)
         {
-            copy.Next = copy.Next is { } next ? (map.TryGetValue(next, out var mappedNext) ? mappedNext : next) : null;
-            copy.TrueNext = copy.TrueNext is { } yes ? (map.TryGetValue(yes, out var mappedYes) ? mappedYes : yes) : null;
-            copy.FalseNext = copy.FalseNext is { } no ? (map.TryGetValue(no, out var mappedNo) ? mappedNo : no) : null;
+            copy.Next = copy.Next is { } next ? (map.TryGetValue(next, out var mappedNext) ? mappedNext : (_graph.Find(next) is not null ? next : null)) : null;
+            copy.TrueNext = copy.TrueNext is { } yes ? (map.TryGetValue(yes, out var mappedYes) ? mappedYes : (_graph.Find(yes) is not null ? yes : null)) : null;
+            copy.FalseNext = copy.FalseNext is { } no ? (map.TryGetValue(no, out var mappedNo) ? mappedNo : (_graph.Find(no) is not null ? no : null)) : null;
             _graph.Nodes.Add(copy);
         }
 
@@ -966,9 +965,14 @@ public sealed class NodeGraphWindow : Window
         _selectedIds.Clear();
         foreach (var id in _marqueeBase) _selectedIds.Add(id);
 
+        var selection = new Rect(left, top, Math.Max(1, right - left), Math.Max(1, bottom - top));
+
         foreach (var node in _graph.Nodes)
         {
-            if (node.X >= left && node.X <= right && node.Y >= top && node.Y <= bottom)
+            var size = NodeSize(node);
+            var bounds = new Rect(node.X, node.Y, size.Width, size.Height);
+
+            if (selection.Intersects(bounds))
             {
                 _selectedIds.Add(node.Id);
             }
@@ -987,6 +991,21 @@ public sealed class NodeGraphWindow : Window
         e.Handled = true;
     }
 
+    private (double Width, double Height) NodeSize(GraphNode node)
+    {
+        if (node.Kind == GraphNodeKind.Group)
+        {
+            return (node.GroupWidth, node.GroupHeight);
+        }
+
+        if (_nodeCards.TryGetValue(node.Id, out var card) && card.Bounds.Width > 0 && card.Bounds.Height > 0)
+        {
+            return (card.Bounds.Width, card.Bounds.Height);
+        }
+
+        return (200d, 150d);
+    }
+
     private void DrawGuides()
     {
         ClearGuides();
@@ -996,28 +1015,44 @@ public sealed class NodeGraphWindow : Window
 
         foreach (var node in selected)
         {
+            var size = NodeSize(node);
+
             foreach (var other in others)
             {
-                if (MathF.Abs(node.X - other.X) <= tolerance)
+                var otherSize = NodeSize(other);
+                var xAnchors = new[] { other.X, other.X + (float)otherSize.Width, other.X + (float)otherSize.Width / 2f };
+                var yAnchors = new[] { other.Y, other.Y + (float)otherSize.Height, other.Y + (float)otherSize.Height / 2f };
+                var nodeXAnchors = new[] { node.X, node.X + (float)size.Width, node.X + (float)size.Width / 2f };
+                var nodeYAnchors = new[] { node.Y, node.Y + (float)size.Height, node.Y + (float)size.Height / 2f };
+
+                foreach (var anchor in xAnchors)
                 {
-                    AddGuide(new Line
+                    if (nodeXAnchors.Any(value => MathF.Abs(value - anchor) <= tolerance))
                     {
-                        StartPoint = new Point(other.X, 0),
-                        EndPoint = new Point(other.X, _canvas.Height),
-                        Stroke = new SolidColorBrush(Color.Parse("#E9A23B")),
-                        StrokeThickness = 1,
-                    });
+                        AddGuide(new Line
+                        {
+                            StartPoint = new Point(anchor, 0),
+                            EndPoint = new Point(anchor, _canvas.Height),
+                            Stroke = new SolidColorBrush(Color.Parse("#E9A23B")),
+                            StrokeThickness = 1,
+                        });
+                        break;
+                    }
                 }
 
-                if (MathF.Abs(node.Y - other.Y) <= tolerance)
+                foreach (var anchor in yAnchors)
                 {
-                    AddGuide(new Line
+                    if (nodeYAnchors.Any(value => MathF.Abs(value - anchor) <= tolerance))
                     {
-                        StartPoint = new Point(0, other.Y),
-                        EndPoint = new Point(_canvas.Width, other.Y),
-                        Stroke = new SolidColorBrush(Color.Parse("#E9A23B")),
-                        StrokeThickness = 1,
-                    });
+                        AddGuide(new Line
+                        {
+                            StartPoint = new Point(0, anchor),
+                            EndPoint = new Point(_canvas.Width, anchor),
+                            Stroke = new SolidColorBrush(Color.Parse("#E9A23B")),
+                            StrokeThickness = 1,
+                        });
+                        break;
+                    }
                 }
             }
         }
@@ -1193,12 +1228,34 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
     private ContextMenu ConnectionMenu(Guid nodeId, string port)
     {
         var menu = new ContextMenu();
+        var node = _graph.Find(nodeId);
+        var targetId = node is null
+            ? null
+            : port switch
+            {
+                "true" => node.TrueNext,
+                "false" => node.FalseNext,
+                _ => node.Next,
+            };
+
+        if (targetId is { } id && _graph.Find(id) is { } target)
+        {
+            var go = new MenuItem { Header = "Ir al destino" };
+            go.Click += (_, _) =>
+            {
+                _selected = target;
+                _selectedIds.Clear();
+                _selectedIds.Add(target.Id);
+                Render();
+            };
+            menu.Items.Add(go);
+        }
+
         var delete = new MenuItem { Header = "Eliminar conexión" };
         delete.Click += (_, _) => ClearConnection(nodeId, port);
         menu.Items.Add(delete);
         return menu;
     }
-
     private void ClearConnection(Guid nodeId, string port)
     {
         if (_graph.Find(nodeId) is not { } node)
@@ -1324,7 +1381,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
             if (node.Condition == GraphConditionKind.Expression)
             {
                 _inspector.Children.Add(Label("Expresión"));
-                _inspector.Children.Add(TextInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
+                _inspector.Children.Add(ExpressionInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
                 _inspector.Children.Add(new TextBlock
                 {
                     Text = "Ej: contador >= 3 && tiene(\"llave\")",
@@ -1357,7 +1414,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
                 _inspector.Children.Add(Label("Variable"));
                 _inspector.Children.Add(TextInput(node.VariableName, value => { node.VariableName = value; MarkChanged(); }));
                 _inspector.Children.Add(Label("Expresión / valor"));
-                _inspector.Children.Add(TextInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
+                _inspector.Children.Add(ExpressionInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
                 AddExpressionError(node.Expression);
                 _inspector.Children.Add(new TextBlock
                 {
@@ -1452,6 +1509,20 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         {
             if (box.Value is { } current) changed((double)current);
         };
+        return box;
+    }
+
+    private static TextBox ExpressionInput(string value, Action<string> changed)
+    {
+        var box = new TextBox { Text = value, FontSize = 11 };
+
+        if (ExpressionEvaluator.Validate(value) is not null)
+        {
+            box.BorderBrush = new SolidColorBrush(Color.Parse("#E05B5B"));
+            box.BorderThickness = new Thickness(2);
+        }
+
+        box.LostFocus += (_, _) => changed(box.Text ?? string.Empty);
         return box;
     }
 

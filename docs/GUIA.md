@@ -833,3 +833,12 @@ error de sintaxis.
 - **Snap de nodos**: rejilla de 10 px, activable con **Rejilla**.
 - **Guías de alineación**: líneas ámbar al alinear bordes con otros nodos.
 - **Errores de expresión junto al campo**, además del panel de validación.
+
+## 37. Grafo: marquee por área y rejilla configurable (0.40)
+
+- **Marquee por área completa**: selecciona si el rectángulo toca la tarjeta o el grupo.
+- **Rejilla configurable**: activa/desactiva y elige el tamaño (2–50 px).
+- **Guías de borde y centro**: izquierda, derecha, centro, superior, inferior.
+- **“Ir al destino”** en el menú contextual de una conexión.
+- **Copiar/pegar sanea enlaces**: si el destino externo ya no existe, se descarta.
+- **Borde rojo** en campos de expresión inválidos, además del texto.

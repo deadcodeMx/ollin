@@ -17,6 +17,18 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.40.0] — 2026-10-31
+
+### Añadido
+
+- Marquee por área completa de tarjeta/grupo.
+- Rejilla configurable (2–50 px) con casilla.
+- Guías de borde y centro.
+- “Ir al destino” en el menú contextual.
+- Saneo de enlaces externos al pegar.
+- Borde rojo en expresiones inválidas.
+- 196 pruebas automatizadas.
+
 ## [0.39.0] — 2026-10-31
 
 ### Añadido
