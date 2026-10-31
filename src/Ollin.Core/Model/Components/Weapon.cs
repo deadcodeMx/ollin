@@ -174,7 +174,8 @@ public sealed class Weapon : Component, ITickable
                 continue;
             }
 
-            var center = new Vector3(entity.Transform.Position.X, 0.9f, entity.Transform.Position.Y);
+            var world = scene.GetWorldPosition(entity);
+            var center = new Vector3(world.X, 0.9f, world.Y);
             var toCenter = center - origin;
             var along = Vector3.Dot(toCenter, direction);
 

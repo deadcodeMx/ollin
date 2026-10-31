@@ -41,7 +41,9 @@ public sealed class Camera3D : Component
     public bool IsMain { get; set; } = true;
 
     [JsonIgnore]
-    public Vector3 Eye => new(Owner?.Transform.Position.X ?? 0f, Height, Owner?.Transform.Position.Y ?? 0f);
+    public Vector3 Eye => Owner is { Scene: { } scene }
+        ? new Vector3(scene.GetWorldPosition(Owner).X, Height, scene.GetWorldPosition(Owner).Y)
+        : new Vector3(Owner?.Transform.Position.X ?? 0f, Height, Owner?.Transform.Position.Y ?? 0f);
 
     [JsonIgnore]
     public Vector3 Forward

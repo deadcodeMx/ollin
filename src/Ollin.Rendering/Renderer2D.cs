@@ -510,11 +510,12 @@ public sealed class Renderer2D : IDisposable
 
     private void DrawGizmo3D(Scene scene, Camera3D camera, Entity entity, int width, int height, Gizmo3DMode mode)
     {
+        var world = scene.GetWorldPosition(entity);
         var center = entity.GetComponent<Wall3D>() is { } wall
             ? wall.Center
             : entity.GetComponent<SpriteRenderer>() is { } sprite
-                ? new Vector3(entity.Transform.Position.X, sprite.Size.Y * 0.5f, entity.Transform.Position.Y)
-                : new Vector3(entity.Transform.Position.X, 0f, entity.Transform.Position.Y);
+                ? new Vector3(world.X, sprite.Size.Y * 0.5f, world.Y)
+                : new Vector3(world.X, 0f, world.Y);
 
         if (entity.GetComponent<Camera3D>() is { } cam)
         {
@@ -653,7 +654,8 @@ public sealed class Renderer2D : IDisposable
                 continue;
             }
 
-            var center = new Vector3(entity.Transform.Position.X, sprite.Size.Y * 0.5f, entity.Transform.Position.Y);
+            var world = scene.GetWorldPosition(entity);
+            var center = new Vector3(world.X, sprite.Size.Y * 0.5f, world.Y);
             var distance = Vector3.Distance(center, camera.Eye);
 
             if (distance <= camera.Near || distance > camera.Far)
@@ -732,7 +734,8 @@ public sealed class Renderer2D : IDisposable
                 continue;
             }
 
-            var lampPosition = new Vector3(entity.Transform.Position.X, 1.6f, entity.Transform.Position.Y);
+            var lampWorld = scene.GetWorldPosition(entity);
+            var lampPosition = new Vector3(lampWorld.X, 1.6f, lampWorld.Y);
             var distance = Vector3.Distance(lampPosition, position);
 
             if (distance >= lamp.Radius)
@@ -893,10 +896,8 @@ public sealed class Renderer2D : IDisposable
                 continue;
             }
 
-            var center = new Vector3(
-                entity.Transform.Position.X,
-                sprite.Size.Y * 0.5f,
-                entity.Transform.Position.Y);
+            var world = scene.GetWorldPosition(entity);
+            var center = new Vector3(world.X, sprite.Size.Y * 0.5f, world.Y);
 
             if (!camera.Project(center, width, height, out var screen, out var depth) || depth > camera.Far)
             {
@@ -931,7 +932,8 @@ public sealed class Renderer2D : IDisposable
                 continue;
             }
 
-            var lampPosition = new Vector3(entity.Transform.Position.X, 1.6f, entity.Transform.Position.Y);
+            var lampWorld = scene.GetWorldPosition(entity);
+            var lampPosition = new Vector3(lampWorld.X, 1.6f, lampWorld.Y);
             var distance = Vector3.Distance(lampPosition, position);
 
             if (distance >= lamp.Radius)

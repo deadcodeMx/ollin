@@ -40,7 +40,7 @@ public static class CylinderCollision
                 continue;
             }
 
-            var center = entity.Transform.Position;
+            var center = scene.GetWorldPosition(entity);
             var delta = position - center;
             var minimum = MathF.Max(0.05f, cylinder.Radius) + MathF.Max(0.05f, agentRadius);
             var distance = delta.Length();

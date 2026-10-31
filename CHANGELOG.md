@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [0.35.0] — 2026-10-31
+
+### Añadido
+
+- Transformaciones de mundo para entidades hijas 2.5D en render, cámara, colisión,
+  IA, navegación, interacción y gizmos.
+- `Scene.SetWorldPosition` y `Scene.WorldDistance`.
+- `Wall3D.Center`, `Bounds` y `Camera3D.Eye` usan la jerarquía.
+- 5 pruebas nuevas: 182 en total.
+
 ## [0.34.0] — 2026-10-31
 
 ### Añadido

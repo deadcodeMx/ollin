@@ -57,7 +57,7 @@ public static class ActionExecutor
                 if (FindPlayer(scene, playerTag) is { } player &&
                     player.GetComponent<Respawn>() is { } respawn)
                 {
-                    respawn.SetCheckpoint(player.Transform.Position);
+                    respawn.SetCheckpoint(scene.GetWorldPosition(player));
                 }
                 break;
 
@@ -72,7 +72,7 @@ public static class ActionExecutor
             case ActionKind.Teleport:
                 if (target is not null && FindPlayer(scene, playerTag) is { } targetPlayer)
                 {
-                    targetPlayer.Transform.Position = target.Transform.Position;
+                    scene.SetWorldPosition(targetPlayer, scene.GetWorldPosition(target));
                 }
                 break;
 
@@ -137,7 +137,7 @@ public sealed class Button3D : Component, ITickable
             return;
         }
 
-        var distance = System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position);
+        var distance = scene.WorldDistance(Owner, player);
         HudHost.SetLabel("Botón", distance <= Radius ? Prompt : string.Empty);
 
         if (distance > Radius || _cooldown > 0f || !InputState.WasKeyPressed(KeyCode.E))
@@ -198,7 +198,7 @@ public sealed class Trigger3D : Component, ITickable
             return;
         }
 
-        var inside = System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position) <= Radius;
+        var inside = scene.WorldDistance(Owner, player) <= Radius;
 
         if (!inside)
         {
@@ -266,7 +266,7 @@ public sealed class Spawner3D : Component, ITickable
         var copy = template.Clone();
         copy.Name = $"{template.Name} {_spawned.Count + 1}";
         copy.Active = true;
-        copy.Transform.Position = Owner.Transform.Position + SpawnOffset;
+        scene.SetWorldPosition(copy, scene.GetWorldPosition(Owner) + SpawnOffset);
         scene.Add(copy);
         _spawned.Add(copy);
     }
@@ -327,13 +327,13 @@ public sealed class Checkpoint3D : Component, ITickable
         var player = ActionExecutor.FindPlayer(scene, PlayerTag);
 
         if (player is null ||
-            System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position) > Radius)
+            scene.WorldDistance(Owner, player) > Radius)
         {
             return;
         }
 
         Activated = true;
-        player.GetComponent<Respawn>()?.SetCheckpoint(player.Transform.Position, Heal);
+        player.GetComponent<Respawn>()?.SetCheckpoint(scene.GetWorldPosition(player), Heal);
 
         if (!string.IsNullOrWhiteSpace(Message))
         {

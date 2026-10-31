@@ -138,13 +138,13 @@ public sealed class FirstPersonController : Component, ITickable
         var speed = Speed * (running ? RunMultiplier : 1f);
         var move = direction * speed * deltaTime;
 
-        var position = Owner.Transform.Position;
+        var position = scene.GetWorldPosition(Owner);
         var walls = CollectWalls(scene);
 
         position.X = MoveAxis(position, move.X, horizontal: true, camera, walls);
         position.Y = MoveAxis(position, move.Y, horizontal: false, camera, walls);
         position = CylinderCollision.Resolve(scene, position, CollisionRadius, camera.Height);
-        Owner.Transform.Position = position;
+        scene.SetWorldPosition(Owner, position);
     }
 
     private static List<Wall3D> CollectWalls(Scenes.Scene scene)

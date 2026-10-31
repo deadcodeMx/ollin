@@ -49,6 +49,7 @@ public sealed class ViewportControl : OpenGlControlBase
     private bool _gizmo3DDragging;
     private Vector3 _gizmo3DStartPlane;
     private Vector2 _gizmo3DStartPosition;
+    private Vector2 _gizmo3DStartWorld;
     private int _gizmo3DAxis;
     private float _gizmo3DStartYaw;
     private float _gizmo3DStartRotation;
@@ -425,7 +426,8 @@ public sealed class ViewportControl : OpenGlControlBase
 
             if (entity.GetComponent<SpriteRenderer>() is { Enabled: true, Visible: true } sprite)
             {
-                var center = new Vector3(entity.Transform.Position.X, sprite.Size.Y * 0.5f, entity.Transform.Position.Y);
+                var spriteWorld = entity.Scene?.GetWorldPosition(entity) ?? entity.Transform.Position;
+        var center = new Vector3(spriteWorld.X, sprite.Size.Y * 0.5f, spriteWorld.Y);
 
                 if (!camera.Project(center, width, height, out var projected, out var depth))
                 {
@@ -502,6 +504,7 @@ public sealed class ViewportControl : OpenGlControlBase
         }
 
         _gizmo3DStartPosition = entity.Transform.Position;
+        _gizmo3DStartWorld = _viewModel.Scene.GetWorldPosition(entity);
         _gizmo3DStartScreen = screen;
         _gizmo3DDragging = true;
         return true;
@@ -597,7 +600,7 @@ public sealed class ViewportControl : OpenGlControlBase
                 }
 
                 var delta = new Vector2(point.X - _gizmo3DStartPlane.X, point.Z - _gizmo3DStartPlane.Z);
-                var next = _gizmo3DStartPosition + delta;
+                var next = _gizmo3DStartWorld + delta;
 
                 if (snap || Snap3D)
                 {
@@ -607,14 +610,14 @@ public sealed class ViewportControl : OpenGlControlBase
 
                 if (_gizmo3DAxis == 1)
                 {
-                    next.Y = _gizmo3DStartPosition.Y;
+                    next.Y = _gizmo3DStartWorld.Y;
                 }
                 else if (_gizmo3DAxis == 2)
                 {
-                    next.X = _gizmo3DStartPosition.X;
+                    next.X = _gizmo3DStartWorld.X;
                 }
 
-                entity.Transform.Position = next;
+                _viewModel.Scene.SetWorldPosition(entity, next);
                 break;
             }
         }
@@ -654,14 +657,18 @@ public sealed class ViewportControl : OpenGlControlBase
         return camera.Project(center, width, height, out screen, out _);
     }
 
-    private static Vector3 EntityCenter3D(Entity entity) =>
-        entity.GetComponent<Wall3D>() is { } wall
+    private static Vector3 EntityCenter3D(Entity entity)
+    {
+        var world = entity.Scene?.GetWorldPosition(entity) ?? entity.Transform.Position;
+
+        return entity.GetComponent<Wall3D>() is { } wall
             ? wall.Center
             : entity.GetComponent<SpriteRenderer>() is { } sprite
-                ? new Vector3(entity.Transform.Position.X, sprite.Size.Y * 0.5f, entity.Transform.Position.Y)
+                ? new Vector3(world.X, sprite.Size.Y * 0.5f, world.Y)
                 : entity.GetComponent<Camera3D>() is { } cam
                     ? cam.Eye
-                    : new Vector3(entity.Transform.Position.X, 0f, entity.Transform.Position.Y);
+                    : new Vector3(world.X, 0f, world.Y);
+    }
 
     private static bool IsNearRing(Entity entity, Camera3D camera, int width, int height, Vector2 screen, out float distance)
     {

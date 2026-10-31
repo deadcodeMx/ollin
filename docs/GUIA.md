@@ -766,3 +766,20 @@ botón, pero cubre el flujo real de ventana y foco.
   `Scene.GetWorldPosition` sigue funcionando tras la carga.
 - **GameState**: se limpia al cambiar de escena; al cargar una partida se restaura desde
   el guardado.
+
+## 32. Transformaciones de mundo en 2.5D (0.35)
+
+Las entidades hijas ya usan la posición de mundo en el modo 2.5D:
+
+- **Render**: paredes, sprites, luces y gizmos usan `Scene.GetWorldPosition`.
+- **Cámara**: `Camera3D.Eye` incluye la posición del padre.
+- **Movimiento**: jugador, IA y seguidor se mueven en mundo y se convierten a local con
+  `Scene.SetWorldPosition`.
+- **Colisión**: cajas, cilindros y navegación A* usan límites de mundo.
+- **Interacción**: recogibles, puertas, triggers, botones, checkpoints, peligro,
+  teletransporte, grafo y armas comparan distancias de mundo.
+- **Gizmos**: seleccionar y mover un hijo usa su centro de mundo y convierte el arrastre
+  de vuelta a local.
+
+`Transform.Position` sigue siendo la posición **local**; los scripts que la modifiquen
+deben recordar que el padre se suma al renderizar.

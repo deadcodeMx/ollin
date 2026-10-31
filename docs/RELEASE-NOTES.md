@@ -1,26 +1,24 @@
-## Ollin 0.34.0 beta — robustez de escenas
+## Ollin 0.35.0 beta — transformaciones de mundo en 2.5D
 
 ### Incluye
 
-- Carga tolerante de escenas: error claro con línea/columna, sin tumbar el editor.
-- Validador de **assets faltantes** (texturas, audio, scripts, proyectiles y armas).
-- Validador de **jerarquía**: padres inexistentes, ciclos, auto-parentesco e IDs duplicados.
-- Guardado/carga de **entidades hijas 2.5D** con posición local y mundo.
-- **GameState** se limpia al cambiar de escena y se restaura al cargar partida.
-- **177 pruebas automatizadas**.
+- Entidades hijas 2.5D renderizadas, iluminadas y colisionadas en **posición de mundo**.
+- Cámara, IA, seguidor, navegación A* y recogibles usan mundo.
+- Gizmo de mover para hijos: centro de mundo y conversión a local.
+- `Scene.SetWorldPosition` y `Scene.WorldDistance`.
+- **182 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 0.34.0.
-2. Abre una escena válida y comprueba la consola.
-3. Corrompe una copia del `.json` y ábrela: debe mostrar error sin cerrar la escena actual.
-4. Borra una textura o audio y vuelve a abrir: aparecerá un aviso de asset faltante.
-5. Crea un padre y un hijo, guarda, cierra y abre: el hijo conserva padre y posición.
+1. Instala 0.35.0 y abre el demo.
+2. Crea una entidad padre y arrastra otra entidad dentro de ella.
+3. Mueve al padre: el hijo debe renderizarse y colisionar en la posición correcta.
+4. Selecciona al hijo y muévelo con el gizmo: debe moverse respecto al padre.
+5. Coloca un recogible hijo y comprueba que se recoge al pasar cerca.
 
 ### Limitaciones
 
-- La validación avisa, no repara automáticamente.
-- Una escena corrupta no recupera entidades parciales.
-- La jerarquía 2.5D se guarda/carga, pero el renderer y la IA de hijos aún usan
-  transformaciones locales en varios sistemas.
-- El validador no cubre todos los assets posibles ni migraciones de formato.
+- La rotación/escala del padre no se combina aún con `Wall3D.Yaw` ni con el tamaño de
+  la caja; solo se compone la posición.
+- `Height` de cámara y `BaseY` de pared siguen siendo valores propios, no heredados.
+- Los scripts que escriben `Transform.Position` trabajan en local.

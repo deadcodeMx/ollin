@@ -32,7 +32,7 @@ public sealed class Hazard3D : Component, ITickable
         var player = ActionExecutor.FindPlayer(scene, PlayerTag);
 
         if (player is null ||
-            Vector2.Distance(Owner.Transform.Position, player.Transform.Position) > Radius)
+            scene.WorldDistance(Owner, player) > Radius)
         {
             return;
         }
@@ -80,7 +80,7 @@ public sealed class Teleporter3D : Component, ITickable
 
         var player = ActionExecutor.FindPlayer(scene, PlayerTag);
 
-        if (player is null || Vector2.Distance(Owner.Transform.Position, player.Transform.Position) > Radius)
+        if (player is null || scene.WorldDistance(Owner, player) > Radius)
         {
             return;
         }
@@ -92,7 +92,7 @@ public sealed class Teleporter3D : Component, ITickable
             return;
         }
 
-        player.Transform.Position = target.Transform.Position;
+        scene.SetWorldPosition(player, scene.GetWorldPosition(target));
         _cooldown = MathF.Max(0.2f, CooldownSeconds);
 
         if (!string.IsNullOrWhiteSpace(Message))
@@ -138,7 +138,9 @@ public sealed class Follower3D : Component, ITickable
             return;
         }
 
-        var toTarget = target.Transform.Position - Owner.Transform.Position;
+        var position = scene.GetWorldPosition(Owner);
+        var targetPosition = scene.GetWorldPosition(target);
+        var toTarget = targetPosition - position;
 
         if (toTarget.Length() <= FollowDistance)
         {
@@ -147,7 +149,7 @@ public sealed class Follower3D : Component, ITickable
 
         var direction = Vector2.Normalize(toTarget);
         var step = direction * Speed * deltaTime;
-        var next = Owner.Transform.Position;
+        var next = position;
         var walls = new List<Wall3D>();
 
         foreach (var entity in scene.Entities)
@@ -161,7 +163,7 @@ public sealed class Follower3D : Component, ITickable
         next.X = MoveAxis(next, step.X, horizontal: true, walls);
         next.Y = MoveAxis(next, step.Y, horizontal: false, walls);
         next = CylinderCollision.Resolve(scene, next, CollisionRadius, 1.1f);
-        Owner.Transform.Position = next;
+        scene.SetWorldPosition(Owner, next);
     }
 
     private float MoveAxis(Vector2 position, float delta, bool horizontal, List<Wall3D> walls)

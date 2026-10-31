@@ -39,7 +39,7 @@ public sealed class Pickup : Component, ITickable
 
         var player = FindPlayer(scene);
 
-        if (player is null || Vector2.Distance(Owner.Transform.Position, player.Transform.Position) > Radius)
+        if (player is null || scene.WorldDistance(Owner, player) > Radius)
         {
             return;
         }

@@ -142,7 +142,7 @@ public sealed class VisualScript : Component, ITickable
                 case ScriptEvent.OnPlayerEnter:
                 {
                     var inside = player is not null &&
-                                 System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position) <= rule.Radius;
+                                 scene.WorldDistance(Owner, player) <= rule.Radius;
 
                     if (inside && !rule.Inside)
                     {
@@ -155,7 +155,7 @@ public sealed class VisualScript : Component, ITickable
 
                 case ScriptEvent.OnInteract:
                     if (player is not null &&
-                        System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position) <= rule.Radius &&
+                        scene.WorldDistance(Owner, player) <= rule.Radius &&
                         InputState.WasKeyPressed(KeyCode.E))
                     {
                         fire = true;

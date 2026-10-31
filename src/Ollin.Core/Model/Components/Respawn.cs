@@ -50,7 +50,7 @@ public sealed class Respawn : Component, ITickable
         {
             _initialized = true;
             LivesRemaining = System.Math.Max(0, Lives);
-            Checkpoint = Owner.Transform.Position;
+            Checkpoint = Owner.Scene?.GetWorldPosition(Owner) ?? Owner.Transform.Position;
             HudHost.SetLabel("Vidas", LivesRemaining.ToString());
         }
 
@@ -89,7 +89,8 @@ public sealed class Respawn : Component, ITickable
             return;
         }
 
-        Owner.Transform.Position = Checkpoint;
+        if (Owner.Scene is { } scene) scene.SetWorldPosition(Owner, Checkpoint);
+        else Owner.Transform.Position = Checkpoint;
         Owner.Active = true;
 
         if (ResetHealth && health is not null)

@@ -43,7 +43,7 @@ public sealed class Projectile : Component, ITickable
             return;
         }
 
-        var next = Owner.Transform.Position + Direction * Speed * deltaTime;
+        var next = scene.GetWorldPosition(Owner) + Direction * Speed * deltaTime;
 
         foreach (var entity in scene.Entities)
         {
@@ -70,7 +70,7 @@ public sealed class Projectile : Component, ITickable
                 continue;
             }
 
-            var center = new Vector2(entity.Transform.Position.X, entity.Transform.Position.Y);
+            var center = scene.GetWorldPosition(entity);
 
             if (Vector2.Distance(next, center) <= Radius + 0.5f)
             {
@@ -80,7 +80,7 @@ public sealed class Projectile : Component, ITickable
             }
         }
 
-        Owner.Transform.Position = next;
+        scene.SetWorldPosition(Owner, next);
     }
 
     public static Entity Spawn(

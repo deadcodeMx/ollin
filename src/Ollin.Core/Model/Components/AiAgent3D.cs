@@ -64,14 +64,14 @@ public sealed class AiAgent3D : Component, ITickable
 
         if (!HasSpawn)
         {
-            Spawn = Owner.Transform.Position;
+            Spawn = scene.GetWorldPosition(Owner);
             _patrolTarget = Spawn;
             HasSpawn = true;
         }
 
-        var position = Owner.Transform.Position;
+        var position = scene.GetWorldPosition(Owner);
         var target = FindTarget(scene);
-        var targetPosition = target?.Transform.Position ?? position;
+        var targetPosition = target is null ? position : scene.GetWorldPosition(target);
         var distance = target is null ? float.MaxValue : Vector2.Distance(position, targetPosition);
         var visible = target is not null &&
                       distance <= VisionRadius &&
@@ -161,7 +161,7 @@ public sealed class AiAgent3D : Component, ITickable
         next.X = MoveAxis(next, step.X, horizontal: true, walls);
         next.Y = MoveAxis(next, step.Y, horizontal: false, walls);
         next = CylinderCollision.Resolve(scene, next, CollisionRadius, 1.1f);
-        Owner.Transform.Position = next;
+        scene.SetWorldPosition(Owner, next);
 
         _attackTimer -= deltaTime;
 

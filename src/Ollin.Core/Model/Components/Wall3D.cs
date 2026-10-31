@@ -29,10 +29,17 @@ public sealed class Wall3D : Component
     public float Yaw { get; set; }
 
     [JsonIgnore]
-    public Vector3 Center => new(
-        Owner?.Transform.Position.X ?? 0f,
-        BaseY + Size.Y * 0.5f,
-        Owner?.Transform.Position.Y ?? 0f);
+    public Vector3 Center
+    {
+        get
+        {
+            var world = Owner is { Scene: { } scene }
+                ? scene.GetWorldPosition(Owner)
+                : Owner?.Transform.Position ?? Vector2.Zero;
+
+            return new Vector3(world.X, BaseY + Size.Y * 0.5f, world.Y);
+        }
+    }
 
     [JsonIgnore]
     public (Vector3 Min, Vector3 Max) Bounds

@@ -173,7 +173,7 @@ public sealed class NodeGraph : Component, ITickable
                 case GraphEventKind.OnPlayerEnter:
                 {
                     var inside = player is not null &&
-                                 System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position) <= node.Radius;
+                                 scene.WorldDistance(Owner, player) <= node.Radius;
 
                     if (inside && !node.Inside) fire = true;
                     node.Inside = inside;
@@ -182,7 +182,7 @@ public sealed class NodeGraph : Component, ITickable
 
                 case GraphEventKind.OnInteract:
                     fire = player is not null &&
-                           System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position) <= node.Radius &&
+                           scene.WorldDistance(Owner, player) <= node.Radius &&
                            InputState.WasKeyPressed(KeyCode.E);
                     break;
 

@@ -145,7 +145,7 @@ public sealed class NavGrid3D
                 continue;
             }
 
-            var center = entity.Transform.Position;
+            var center = scene.GetWorldPosition(entity);
 
             for (var z = 0; z < grid.Height; z++)
             {

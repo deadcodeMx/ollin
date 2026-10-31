@@ -98,6 +98,33 @@ public sealed class Scene
 
     public Vector2 GetWorldPosition(Entity entity) => GetWorldMatrix(entity).Translation.AsVector2();
 
+    /// <summary>Coloca una entidad por su posición de mundo respetando la jerarquía.</summary>
+    public void SetWorldPosition(Entity entity, Vector2 world)
+    {
+        var parent = entity.ParentId is { } parentId ? Find(parentId) : null;
+
+        if (parent is null)
+        {
+            entity.Transform.Position = world;
+            return;
+        }
+
+        var parentMatrix = GetWorldMatrix(parent);
+
+        if (Matrix4x4.Invert(parentMatrix, out var inverse))
+        {
+            var local = Vector3.Transform(new Vector3(world, 0f), inverse);
+            entity.Transform.Position = new Vector2(local.X, local.Y);
+        }
+        else
+        {
+            entity.Transform.Position = world;
+        }
+    }
+
+    /// <summary>Distancia entre dos entidades usando sus posiciones de mundo.</summary>
+    public float WorldDistance(Entity a, Entity b) => Vector2.Distance(GetWorldPosition(a), GetWorldPosition(b));
+
     /// <summary>Cámara 3D principal, si la escena usa el modo 2.5D.</summary>
     public Camera3D? GetMainCamera3D() =>
         Entities

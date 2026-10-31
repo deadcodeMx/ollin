@@ -51,7 +51,7 @@ public sealed class Door : Component, ITickable
                 return;
             }
 
-            var distance = System.Numerics.Vector2.Distance(Owner.Transform.Position, player.Transform.Position);
+            var distance = scene.WorldDistance(Owner, player);
             HudHost.SetLabel("Puerta", distance <= InteractionRadius ? "E para abrir" : string.Empty);
 
             if (distance > InteractionRadius || !InputState.WasKeyPressed(KeyCode.E))
