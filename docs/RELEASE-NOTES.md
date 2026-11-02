@@ -1,30 +1,15 @@
-## Ollin Beta 6.93.0 — componentes que faltaban
+## Ollin Beta 6.95.0 — todos los componentes visibles
 
 ### Corregido
 
-- **Visual (Sprite)** añadido a Añadir componente.
-- **Interactuable** añadido a Añadir componente.
-- Se revisó la lista completa de componentes 2D.
-
-### Lista actual
-
-- Visual (Sprite)
-- Interactuable
-- Colisión
-- Disparador
-- Cuerpo físico
-- Cámara 2D
-- Animación
-- Tilemap
-- Audio
-- Luz 2D
-- Rotador
-- Oscilador
-- IA
-- Script C#…
+- Los componentes se pliegan por defecto; así se ven todos los encabezados.
+- **INTERACCIÓN** aparece al añadir Interactuable.
+- Colisión, Visual, Interacción y Scripts muestran su botón ✕.
+- Todos los `Has...` notifican cambios al inspector.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.93.0 instalado y abierto sin crash.
+- Instalador 6.95.0 instalado.
+- Captura con Visual, Interacción y Colisión visibles.
 - Demo técnica no publicada.

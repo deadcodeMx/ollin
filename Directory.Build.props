@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
-    <Version>6.93.0</Version>
+    <Version>6.95.0</Version>
     <Product>Ollin Engine</Product>
     <Company>Ollin</Company>
     <NeutralLanguage>es-MX</NeutralLanguage>

@@ -17,6 +17,19 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.95.0] — 2026-11-02
+
+### Corregido
+
+- Los componentes se pliegan por defecto para mostrar todos los encabezados.
+
+## [6.94.0] — 2026-11-02
+
+### Corregido
+
+- Interactuable notifica HasInteractable y aparece al añadirlo.
+- Se notifican todos los Has de componentes.
+
 ## [6.93.0] — 2026-11-02
 
 ### Corregido

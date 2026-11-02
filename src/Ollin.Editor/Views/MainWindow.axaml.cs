@@ -223,6 +223,7 @@ public partial class MainWindow : Window
         "Luz" => "light",
         "Rotador" => "rotator",
         "Oscilador" => "oscillator",
+        "Interacción" => "interactable",
         "IA" => "ai",
         "Script" => "script",
         _ => null,
@@ -296,7 +297,7 @@ public partial class MainWindow : Window
             {
                 Header = header,
                 Content = child,
-                IsExpanded = true,
+                IsExpanded = false,
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
                 Margin = new Thickness(0, 2),
             };
@@ -386,7 +387,7 @@ public partial class MainWindow : Window
             {
                 Header = header,
                 Content = content,
-                IsExpanded = true,
+                IsExpanded = false,
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
                 Margin = new Thickness(0, 2),
             });
@@ -890,7 +891,7 @@ public partial class MainWindow : Window
             var expander = new Expander
             {
                 Header = header,
-                IsExpanded = true,
+                IsExpanded = kind is null,
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
                 Margin = new Thickness(0, 2, 0, 2),
             };
