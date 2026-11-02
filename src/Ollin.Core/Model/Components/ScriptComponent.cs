@@ -11,11 +11,15 @@ public sealed class ScriptComponent : Component
 
     public string ClassName { get; set; } = string.Empty;
 
+    /// <summary>Valores de campos públicos serializados desde el inspector.</summary>
+    public Dictionary<string, string> Values { get; set; } = new();
+
     public override Component CloneFor(Entity newOwner) => new ScriptComponent
     {
         Enabled = Enabled,
         ScriptPath = ScriptPath,
         ClassName = ClassName,
+        Values = new Dictionary<string, string>(Values),
         Owner = newOwner,
     };
 }

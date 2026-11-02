@@ -928,6 +928,7 @@ public sealed partial class MainViewModel : ObservableObject
         component.ClassName = className;
 
         ReloadScripts();
+        RefreshProjectFiles();
         Selected.RefreshAll();
         MarkDirty();
         StatusMessage = $"Script {className} enlazado a {entity.Name}";

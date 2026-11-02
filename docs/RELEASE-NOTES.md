@@ -1,21 +1,20 @@
-## Ollin Beta 6.74.0 — componentes en el inspector
+## Ollin Beta 6.76.0 — inspector contraíble y scripts
+
+### Añadido
+
+- Encabezados de componentes resaltados en ámbar.
+- Secciones del inspector contraíbles.
+- **Crear script aquí…** desde Archivos.
+- El script creado se añade automáticamente a la entidad seleccionada.
+- Campos públicos de scripts como campos editables del inspector.
+- Los valores se guardan en el componente y se aplican al reproducir.
 
 ### Corregido
 
-- Los componentes añadidos con **+ Añadir componente** aparecen de inmediato.
-- Colisión, cuerpo físico y script conservan su contexto en el inspector.
-- Se eliminó la pestaña Física; cada componente se muestra solo si existe.
+- Scripts antiguos sin valores de campos.
 
-### Incluye
+### Verificado
 
-- Inspector unificado con componentes condicionales.
-- **205 pruebas automatizadas**.
-- Instalador sin demo técnica.
-
-### Cómo probarlo
-
-1. Instala 6.74.0.
-2. Selecciona una entidad.
-3. Pulsa **+ Añadir componente → Colisión**.
-4. Verifica que aparece **COLISIÓN** con ancho, alto y trigger.
-5. Añade **Cuerpo físico** o **Script** y comprueba sus secciones.
+- **205/205 pruebas**.
+- Instalado 6.76.0.
+- Demo técnica no publicada.

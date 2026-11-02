@@ -17,6 +17,20 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.76.0] — 2026-11-02
+
+### Corregido
+
+- Compatibilidad de scripts antiguos sin valores de campos.
+
+## [6.75.0] — 2026-11-02
+
+### Añadido
+
+- Secciones del inspector contraíbles y con encabezados resaltados.
+- Crear scripts desde Archivos y añadirlos a la entidad seleccionada.
+- Campos públicos de scripts compilados como campos editables.
+
 ## [6.74.0] — 2026-11-02
 
 ### Corregido

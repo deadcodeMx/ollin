@@ -45,6 +45,24 @@ public sealed partial class MainViewModel
     /// <summary>Carpeta de prefabs del proyecto (o una local si no hay proyecto).</summary>
     public string PrefabsFolder => Project?.PrefabsFolder ?? Path.Combine(ProjectRoot, "prefabs");
 
+    /// <summary>Campos públicos del script compilado, para el inspector.</summary>
+    public IReadOnlyList<ScriptFieldDefinition> GetScriptFields(string className)
+    {
+        if (string.IsNullOrWhiteSpace(className)) return Array.Empty<ScriptFieldDefinition>();
+        var type = _scripts.Types.FirstOrDefault(item => item.Name == className || item.FullName == className)?.Type;
+        if (type is null) return Array.Empty<ScriptFieldDefinition>();
+
+        return type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+            .Where(field => field.FieldType == typeof(float) || field.FieldType == typeof(int) ||
+                            field.FieldType == typeof(bool) || field.FieldType == typeof(string) ||
+                            field.FieldType == typeof(double))
+            .Select(field => new ScriptFieldDefinition(
+                field.Name,
+                field.FieldType.Name,
+                field.FieldType == typeof(bool) ? "false" : field.FieldType == typeof(string) ? string.Empty : "0"))
+            .ToList();
+    }
+
     public void ClearSearch() => SearchText = string.Empty;
 
     /// <summary>Copia la selección al portapapeles interno (JSON por entidad).</summary>

@@ -619,6 +619,27 @@ public sealed class SceneRuntime
 
         public float Wait { get; set; }
     }
+    private static void ApplyScriptValues(OllinScript script, ScriptComponent component)
+    {
+        if (component.Values is null || component.Values.Count == 0) return;
+        var type = script.GetType();
+        foreach (var field in type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+        {
+            if (!component.Values.TryGetValue(field.Name, out var text) || string.IsNullOrWhiteSpace(text)) continue;
+            try
+            {
+                object? value = field.FieldType == typeof(float) ? float.Parse(text, System.Globalization.CultureInfo.InvariantCulture)
+                    : field.FieldType == typeof(double) ? double.Parse(text, System.Globalization.CultureInfo.InvariantCulture)
+                    : field.FieldType == typeof(int) ? int.Parse(text, System.Globalization.CultureInfo.InvariantCulture)
+                    : field.FieldType == typeof(bool) ? bool.Parse(text)
+                    : field.FieldType == typeof(string) ? text
+                    : null;
+                if (value is not null) field.SetValue(script, value);
+            }
+            catch { }
+        }
+    }
+
     private void StartScripts()
     {
         if (_scene is null || _scriptsWorkspace is null)

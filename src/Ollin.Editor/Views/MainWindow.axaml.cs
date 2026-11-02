@@ -210,6 +210,35 @@ public partial class MainWindow : Window
         }
     }
 
+    private static void WrapComponentPanels(StackPanel root)
+    {
+        foreach (var child in root.Children.OfType<StackPanel>().ToList())
+        {
+            if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT")) continue;
+
+            root.Children.Remove(child);
+            child.Children.Remove(title);
+            var header = new TextBlock
+            {
+                Text = title.Text,
+                FontSize = 10,
+                FontWeight = Avalonia.Media.FontWeight.Bold,
+                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+            };
+            var expander = new Expander
+            {
+                Header = header,
+                Content = child,
+                IsExpanded = true,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 2),
+            };
+            expander.Bind(Visual.IsVisibleProperty, new Binding("IsVisible") { Source = child });
+            root.Children.Add(expander);
+        }
+    }
+
     private void EnsureInspectorConsolidated()
     {
         if (_inspectorConsolidated || DataContext is not MainViewModel) return;
@@ -459,6 +488,47 @@ public partial class MainWindow : Window
         }
     }
 
+    private async void OnCreateScriptHere(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null) return;
+        if (ViewModel.Selected is null)
+        {
+            ViewModel.StatusMessage = "Selecciona una entidad para añadirle el script";
+            return;
+        }
+
+        var node = (sender as MenuItem)?.DataContext as ViewModels.FileNode;
+        var folder = node is { IsFolder: true }
+            ? Path.GetRelativePath(ViewModel.ProjectRoot, node.FullPath).Replace('\\', '/')
+            : node is not null ? Path.GetRelativePath(ViewModel.ProjectRoot, Path.GetDirectoryName(node.FullPath)!).Replace('\\', '/') : "scripts";
+        var suggested = ViewModel.Selected.Name.Replace(" ", string.Empty) + "Script";
+        var window = new CreateScriptWindow(suggested, folder);
+        if (await window.ShowDialog<bool>(this))
+        {
+            ViewModel.CreateScriptForSelected(window.ScriptName, window.ScriptFolder);
+        }
+    }
+
+    private async void OnCreateFolderHere(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null) return;
+        var node = (sender as MenuItem)?.DataContext as ViewModels.FileNode;
+        var basePath = node is { IsFolder: true }
+            ? node.FullPath
+            : node is not null ? Path.GetDirectoryName(node.FullPath)! : ViewModel.ProjectRoot;
+        var window = new NamePromptWindow("Nueva carpeta", "Nombre de la carpeta", "NuevaCarpeta");
+        if (!await window.ShowDialog<bool>(this)) return;
+        var target = Path.Combine(basePath, window.Value);
+        if (Directory.Exists(target))
+        {
+            ViewModel.StatusMessage = "La carpeta ya existe";
+            return;
+        }
+        Directory.CreateDirectory(target);
+        ViewModel.RefreshProjectFiles();
+        ViewModel.StatusMessage = $"Carpeta creada: {window.Value}";
+    }
+
     private async void OnCreateScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel?.Selected is null) return;
@@ -623,8 +693,9 @@ public partial class MainWindow : Window
             var visibilityProperty = VisibilityPropertyFor(headerText, occurrence);
             if (visibilityProperty is not null)
             {
-                section.Bind(Visual.IsVisibleProperty, new Binding(visibilityProperty));
+                section.Bind(Visual.IsVisibleProperty, new Binding($"DataContext.{visibilityProperty}") { Source = this });
             }
+
             var header = new TextBlock
             {
                 Text = tab.Header?.ToString()?.ToUpperInvariant() ?? string.Empty,
@@ -634,9 +705,20 @@ public partial class MainWindow : Window
                 Margin = new Thickness(0, 8, 0, 2),
             };
 
-            section.Children.Add(header);
-            if (content is not null) section.Children.Add(content);
-            panel.Children.Add(section);
+            var expander = new Expander
+            {
+                Header = header,
+                IsExpanded = true,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 2, 0, 2),
+            };
+            if (visibilityProperty is not null)
+            {
+                expander.Bind(Visual.IsVisibleProperty, new Binding($"DataContext.{visibilityProperty}") { Source = this });
+            }
+
+            if (content is not null) expander.Content = content;
+            panel.Children.Add(expander);            panel.Children.Add(section);
         }
 
         var addButton = BuildAddComponentButton();

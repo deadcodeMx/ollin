@@ -9,6 +9,32 @@ using Ollin.Core.Model.Components;
 
 namespace Ollin.Editor.ViewModels;
 
+public sealed record ScriptFieldDefinition(string Name, string TypeName, string DefaultValue);
+
+public sealed class ScriptField
+{
+    private readonly Action<string> _set;
+    private string _value;
+
+    public ScriptField(string name, string typeName, string value, Action<string> set)
+    {
+        Name = name; TypeName = typeName; _value = value; _set = set;
+    }
+
+    public string Name { get; }
+    public string TypeName { get; }
+    public string Value
+    {
+        get => _value;
+        set
+        {
+            if (_value == value) return;
+            _value = value ?? string.Empty;
+            _set(_value);
+        }
+    }
+}
+
 /// <summary>
 /// Nodo del árbol de escena. Envuelve una <see cref="Entity"/> y expone las
 /// propiedades que edita el inspector (con conversión a unidades amigables).
@@ -205,6 +231,30 @@ public sealed class EntityNode : ObservableObject
     }
 
     public int ScriptCount => ScriptComponents.Count;
+
+    private IReadOnlyList<ScriptField>? _scriptFields;
+
+    public IReadOnlyList<ScriptField> ScriptFields
+    {
+        get
+        {
+            if (_scriptFields is not null) return _scriptFields;
+            var component = Script;
+            _scriptFields = _owner.GetScriptFields(component?.ClassName ?? string.Empty)
+                .Select(definition => new ScriptField(
+                    definition.Name,
+                    definition.TypeName,
+                    component?.Values?.TryGetValue(definition.Name, out var value) == true ? value : definition.DefaultValue,
+                    newValue =>
+                    {
+                        if (component is null) return;
+                        component.Values[definition.Name] = newValue;
+                        _owner.MarkDirty();
+                    }))
+                .ToList();
+            return _scriptFields;
+        }
+    }
 
     public bool HasRotator => Entity.GetComponent<RotatorComponent>() is not null;
 
@@ -1093,6 +1143,8 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(Ai3DStatus));
         OnPropertyChanged(nameof(OscillationAmplitude));
         OnPropertyChanged(nameof(OscillationFrequency));
+_scriptFields = null;
+        OnPropertyChanged(nameof(ScriptFields));
         OnPropertyChanged(nameof(HasSprite));
         OnPropertyChanged(nameof(HasCollider));
         OnPropertyChanged(nameof(HasRigidbody));
