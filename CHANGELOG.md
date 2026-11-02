@@ -17,6 +17,12 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.93.0] — 2026-11-02
+
+### Corregido
+
+- Visual (Sprite) e Interactuable añadidos a Añadir componente.
+
 ## [6.92.0] — 2026-11-02
 
 ### Añadido

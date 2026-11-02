@@ -293,6 +293,16 @@ public sealed partial class MainViewModel
 
         switch (kind)
         {
+            case "sprite":
+                if (entity.HasComponent<SpriteRenderer>()) { added = false; break; }
+                entity.AddComponent(new SpriteRenderer());
+                break;
+
+            case "interactable":
+                if (entity.HasComponent<Interactable>()) { added = false; break; }
+                entity.AddComponent(new Interactable());
+                break;
+
             case "collider":
                 if (entity.HasComponent<BoxCollider>()) { added = false; break; }
                 var size = entity.GetComponent<SpriteRenderer>()?.Size ?? Vector2.One;

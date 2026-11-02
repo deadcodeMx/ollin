@@ -1516,6 +1516,8 @@ public partial class MainWindow : Window
             flyout.Items.Add(item);
         }
 
+        Add("Visual (Sprite)", "sprite");
+        Add("Interactuable", "interactable");
         Add("Colisión (caja)", "collider");
         Add("Disparador (trigger)", "trigger");
         Add("Cuerpo físico", "rigidbody");
