@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.91.0] — 2026-11-02
+
+### Corregido
+
+- Crash al abrir el motor por reparentar componentes de física.
+- El inspector vuelve a abrir correctamente.
+
 ## [6.90.0] — 2026-11-02
 
 ### Corregido

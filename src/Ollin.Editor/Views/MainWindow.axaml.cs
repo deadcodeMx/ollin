@@ -288,6 +288,7 @@ public partial class MainWindow : Window
             if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR")) continue;
 
             var index = root.Children.IndexOf(child);
+            root.Children.RemoveAt(index);
             child.Children.Remove(title);
             var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
@@ -305,7 +306,6 @@ public partial class MainWindow : Window
                 child.Children.Add(BuildRemoveButton(kind));
                 expander.ContextMenu = BuildComponentMenu(kind);
             }
-            root.Children.RemoveAt(index);
             root.Children.Insert(index, expander);
         }
     }
@@ -331,12 +331,18 @@ public partial class MainWindow : Window
         _scriptHost.Children.Clear();
 
         var selected = ViewModel?.Selected;
-        try { System.IO.File.AppendAllText(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "ollin-scripts.txt"), $"selected={selected?.Name} count={selected?.ScriptComponents.Count}" + Environment.NewLine); } catch { }
         if (selected is null) return;
 
         foreach (var component in selected.ScriptComponents)
         {
-            var editor = new ScriptComponentEditor(selected, component, () => { }, () => ViewModel?.OpenScript(Path.Combine(ViewModel.ProjectRoot, component.ScriptPath ?? string.Empty)));
+            var editor = new ScriptComponentEditor(selected, component,
+                () =>
+                {
+                    selected.Entity.RemoveComponent(component);
+                    selected.RefreshAll();
+                    ViewModel?.NotifyComponentsChanged();
+                },
+                () => ViewModel?.OpenScript(Path.Combine(ViewModel.ProjectRoot, component.ScriptPath ?? string.Empty)));
             var content = new StackPanel { Spacing = 4 };
 
             var path = new TextBox { Watermark = "scripts/MiScript.cs" };
@@ -365,6 +371,9 @@ public partial class MainWindow : Window
                 ViewModel.NotifyComponentsChanged();
             };
             content.Children.Add(remove);
+            var open = new Button { Content = "Abrir script", Classes = { "tool", "accent" }, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch };
+            open.Click += (_, _) => editor.Open();
+            content.Children.Add(open);
 
             var header = new TextBlock
             {
@@ -877,6 +886,10 @@ public partial class MainWindow : Window
             if (kind is not null) expander.ContextMenu = BuildComponentMenu(kind);
             panel.Children.Add(expander);
         }
+
+        _scriptHost = new StackPanel { Spacing = 8 };
+        panel.Children.Add(_scriptHost);
+        RefreshScriptSections();
 
         var addButton = BuildAddComponentButton();
         DockPanel.SetDock(addButton, Dock.Bottom);

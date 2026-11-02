@@ -1,15 +1,15 @@
-## Ollin Beta 6.90.0 — componentes eliminables
+## Ollin Beta 6.91.0 — crash corregido y colisión eliminable
 
 ### Corregido
 
-- El botón **✕ Quitar componente** se genera dentro de cada componente.
-- Colisión, cuerpo físico, rotador y oscilador conservan su orden.
-- Los scripts se pliegan por defecto para dejar visible la colisión.
-- Cada script tiene **Abrir script**.
-- Los valores iniciales de scripts se leen del código real.
+- Crash al abrir el motor por reparentar componentes de física.
+- El inspector abre correctamente.
+- Colisión muestra el botón **✕** para quitarla.
+- Los componentes conservan el orden.
+- Los scripts se cargan en el host dinámico.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.90.0 instalado.
+- Instalador 6.91.0 instalado y abierto sin crash.
 - Demo técnica no publicada.
