@@ -286,12 +286,12 @@ public partial class MainWindow : Window
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
-            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D" or "PLATAFORMA MÓVIL" or "PARTÍCULAS" or "ESTELA" or "ANIMACIÓN FSM" or "TRANSICIÓN" or "EQUIPO" or "MISIONES")) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D" or "PLATAFORMA MÓVIL" or "PARTÍCULAS" or "ESTELA" or "ANIMACIÓN FSM" or "TRANSICIÓN" or "EQUIPO" or "MISIONES" or "TURNO" or "GESTOR DE TURNOS" or "CARTAS" or "MAZMORRA" or "ESQUELETO")) continue;
 
             var index = root.Children.IndexOf(child);
             root.Children.RemoveAt(index);
             child.Children.Remove(title);
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", "PLATAFORMA MÓVIL" => "movingplatform", "PARTÍCULAS" => "particles", "ESTELA" => "trail", "ANIMACIÓN FSM" => "animfsm", "TRANSICIÓN" => "transition", "EQUIPO" => "equipment", "MISIONES" => "questlog", _ => null };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", "PLATAFORMA MÓVIL" => "movingplatform", "PARTÍCULAS" => "particles", "ESTELA" => "trail", "ANIMACIÓN FSM" => "animfsm", "TRANSICIÓN" => "transition", "EQUIPO" => "equipment", "MISIONES" => "questlog", "TURNO" => "turnactor", "GESTOR DE TURNOS" => "turnmanager", "CARTAS" => "carddeck", "MAZMORRA" => "dungeon", "ESQUELETO" => "skeleton", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
             var expander = new Expander
             {
@@ -1555,6 +1555,16 @@ public partial class MainWindow : Window
         Add(combat, "Arma 2D", "weapon2d");
         flyout.Items.Add(combat);
 
+        var strategy = new MenuItem { Header = "Estrategia" };
+        Add(strategy, "Actor de turno", "turnactor");
+        Add(strategy, "Gestor de turnos", "turnmanager");
+        Add(strategy, "Mazo de cartas", "carddeck");
+        flyout.Items.Add(strategy);
+
+        var world = new MenuItem { Header = "Mundo" };
+        Add(world, "Generador de mazmorra", "dungeon");
+        flyout.Items.Add(world);
+
         var player = new MenuItem { Header = "Jugador" };
         Add(player, "Equipo", "equipment");
         Add(player, "Misiones", "questlog");
@@ -1567,6 +1577,7 @@ public partial class MainWindow : Window
         Add(visual, "Transición de pantalla", "transition");
         Add(visual, "Luz 2D", "light");
         Add(visual, "Partículas", "particles");
+        Add(visual, "Esqueleto 2D", "skeleton");
         Add(visual, "Estela", "trail");
         flyout.Items.Add(visual);
 

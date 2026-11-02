@@ -697,6 +697,30 @@
                       <TextBlock Classes="section" Text="MISIONES" />
                       <TextBlock Text="{Binding Selected.QuestSummary}" Classes="hint" TextWrapping="Wrap" />
                     </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasTurnActor}" Spacing="5">
+                      <TextBlock Classes="section" Text="TURNO" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Iniciativa" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TurnInitiative, Mode=TwoWay}" Increment="1" FormatString="0" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Equipo" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.TurnTeam, Mode=TwoWay}" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasTurnManager}" Spacing="5">
+                      <TextBlock Classes="section" Text="GESTOR DE TURNOS" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Segundos" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TurnSeconds, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" /></Grid>
+                      <TextBlock Text="{Binding Selected.TurnStatus}" Classes="hint" />
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasCardDeck}" Spacing="5">
+                      <TextBlock Classes="section" Text="CARTAS" />
+                      <TextBlock Text="{Binding Selected.CardCounts}" Classes="hint" />
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasDungeon}" Spacing="5">
+                      <TextBlock Classes="section" Text="MAZMORRA" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Ancho" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.DungeonWidth, Mode=TwoWay}" Increment="1" Minimum="4" FormatString="0" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Alto" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.DungeonHeight, Mode=TwoWay}" Increment="1" Minimum="4" FormatString="0" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Semilla" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.DungeonSeed, Mode=TwoWay}" Increment="1" FormatString="0" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasSkeleton}" Spacing="5">
+                      <TextBlock Classes="section" Text="ESQUELETO" />
+                      <TextBlock Text="{Binding Selected.SkeletonInfo}" Classes="hint" />
+                    </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasRotator}" Spacing="5">
                       <TextBlock Classes="section" Text="ROTADOR" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1">

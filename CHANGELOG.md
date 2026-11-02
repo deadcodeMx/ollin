@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.111.0] — 2026-11-02
+
+### Añadido
+
+- Turnos por iniciativa.
+- Mazo, mano y descarte.
+- Generador de mazmorra procedural.
+- Esqueleto 2D con preview.
+- IA y luces con sombras existentes.
+
 ## [6.110.0] — 2026-11-02
 
 ### Añadido

@@ -1,16 +1,22 @@
-## Ollin Beta 6.110.0 — Etapa C
+## Ollin Beta 6.111.0 — Etapa D (base)
 
 ### Añadido
 
-- **Equipment** por ranuras y datos de ItemId.
-- **QuestLog** con objetivos y HUD de objetivo.
-- **Audio mixer**: master, música, efectos y UI.
-- Sliders de música y efectos en ajustes del juego.
-- **Localización** por `localization/*.json`.
-- Diálogos localizables por clave.
+- Turnos por iniciativa.
+- Mazo, mano y descarte.
+- Generador de mazmorra procedural.
+- Esqueleto 2D con preview.
+- IA con A* y luces con sombras ya existentes.
+
+### Limitaciones
+
+- Sin rejilla hexagonal.
+- Cartas sin assets/UI.
+- IK sin deformar la pose.
+- Sin multijugador.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.110.0 instalado y abierto sin crash.
+- Instalador 6.111.0 instalado y abierto sin crash.
 - Demo técnica no publicada.

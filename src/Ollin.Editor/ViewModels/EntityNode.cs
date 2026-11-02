@@ -413,6 +413,22 @@ public sealed class EntityNode : ObservableObject
     public decimal Weapon2DCooldown { get => (decimal)(Entity.GetComponent<Weapon2D>()?.Cooldown ?? 0.25f); set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Cooldown = MathF.Max(0.01f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public int Weapon2DAmmo { get => Entity.GetComponent<Weapon2D>()?.Ammo ?? -1; set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Ammo = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public bool HasSkeleton => Entity.GetComponent<Skeleton2D>() is not null;
+    public string SkeletonInfo => Entity.GetComponent<Skeleton2D>() is { } s ? $"{s.Bones.Count} huesos" : "-";
+
+    public bool HasTurnActor => Entity.GetComponent<TurnActor>() is not null;
+    public decimal TurnInitiative { get => Entity.GetComponent<TurnActor>()?.Initiative ?? 0; set { if (Entity.GetComponent<TurnActor>() is { } t) { t.Initiative = (int)value; OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public string TurnTeam { get => Entity.GetComponent<TurnActor>()?.Team ?? "player"; set { if (Entity.GetComponent<TurnActor>() is { } t) { t.Team = value ?? "player"; OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public bool HasTurnManager => Entity.GetComponent<TurnManager>() is not null;
+    public decimal TurnSeconds { get => (decimal)(Entity.GetComponent<TurnManager>()?.TurnSeconds ?? 0f); set { if (Entity.GetComponent<TurnManager>() is { } t) { t.TurnSeconds = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public string TurnStatus => Entity.GetComponent<TurnManager>() is { } t ? $"Ronda {t.Round}, índice {t.CurrentIndex + 1}" : "-";
+    public bool HasCardDeck => Entity.GetComponent<CardDeck>() is not null;
+    public string CardCounts => Entity.GetComponent<CardDeck>() is { } d ? $"Mazo {d.DrawPile.Count} · Mano {d.Hand.Count} · Descarte {d.DiscardPile.Count}" : "-";
+    public bool HasDungeon => Entity.GetComponent<DungeonGenerator2D>() is not null;
+    public decimal DungeonWidth { get => Entity.GetComponent<DungeonGenerator2D>()?.Width ?? 32; set { if (Entity.GetComponent<DungeonGenerator2D>() is { } d) { d.Width = System.Math.Max(4, (int)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal DungeonHeight { get => Entity.GetComponent<DungeonGenerator2D>()?.Height ?? 20; set { if (Entity.GetComponent<DungeonGenerator2D>() is { } d) { d.Height = System.Math.Max(4, (int)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal DungeonSeed { get => Entity.GetComponent<DungeonGenerator2D>()?.Seed ?? 12345; set { if (Entity.GetComponent<DungeonGenerator2D>() is { } d) { d.Seed = (int)value; OnPropertyChanged(); _owner.MarkDirty(); } } }
+
     public bool HasEquipment => Entity.GetComponent<Equipment>() is not null;
     public string EquipmentSlotsText => Entity.GetComponent<Equipment>() is { } equipment
         ? string.Join(", ", equipment.Slots.Select(pair => $"{pair.Key}: {pair.Value}"))
@@ -1436,6 +1452,13 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasMovingPlatform));
         OnPropertyChanged(nameof(HasAnimationFSM));
         OnPropertyChanged(nameof(HasEquipment));
+        OnPropertyChanged(nameof(HasTurnActor));
+        OnPropertyChanged(nameof(HasSkeleton));
+        OnPropertyChanged(nameof(HasTurnManager));
+        OnPropertyChanged(nameof(TurnStatus));
+        OnPropertyChanged(nameof(HasCardDeck));
+        OnPropertyChanged(nameof(CardCounts));
+        OnPropertyChanged(nameof(HasDungeon));
         OnPropertyChanged(nameof(EquipmentSlotsText));
         OnPropertyChanged(nameof(HasQuestLog));
         OnPropertyChanged(nameof(QuestSummary));

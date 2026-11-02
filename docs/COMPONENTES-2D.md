@@ -349,6 +349,28 @@ Falta o está incompleto:
 28. Skeletal/IK.
 29. Multiplayer.
 
+#### Estado real de la Etapa D (Beta 6.111.0)
+
+| Punto | Estado | Detalle |
+|---|---|---|
+| 23. Pathfinding/AI | ✅ | `AiAgent` con patrulla, persecución, memoria y A* sobre tilemap. |
+| 24. Grid/hex + turn manager | ⚠️ Parcial | `TurnManager` por iniciativa; falta rejilla hexagonal y movimiento por casillas. |
+| 25. Cards/deck | ⚠️ Parcial | `CardDeck` con mazo, mano, descarte y mezcla; falta base de datos de cartas en assets y UI. |
+| 26. Procedural generation | ⚠️ Parcial | `DungeonGenerator2D` por random walk sobre un Tilemap. |
+| 27. Light2D avanzado/shaders | ⚠️ Parcial | Luces puntuales/conos, flicker y sombras; no hay shaders personalizados. |
+| 28. Skeletal/IK | ⚠️ Parcial | Huesos jerárquicos y preview; el objetivo IK aún no deforma la cadena. |
+| 29. Multiplayer | ❌ | No implementado; requiere transporte, autoridad y sincronización. |
+
+#### Limitaciones actuales de la Etapa D
+
+- No hay rejilla hexagonal ni movimiento por casillas.
+- Las cartas no se cargan desde `cards/*.json` ni tienen editor visual.
+- El generador procedural solo hace una mazmorra por random walk.
+- No hay sombras suaves ni shaders de luz personalizados.
+- El IK no está conectado a la pose de los huesos.
+- Multijugador no existe: no hay red, servidor ni predicción.
+- La IA usa A* de rejilla cuadrada, no navmesh continuo.
+
 ## Regla de diseño
 
 - Un componente debe resolver una responsabilidad.

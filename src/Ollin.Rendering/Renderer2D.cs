@@ -147,6 +147,23 @@ public sealed class Renderer2D : IDisposable
         DrawLighting(scene, camera, cameraPosition, width, height, viewProjection);
     }
 
+    private void DrawSkeletons(Scene scene)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<Skeleton2D>() is not { Enabled: true } skeleton) continue;
+            var points = skeleton.WorldPoints;
+            for (var i = 0; i < points.Count; i++)
+            {
+                var bone = skeleton.Bones[i];
+                var start = bone.Parent >= 0 && bone.Parent < points.Count
+                    ? points[bone.Parent]
+                    : scene.GetWorldPosition(entity);
+                _batch.DrawLine(null, start, points[i], 0.035f, new Vector4(0.9f, 0.4f, 1f, 1f));
+                _batch.DrawRect(null, points[i], new Vector2(0.08f), new Vector4(1f, 0.8f, 0.3f, 1f));
+            }
+        }
+    }
     private void DrawParticles(Scene scene)
     {
         foreach (var entity in scene.Entities)
