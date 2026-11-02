@@ -17,6 +17,20 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.90.0] — 2026-11-02
+
+### Corregido
+
+- Los componentes físicos conservan su orden y muestran el botón de quitar.
+- Los scripts se pliegan por defecto para dejar visible colisión.
+
+## [6.89.0] — 2026-11-02
+
+### Corregido
+
+- Se llama a WrapComponentPanels para colisión, cuerpo, rotador y oscilador.
+- Los botones de quitar componente ya se generan.
+
 ## [6.88.0] — 2026-11-02
 
 ### Corregido

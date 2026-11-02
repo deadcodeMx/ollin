@@ -611,7 +611,7 @@
                     <ItemsControl ItemsSource="{Binding Selected.ScriptEditors}" Margin="0,4">
                       <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                          <Expander IsExpanded="True" Margin="0,2">
+                          <Expander IsExpanded="False" Margin="0,2">
                             <Expander.Header>
                               <TextBlock Text="{Binding Title, StringFormat='SCRIPT · {0}'}" FontSize="10" FontWeight="Bold" Foreground="#E9A23B" />
                             </Expander.Header>

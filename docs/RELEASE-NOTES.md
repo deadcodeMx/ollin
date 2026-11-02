@@ -1,14 +1,15 @@
-## Ollin Beta 6.88.0 — eliminar componentes y abrir scripts
+## Ollin Beta 6.90.0 — componentes eliminables
 
 ### Corregido
 
-- Botón **✕ Quitar componente** visible dentro de cada componente.
-- Ya se puede quitar colisión, cuerpo físico, sprite, audio, luz, IA, etc.
-- Cada script tiene **Abrir script** en el inspector.
-- Se mantiene el botón de quitar script.
+- El botón **✕ Quitar componente** se genera dentro de cada componente.
+- Colisión, cuerpo físico, rotador y oscilador conservan su orden.
+- Los scripts se pliegan por defecto para dejar visible la colisión.
+- Cada script tiene **Abrir script**.
+- Los valores iniciales de scripts se leen del código real.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.88.0 instalado.
+- Instalador 6.90.0 instalado.
 - Demo técnica no publicada.

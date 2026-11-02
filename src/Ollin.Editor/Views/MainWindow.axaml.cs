@@ -287,7 +287,7 @@ public partial class MainWindow : Window
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
             if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR")) continue;
 
-            root.Children.Remove(child);
+            var index = root.Children.IndexOf(child);
             child.Children.Remove(title);
             var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
@@ -305,7 +305,8 @@ public partial class MainWindow : Window
                 child.Children.Add(BuildRemoveButton(kind));
                 expander.ContextMenu = BuildComponentMenu(kind);
             }
-            root.Children.Add(expander);
+            root.Children.RemoveAt(index);
+            root.Children.Insert(index, expander);
         }
     }
 
@@ -829,6 +830,11 @@ public partial class MainWindow : Window
             }
 
             tab.Content = null;
+
+            if (headerText == "Entidad" && content is StackPanel entityPanel)
+            {
+                WrapComponentPanels(entityPanel);
+            }
 
             if (headerText == "Física" && content is StackPanel physics)
             {
