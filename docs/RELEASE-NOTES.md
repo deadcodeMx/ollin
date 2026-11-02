@@ -1,20 +1,22 @@
-## Ollin Beta 6.97.0 — núcleo 2D: personaje y cámara
+## Ollin Beta 6.98.0 — Area2D y formas de colisión
 
 ### Añadido
 
-- **Personaje 2D**:
-  - Movimiento A/D o flechas.
-  - Salto con Espacio/W/Arriba.
-  - Gravedad, aceleración y caída máxima.
-  - Coyote time, buffer y salto variable.
-  - Rigidbody y collider automáticos.
-- **Cámara 2D**:
-  - Zona muerta X/Y.
-  - Límites de mapa.
-  - Seguimiento con suavizado.
+- **Area2D** como zona de detección/trigger.
+- **CircleCollider2D**.
+- **CapsuleCollider2D**.
+- **PolygonCollider2D**.
+- Base común `Collider2D` para física y render.
+- Radio editable para círculos.
+- Ancho/alto para caja, cápsula y área.
+
+### Importante
+
+- La física usa la **caja envolvente** de círculos, cápsulas y polígonos.
+- Es funcional y estable, pero la colisión circular/poligonal exacta queda para una etapa posterior.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.97.0 instalado y abierto sin crash.
+- Instalador 6.98.0 instalado y abierto sin crash.
 - Demo técnica no publicada.

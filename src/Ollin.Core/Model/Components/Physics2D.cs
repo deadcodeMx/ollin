@@ -2,18 +2,24 @@ using System.Numerics;
 
 namespace Ollin.Core.Model.Components;
 
-/// <summary>Caja de colisión alineada a los ejes, en espacio local de la entidad.</summary>
-public sealed class BoxCollider : Component
+/// <summary>Base común de todas las formas de colisión 2D.</summary>
+public abstract class Collider2D : Component
 {
-    public Vector2 Size { get; set; } = Vector2.One;
-
     public Vector2 Offset { get; set; }
 
-    /// <summary>Si es un disparador no bloquea el paso; solo notifica.</summary>
+    /// <summary>Si es disparador no bloquea el paso; solo notifica.</summary>
     public bool IsTrigger { get; set; }
 
-    /// <summary>Dibuja la caja en el viewport (útil para depurar).</summary>
     public bool ShowInEditor { get; set; } = true;
+
+    /// <summary>Esquinas en mundo. La física usa su caja envolvente.</summary>
+    public abstract Vector2[] GetWorldCorners(Matrix4x4 world);
+}
+
+/// <summary>Caja de colisión alineada a los ejes, en espacio local de la entidad.</summary>
+public sealed class BoxCollider : Collider2D
+{
+    public Vector2 Size { get; set; } = Vector2.One;
 
     public override Component CloneFor(Entity newOwner) => new BoxCollider
     {
@@ -25,11 +31,9 @@ public sealed class BoxCollider : Component
         Owner = newOwner,
     };
 
-    /// <summary>Esquinas en mundo (TL, TR, BR, BL), sin rotación.</summary>
-    public Vector2[] GetWorldCorners(Matrix4x4 world)
+    public override Vector2[] GetWorldCorners(Matrix4x4 world)
     {
         var half = Size * 0.5f;
-
         return new[]
         {
             Vector2.Transform(new Vector2(-half.X, half.Y) + Offset, world),
@@ -40,6 +44,113 @@ public sealed class BoxCollider : Component
     }
 }
 
+/// <summary>Colisión circular. Se resuelve con su caja envolvente.</summary>
+public sealed class CircleCollider2D : Collider2D
+{
+    public float Radius { get; set; } = 0.5f;
+
+    public override Component CloneFor(Entity newOwner) => new CircleCollider2D
+    {
+        Enabled = Enabled,
+        Radius = Radius,
+        Offset = Offset,
+        IsTrigger = IsTrigger,
+        ShowInEditor = ShowInEditor,
+        Owner = newOwner,
+    };
+
+    public override Vector2[] GetWorldCorners(Matrix4x4 world)
+    {
+        var r = MathF.Max(0.01f, Radius);
+        return new[]
+        {
+            Vector2.Transform(new Vector2(-r, r) + Offset, world),
+            Vector2.Transform(new Vector2(r, r) + Offset, world),
+            Vector2.Transform(new Vector2(r, -r) + Offset, world),
+            Vector2.Transform(new Vector2(-r, -r) + Offset, world),
+        };
+    }
+}
+
+/// <summary>Cápsula 2D. Se resuelve con su caja envolvente.</summary>
+public sealed class CapsuleCollider2D : Collider2D
+{
+    public Vector2 Size { get; set; } = new(0.7f, 1.4f);
+
+    public override Component CloneFor(Entity newOwner) => new CapsuleCollider2D
+    {
+        Enabled = Enabled,
+        Size = Size,
+        Offset = Offset,
+        IsTrigger = IsTrigger,
+        ShowInEditor = ShowInEditor,
+        Owner = newOwner,
+    };
+
+    public override Vector2[] GetWorldCorners(Matrix4x4 world)
+    {
+        var half = Size * 0.5f;
+        return new[]
+        {
+            Vector2.Transform(new Vector2(-half.X, half.Y) + Offset, world),
+            Vector2.Transform(new Vector2(half.X, half.Y) + Offset, world),
+            Vector2.Transform(new Vector2(half.X, -half.Y) + Offset, world),
+            Vector2.Transform(new Vector2(-half.X, -half.Y) + Offset, world),
+        };
+    }
+}
+
+/// <summary>Polígono de colisión. La física usa su caja envolvente.</summary>
+public sealed class PolygonCollider2D : Collider2D
+{
+    public List<Vector2> Points { get; set; } = new()
+    {
+        new(-0.5f, 0.5f), new(0.5f, 0.5f), new(0.5f, -0.5f), new(-0.5f, -0.5f),
+    };
+
+    public override Component CloneFor(Entity newOwner) => new PolygonCollider2D
+    {
+        Enabled = Enabled,
+        Points = new List<Vector2>(Points),
+        Offset = Offset,
+        IsTrigger = IsTrigger,
+        ShowInEditor = ShowInEditor,
+        Owner = newOwner,
+    };
+
+    public override Vector2[] GetWorldCorners(Matrix4x4 world) =>
+        Points.Select(point => Vector2.Transform(point + Offset, world)).ToArray();
+}
+
+/// <summary>Zona de detección: no bloquea, solo notifica solapamientos.</summary>
+public sealed class Area2D : Collider2D
+{
+    public Vector2 Size { get; set; } = new(2f, 2f);
+
+    public Area2D() => IsTrigger = true;
+
+    public override Component CloneFor(Entity newOwner) => new Area2D
+    {
+        Enabled = Enabled,
+        Size = Size,
+        Offset = Offset,
+        IsTrigger = true,
+        ShowInEditor = ShowInEditor,
+        Owner = newOwner,
+    };
+
+    public override Vector2[] GetWorldCorners(Matrix4x4 world)
+    {
+        var half = Size * 0.5f;
+        return new[]
+        {
+            Vector2.Transform(new Vector2(-half.X, half.Y) + Offset, world),
+            Vector2.Transform(new Vector2(half.X, half.Y) + Offset, world),
+            Vector2.Transform(new Vector2(half.X, -half.Y) + Offset, world),
+            Vector2.Transform(new Vector2(-half.X, -half.Y) + Offset, world),
+        };
+    }
+}
 
 /// <summary>
 /// Cuerpo con velocidad para física 2D simple: integración, gravedad y resolución
@@ -53,12 +164,10 @@ public sealed class Rigidbody2D : Component, ITickable
 
     public float GravityScale { get; set; } = 1f;
 
-    /// <summary>Los cuerpos estáticos no se mueven, pero bloquean a los demás.</summary>
     public bool IsStatic { get; set; }
 
     public float Mass { get; set; } = 1f;
 
-    /// <summary>Cuerpo cinemático: se mueve con su velocidad pero no lo empujan.</summary>
     public bool IsKinematic { get; set; }
 
     public override Component CloneFor(Entity newOwner) => new Rigidbody2D
@@ -75,17 +184,9 @@ public sealed class Rigidbody2D : Component, ITickable
 
     public void OnUpdate(float deltaTime)
     {
-        if (IsStatic || Owner is null)
-        {
-            return;
-        }
-
+        if (IsStatic || Owner is null) return;
         var velocity = Velocity;
-        if (AffectedByGravity)
-        {
-            velocity.Y -= 9.8f * GravityScale * deltaTime;
-        }
-
+        if (AffectedByGravity) velocity.Y -= 9.8f * GravityScale * deltaTime;
         Velocity = velocity;
     }
 }

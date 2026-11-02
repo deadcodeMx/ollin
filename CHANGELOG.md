@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.98.0] — 2026-11-02
+
+### Añadido
+
+- Area2D como zona de detección.
+- Colliders circular, cápsula y polígono.
+- Física y render usan Collider2D común.
+
 ## [6.97.0] — 2026-11-02
 
 ### Añadido

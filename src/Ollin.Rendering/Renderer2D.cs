@@ -330,7 +330,7 @@ public sealed class Renderer2D : IDisposable
         }
 
         // Caja de colisión, si la tiene
-        var collider = entity.GetComponent<BoxCollider>();
+        var collider = entity.GetComponent<Collider2D>();
         if (collider is { Enabled: true })
         {
             var box = collider.GetWorldCorners(scene.GetWorldMatrix(entity));
@@ -1250,7 +1250,7 @@ public sealed class Renderer2D : IDisposable
 
             var world = scene.GetWorldMatrix(entity);
 
-            if (entity.GetComponent<BoxCollider>() is { Enabled: true, IsTrigger: false } collider)
+            if (entity.GetComponent<Collider2D>() is { Enabled: true, IsTrigger: false } collider)
             {
                 AddEdges(edges, collider.GetWorldCorners(world));
             }

@@ -821,21 +821,43 @@ public sealed class EntityNode : ObservableObject
 
     // ---------- Física ----------
 
-    public bool HasCollider => Entity.GetComponent<BoxCollider>() is not null;
+    public bool HasCollider => Entity.GetComponent<Collider2D>() is not null;
 
-    public BoxCollider? Collider => Entity.GetComponent<BoxCollider>();
+    public bool HasCircleCollider => Entity.GetComponent<CircleCollider2D>() is not null;
+
+    public bool HasArea2D => Entity.GetComponent<Area2D>() is not null;
+
+    public Collider2D? Collider => Entity.GetComponent<Collider2D>();
+
+    private Vector2 ColliderSize => Collider switch
+    {
+        BoxCollider box => box.Size,
+        CapsuleCollider2D capsule => capsule.Size,
+        Area2D area => area.Size,
+        CircleCollider2D circle => new Vector2(circle.Radius * 2f),
+        PolygonCollider2D polygon => PolygonSize(polygon),
+        _ => Vector2.One,
+    };
+
+    private static Vector2 PolygonSize(PolygonCollider2D polygon)
+    {
+        if (polygon.Points.Count == 0) return Vector2.One;
+        var min = polygon.Points[0]; var max = polygon.Points[0];
+        foreach (var point in polygon.Points) { min = Vector2.Min(min, point); max = Vector2.Max(max, point); }
+        return Vector2.Max(new Vector2(0.01f), max - min);
+    }
 
     public decimal ColliderWidth
     {
-        get => (decimal)(Collider?.Size.X ?? 1f);
+        get => (decimal)ColliderSize.X;
         set
         {
-            if (Collider is null || MathF.Abs(Collider.Size.X - (float)value) < 0.001f)
+            if (Collider is null || MathF.Abs(ColliderSize.X - (float)value) < 0.001f)
             {
                 return;
             }
 
-            Collider.Size = new Vector2(Math.Max(0.01f, (float)value), Collider.Size.Y);
+            SetColliderSize(new Vector2(Math.Max(0.01f, (float)value), ColliderSize.Y));
             OnPropertyChanged();
             _owner.MarkDirty();
             _owner.RequestRedraw();
@@ -844,18 +866,40 @@ public sealed class EntityNode : ObservableObject
 
     public decimal ColliderHeight
     {
-        get => (decimal)(Collider?.Size.Y ?? 1f);
+        get => (decimal)ColliderSize.Y;
         set
         {
-            if (Collider is null || MathF.Abs(Collider.Size.Y - (float)value) < 0.001f)
+            if (Collider is null || MathF.Abs(ColliderSize.Y - (float)value) < 0.001f)
             {
                 return;
             }
 
-            Collider.Size = new Vector2(Collider.Size.X, Math.Max(0.01f, (float)value));
+            SetColliderSize(new Vector2(ColliderSize.X, Math.Max(0.01f, (float)value)));
             OnPropertyChanged();
             _owner.MarkDirty();
             _owner.RequestRedraw();
+        }
+    }
+
+    private void SetColliderSize(Vector2 size)
+    {
+        switch (Collider)
+        {
+            case BoxCollider box: box.Size = size; break;
+            case CapsuleCollider2D capsule: capsule.Size = size; break;
+            case Area2D area: area.Size = size; break;
+            case CircleCollider2D circle: circle.Radius = MathF.Max(0.01f, MathF.Max(size.X, size.Y) * 0.5f); break;
+        }
+    }
+
+    public decimal ColliderRadius
+    {
+        get => (decimal)(Collider is CircleCollider2D circle ? circle.Radius : 0.5f);
+        set
+        {
+            if (Collider is not CircleCollider2D circle || MathF.Abs(circle.Radius - (float)value) < 0.001f) return;
+            circle.Radius = MathF.Max(0.01f, (float)value);
+            OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw();
         }
     }
 
@@ -1296,6 +1340,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(ScriptFields));
         OnPropertyChanged(nameof(HasSprite));
         OnPropertyChanged(nameof(HasCollider));
+        OnPropertyChanged(nameof(HasCircleCollider));
+        OnPropertyChanged(nameof(HasArea2D));
         OnPropertyChanged(nameof(HasRigidbody));
         OnPropertyChanged(nameof(HasCharacterBody));
         OnPropertyChanged(nameof(CharacterMoveSpeed));

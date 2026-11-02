@@ -1518,6 +1518,10 @@ public partial class MainWindow : Window
         }
 
         Add("Personaje 2D", "character");
+        Add("Área 2D (trigger)", "area");
+        Add("Colisión circular", "circle");
+        Add("Colisión cápsula", "capsule");
+        Add("Colisión polígono", "polygon");
         Add("Visual (Sprite)", "sprite");
         Add("Interactuable", "interactable");
         Add("Colisión (caja)", "collider");

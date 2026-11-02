@@ -20,7 +20,7 @@ internal sealed class PhysicsSystem
 
     public void Step(Scene scene, IReadOnlyList<OllinScript> scripts, float deltaTime)
     {
-        var bodies = new List<(Entity Entity, BoxCollider Collider, Rigidbody2D? Body)>();
+        var bodies = new List<(Entity Entity, Collider2D Collider, Rigidbody2D? Body)>();
 
         foreach (var entity in scene.Entities.ToArray())
         {
@@ -29,7 +29,7 @@ internal sealed class PhysicsSystem
                 continue;
             }
 
-            var collider = entity.GetComponent<BoxCollider>();
+            var collider = entity.GetComponent<Collider2D>();
             if (collider is not { Enabled: true })
             {
                 continue;
@@ -213,7 +213,7 @@ internal sealed class PhysicsSystem
                 continue;
             }
 
-            if (a.GetComponent<BoxCollider>()?.IsTrigger == true || b.GetComponent<BoxCollider>()?.IsTrigger == true)
+            if (a.GetComponent<Collider2D>()?.IsTrigger == true || b.GetComponent<Collider2D>()?.IsTrigger == true)
             {
                 NotifyExit(scripts, a, b);
             }
@@ -224,8 +224,8 @@ internal sealed class PhysicsSystem
     }
 
     private static void Push(
-        (Entity Entity, BoxCollider Collider, Rigidbody2D? Body) a,
-        (Entity Entity, BoxCollider Collider, Rigidbody2D? Body) b,
+        (Entity Entity, Collider2D Collider, Rigidbody2D? Body) a,
+        (Entity Entity, Collider2D Collider, Rigidbody2D? Body) b,
         Vector2 delta)
     {
         var aDynamic = a.Body is { IsStatic: false, IsKinematic: false };
@@ -254,7 +254,7 @@ internal sealed class PhysicsSystem
     /// Anula la velocidad en el eje del empuje: evita que el cuerpo vuelva a
     /// penetrar el sólido en el siguiente paso (y que acabe atravesándolo).
     /// </summary>
-    private static void CancelVelocity((Entity Entity, BoxCollider Collider, Rigidbody2D? Body) body, Vector2 push)
+    private static void CancelVelocity((Entity Entity, Collider2D Collider, Rigidbody2D? Body) body, Vector2 push)
     {
         if (body.Body is not { IsStatic: false } rigidbody)
         {
@@ -276,7 +276,7 @@ internal sealed class PhysicsSystem
         rigidbody.Velocity = velocity;
     }
 
-    private static void GetBounds(Scene scene, Entity entity, BoxCollider collider, out Vector2 min, out Vector2 max)
+    private static void GetBounds(Scene scene, Entity entity, Collider2D collider, out Vector2 min, out Vector2 max)
     {
         var corners = collider.GetWorldCorners(scene.GetWorldMatrix(entity));
         min = new Vector2(float.MaxValue, float.MaxValue);
@@ -333,8 +333,8 @@ internal sealed class PhysicsSystem
     {
         try
         {
-            var isTrigger = script.Entity.GetComponent<BoxCollider>()?.IsTrigger == true ||
-                            other.GetComponent<BoxCollider>()?.IsTrigger == true;
+            var isTrigger = script.Entity.GetComponent<Collider2D>()?.IsTrigger == true ||
+                            other.GetComponent<Collider2D>()?.IsTrigger == true;
 
             if (isTrigger)
             {

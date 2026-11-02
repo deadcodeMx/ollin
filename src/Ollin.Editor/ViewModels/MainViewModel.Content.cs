@@ -303,6 +303,26 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new Interactable());
                 break;
 
+            case "area":
+                if (entity.HasComponent<Collider2D>()) { added = false; break; }
+                entity.AddComponent(new Area2D());
+                break;
+
+            case "circle":
+                if (entity.HasComponent<Collider2D>()) { added = false; break; }
+                entity.AddComponent(new CircleCollider2D());
+                break;
+
+            case "capsule":
+                if (entity.HasComponent<Collider2D>()) { added = false; break; }
+                entity.AddComponent(new CapsuleCollider2D());
+                break;
+
+            case "polygon":
+                if (entity.HasComponent<Collider2D>()) { added = false; break; }
+                entity.AddComponent(new PolygonCollider2D());
+                break;
+
             case "collider":
                 if (entity.HasComponent<BoxCollider>()) { added = false; break; }
                 var size = entity.GetComponent<SpriteRenderer>()?.Size ?? Vector2.One;
@@ -442,7 +462,7 @@ public sealed partial class MainViewModel
             "animator" => entity.GetComponent<SpriteAnimator>(),
             "camera" => entity.GetComponent<Camera2D>(),
             "tilemap" => entity.GetComponent<Tilemap>(),
-            "collider" => entity.GetComponent<BoxCollider>(),
+            "collider" => entity.GetComponent<Collider2D>(),
             "rigidbody" => entity.GetComponent<Rigidbody2D>(),
             "character" => entity.GetComponent<CharacterBody2D>(),
             "audio" => entity.GetComponent<AudioSource>(),

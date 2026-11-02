@@ -638,6 +638,10 @@
                         <TextBlock Text="Alto" VerticalAlignment="Center" Classes="hint" />
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderHeight, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.###" />
                       </Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1" IsVisible="{Binding Selected.HasCircleCollider}">
+                        <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderRadius, Mode=TwoWay}" Increment="0.05" Minimum="0.01" FormatString="0.###" />
+                      </Grid>
                       <CheckBox Content="Es disparador (trigger)" IsChecked="{Binding Selected.IsTrigger, Mode=TwoWay}" FontSize="11.5" />
                     </StackPanel>
 
