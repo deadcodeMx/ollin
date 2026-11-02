@@ -393,6 +393,40 @@ public partial class MainWindow : Window
     private void OnBrushFloor(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewportHost.Viewport.Brush3DMode = ViewportHost.Viewport.Brush3DMode == Controls.Brush3DMode.Floor ? Controls.Brush3DMode.None : Controls.Brush3DMode.Floor;
 
+    private void OnZoomIn(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ZoomBy(1.2f);
+
+    private void OnZoomOut(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ZoomBy(1f / 1.2f);
+
+    private void OnZoomReset(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        ViewModel?.SetZoom(1f);
+
+    private void OnSendToBack(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => MoveSorting(-1, extreme: true);
+
+    private void OnSendBackward(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => MoveSorting(-1, extreme: false);
+
+    private void OnBringForward(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => MoveSorting(1, extreme: false);
+
+    private void OnBringToFront(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => MoveSorting(1, extreme: true);
+
+    private void MoveSorting(int direction, bool extreme)
+    {
+        if (ViewModel?.Selected is not { HasSprite: true } selected)
+        {
+            return;
+        }
+
+        var orders = ViewModel.Scene.Entities
+            .Select(entity => entity.GetComponent<Ollin.Core.Model.Components.SpriteRenderer>()?.SortingOrder ?? 0)
+            .ToList();
+
+        var current = (int)selected.SortingOrder;
+        var value = extreme
+            ? (direction > 0 ? orders.DefaultIfEmpty(0).Max() + 1 : orders.DefaultIfEmpty(0).Min() - 1)
+            : current + direction;
+
+        selected.SortingOrder = value;
+    }
+
     private void OnSnapToggle(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewportHost.Viewport.Snap3D = (sender as Avalonia.Controls.Primitives.ToggleButton)?.IsChecked == true;
 

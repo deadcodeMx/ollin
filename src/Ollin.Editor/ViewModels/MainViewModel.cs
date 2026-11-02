@@ -1252,6 +1252,21 @@ public sealed partial class MainViewModel : ObservableObject
         Selected = FindNode(entity.Id);
     }
 
+    public void ZoomBy(float factor)
+    {
+        var camera = ActiveCamera;
+        camera.Zoom = Math.Clamp(camera.Zoom * factor, 0.05f, 40f);
+        OnPropertyChanged(nameof(ZoomText));
+        RequestRedraw();
+    }
+
+    public void SetZoom(float zoom)
+    {
+        ActiveCamera.Zoom = Math.Clamp(zoom, 0.05f, 40f);
+        OnPropertyChanged(nameof(ZoomText));
+        RequestRedraw();
+    }
+
     public void ResetCamera()
     {
         var camera = ActiveCamera;

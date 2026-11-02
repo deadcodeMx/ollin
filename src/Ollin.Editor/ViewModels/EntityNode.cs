@@ -889,6 +889,23 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public bool FlipY
+    {
+        get => Sprite?.FlipY ?? false;
+        set
+        {
+            if (Sprite is null)
+            {
+                return;
+            }
+
+            Sprite.FlipY = value;
+            OnPropertyChanged();
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
     public decimal OrthographicSize
     {
         get => (decimal)(Camera?.OrthographicSize ?? 6f);
@@ -965,6 +982,7 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(SpriteHeight));
         OnPropertyChanged(nameof(SortingOrder));
         OnPropertyChanged(nameof(FlipX));
+        OnPropertyChanged(nameof(FlipY));
         OnPropertyChanged(nameof(OrthographicSize));
         OnPropertyChanged(nameof(CameraZoom));
         OnPropertyChanged(nameof(ComponentsSummary));

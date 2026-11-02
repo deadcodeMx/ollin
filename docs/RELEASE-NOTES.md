@@ -1,23 +1,21 @@
-## Ollin Beta 6.57.0 — interfaz limpia y snap 2D
+## Ollin Beta 6.58.0 — pulido 2D
 
 ### Incluye
 
-- Barra principal **limpia y agrupada**.
-- **Rejilla** visible/oculta.
-- **Imán 2D** configurable (0.25–2).
-- Herramientas 3D/2.5D en **Herramientas ▾**.
-- Reproducir, pausa, detener y exportar a la derecha.
+- **Volteo vertical** de sprite.
+- Botones de **orden de capas**.
+- Barra flotante de **zoom** en el viewport.
 - **205 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 6.57.0 y abre el editor.
-2. Prueba **+ Sprite**, **Rejilla** e **Imán 2D**.
-3. Cambia el tamaño del imán y mueve un sprite.
-4. Abre **Herramientas ▾** para paredes, gizmos, grafo y cámara.
+1. Instala 6.58.0 y selecciona un sprite.
+2. En **Visual**, prueba voltear horizontal/vertical.
+3. Usa **Al fondo/Atrás/Adelante/Al frente**.
+4. Usa la barra de zoom inferior derecha.
 
 ### Limitaciones
 
-- El imán 2D se aplica al mover; rotación/escala usan Ctrl.
-- Los tamaños de rejilla son 0.25, 0.5, 1 y 2.
+- El orden de capas se guarda en el sprite, no como lista de escena.
+- La barra de zoom no reemplaza el zoom con rueda.
 - La demo técnica no se publica.

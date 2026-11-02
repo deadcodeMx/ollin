@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.58.0] — 2026-11-02
+
+### Añadido
+
+- Volteo vertical de sprite.
+- Botones de orden de capas: al fondo, atrás, adelante, al frente.
+- Barra de zoom flotante en el viewport.
+- 205 pruebas automatizadas.
+
 ## [6.57.0] — 2026-11-02
 
 ### Cambiado

@@ -989,3 +989,10 @@ error de sintaxis.
 - **Imán 2D** configurable: 0.25, 0.5, 1 o 2 unidades.
 - Herramientas 3D/2.5D y cámara/scripts en **Herramientas ▾**.
 - Reproducir, pausa, detener y exportar agrupados a la derecha.
+
+## 56. Pulido 2D: capas, volteo y zoom (6.58)
+
+- **Voltear verticalmente** además de horizontal.
+- Botones **Al fondo / Atrás / Adelante / Al frente** para ordenar sprites.
+- Barra flotante de zoom en el viewport: −, porcentaje, + y Enfocar.
+- El zoom usa el mismo valor que la rueda y actualiza el porcentaje.

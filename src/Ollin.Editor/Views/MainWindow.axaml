@@ -324,6 +324,17 @@
                            Classes="hint" IsHitTestVisible="False"
                            Text="Clic: seleccionar  ·  Rueda: zoom  ·  Alt + arrastrar: mover cámara" />
 
+                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10"
+                        Background="#E610131A" BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1"
+                        CornerRadius="6" Padding="3">
+                  <StackPanel Orientation="Horizontal" Spacing="2">
+                    <Button Classes="tool" Content="−" Click="OnZoomOut" ToolTip.Tip="Alejar" />
+                    <Button Classes="tool" Content="{Binding ZoomText}" Click="OnZoomReset" MinWidth="58" ToolTip.Tip="Volver al 100%" />
+                    <Button Classes="tool" Content="+" Click="OnZoomIn" ToolTip.Tip="Acercar" />
+                    <Button Classes="tool" Content="Enfocar" Click="OnFrameSelected" ToolTip.Tip="Enfocar la selección" />
+                  </StackPanel>
+                </Border>
+
                 <Border IsVisible="{Binding HasInteractionPrompt}" HorizontalAlignment="Center"
                         VerticalAlignment="Bottom" Margin="0,0,0,78"
                         Background="#E610131A" BorderBrush="{DynamicResource Ollin.Border}"
@@ -601,6 +612,7 @@
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.SortingOrder, Mode=TwoWay}" Increment="1" FormatString="0" />
                     </Grid>
                     <CheckBox Content="Voltear horizontalmente" IsChecked="{Binding Selected.FlipX, Mode=TwoWay}" FontSize="11.5" />
+                    <CheckBox Content="Voltear verticalmente" IsChecked="{Binding Selected.FlipY, Mode=TwoWay}" FontSize="11.5" />
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Paralaje" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.Parallax, Mode=TwoWay}" Increment="0.1" Minimum="0" Maximum="1" FormatString="0.##" />
