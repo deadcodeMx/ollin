@@ -62,6 +62,7 @@ public sealed class NodeGraphWindow : Window
     private bool _snapNodes = true;
     private bool _stepMode;
     private bool _moveHiddenMembers;
+    private int _traceIndex = -1;
     private StackPanel? _quickActions;
     private StackPanel? _editActions;
     private StackPanel? _zoomControls;
@@ -250,6 +251,8 @@ public sealed class NodeGraphWindow : Window
         AddMore("Separar V", () => Separate(false));
         AddMore("Ejecutar hasta seleccionado", RunToSelected);
         AddMore("Cancelar ejecutar hasta", CancelRunTo);
+        AddMore("Paso atrás (traza)", StepTraceBack);
+        AddMore("Paso adelante (traza)", StepTraceForward);
         AddMore("Mover hijos ocultos", ToggleMoveHidden);
         AddMore("Modo paso", ToggleStepMode);
         AddMore("Atajos (F1)", ShowShortcuts);
@@ -517,6 +520,22 @@ F1      Esta ayuda
             Content = new ScrollViewer { Content = text },
         };
         window.Show();
+    }
+
+    private void StepTraceBack()
+    {
+        if (_graph.DebugFrames.Count == 0) return;
+        _traceIndex = Math.Clamp(_traceIndex <= 0 ? 0 : _traceIndex - 1, 0, _graph.DebugFrames.Count - 1);
+        _activeNodeId = _graph.DebugFrames[_traceIndex].NodeId;
+        Render();
+    }
+
+    private void StepTraceForward()
+    {
+        if (_graph.DebugFrames.Count == 0) return;
+        _traceIndex = Math.Clamp(_traceIndex + 1, 0, _graph.DebugFrames.Count - 1);
+        _activeNodeId = _graph.DebugFrames[_traceIndex].NodeId;
+        Render();
     }
 
     private void StepGraph()
@@ -856,6 +875,7 @@ F1      Esta ayuda
         if (id != _activeNodeId)
         {
             _activeNodeId = id;
+            _traceIndex = _graph.DebugFrames.Count - 1;
             Render();
         }
     }
@@ -947,39 +967,58 @@ F1      Esta ayuda
 
             if (_graph.DebugFrames.Count > 0)
             {
-                _inspector.Children.Add(new TextBlock
+                if (_traceIndex < 0 || _traceIndex >= _graph.DebugFrames.Count)
                 {
-                    Text = "Variables por nodo",
-                    FontSize = 10,
-                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
-                    Margin = new Thickness(0, 6, 0, 0),
-                });
+                    _traceIndex = _graph.DebugFrames.Count - 1;
+                }
 
-                foreach (var frame in _graph.DebugFrames.TakeLast(3).Reverse())
+                var frame = _graph.DebugFrames[_traceIndex];
+
+                if (_graph.Find(frame.NodeId) is { } frameNode)
                 {
-                    if (_graph.Find(frame.NodeId) is not { } frameNode) continue;
-
                     _inspector.Children.Add(new TextBlock
                     {
-                        Text = $"{KindLabel(frameNode)} · {NodeSummary(frameNode)}",
+                        Text = $"Traza {_traceIndex + 1}/{_graph.DebugFrames.Count} · {KindLabel(frameNode)} · {NodeSummary(frameNode)}",
                         FontSize = 9.5,
                         FontWeight = FontWeight.Bold,
                         Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
                         TextWrapping = TextWrapping.Wrap,
+                        Margin = new Thickness(0, 6, 0, 0),
                     });
 
-                    foreach (var (key, value) in (frame.VariablesAfter ?? frame.VariablesBefore).Take(4))
+                    var before = frame.VariablesBefore;
+                    var after = frame.VariablesAfter ?? before;
+                    var keys = before.Keys.Concat(after.Keys).Distinct(StringComparer.OrdinalIgnoreCase)
+                        .Where(key => !string.Equals(before.GetValueOrDefault(key), after.GetValueOrDefault(key), StringComparison.Ordinal))
+                        .Take(8)
+                        .ToList();
+
+                    if (keys.Count == 0)
                     {
                         _inspector.Children.Add(new TextBlock
                         {
-                            Text = $"    {key} = {value}",
+                            Text = "Sin cambios de variables",
                             FontSize = 9.5,
-                            Foreground = new SolidColorBrush(Color.Parse("#AAB4C4")),
+                            Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                         });
+                    }
+                    else
+                    {
+                        foreach (var key in keys)
+                        {
+                            var from = before.TryGetValue(key, out var valueBefore) ? valueBefore : "∅";
+                            var to = after.TryGetValue(key, out var valueAfter) ? valueAfter : "∅";
+                            _inspector.Children.Add(new TextBlock
+                            {
+                                Text = $"    {key}: {from} → {to}",
+                                FontSize = 9.5,
+                                Foreground = new SolidColorBrush(Color.Parse("#AAB4C4")),
+                                TextWrapping = TextWrapping.Wrap,
+                            });
+                        }
                     }
                 }
             }
-
             if (GameStateHost.Current is { } state)
             {
                 foreach (var (key, value) in state.Values.Take(8))
@@ -1028,6 +1067,7 @@ F1      Esta ayuda
         Dispatcher.UIThread.Post(() =>
         {
             _activeNodeId = nodeId;
+            _traceIndex = _graph.DebugFrames.Count - 1;
 
             if (_viewModel.IsPlaying && !_viewModel.IsPaused)
             {

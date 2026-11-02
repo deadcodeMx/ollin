@@ -961,3 +961,9 @@ error de sintaxis.
 - **Más ▾ → Atajos (F1)**.
 - El buscador solo se expande si la ventana tiene ancho suficiente (≥1080 px).
 - El buscador tiene nombre de accesibilidad.
+
+## 52. Cierre de limitaciones de 6.52 (6.54)
+
+- **Paso atrás/adelante de traza**: navega las últimas ejecuciones y muestra el nodo.
+- **Diff de variables**: cada nodo muestra `antes → después` de las variables cambiadas.
+- El paso atrás de traza **no revierte el mundo**; solo inspecciona la ejecución.

@@ -1,22 +1,20 @@
-## Ollin Beta 6.53.0 — cierre de limitaciones de 0.50
+## Ollin Beta 6.54.0 — cierre de 6.52
 
 ### Incluye
 
-- **F1** abre la ventana de atajos.
-- **Más ▾ → Atajos (F1)**.
-- El buscador solo se expande si hay ancho suficiente.
-- Nombre de accesibilidad en el buscador.
+- **Paso atrás/adelante de traza**.
+- **Diff de variables** `antes → después` por nodo.
 - **205 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 6.53.0 y abre el grafo.
-2. Pulsa **F1** y revisa la lista de atajos.
-3. Reduce la ventana y enfoca el buscador: no debe apretar la barra.
-4. Usa **Más ▾ → Atajos** si no recuerdas la tecla.
+1. Instala 6.54.0 y abre el grafo.
+2. Reproduce una acción que cambie `GameState` y pausa.
+3. Usa **Más ▾ → Paso atrás (traza)**.
+4. Revisa el diff de variables del nodo.
 
 ### Limitaciones
 
-- No se ha validado con lector de pantalla real.
-- La ventana de atajos es informativa, no editable.
+- El paso atrás es de **traza**, no revierte el mundo.
+- El diff solo muestra variables cambiadas, máximo 8.
 - La demo técnica no se publica.

@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.54.0] — 2026-11-02
+
+### Añadido
+
+- Paso atrás/adelante de traza.
+- Diff de variables antes/después por nodo.
+- 205 pruebas automatizadas.
+
 ## [6.53.0] — 2026-11-02
 
 ### Cambiado

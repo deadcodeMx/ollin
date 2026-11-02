@@ -37,6 +37,7 @@ public class GraphDebugFrameTests
 
             Assert.Equal(action.Id, frame.NodeId);
             Assert.Equal("7", frame.VariablesAfter!["contador"]);
+            Assert.DoesNotContain("contador", frame.VariablesBefore);
         }
         finally
         {
