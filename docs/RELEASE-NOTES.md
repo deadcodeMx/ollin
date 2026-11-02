@@ -1,21 +1,22 @@
-## Ollin Beta 6.62.0 — edición en lote
+## Ollin Beta 6.63.0 — copiar/pegar y tilemaps
 
 ### Incluye
 
-- Mover varias entidades por ΔX/ΔY.
-- Aplicar rotación, escala y orden de capa en lote.
-- Duplicar toda la selección.
+- **Copiar/pegar** toda la selección.
+- **Borrador**, **Relleno** y **Limpiar** en tilemap.
+- Deshacer por trazo de pintura.
 - **205 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 6.62.0 y selecciona varias entidades.
-2. En el inspector, usa **Mover selección**.
-3. Aplica rotación, escala u orden.
-4. Pulsa **Duplicar** para copiar todo el grupo.
+1. Instala 6.63.0.
+2. Selecciona varias entidades y usa Ctrl+C / Ctrl+V.
+3. Abre una entidad con **Tilemap**.
+4. Pinta, usa **Borrador**, **Relleno** y **Limpiar**.
+5. Comprueba que Ctrl+Z revierte el trazo completo.
 
 ### Limitaciones
 
-- La edición de posición es por desplazamiento, no absoluta.
-- Las copias no reconstruyen relaciones padre-hijo entre seleccionados.
+- El relleno solo afecta al tilemap seleccionado.
+- El portapapeles es interno del editor, no del sistema.
 - La demo técnica no se publica.

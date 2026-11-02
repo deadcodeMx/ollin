@@ -63,7 +63,15 @@ public sealed class ViewportSurface : Border
             _painting = true;
             _capturedPointer = e.Pointer;
             e.Pointer.Capture(this);
-            Viewport.PaintAt(position);
+            if (Viewport.ViewModel?.TileFillMode == true)
+            {
+                Viewport.FillAt(position);
+            }
+            else
+            {
+                Viewport.PaintAt(position);
+            }
+
             e.Handled = true;
             return;
         }
@@ -232,7 +240,10 @@ public sealed class ViewportSurface : Border
 
         if (_painting)
         {
-            Viewport.PaintAt(e.GetPosition(this));
+            if (Viewport.ViewModel?.TileFillMode != true)
+            {
+                Viewport.PaintAt(e.GetPosition(this));
+            }
             e.Handled = true;
             return;
         }
@@ -274,6 +285,7 @@ public sealed class ViewportSurface : Border
         if (_painting)
         {
             _painting = false;
+            if (Viewport.ViewModel?.TileFillMode != true) Viewport.CommitTileStroke();
             _capturedPointer?.Capture(null);
             _capturedPointer = null;
             e.Handled = true;

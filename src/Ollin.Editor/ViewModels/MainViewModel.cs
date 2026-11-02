@@ -59,6 +59,7 @@ public sealed partial class MainViewModel : ObservableObject
     private string _scriptStatus = "Scripts: —";
     private bool _isPaintingTiles;
     private decimal _paintTileIndex;
+    private bool _tileFillMode;
     private FileSystemWatcher? _scriptWatcher;
     private bool _usesPrecompiledScripts;
     private DispatcherTimer? _scriptReloadTimer;
@@ -139,6 +140,77 @@ public sealed partial class MainViewModel : ObservableObject
     {
         get => _paintTileIndex;
         set => SetProperty(ref _paintTileIndex, value);
+    }
+
+    public bool TileFillMode
+    {
+        get => _tileFillMode;
+        set
+        {
+            if (SetProperty(ref _tileFillMode, value))
+            {
+                StatusMessage = value ? "Relleno: haz clic en una celda" : "Pincel de mosaicos";
+            }
+        }
+    }
+
+    public void ClearTilemap()
+    {
+        if (IsPlaying || Selected?.Tilemap is not { } map) return;
+        Array.Fill(map.Tiles, -1);
+        MarkDirty();
+        CommitEdit("Limpiar tilemap");
+        RequestRedraw();
+    }
+
+    public void SetTileEraser()
+    {
+        PaintTileIndex = -1;
+        TileFillMode = false;
+        IsPaintingTiles = true;
+        StatusMessage = "Borrador de mosaicos: clic para borrar";
+    }
+
+    public void CommitTileStroke()
+    {
+        if (IsPaintingTiles) CommitEdit("Pintar tilemap");
+    }
+
+    public void FillTileAtWorld(Vector2 world)
+    {
+        if (IsPlaying || Selected?.Tilemap is not { } map) return;
+
+        var worldMatrix = Scene.GetWorldMatrix(Selected.Entity);
+        if (!Matrix4x4.Invert(worldMatrix, out var inverse)) return;
+
+        var local = Vector2.Transform(world, inverse);
+        var (startX, startY) = map.WorldToCell(local);
+        if (startX < 0 || startY < 0 || startX >= map.Width || startY >= map.Height) return;
+
+        var target = map.TileAt(startX, startY);
+        var replacement = (int)_paintTileIndex;
+        if (target == replacement) return;
+
+        var stack = new Stack<(int X, int Y)>();
+        var seen = new HashSet<(int X, int Y)>();
+        stack.Push((startX, startY));
+
+        while (stack.Count > 0)
+        {
+            var (x, y) = stack.Pop();
+            if (x < 0 || y < 0 || x >= map.Width || y >= map.Height || !seen.Add((x, y))) continue;
+            if (map.TileAt(x, y) != target) continue;
+
+            map.SetTile(x, y, replacement);
+            stack.Push((x + 1, y));
+            stack.Push((x - 1, y));
+            stack.Push((x, y + 1));
+            stack.Push((x, y - 1));
+        }
+
+        MarkDirty();
+        CommitEdit("Rellenar tilemap");
+        RequestRedraw();
     }
 
     /// <summary>Pinta el mosaico seleccionado en la celda bajo un punto de mundo.</summary>

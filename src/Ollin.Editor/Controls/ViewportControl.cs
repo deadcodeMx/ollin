@@ -904,6 +904,10 @@ public sealed class ViewportControl : OpenGlControlBase
     /// <summary>Pinta el mosaico activo en la celda bajo el puntero.</summary>
     public void PaintAt(Point position) => _viewModel?.PaintTileAtWorld(ToWorld(position));
 
+    public void FillAt(Point position) => _viewModel?.FillTileAtWorld(ToWorld(position));
+
+    public void CommitTileStroke() => _viewModel?.CommitTileStroke();
+
     /// <summary>Alimenta la posición del ratón para los scripts (solo durante la reproducción).</summary>
     public void UpdatePointerInput(Point position)
     {

@@ -9,7 +9,7 @@ namespace Ollin.Editor.ViewModels;
 /// <summary>Portapapeles, prefabs y búsqueda en la jerarquía.</summary>
 public sealed partial class MainViewModel
 {
-    private string? _clipboard;
+    private List<string> _clipboard = new();
     private string _searchText = string.Empty;
 
     public string SearchText
@@ -46,29 +46,30 @@ public sealed partial class MainViewModel
 
     public void ClearSearch() => SearchText = string.Empty;
 
-    /// <summary>Copia la entidad seleccionada al portapapeles interno (JSON).</summary>
+    /// <summary>Copia la selección al portapapeles interno (JSON por entidad).</summary>
     public void CopySelected()
     {
-        if (Selected is null)
+        var nodes = _selection.Count > 0
+            ? _selection.ToList()
+            : Selected is { } primary ? new List<EntityNode> { primary } : new List<EntityNode>();
+
+        if (nodes.Count == 0)
         {
             StatusMessage = "Selecciona una entidad para copiar";
             return;
         }
 
-        _clipboard = PrefabSerializer.Serialize(Selected.Entity);
-        StatusMessage = $"Copiado: {Selected.Name}";
-        Log.Info($"Entidad copiada: {Selected.Name}", "Editor");
+        _clipboard = nodes.Select(node => PrefabSerializer.Serialize(node.Entity)).ToList();
+        StatusMessage = nodes.Count == 1 ? $"Copiado: {nodes[0].Name}" : $"{nodes.Count} entidades copiadas";
+        Log.Info(nodes.Count == 1 ? $"Entidad copiada: {nodes[0].Name}" : $"{nodes.Count} entidades copiadas", "Editor");
     }
 
-    /// <summary>Pega la entidad copiada con un desplazamiento y nombre único.</summary>
+    /// <summary>Pega las entidades copiadas con desplazamiento y nombres únicos.</summary>
     public void PasteCopied()
     {
-        if (IsPlaying)
-        {
-            return;
-        }
+        if (IsPlaying) return;
 
-        if (string.IsNullOrWhiteSpace(_clipboard))
+        if (_clipboard.Count == 0)
         {
             StatusMessage = "No hay nada que pegar";
             return;
@@ -76,17 +77,23 @@ public sealed partial class MainViewModel
 
         try
         {
-            var entity = PrefabSerializer.Deserialize(_clipboard);
-            entity.Id = Guid.NewGuid();
-            entity.Name = UniqueName(entity.Name);
-            entity.Transform.Position += new Vector2(1f, -0.5f);
-            Scene.Add(entity);
+            var copies = new List<Entity>();
+            foreach (var serialized in _clipboard)
+            {
+                var entity = PrefabSerializer.Deserialize(serialized);
+                entity.Id = Guid.NewGuid();
+                entity.Name = UniqueName(entity.Name);
+                entity.Transform.Position += new Vector2(1f, -0.5f);
+                Scene.Add(entity);
+                copies.Add(entity);
+            }
+
             RebuildTree();
-            Select(entity);
+            SelectMany(copies);
             IsDirty = true;
-            CommitEdit("Pegar entidad");
+            CommitEdit(copies.Count == 1 ? "Pegar entidad" : $"Pegar {copies.Count} entidades");
             OnPropertyChanged(nameof(EntityCountText));
-            StatusMessage = $"Pegado: {entity.Name}";
+            StatusMessage = copies.Count == 1 ? $"Pegado: {copies[0].Name}" : $"{copies.Count} entidades pegadas";
             RequestRedraw();
         }
         catch (Exception exception)
@@ -94,7 +101,6 @@ public sealed partial class MainViewModel
             Log.Error($"No se pudo pegar: {exception.Message}", "Editor");
         }
     }
-
     /// <summary>Guarda la entidad seleccionada como prefab reutilizable.</summary>
     public void SaveSelectedAsPrefab(string path)
     {

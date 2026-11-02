@@ -432,6 +432,10 @@ public partial class MainWindow : Window
     private void OnBrushFloor(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewportHost.Viewport.Brush3DMode = ViewportHost.Viewport.Brush3DMode == Controls.Brush3DMode.Floor ? Controls.Brush3DMode.None : Controls.Brush3DMode.Floor;
 
+    private void OnTileEraser(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTileEraser();
+
+    private void OnTileClear(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ClearTilemap();
+
     private void OnBatchMove(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ApplyBatchMove();
 
     private void OnBatchRotate(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ApplyBatchRotation();

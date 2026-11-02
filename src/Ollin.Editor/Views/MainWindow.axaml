@@ -1484,6 +1484,11 @@
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.TileSize, Mode=TwoWay}" Increment="0.25" Minimum="0.05" FormatString="0.###" />
                     </Grid>
                     <CheckBox Content="Pintar en el viewport" IsChecked="{Binding IsPaintingTiles, Mode=TwoWay}" FontSize="11.5" />
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                      <Button Classes="tool" Content="Borrador" Click="OnTileEraser" />
+                      <ToggleButton Classes="tool" Content="Relleno" IsChecked="{Binding TileFillMode, Mode=TwoWay}" />
+                      <Button Classes="tool" Content="Limpiar" Click="OnTileClear" />
+                    </StackPanel>
                     <CheckBox Content="Colisiona (bloquea cuerpos)" IsChecked="{Binding Selected.TilemapCollides, Mode=TwoWay}" FontSize="11.5" />
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Mosaico" VerticalAlignment="Center" Classes="hint" />

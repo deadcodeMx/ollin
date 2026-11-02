@@ -1032,3 +1032,13 @@ error de sintaxis.
   - **Aplicar orden de capa**.
 - **Duplicar** crea una copia de cada entidad seleccionada.
 - Los duplicados quedan seleccionados.
+
+## 61. Copiar/pegar múltiple y tilemaps (6.63)
+
+- **Copiar** guarda todas las entidades seleccionadas.
+- **Pegar** crea una copia de cada una y las selecciona.
+- En **Tilemap**:
+  - **Borrador** pone el mosaico en -1.
+  - **Relleno** rellena una región conectada del mismo mosaico.
+  - **Limpiar** vacía todo el tilemap.
+  - El trazo de pintura se registra como una sola operación de deshacer.

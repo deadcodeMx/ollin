@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.63.0] — 2026-11-02
+
+### Añadido
+
+- Copiar/pegar múltiples entidades.
+- Borrador, relleno y limpiar tilemap.
+- Deshacer por trazo de pintura.
+- 205 pruebas automatizadas.
+
 ## [6.62.0] — 2026-11-02
 
 ### Añadido
