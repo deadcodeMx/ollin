@@ -334,9 +334,9 @@ public sealed class Renderer2D : IDisposable
         if (collider is { Enabled: true })
         {
             var box = collider.GetWorldCorners(scene.GetWorldMatrix(entity));
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < box.Length; i++)
             {
-                _batch.DrawLine(null, box[i], box[(i + 1) % 4], 1f / ppu, ColliderColor);
+                _batch.DrawLine(null, box[i], box[(i + 1) % box.Length], 1f / ppu, ColliderColor);
             }
         }
 

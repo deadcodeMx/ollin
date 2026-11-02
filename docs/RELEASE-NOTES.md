@@ -1,14 +1,14 @@
-## Ollin Beta 6.100.0 — formas de colisión correctas
+## Ollin Beta 6.101.0 — círculo visible correctamente
 
 ### Corregido
 
-- **Círculo** se dibuja con 32 segmentos, no como cuadrado.
-- **Cápsula** se dibuja con su contorno real.
-- Física y luces usan el contorno real de la cápsula.
-- El triángulo/polígono se dibuja con sus vértices.
+- El render del collider recorre **todos** los puntos de la forma.
+- El círculo se dibuja circular, no como un arco o cuadrado.
+- La cápsula conserva su contorno.
+- Verificado con `player-test` y una entidad con CircleCollider2D.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.100.0 instalado y abierto con `player-test`.
+- Instalador 6.101.0 instalado.
 - Demo técnica no publicada.

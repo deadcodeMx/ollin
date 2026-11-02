@@ -17,6 +17,12 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.101.0] — 2026-11-02
+
+### Corregido
+
+- El render del collider recorre todos los puntos de la forma, no solo 4.
+
 ## [6.100.0] — 2026-11-02
 
 ### Corregido
