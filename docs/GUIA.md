@@ -1006,3 +1006,11 @@ error de sintaxis.
   - Distribuir horizontal/vertical.
 - El inspector muestra cuántas entidades hay seleccionadas.
 - Las entidades se alinean usando el tamaño real del sprite y su escala.
+
+## 58. Lazo de selección 2D (6.60)
+
+- Arrastra con el botón izquierdo sobre una zona vacía del viewport para dibujar un lazo.
+- Al soltar, se seleccionan las entidades 2D que intersectan el rectángulo.
+- `Ctrl` mantiene la selección existente y añade el lazo.
+- Clic vacío sin arrastrar limpia la selección.
+- Las entidades seleccionadas muestran contorno; el gizmo sigue en la principal.

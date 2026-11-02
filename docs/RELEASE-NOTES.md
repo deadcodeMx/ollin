@@ -1,22 +1,22 @@
-## Ollin Beta 6.59.0 — alinear y distribuir
+## Ollin Beta 6.60.0 — lazo de selección 2D
 
 ### Incluye
 
-- **Ctrl+clic** para seleccionar varias entidades.
-- Menú **Alinear ▾**.
-- Alinear izquierda/centro/derecha y arriba/centro/abajo.
-- Distribuir horizontal y vertical.
+- Lazo de selección arrastrando sobre el viewport.
+- Rectángulo visual translúcido.
+- Selección por intersección al soltar.
+- Ctrl para añadir a la selección.
 - **205 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 6.59.0 y abre una escena 2D.
-2. Haz clic en una entidad y `Ctrl+clic` en otra.
-3. Abre **Alinear ▾**.
-4. Prueba alinear y distribuir.
+1. Instala 6.60.0 y abre una escena 2D.
+2. Arrastra sobre una zona vacía para dibujar el lazo.
+3. Suelta sobre dos o más entidades.
+4. Usa **Alinear ▾** con el resultado.
 
 ### Limitaciones
 
-- La selección múltiple es por Ctrl+clic; no hay lazo.
-- La jerarquía sigue seleccionando una entidad.
+- El lazo solo está en el viewport 2D; en vista 3D se sigue seleccionando por clic.
+- No hay lazo desde la jerarquía.
 - La demo técnica no se publica.

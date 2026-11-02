@@ -1303,6 +1303,49 @@ public sealed partial class MainViewModel : ObservableObject
         }
     }
 
+    public void ClearSelection()
+    {
+        Selected = null;
+    }
+
+    public void SelectMany(IEnumerable<Entity> entities, bool additive = false)
+    {
+        var nodes = entities
+            .Select(entity => FindNode(entity.Id))
+            .Where(node => node is not null)
+            .Cast<EntityNode>()
+            .Distinct()
+            .ToList();
+
+        if (nodes.Count == 0 && !additive)
+        {
+            Selected = null;
+            return;
+        }
+
+        _selectionAdd = true;
+        try
+        {
+            if (!additive) _selection.Clear();
+
+            foreach (var node in nodes)
+            {
+                if (!_selection.Contains(node)) _selection.Add(node);
+            }
+
+            Selected = _selection.LastOrDefault() ?? Selected;
+        }
+        finally
+        {
+            _selectionAdd = false;
+            OnPropertyChanged(nameof(SelectionText));
+            OnPropertyChanged(nameof(HasMultipleSelection));
+            OnPropertyChanged(nameof(SelectionCount));
+            OnPropertyChanged(nameof(SelectionIds));
+            RequestRedraw();
+        }
+    }
+
     public void AlignSelected(string mode)
     {
         if (_selection.Count < 2) return;

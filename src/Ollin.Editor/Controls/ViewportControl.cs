@@ -829,44 +829,78 @@ public sealed class ViewportControl : OpenGlControlBase
     /// <summary>Selecciona la entidad bajo un punto del viewport (coordenadas locales).</summary>
     public void SelectAt(Point position, bool additive = false)
     {
-        if (_viewModel is null)
+        if (HitTestEntity(position, out var hit))
         {
-            return;
+            _viewModel?.Select(hit, additive);
+            RequestNextFrameRendering();
         }
+        else if (!additive)
+        {
+            _viewModel?.ClearSelection();
+            RequestNextFrameRendering();
+        }
+    }
+
+    /// <summary>Busca la entidad 2D bajo un punto sin cambiar la selección.</summary>
+    public bool HitTestEntity(Point position, out Entity? entity)
+    {
+        entity = null;
+        if (_viewModel is null) return false;
 
         var (width, height, scaling) = GetPixelSizeWithScaling();
         var camera = _viewModel.ActiveCamera;
         var screen = new Vector2((float)(position.X * scaling), (float)(position.Y * scaling));
         var world = CameraMath.ScreenToWorld(_viewModel.CameraPosition, camera.OrthographicSize, camera.Zoom, width, height, screen);
-        Diag($"press local=({position.X:0.#},{position.Y:0.#}) screen=({screen.X:0.#},{screen.Y:0.#}) vp={width}x{height} world=({world.X:0.##},{world.Y:0.##})");
 
-        Entity? hit = null;
         var bestOrder = int.MinValue;
-        foreach (var entity in _viewModel.Scene.Entities)
+        foreach (var candidate in _viewModel.Scene.Entities)
         {
-            if (!entity.Active)
-            {
-                continue;
-            }
+            if (!candidate.Active) continue;
 
-            var sprite = entity.GetComponent<SpriteRenderer>();
-            if (sprite is not { Visible: true } || sprite.SortingOrder < bestOrder)
-            {
-                continue;
-            }
+            var sprite = candidate.GetComponent<SpriteRenderer>();
+            if (sprite is not { Visible: true } || sprite.SortingOrder < bestOrder) continue;
 
-            if (Renderer2D.HitTest(_viewModel.Scene, entity, world))
+            if (Renderer2D.HitTest(_viewModel.Scene, candidate, world))
             {
-                hit = entity;
+                entity = candidate;
                 bestOrder = sprite.SortingOrder;
             }
         }
 
-        Diag($"hit={(hit?.Name ?? "nada")} order={bestOrder}");
-        _viewModel.Select(hit, additive);
-        RequestNextFrameRendering();
+        return entity is not null;
     }
 
+    /// <summary>Selecciona entidades 2D que intersectan un rectángulo de pantalla.</summary>
+    public void SelectInRect(Rect rect, bool additive = false)
+    {
+        if (_viewModel is null) return;
+
+        var a = ToWorld(new Point(rect.Left, rect.Top));
+        var b = ToWorld(new Point(rect.Right, rect.Bottom));
+        var minX = MathF.Min(a.X, b.X);
+        var maxX = MathF.Max(a.X, b.X);
+        var minY = MathF.Min(a.Y, b.Y);
+        var maxY = MathF.Max(a.Y, b.Y);
+        var selected = new List<Entity>();
+
+        foreach (var entity in _viewModel.Scene.Entities)
+        {
+            if (!entity.Active) continue;
+            var sprite = entity.GetComponent<SpriteRenderer>();
+            if (sprite is not { Visible: true }) continue;
+
+            var position = _viewModel.Scene.GetWorldPosition(entity);
+            var half = sprite.Size * 0.5f;
+            if (position.X + half.X >= minX && position.X - half.X <= maxX &&
+                position.Y + half.Y >= minY && position.Y - half.Y <= maxY)
+            {
+                selected.Add(entity);
+            }
+        }
+
+        _viewModel.SelectMany(selected, additive);
+        RequestNextFrameRendering();
+    }
     /// <summary>Pinta el mosaico activo en la celda bajo el puntero.</summary>
     public void PaintAt(Point position) => _viewModel?.PaintTileAtWorld(ToWorld(position));
 

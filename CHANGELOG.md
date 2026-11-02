@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.60.0] — 2026-11-02
+
+### Añadido
+
+- Lazo de selección 2D con rectángulo visual.
+- Selección por intersección al soltar.
+- Ctrl para lazo aditivo.
+- 205 pruebas automatizadas.
+
 ## [6.59.0] — 2026-11-02
 
 ### Añadido
