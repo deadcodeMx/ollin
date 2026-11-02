@@ -228,6 +228,19 @@ public partial class MainWindow : Window
         _ => null,
     };
 
+    private Button BuildRemoveButton(string kind)
+    {
+        var remove = new Button
+        {
+            Content = "✕ Quitar componente",
+            Classes = { "tool" },
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+            Margin = new Thickness(0, 4, 0, 0),
+        };
+        remove.Click += (_, _) => ViewModel?.RemoveComponent(kind);
+        return remove;
+    }
+
     private Grid BuildSectionHeader(string title, string? kind)
     {
         var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
@@ -287,7 +300,11 @@ public partial class MainWindow : Window
                 Margin = new Thickness(0, 2),
             };
             expander.Bind(Visual.IsVisibleProperty, new Binding("IsVisible") { Source = child });
-            if (kind is not null) expander.ContextMenu = BuildComponentMenu(kind);
+            if (kind is not null)
+            {
+                child.Children.Add(BuildRemoveButton(kind));
+                expander.ContextMenu = BuildComponentMenu(kind);
+            }
             root.Children.Add(expander);
         }
     }
@@ -318,7 +335,7 @@ public partial class MainWindow : Window
 
         foreach (var component in selected.ScriptComponents)
         {
-            var editor = new ScriptComponentEditor(selected, component, () => { });
+            var editor = new ScriptComponentEditor(selected, component, () => { }, () => ViewModel?.OpenScript(Path.Combine(ViewModel.ProjectRoot, component.ScriptPath ?? string.Empty)));
             var content = new StackPanel { Spacing = 4 };
 
             var path = new TextBox { Watermark = "scripts/MiScript.cs" };
@@ -962,6 +979,14 @@ public partial class MainWindow : Window
         });
 
         return new TabItem { Header = "Tags", Content = new ScrollViewer { Content = panel } };
+    }
+
+    private void OnOpenScriptEditor(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Button { DataContext: ScriptComponentEditor editor })
+        {
+            editor.Open();
+        }
     }
 
     private void OnRemoveScriptEditor(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

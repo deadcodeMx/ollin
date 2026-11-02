@@ -46,16 +46,19 @@ public sealed class ScriptComponentEditor
     private readonly EntityNode _owner;
     private IReadOnlyList<ScriptField>? _fields;
 
-    public ScriptComponentEditor(EntityNode owner, ScriptComponent component, Action remove)
+    public ScriptComponentEditor(EntityNode owner, ScriptComponent component, Action remove, Action open)
     {
         _owner = owner;
         Component = component;
         Remove = remove;
+        Open = open;
     }
 
     public ScriptComponent Component { get; }
 
     public Action Remove { get; }
+
+    public Action Open { get; }
 
     public string Title => string.IsNullOrWhiteSpace(Component.ClassName) ? "Script" : Component.ClassName;
 
@@ -322,6 +325,8 @@ public sealed class EntityNode : ObservableObject
 
     public void NotifyEdit() => _owner.MarkDirty();
 
+    public void OpenScriptFor(ScriptComponent component) => _owner.OpenScript(Path.Combine(_owner.ProjectRoot, component.ScriptPath ?? string.Empty));
+
     private IReadOnlyList<ScriptComponentEditor>? _scriptEditors;
 
     public IReadOnlyList<ScriptComponentEditor> ScriptEditors
@@ -337,7 +342,8 @@ public sealed class EntityNode : ObservableObject
                     Entity.RemoveComponent(component);
                     RefreshAll();
                     _owner.NotifyComponentsChanged();
-                })).ToList();
+                },
+                () => _owner.OpenScript(Path.Combine(_owner.ProjectRoot, component.ScriptPath ?? string.Empty)))).ToList();
             return _scriptEditors;
         }
     }

@@ -634,6 +634,7 @@
                                   </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                               </ItemsControl>
+                              <Button Classes="tool accent" Content="Abrir script" Click="OnOpenScriptEditor" HorizontalAlignment="Stretch" />
                               <Button Classes="tool" Content="Quitar componente" Click="OnRemoveScriptEditor" HorizontalAlignment="Stretch" />
                             </StackPanel>
                           </Expander>

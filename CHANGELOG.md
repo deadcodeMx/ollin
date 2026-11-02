@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.88.0] — 2026-11-02
+
+### Corregido
+
+- Botón visible para quitar componentes desde el contenido.
+- Botón Abrir script en cada componente Script.
+
 ## [6.87.0] — 2026-11-02
 
 ### Corregido
