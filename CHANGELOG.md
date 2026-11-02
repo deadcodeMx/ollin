@@ -17,6 +17,17 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.65.0] — 2026-11-02
+
+### Corregido
+
+- El desinstalador funciona con doble clic sin `--uninstall`.
+- Espera al proceso padre y reintenta el borrado.
+- Cierra Ollin antes de desinstalar.
+- Confirmación antes de desinstalar.
+- Acceso directo Desinstalar Ollin en el menú Inicio.
+- 205 pruebas automatizadas.
+
 ## [6.64.0] — 2026-11-02
 
 ### Añadido

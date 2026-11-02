@@ -1050,3 +1050,13 @@ error de sintaxis.
 - **Columnas** configura la cuadrícula del tileset.
 - **Copiar/pegar entre escenas**: el portapapeles interno se conserva al cambiar de escena;
   copia en una escena y pega en otra.
+
+## 63. Desinstalador (6.65)
+
+- `Desinstalar.exe` funciona con **doble clic**, sin argumentos.
+- Muestra confirmación antes de borrar.
+- Cierra Ollin si está abierto.
+- Elimina accesos directos, registro y `%LOCALAPPDATA%\Ollin`.
+- Espera a que termine el proceso padre antes de borrar.
+- Reintenta si Windows mantiene archivos bloqueados.
+- También se añade **Desinstalar Ollin** al menú Inicio.

@@ -17,10 +17,13 @@ internal static class Program
     {
         var silent = args.Any(a => a.Equals("--silent", StringComparison.OrdinalIgnoreCase));
         var uninstall = args.Any(a => a.Equals("--uninstall", StringComparison.OrdinalIgnoreCase));
+        var waitPid = ParseInt(args, "--wait-pid");
+        var processName = Path.GetFileNameWithoutExtension(Environment.ProcessPath ?? string.Empty);
+        var isUninstaller = string.Equals(processName, "Desinstalar", StringComparison.OrdinalIgnoreCase);
 
-        if (uninstall)
+        if (uninstall || isUninstaller)
         {
-            return Uninstall(silent);
+            return Uninstall(silent, waitPid);
         }
 
         if (silent)
@@ -64,6 +67,7 @@ internal static class Program
             var iconPath = WriteIcon(installDir);
             CreateShortcut(Path.Combine(StartMenuFolder(), "Ollin.lnk"), appExe, installDir, iconPath);
             CreateShortcut(Path.Combine(DesktopFolder(), "Ollin.lnk"), appExe, installDir, iconPath);
+            CreateShortcut(Path.Combine(StartMenuFolder(), "Desinstalar Ollin.lnk"), uninstaller, installDir, iconPath, "--uninstall");
             WriteUninstallEntry(installDir);
             RefreshShellIcons(DesktopFolder());
             return null;
@@ -109,10 +113,20 @@ internal static class Program
         Thread.Sleep(300);
     }
 
-    public static int Uninstall(bool silent)
+    public static int Uninstall(bool silent, int waitPid = 0)
     {
         var installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppName);
         var self = Environment.ProcessPath ?? string.Empty;
+
+        if (waitPid > 0)
+        {
+            try
+            {
+                using var parent = Process.GetProcessById(waitPid);
+                parent.WaitForExit(10000);
+            }
+            catch { }
+        }
 
         // No se puede borrar la carpeta mientras el propio desinstalador vive dentro.
         if (self.StartsWith(installDir, StringComparison.OrdinalIgnoreCase))
@@ -121,7 +135,7 @@ internal static class Program
             {
                 var temp = Path.Combine(Path.GetTempPath(), $"Ollin-Uninstall-{Guid.NewGuid():N}.exe");
                 File.Copy(self, temp, overwrite: true);
-                var arguments = "--uninstall" + (silent ? " --silent" : string.Empty);
+                var arguments = "--uninstall" + (silent ? " --silent" : string.Empty) + " --wait-pid " + Environment.ProcessId;
                 Process.Start(new ProcessStartInfo(temp, arguments) { UseShellExecute = false });
                 return 0;
             }
@@ -136,9 +150,17 @@ internal static class Program
             }
         }
 
+        if (!silent)
+        {
+            var answer = MessageBox.Show("¿Desinstalar Ollin completamente?", DisplayName, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (answer != DialogResult.Yes) return 2;
+        }
+
         try
         {
+            CloseRunningApps();
             DeleteShortcut(Path.Combine(StartMenuFolder(), "Ollin.lnk"));
+            DeleteShortcut(Path.Combine(StartMenuFolder(), "Desinstalar Ollin.lnk"));
             DeleteShortcut(Path.Combine(DesktopFolder(), "Ollin.lnk"));
             RefreshShellIcons(DesktopFolder());
 
@@ -149,7 +171,7 @@ internal static class Program
 
             if (Directory.Exists(installDir))
             {
-                Directory.Delete(installDir, recursive: true);
+                DeleteDirectoryWithRetry(installDir);
             }
 
             if (!silent)
@@ -168,6 +190,42 @@ internal static class Program
 
             return 1;
         }
+    }
+
+    private static int ParseInt(string[] args, string name)
+    {
+        for (var i = 0; i < args.Length - 1; i++)
+        {
+            if (args[i].Equals(name, StringComparison.OrdinalIgnoreCase) &&
+                int.TryParse(args[i + 1], out var value))
+            {
+                return value;
+            }
+        }
+
+        return 0;
+    }
+
+    private static void DeleteDirectoryWithRetry(string path)
+    {
+        for (var attempt = 0; attempt < 5; attempt++)
+        {
+            try
+            {
+                Directory.Delete(path, recursive: true);
+                return;
+            }
+            catch (IOException) when (attempt < 4)
+            {
+                Thread.Sleep(400);
+            }
+            catch (UnauthorizedAccessException) when (attempt < 4)
+            {
+                Thread.Sleep(400);
+            }
+        }
+
+        Directory.Delete(path, recursive: true);
     }
 
     public static void Launch(string installDir)
@@ -216,7 +274,7 @@ internal static class Program
         return folder;
     }
 
-    private static void CreateShortcut(string linkPath, string targetPath, string workingDirectory, string iconPath)
+    private static void CreateShortcut(string linkPath, string targetPath, string workingDirectory, string iconPath, string arguments = "")
     {
         var shellType = Type.GetTypeFromProgID("WScript.Shell");
         if (shellType is null)
@@ -232,6 +290,7 @@ internal static class Program
         dynamic shell = Activator.CreateInstance(shellType)!;
         dynamic shortcut = shell.CreateShortcut(linkPath);
         shortcut.TargetPath = targetPath;
+        shortcut.Arguments = arguments;
         shortcut.WorkingDirectory = workingDirectory;
         shortcut.Description = DisplayName;
         shortcut.IconLocation = File.Exists(iconPath) ? iconPath + ",0" : targetPath + ",0";
