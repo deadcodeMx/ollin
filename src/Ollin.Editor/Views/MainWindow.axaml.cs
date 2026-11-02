@@ -210,7 +210,33 @@ public partial class MainWindow : Window
         }
     }
 
-    private static void WrapComponentPanels(StackPanel root)
+    private static string? ComponentKindForHeader(string header) => header switch
+    {
+        "Visual" => "sprite",
+        "Colisión" => "collider",
+        "Cuerpo físico" or "Cuerpo" => "rigidbody",
+        "Cámara" => "camera",
+        "Animación" => "animator",
+        "Tilemap" => "tilemap",
+        "Audio" => "audio",
+        "Luz" => "light",
+        "Rotador" => "rotator",
+        "Oscilador" => "oscillator",
+        "IA" => "ai",
+        "Script" => "script",
+        _ => null,
+    };
+
+    private ContextMenu BuildComponentMenu(string kind)
+    {
+        var menu = new ContextMenu();
+        var remove = new MenuItem { Header = "Quitar componente" };
+        remove.Click += (_, _) => ViewModel?.RemoveComponent(kind);
+        menu.Items.Add(remove);
+        return menu;
+    }
+
+    private void WrapComponentPanels(StackPanel root)
     {
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
@@ -235,6 +261,8 @@ public partial class MainWindow : Window
                 Margin = new Thickness(0, 2),
             };
             expander.Bind(Visual.IsVisibleProperty, new Binding("IsVisible") { Source = child });
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", _ => null };
+            if (kind is not null) expander.ContextMenu = BuildComponentMenu(kind);
             root.Children.Add(expander);
         }
     }
@@ -718,6 +746,8 @@ public partial class MainWindow : Window
             }
 
             if (content is not null) expander.Content = content;
+            var kind = ComponentKindForHeader(headerText);
+            if (kind is not null) expander.ContextMenu = BuildComponentMenu(kind);
             panel.Children.Add(expander);            panel.Children.Add(section);
         }
 

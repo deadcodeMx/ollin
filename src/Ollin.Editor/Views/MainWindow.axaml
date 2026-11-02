@@ -634,6 +634,17 @@
                       <Grid ColumnDefinitions="86,*" Margin="0,1">
                         <TextBlock Text="Clase" VerticalAlignment="Center" Classes="hint" />
                         <TextBox Grid.Column="1" Text="{Binding Selected.ScriptClass, Mode=TwoWay}" Watermark="NombreDeLaClase" />
+                      <TextBlock Classes="section" Text="CAMPOS PÚBLICOS" />
+                      <ItemsControl ItemsSource="{Binding Selected.ScriptFields}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <Grid ColumnDefinitions="96,*" Margin="0,1">
+                              <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Classes="hint" ToolTip.Tip="{Binding TypeName}" />
+                              <TextBox Grid.Column="1" Text="{Binding Value, Mode=TwoWay}" />
+                            </Grid>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
                       </Grid>
                       <Button Classes="tool accent" Content="Abrir script" Click="OnOpenSelectedScript" HorizontalAlignment="Stretch" />
                       <Button Classes="tool" Content="Crear script para esta entidad" Click="OnCreateScript" HorizontalAlignment="Stretch" />

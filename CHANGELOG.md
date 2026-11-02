@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.77.0] — 2026-11-02
+
+### Mejorado
+
+- Inspector tipo Unity: componentes plegables, encabezados resaltados.
+- Menú contextual para quitar componentes.
+- Campos públicos de scripts visibles y editables.
+- Crear scripts desde Archivos y añadirlos a la entidad.
+
 ## [6.76.0] — 2026-11-02
 
 ### Corregido

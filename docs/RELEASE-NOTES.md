@@ -1,20 +1,27 @@
-## Ollin Beta 6.76.0 — inspector contraíble y scripts
+## Ollin Beta 6.77.0 — inspector tipo Unity
 
-### Añadido
+### Incluye
 
-- Encabezados de componentes resaltados en ámbar.
-- Secciones del inspector contraíbles.
+- Componentes con **encabezados resaltados**.
+- Secciones **plegables** con flecha.
+- Menú contextual **Quitar componente**.
+- **+ Añadir componente** fijo al final.
 - **Crear script aquí…** desde Archivos.
-- El script creado se añade automáticamente a la entidad seleccionada.
-- Campos públicos de scripts como campos editables del inspector.
-- Los valores se guardan en el componente y se aplican al reproducir.
+- El script se añade automáticamente a la entidad.
+- **Campos públicos** de scripts editables en el inspector.
+- **205 pruebas automatizadas**.
 
-### Corregido
+### Cómo probarlo
 
-- Scripts antiguos sin valores de campos.
+1. Instala 6.77.0.
+2. Selecciona una entidad.
+3. Pliega y despliega componentes con la flecha.
+4. Clic derecho en el encabezado de un componente para quitarlo.
+5. En Archivos, clic derecho en `scripts` → **Crear script aquí…**.
+6. Edita los campos públicos desde el inspector.
 
-### Verificado
+### Limitaciones
 
-- **205/205 pruebas**.
-- Instalado 6.76.0.
-- Demo técnica no publicada.
+- Aún no se pueden reordenar componentes arrastrando.
+- La selección múltiple usa el panel de lote, no valores mixtos por campo.
+- La demo técnica no se publica.
