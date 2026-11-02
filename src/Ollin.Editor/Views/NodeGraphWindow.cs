@@ -252,6 +252,7 @@ public sealed class NodeGraphWindow : Window
         AddMore("Cancelar ejecutar hasta", CancelRunTo);
         AddMore("Mover hijos ocultos", ToggleMoveHidden);
         AddMore("Modo paso", ToggleStepMode);
+        AddMore("Atajos (F1)", ShowShortcuts);
         var snapItem = new MenuItem { Header = _snapNodes ? "Rejilla: activada" : "Rejilla: desactivada" };
         snapItem.Click += (_, _) =>
         {
@@ -276,7 +277,8 @@ public sealed class NodeGraphWindow : Window
             _searchText = _searchBox.Text ?? string.Empty;
             Render();
         };
-        _searchBox.GotFocus += (_, _) => _searchBox.Width = 170;
+        _searchBox.GotFocus += (_, _) => _searchBox.Width = Bounds.Width >= 1080 ? 170 : 76;
+        AutomationProperties.SetName(_searchBox, "Buscar nodo");
         _searchBox.LostFocus += (_, _) => _searchBox.Width = Bounds.Width < 1080 ? 60 : 76;
         toolbar.Children.Add(_searchBox);
         UpdateZoomText();
@@ -476,6 +478,45 @@ public sealed class NodeGraphWindow : Window
         {
             _viewModel.MarkDirty("grupos-migrados");
         }
+    }
+
+    private void ShowShortcuts()
+    {
+        var text = new TextBlock
+        {
+            Text = """
+Atajos del grafo
+
+Ctrl+Z  Deshacer
+Ctrl+Y  Rehacer
+Ctrl+C  Copiar
+Ctrl+V  Pegar
+Supr    Borrar selección
+Ctrl+A  Seleccionar todo
+Ctrl+F  Buscar
+Esc     Limpiar búsqueda
+Ctrl+0  Ajustar
+Ctrl+Shift+O  Ordenar
+Ctrl+Shift+H  Distribuir horizontal
+Ctrl+Shift+V  Distribuir vertical
+F8      Paso
+F1      Esta ayuda
+""",
+            FontSize = 12,
+            Foreground = new SolidColorBrush(Color.Parse("#D6DCE8")),
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(16),
+        };
+
+        var window = new Window
+        {
+            Title = "Atajos del grafo",
+            Width = 430,
+            Height = 430,
+            Background = new SolidColorBrush(Color.Parse("#0B0D12")),
+            Content = new ScrollViewer { Content = text },
+        };
+        window.Show();
     }
 
     private void StepGraph()
@@ -780,6 +821,7 @@ public sealed class NodeGraphWindow : Window
         else if (control && shift && e.Key == Key.H) { Distribute(true); e.Handled = true; }
         else if (control && shift && e.Key == Key.V) { Distribute(false); e.Handled = true; }
         else if (e.Key == Key.F8) { StepGraph(); e.Handled = true; }
+        else if (e.Key == Key.F1) { ShowShortcuts(); e.Handled = true; }
         else if (e.Key == Key.Escape && _searchBox is not null)
         {
             _searchBox.Text = string.Empty;

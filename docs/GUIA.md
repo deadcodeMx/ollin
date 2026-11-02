@@ -954,3 +954,10 @@ error de sintaxis.
 - **Cancelar ejecutar hasta** en **Más ▾**.
 - **Mover hijos ocultos** se guarda en el grafo.
 - El paso atrás sigue pendiente.
+
+## 51. Cierre de limitaciones de 0.50 (6.53)
+
+- **F1** abre la ventana de atajos del grafo.
+- **Más ▾ → Atajos (F1)**.
+- El buscador solo se expande si la ventana tiene ancho suficiente (≥1080 px).
+- El buscador tiene nombre de accesibilidad.
