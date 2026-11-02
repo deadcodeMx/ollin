@@ -17,6 +17,12 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.115.0] — 2026-11-02
+
+### Mejorado
+
+- Las etiquetas del HUD admiten varias líneas.
+
 ## [6.114.0] — 2026-11-02
 
 ### Corregido

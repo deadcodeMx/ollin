@@ -1,13 +1,12 @@
-## Ollin Beta 6.114.0 — modo Vacío corregido
+## Ollin Beta 6.115.0 — HUD multilínea
 
-### Corregido
+### Mejorado
 
-- Al crear un proyecto desde **Archivo → Nuevo proyecto** se perdía el modo elegido y se guardaba como Completo.
-- Ahora el modo Vacío muestra solo Sprite, Collider, Rigidbody, Cámara y Script.
-- Nuevo selector **Archivo → Modo de componentes** para proyectos existentes.
+- Las etiquetas del HUD admiten varias líneas.
+- Los objetivos largos ya no se recortan en el editor ni en el juego exportado.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.114.0 instalado y abierto sin crash.
+- Instalador 6.115.0 instalado.
 - Demo técnica no publicada.

@@ -22,7 +22,7 @@
       <ItemsControl ItemsSource="{Binding HudLabels}">
         <ItemsControl.ItemTemplate>
           <DataTemplate>
-            <TextBlock Text="{Binding Display}" FontSize="12" Foreground="#E7EAF0" />
+            <TextBlock Text="{Binding Display}" FontSize="12" Foreground="#E7EAF0" TextWrapping="Wrap" MaxWidth="300" />
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
