@@ -1093,6 +1093,18 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(Ai3DStatus));
         OnPropertyChanged(nameof(OscillationAmplitude));
         OnPropertyChanged(nameof(OscillationFrequency));
+        OnPropertyChanged(nameof(HasSprite));
+        OnPropertyChanged(nameof(HasCollider));
+        OnPropertyChanged(nameof(HasRigidbody));
+        OnPropertyChanged(nameof(HasAudio));
+        OnPropertyChanged(nameof(HasLight));
+        OnPropertyChanged(nameof(HasCamera));
+        OnPropertyChanged(nameof(HasTilemap));
+        OnPropertyChanged(nameof(HasAnimator));
+        OnPropertyChanged(nameof(HasScript));
+        OnPropertyChanged(nameof(HasAi));
+        OnPropertyChanged(nameof(HasCamera3D));
+        OnPropertyChanged(nameof(HasWall3D));
         OnPropertyChanged(nameof(ScriptPath));
         OnPropertyChanged(nameof(ScriptClass));
     }

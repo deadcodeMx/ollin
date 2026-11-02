@@ -31,14 +31,16 @@ public partial class MainWindow : Window
 
     private bool _loadingScript;
     private bool _syncingHierarchy;
+    private bool _inspectorConsolidated;
+    private readonly List<(Control Control, string Property)> _physicsSections = new();
     private GameWindow? _gameWindow;
     private CompletionWindow? _completionWindow;
 
     public MainWindow()
     {
         InitializeComponent();
-        ConsolidateInspector();
         DataContextChanged += OnDataContextChanged;
+        Opened += (_, _) => EnsureInspectorConsolidated();
         SetupScriptEditor();
         SetupAudio();
         SetupDragAndDrop();
@@ -192,6 +194,29 @@ public partial class MainWindow : Window
 
     private MainViewModel? ViewModel => DataContext as MainViewModel;
 
+    private bool HasSelected(string property) => property switch
+    {
+        "HasCollider" => ViewModel?.Selected?.HasCollider == true,
+        "HasRigidbody" => ViewModel?.Selected?.HasRigidbody == true,
+        "HasScript" => ViewModel?.Selected?.HasScript == true,
+        _ => false,
+    };
+
+    private void RefreshPhysicsSections()
+    {
+        foreach (var (control, property) in _physicsSections)
+        {
+            control.IsVisible = HasSelected(property);
+        }
+    }
+
+    private void EnsureInspectorConsolidated()
+    {
+        if (_inspectorConsolidated || DataContext is not MainViewModel) return;
+        _inspectorConsolidated = true;
+        ConsolidateInspector();
+    }
+
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
         if (DataContext is not MainViewModel vm)
@@ -200,6 +225,11 @@ public partial class MainWindow : Window
         }
 
         ViewportHost.Viewport.ViewModel = vm;
+        vm.ComponentsChanged += RefreshPhysicsSections;
+        vm.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ViewModels.MainViewModel.Selected)) RefreshPhysicsSections();
+        };
         vm.Logs.CollectionChanged += OnLogsChanged;
         vm.PropertyChanged += (_, args) =>
         {
@@ -576,14 +606,19 @@ public partial class MainWindow : Window
 
             if (headerText == "Física" && content is StackPanel physics)
             {
+                var properties = new[] { "HasCollider", "HasRigidbody", "HasScript" };
+                var index = 0;
                 foreach (var child in physics.Children.OfType<Control>().ToList())
                 {
                     physics.Children.Remove(child);
+                    child.DataContext = DataContext;
+                    if (index < properties.Length) _physicsSections.Add((child, properties[index]));
+                    child.IsVisible = index < properties.Length && HasSelected(properties[index]);
                     panel.Children.Add(child);
+                    index++;
                 }
                 continue;
             }
-
             var section = new StackPanel { Spacing = 4 };
             var visibilityProperty = VisibilityPropertyFor(headerText, occurrence);
             if (visibilityProperty is not null)

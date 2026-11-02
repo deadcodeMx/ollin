@@ -590,6 +590,56 @@
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ScaleY, Mode=TwoWay}" Increment="0.1" FormatString="0.###" />
                       </Grid>
                     </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasCollider}" Spacing="5">
+                      <TextBlock Classes="section" Text="COLISIÓN" />
+                      <Grid ColumnDefinitions="86,*" Margin="0,1">
+                        <TextBlock Text="Ancho" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderWidth, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.###" />
+                      </Grid>
+                      <Grid ColumnDefinitions="86,*" Margin="0,1">
+                        <TextBlock Text="Alto" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderHeight, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.###" />
+                      </Grid>
+                      <CheckBox Content="Es disparador (trigger)" IsChecked="{Binding Selected.IsTrigger, Mode=TwoWay}" FontSize="11.5" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding Selected.HasRigidbody}" Spacing="5">
+                      <TextBlock Classes="section" Text="CUERPO" />
+                      <Grid ColumnDefinitions="86,*" Margin="0,1">
+                        <TextBlock Text="Velocidad X" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.VelocityX, Mode=TwoWay}" Increment="0.1" FormatString="0.###" />
+                      </Grid>
+                      <Grid ColumnDefinitions="86,*" Margin="0,1">
+                        <TextBlock Text="Velocidad Y" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.VelocityY, Mode=TwoWay}" Increment="0.1" FormatString="0.###" />
+                      </Grid>
+                      <CheckBox Content="Afectado por gravedad" IsChecked="{Binding Selected.UseGravity, Mode=TwoWay}" FontSize="11.5" />
+                      <CheckBox Content="Estático" IsChecked="{Binding Selected.IsStaticBody, Mode=TwoWay}" FontSize="11.5" />
+                      <CheckBox Content="Cinemático (no lo empujan)" IsChecked="{Binding Selected.IsKinematicBody, Mode=TwoWay}" FontSize="11.5" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding Selected.HasScript}" Spacing="5">
+                      <TextBlock Classes="section" Text="SCRIPT" />
+                      <ComboBox ItemsSource="{Binding Selected.ScriptComponents}" SelectedItem="{Binding Selected.ActiveScript, Mode=TwoWay}" HorizontalAlignment="Stretch" Margin="0,1">
+                        <ComboBox.ItemTemplate>
+                          <DataTemplate>
+                            <TextBlock Text="{Binding ClassName}" />
+                          </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                      </ComboBox>
+                      <Grid ColumnDefinitions="86,*" Margin="0,1">
+                        <TextBlock Text="Archivo" VerticalAlignment="Center" Classes="hint" />
+                        <TextBox Grid.Column="1" Text="{Binding Selected.ScriptPath, Mode=TwoWay}" Watermark="scripts/MiScript.cs" />
+                      </Grid>
+                      <Grid ColumnDefinitions="86,*" Margin="0,1">
+                        <TextBlock Text="Clase" VerticalAlignment="Center" Classes="hint" />
+                        <TextBox Grid.Column="1" Text="{Binding Selected.ScriptClass, Mode=TwoWay}" Watermark="NombreDeLaClase" />
+                      </Grid>
+                      <Button Classes="tool accent" Content="Abrir script" Click="OnOpenSelectedScript" HorizontalAlignment="Stretch" />
+                      <Button Classes="tool" Content="Crear script para esta entidad" Click="OnCreateScript" HorizontalAlignment="Stretch" />
+                      <Button Classes="tool" Content="Añadir otra ranura de script" Click="OnAddScriptComponent" HorizontalAlignment="Stretch" />
+                      <Button Classes="tool" Content="Quitar script" Click="OnRemoveScript" HorizontalAlignment="Stretch" />
+                    </StackPanel>
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>
@@ -1388,62 +1438,6 @@
                 </StackPanel>
               </TabItem>
 
-              <TabItem Header="Física">
-                <ScrollViewer>
-                  <StackPanel Margin="8" Spacing="8">
-                    <StackPanel IsVisible="{Binding Selected.HasCollider}" Spacing="5">
-                      <TextBlock Classes="section" Text="COLISIÓN" />
-                      <Grid ColumnDefinitions="86,*" Margin="0,1">
-                        <TextBlock Text="Ancho" VerticalAlignment="Center" Classes="hint" />
-                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderWidth, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.###" />
-                      </Grid>
-                      <Grid ColumnDefinitions="86,*" Margin="0,1">
-                        <TextBlock Text="Alto" VerticalAlignment="Center" Classes="hint" />
-                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderHeight, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.###" />
-                      </Grid>
-                      <CheckBox Content="Es disparador (trigger)" IsChecked="{Binding Selected.IsTrigger, Mode=TwoWay}" FontSize="11.5" />
-                    </StackPanel>
-
-                    <StackPanel IsVisible="{Binding Selected.HasRigidbody}" Spacing="5">
-                      <TextBlock Classes="section" Text="CUERPO" />
-                      <Grid ColumnDefinitions="86,*" Margin="0,1">
-                        <TextBlock Text="Velocidad X" VerticalAlignment="Center" Classes="hint" />
-                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.VelocityX, Mode=TwoWay}" Increment="0.1" FormatString="0.###" />
-                      </Grid>
-                      <Grid ColumnDefinitions="86,*" Margin="0,1">
-                        <TextBlock Text="Velocidad Y" VerticalAlignment="Center" Classes="hint" />
-                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.VelocityY, Mode=TwoWay}" Increment="0.1" FormatString="0.###" />
-                      </Grid>
-                      <CheckBox Content="Afectado por gravedad" IsChecked="{Binding Selected.UseGravity, Mode=TwoWay}" FontSize="11.5" />
-                      <CheckBox Content="Estático" IsChecked="{Binding Selected.IsStaticBody, Mode=TwoWay}" FontSize="11.5" />
-                      <CheckBox Content="Cinemático (no lo empujan)" IsChecked="{Binding Selected.IsKinematicBody, Mode=TwoWay}" FontSize="11.5" />
-                    </StackPanel>
-
-                    <StackPanel IsVisible="{Binding Selected.HasScript}" Spacing="5">
-                      <TextBlock Classes="section" Text="SCRIPT" />
-                      <ComboBox ItemsSource="{Binding Selected.ScriptComponents}" SelectedItem="{Binding Selected.ActiveScript, Mode=TwoWay}" HorizontalAlignment="Stretch" Margin="0,1">
-                        <ComboBox.ItemTemplate>
-                          <DataTemplate>
-                            <TextBlock Text="{Binding ClassName}" />
-                          </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                      </ComboBox>
-                      <Grid ColumnDefinitions="86,*" Margin="0,1">
-                        <TextBlock Text="Archivo" VerticalAlignment="Center" Classes="hint" />
-                        <TextBox Grid.Column="1" Text="{Binding Selected.ScriptPath, Mode=TwoWay}" Watermark="scripts/MiScript.cs" />
-                      </Grid>
-                      <Grid ColumnDefinitions="86,*" Margin="0,1">
-                        <TextBlock Text="Clase" VerticalAlignment="Center" Classes="hint" />
-                        <TextBox Grid.Column="1" Text="{Binding Selected.ScriptClass, Mode=TwoWay}" Watermark="NombreDeLaClase" />
-                      </Grid>
-                      <Button Classes="tool accent" Content="Abrir script" Click="OnOpenSelectedScript" HorizontalAlignment="Stretch" />
-                      <Button Classes="tool" Content="Crear script para esta entidad" Click="OnCreateScript" HorizontalAlignment="Stretch" />
-                      <Button Classes="tool" Content="Añadir otra ranura de script" Click="OnAddScriptComponent" HorizontalAlignment="Stretch" />
-                      <Button Classes="tool" Content="Quitar script" Click="OnRemoveScript" HorizontalAlignment="Stretch" />
-                    </StackPanel>
-                  </StackPanel>
-                </ScrollViewer>
-              </TabItem>
 
               <TabItem Header="Tilemap" IsVisible="{Binding Selected.HasTilemap}">
                 <ScrollViewer>

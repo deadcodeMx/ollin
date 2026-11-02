@@ -17,6 +17,40 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.74.0] — 2026-11-02
+
+### Corregido
+
+- Colisión, cuerpo físico y script se muestran al añadirlos.
+- Las secciones de física viven dentro de la entidad y conservan su contexto.
+
+## [6.73.0] — 2026-11-02
+
+### Corregido
+
+- Las secciones de física se actualizan al añadir o quitar componentes.
+
+## [6.72.0] — 2026-11-02
+
+### Corregido
+
+- Las notificaciones de componentes se envían desde RefreshAll.
+- Colisión, cuerpo físico y script aparecen al añadirlos.
+
+## [6.71.0] — 2026-11-02
+
+### Corregido
+
+- Las secciones de colisión, cuerpo físico y script se reconstruyen y
+  aparecen al añadir el componente.
+
+## [6.70.0] — 2026-11-02
+
+### Corregido
+
+- Los componentes añadidos desde el botón ya aparecen en el inspector.
+- El inspector recibe notificación de todos los cambios de componente.
+
 ## [6.69.0] — 2026-11-02
 
 ### Añadido

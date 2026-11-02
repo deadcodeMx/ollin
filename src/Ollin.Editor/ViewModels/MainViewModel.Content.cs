@@ -9,6 +9,7 @@ namespace Ollin.Editor.ViewModels;
 /// <summary>Portapapeles, prefabs y búsqueda en la jerarquía.</summary>
 public sealed partial class MainViewModel
 {
+    public event Action? ComponentsChanged;
     private List<string> _clipboard = new();
     private string _searchText = string.Empty;
 
@@ -338,6 +339,7 @@ public sealed partial class MainViewModel
 
         Selected.RefreshAll();
         IsDirty = true;
+        ComponentsChanged?.Invoke();
         CommitEdit("Añadir componente");
         StatusMessage = $"Componente {kind} añadido a {entity.Name}";
         RequestRedraw();
