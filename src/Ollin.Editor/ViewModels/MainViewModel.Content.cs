@@ -203,13 +203,14 @@ public sealed partial class MainViewModel
 
             var relative = Path.GetRelativePath(ProjectRoot, fullPath).Replace('\\', '/');
             var className = Path.GetFileNameWithoutExtension(fullPath);
-            var component = target.GetComponent<ScriptComponent>() ?? target.AddComponent(new ScriptComponent());
+            var component = target.AddComponent(new ScriptComponent());
             component.ScriptPath = relative;
             component.ClassName = className;
 
             RebuildTree();
             Select(target);
             Selected?.RefreshAll();
+            NotifyComponentsChanged();
             IsDirty = true;
             CommitEdit("Añadir script");
             StatusMessage = $"Script {className} en {target.Name}";

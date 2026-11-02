@@ -44,7 +44,7 @@
   <Style Selector="TextBlock.section">
     <Setter Property="FontSize" Value="10.5" />
     <Setter Property="FontWeight" Value="SemiBold" />
-    <Setter Property="Foreground" Value="{DynamicResource Ollin.TextDim}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Accent}" />
     <Setter Property="LetterSpacing" Value="1.2" />
   </Style>
 

@@ -17,6 +17,18 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.79.0] — 2026-11-02
+
+### Corregido
+
+- Añadir scripts desde Archivos refresca el inspector.
+- Cada script aparece como componente independiente.
+- Los títulos de sección usan el color de acento.
+
+### Cambiado
+
+- Script retirado de Añadir componente; solo se añade desde Archivos.
+
 ## [6.78.0] — 2026-11-02
 
 ### Cambiado
