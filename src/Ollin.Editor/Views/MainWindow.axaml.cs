@@ -432,6 +432,14 @@ public partial class MainWindow : Window
     private void OnBrushFloor(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewportHost.Viewport.Brush3DMode = ViewportHost.Viewport.Brush3DMode == Controls.Brush3DMode.Floor ? Controls.Brush3DMode.None : Controls.Brush3DMode.Floor;
 
+    private void OnBatchMove(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ApplyBatchMove();
+
+    private void OnBatchRotate(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ApplyBatchRotation();
+
+    private void OnBatchScale(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ApplyBatchScale();
+
+    private void OnBatchSorting(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ApplyBatchSorting();
+
     private void OnAlignLeft(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AlignSelected("left");
 
     private void OnAlignCenterH(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AlignSelected("centerH");

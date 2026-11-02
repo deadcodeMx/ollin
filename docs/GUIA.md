@@ -1022,3 +1022,13 @@ error de sintaxis.
 - La selección se sincroniza con el viewport en ambos sentidos.
 - Con varias entidades, el inspector muestra el resumen y **Alinear ▾**.
 - Supr borra todas las entidades seleccionadas.
+
+## 60. Edición en lote y duplicar selección (6.62)
+
+- Con varias entidades seleccionadas, el inspector muestra:
+  - **Mover selección** por ΔX/ΔY.
+  - **Aplicar rotación**.
+  - **Aplicar escala** X/Y.
+  - **Aplicar orden de capa**.
+- **Duplicar** crea una copia de cada entidad seleccionada.
+- Los duplicados quedan seleccionados.

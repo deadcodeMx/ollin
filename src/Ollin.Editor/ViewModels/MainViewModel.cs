@@ -28,6 +28,12 @@ public sealed partial class MainViewModel : ObservableObject
     private EntityNode? _selected;
     private readonly List<EntityNode> _selection = new();
     private bool _selectionAdd;
+    private decimal _batchOffsetX;
+    private decimal _batchOffsetY;
+    private decimal _batchRotation;
+    private decimal _batchScaleX = 1m;
+    private decimal _batchScaleY = 1m;
+    private decimal _batchSorting;
     private bool _showGrid = true;
     private string _statusMessage = "Listo";
     private string? _scenePath;
@@ -1252,25 +1258,34 @@ public sealed partial class MainViewModel : ObservableObject
 
     public void DuplicateSelected()
     {
-        if (IsPlaying || Selected is null)
+        if (IsPlaying) return;
+
+        var nodes = _selection.Count > 0
+            ? _selection.ToList()
+            : Selected is { } primary ? new List<EntityNode> { primary } : new List<EntityNode>();
+        if (nodes.Count == 0) return;
+
+        var copies = new List<Entity>();
+        foreach (var node in nodes)
         {
-            return;
+            var original = node.Entity;
+            var copy = original.Clone();
+            copy.Name = nodes.Count == 1 ? $"{original.Name} (copia)" : $"{original.Name} (copia)";
+            copy.Transform.Position += new Vector2(0.4f, -0.4f);
+            Scene.Add(copy);
+            copies.Add(copy);
         }
 
-        var original = Selected.Entity;
-        var copy = original.Clone();
-        copy.Name = $"{original.Name} (copia)";
-        copy.Transform.Position += new Vector2(0.4f, -0.4f);
-        Scene.Add(copy);
         RebuildTree();
-        Select(copy);
+        SelectMany(copies);
         IsDirty = true;
-        CommitEdit("Duplicar entidad");
+        CommitEdit(nodes.Count == 1 ? "Duplicar entidad" : $"Duplicar {nodes.Count} entidades");
         OnPropertyChanged(nameof(EntityCountText));
-        Log.Info($"Entidad duplicada: {copy.Name}", "Editor");
+        Log.Info(nodes.Count == 1
+            ? $"Entidad duplicada: {copies[0].Name}"
+            : $"{nodes.Count} entidades duplicadas", "Editor");
         RequestRedraw();
     }
-
     public void Select(Entity? entity, bool additive = false)
     {
         if (entity is null)
@@ -1356,6 +1371,56 @@ public sealed partial class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(SelectionIds));
             RequestRedraw();
         }
+    }
+
+    public decimal BatchOffsetX { get => _batchOffsetX; set => SetProperty(ref _batchOffsetX, value); }
+
+    public decimal BatchOffsetY { get => _batchOffsetY; set => SetProperty(ref _batchOffsetY, value); }
+
+    public decimal BatchRotation { get => _batchRotation; set => SetProperty(ref _batchRotation, value); }
+
+    public decimal BatchScaleX { get => _batchScaleX; set => SetProperty(ref _batchScaleX, value); }
+
+    public decimal BatchScaleY { get => _batchScaleY; set => SetProperty(ref _batchScaleY, value); }
+
+    public decimal BatchSorting { get => _batchSorting; set => SetProperty(ref _batchSorting, value); }
+
+    public void ApplyBatchMove()
+    {
+        if (_selection.Count < 2) return;
+        foreach (var node in _selection)
+        {
+            node.X += BatchOffsetX;
+            node.Y += BatchOffsetY;
+        }
+        BatchOffsetX = 0m;
+        BatchOffsetY = 0m;
+        StatusMessage = $"Movidas {_selection.Count} entidades";
+    }
+
+    public void ApplyBatchRotation()
+    {
+        if (_selection.Count < 2) return;
+        foreach (var node in _selection) node.RotationDegrees = BatchRotation;
+        StatusMessage = $"Rotación aplicada a {_selection.Count} entidades";
+    }
+
+    public void ApplyBatchScale()
+    {
+        if (_selection.Count < 2) return;
+        foreach (var node in _selection)
+        {
+            node.ScaleX = BatchScaleX;
+            node.ScaleY = BatchScaleY;
+        }
+        StatusMessage = $"Escala aplicada a {_selection.Count} entidades";
+    }
+
+    public void ApplyBatchSorting()
+    {
+        if (_selection.Count < 2) return;
+        foreach (var node in _selection) node.SortingOrder = BatchSorting;
+        StatusMessage = $"Orden aplicado a {_selection.Count} entidades";
     }
 
     public void AlignSelected(string mode)

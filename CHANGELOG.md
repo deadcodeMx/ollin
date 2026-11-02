@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.62.0] — 2026-11-02
+
+### Añadido
+
+- Edición en lote de posición, rotación, escala y orden de capa.
+- Duplicar toda la selección.
+- 205 pruebas automatizadas.
+
 ## [6.61.0] — 2026-11-02
 
 ### Añadido
