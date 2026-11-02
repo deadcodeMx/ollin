@@ -1230,6 +1230,8 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(OscillationAmplitude));
         OnPropertyChanged(nameof(OscillationFrequency));
 _scriptFields = null;
+        _scriptEditors = null;
+        OnPropertyChanged(nameof(ScriptEditors));
         OnPropertyChanged(nameof(ScriptFields));
         OnPropertyChanged(nameof(HasSprite));
         OnPropertyChanged(nameof(HasCollider));

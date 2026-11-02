@@ -1,21 +1,22 @@
-## Ollin Beta 6.83.0 — scripts visibles en la entidad
+## Ollin Beta 6.84.0 — scripts editables
 
 ### Corregido
 
-- El script añadido aparece **dentro de la entidad**, antes de colisión/física.
-- Se puede editar archivo, clase y campos públicos.
-- Varios scripts se muestran como componentes independientes.
-- Los títulos de componentes están resaltados en ámbar.
+- Quitar un script lo elimina del inspector.
+- Los campos **y propiedades públicas** aparecen tras recargar scripts.
+- Los valores públicos se aplican al reproducir.
 
 ### Cómo probarlo
 
-1. Selecciona una entidad.
-2. En Archivos, clic derecho en un `.cs` → **Añadir a la entidad seleccionada**.
-3. Aparece **SCRIPT · Nombre** debajo de Transformación.
-4. Repite con otro script para tener varias secciones.
+1. Instala 6.84.0.
+2. Añade un script desde Archivos.
+3. Añade un `public float velocidad = 5f;` al script y guarda.
+4. Pulsa **Scripts → Recargar**.
+5. El campo aparece en **SCRIPT · Nombre** y puedes editarlo.
+6. Pulsa **Quitar componente** y desaparece del inspector.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.83.0 instalado.
+- Instalador 6.84.0 instalado.
 - Demo técnica no publicada.

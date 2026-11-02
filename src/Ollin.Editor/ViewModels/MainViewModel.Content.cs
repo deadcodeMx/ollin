@@ -54,17 +54,19 @@ public sealed partial class MainViewModel
         var type = _scripts.Types.FirstOrDefault(item => item.Name == className || item.FullName == className)?.Type;
         if (type is null) return Array.Empty<ScriptFieldDefinition>();
 
-        return type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
-            .Where(field => field.FieldType == typeof(float) || field.FieldType == typeof(int) ||
-                            field.FieldType == typeof(bool) || field.FieldType == typeof(string) ||
-                            field.FieldType == typeof(double))
-            .Select(field => new ScriptFieldDefinition(
-                field.Name,
-                field.FieldType.Name,
-                field.FieldType == typeof(bool) ? "false" : field.FieldType == typeof(string) ? string.Empty : "0"))
-            .ToList();
-    }
+        static bool Supported(Type type) => type == typeof(float) || type == typeof(int) ||
+            type == typeof(bool) || type == typeof(string) || type == typeof(double);
+        static string Default(Type type) => type == typeof(bool) ? "false" : type == typeof(string) ? string.Empty : "0";
 
+        var flags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance;
+        var fields = type.GetFields(flags)
+            .Where(field => Supported(field.FieldType))
+            .Select(field => new ScriptFieldDefinition(field.Name, field.FieldType.Name, Default(field.FieldType)));
+        var properties = type.GetProperties(flags)
+            .Where(property => property.CanRead && property.CanWrite && Supported(property.PropertyType))
+            .Select(property => new ScriptFieldDefinition(property.Name, property.PropertyType.Name, Default(property.PropertyType)));
+        return fields.Concat(properties).ToList();
+    }
     public void ClearSearch() => SearchText = string.Empty;
 
     /// <summary>Copia la selección al portapapeles interno (JSON por entidad).</summary>

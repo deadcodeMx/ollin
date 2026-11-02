@@ -638,6 +638,22 @@ public sealed class SceneRuntime
             }
             catch { }
         }
+
+        foreach (var property in type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+        {
+            if (!property.CanWrite || !component.Values.TryGetValue(property.Name, out var text) || string.IsNullOrWhiteSpace(text)) continue;
+            try
+            {
+                object? value = property.PropertyType == typeof(float) ? float.Parse(text, System.Globalization.CultureInfo.InvariantCulture)
+                    : property.PropertyType == typeof(double) ? double.Parse(text, System.Globalization.CultureInfo.InvariantCulture)
+                    : property.PropertyType == typeof(int) ? int.Parse(text, System.Globalization.CultureInfo.InvariantCulture)
+                    : property.PropertyType == typeof(bool) ? bool.Parse(text)
+                    : property.PropertyType == typeof(string) ? text
+                    : null;
+                if (value is not null) property.SetValue(script, value);
+            }
+            catch { }
+        }
     }
 
     private void StartScripts()

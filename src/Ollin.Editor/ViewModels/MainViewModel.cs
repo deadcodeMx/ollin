@@ -844,6 +844,8 @@ public sealed partial class MainViewModel : ObservableObject
             StatusMessage = hot > 0
                 ? $"Recarga en caliente: {hot} script(s) con estado conservado"
                 : "No se pudieron recargar los scripts (ver consola)";
+        Selected?.RefreshAll();
+        NotifyComponentsChanged();
             SyncOpenScripts();
             return;
         }
@@ -861,6 +863,8 @@ public sealed partial class MainViewModel : ObservableObject
         ScriptStatusText = _scripts.HasScripts
             ? $"Scripts: {string.Join(", ", result.Types.Select(t => t.Name))}"
             : "Scripts: sin scripts";
+        Selected?.RefreshAll();
+        NotifyComponentsChanged();
 
         SyncOpenScripts();
     }
