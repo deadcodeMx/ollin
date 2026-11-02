@@ -232,6 +232,7 @@ public sealed class NodeGraphWindow : Window
         _quickActions = quick;
         toolbar.Children.Add(quick);
         var more = new Button { Content = "Más ▾", FontSize = 10.5, Padding = new Thickness(6, 3) };
+        AutomationProperties.SetName(more, "More graph actions");
         var moreFlyout = new MenuFlyout();
         void AddMore(string header, Action action)
         {
@@ -485,43 +486,52 @@ public sealed class NodeGraphWindow : Window
 
     private void ShowShortcuts()
     {
-        var text = new TextBlock
+        Window? help = null;
+        var panel = new StackPanel { Spacing = 6, Margin = new Thickness(16) };
+
+        void AddAction(string label, Action action)
         {
-            Text = """
-Atajos del grafo
+            var button = new Button
+            {
+                Content = label,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                FontSize = 11,
+            };
+            button.Click += (_, _) =>
+            {
+                action();
+                help?.Close();
+            };
+            panel.Children.Add(button);
+        }
 
-Ctrl+Z  Deshacer
-Ctrl+Y  Rehacer
-Ctrl+C  Copiar
-Ctrl+V  Pegar
-Supr    Borrar selección
-Ctrl+A  Seleccionar todo
-Ctrl+F  Buscar
-Esc     Limpiar búsqueda
-Ctrl+0  Ajustar
-Ctrl+Shift+O  Ordenar
-Ctrl+Shift+H  Distribuir horizontal
-Ctrl+Shift+V  Distribuir vertical
-F8      Paso
-F1      Esta ayuda
-""",
-            FontSize = 12,
-            Foreground = new SolidColorBrush(Color.Parse("#D6DCE8")),
-            TextWrapping = TextWrapping.Wrap,
-            Margin = new Thickness(16),
-        };
+        AddAction("Deshacer · Ctrl+Z", Undo);
+        AddAction("Rehacer · Ctrl+Y", Redo);
+        AddAction("Copiar · Ctrl+C", CopySelected);
+        AddAction("Pegar · Ctrl+V", Paste);
+        AddAction("Borrar selección · Supr", DeleteSelected);
+        AddAction("Buscar · Ctrl+F", () => { _searchBox?.Focus(); _searchBox?.SelectAll(); });
+        AddAction("Ajustar · Ctrl+0", () => SetZoom(0.75));
+        AddAction("Ordenar · Ctrl+Shift+O", AutoLayout);
+        AddAction("Distribuir H · Ctrl+Shift+H", () => Distribute(true));
+        AddAction("Distribuir V · Ctrl+Shift+V", () => Distribute(false));
+        AddAction("Paso · F8", StepGraph);
 
-        var window = new Window
+        var close = new Button { Content = "Cerrar", HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 8, 0, 0) };
+        close.Click += (_, _) => help?.Close();
+        panel.Children.Add(close);
+
+        help = new Window
         {
             Title = "Atajos del grafo",
-            Width = 430,
-            Height = 430,
+            Width = 380,
+            Height = 520,
             Background = new SolidColorBrush(Color.Parse("#0B0D12")),
-            Content = new ScrollViewer { Content = text },
+            Content = new ScrollViewer { Content = panel },
         };
-        window.Show();
+        help.Show();
     }
-
     private void StepTraceBack()
     {
         if (_graph.DebugFrames.Count == 0) return;

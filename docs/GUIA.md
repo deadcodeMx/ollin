@@ -967,3 +967,10 @@ error de sintaxis.
 - **Paso atrás/adelante de traza**: navega las últimas ejecuciones y muestra el nodo.
 - **Diff de variables**: cada nodo muestra `antes → después` de las variables cambiadas.
 - El paso atrás de traza **no revierte el mundo**; solo inspecciona la ejecución.
+
+## 53. Cierre de limitaciones de 6.53 (6.55)
+
+- La ventana de atajos (**F1**) tiene botones que ejecutan la acción y cierran.
+- El **UI smoke** comprueba nombres de accesibilidad UIA de buscador y Más.
+- **Más acciones del grafo** expone nombre ASCII para automatización.
+- La validación con lector de pantalla real sigue siendo una prueba manual.

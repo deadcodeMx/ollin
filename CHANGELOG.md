@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.55.0] — 2026-11-02
+
+### Cambiado
+
+- Ventana de atajos accionable (ejecuta y cierra).
+- Smoke UIA de nombres de accesibilidad.
+- 205 pruebas automatizadas.
+
 ## [6.54.0] — 2026-11-02
 
 ### Añadido

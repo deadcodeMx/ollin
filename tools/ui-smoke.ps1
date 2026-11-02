@@ -77,6 +77,31 @@ if (-not [OllinSmokeWindows]::HasGraph([uint32]$editorProcess.Id)) {
     throw "No se abrió la ventana del grafo."
 }
 
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+$automationRoot = [System.Windows.Automation.AutomationElement]::RootElement
+$processCondition = New-Object System.Windows.Automation.PropertyCondition(
+    [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+    $editorProcess.Id)
+$editorWindow = $automationRoot.FindFirst([System.Windows.Automation.TreeScope]::Children, $processCondition)
+
+function Find-ByAutomationName([string]$name) {
+    if ($null -eq $editorWindow) { return $null }
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty, $name)
+    return $editorWindow.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+if ($null -eq (Find-ByAutomationName "Buscar nodo")) {
+    throw "El buscador no expone nombre de accesibilidad."
+}
+
+if ($null -eq (Find-ByAutomationName "More graph actions")) {
+    throw "El botón Más no expone nombre de accesibilidad."
+}
+
+Write-Host "UI smoke: nombres de accesibilidad OK."
+
 Stop-Process -Id $editorProcess.Id -Force
 Write-Host "UI smoke: grafo OK."
 Write-Host "UI smoke COMPLETADO."
