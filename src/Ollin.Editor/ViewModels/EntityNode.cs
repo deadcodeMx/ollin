@@ -413,6 +413,25 @@ public sealed class EntityNode : ObservableObject
     public decimal Weapon2DCooldown { get => (decimal)(Entity.GetComponent<Weapon2D>()?.Cooldown ?? 0.25f); set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Cooldown = MathF.Max(0.01f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public int Weapon2DAmmo { get => Entity.GetComponent<Weapon2D>()?.Ammo ?? -1; set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Ammo = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public bool HasAnimationFSM => Entity.GetComponent<AnimationStateMachine>() is not null;
+    public string AnimationDefaultState { get => Entity.GetComponent<AnimationStateMachine>()?.DefaultState ?? "idle"; set { if (Entity.GetComponent<AnimationStateMachine>() is { } f) { f.DefaultState = value ?? "idle"; OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public string AnimationCurrentState => Entity.GetComponent<AnimationStateMachine>()?.CurrentState ?? "-";
+    public bool HasTransition2D => Entity.GetComponent<ScreenTransition2D>() is not null;
+    public decimal TransitionDuration { get => (decimal)(Entity.GetComponent<ScreenTransition2D>()?.Duration ?? 0.6f); set { if (Entity.GetComponent<ScreenTransition2D>() is { } t) { t.Duration = MathF.Max(0.05f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal TransitionDelay { get => (decimal)(Entity.GetComponent<ScreenTransition2D>()?.Delay ?? 0f); set { if (Entity.GetComponent<ScreenTransition2D>() is { } t) { t.Delay = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public bool TilemapAutotile { get => Tilemap?.Autotile ?? false; set { if (Tilemap is null || Tilemap.Autotile == value) return; Tilemap.Autotile = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } }
+    public decimal TilemapAutotileBase { get => Tilemap?.AutotileBase ?? 0; set { if (Tilemap is null || Tilemap.AutotileBase == (int)value) return; Tilemap.AutotileBase = (int)value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } }
+
+    public bool HasMovingPlatform => Entity.GetComponent<MovingPlatform2D>() is not null;
+    public decimal MovingTravelX { get => (decimal)(Entity.GetComponent<MovingPlatform2D>()?.Travel.X ?? 3f); set { if (Entity.GetComponent<MovingPlatform2D>() is { } m) { m.Travel = new Vector2((float)value, m.Travel.Y); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal MovingTravelY { get => (decimal)(Entity.GetComponent<MovingPlatform2D>()?.Travel.Y ?? 0f); set { if (Entity.GetComponent<MovingPlatform2D>() is { } m) { m.Travel = new Vector2(m.Travel.X, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal MovingSpeed { get => (decimal)(Entity.GetComponent<MovingPlatform2D>()?.Speed ?? 1f); set { if (Entity.GetComponent<MovingPlatform2D>() is { } m) { m.Speed = MathF.Max(0.01f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public bool HasParticles => Entity.GetComponent<ParticleEmitter2D>() is not null;
+    public decimal ParticleRate { get => (decimal)(Entity.GetComponent<ParticleEmitter2D>()?.Rate ?? 20f); set { if (Entity.GetComponent<ParticleEmitter2D>() is { } p) { p.Rate = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal ParticleLifetime { get => (decimal)(Entity.GetComponent<ParticleEmitter2D>()?.Lifetime ?? 0.8f); set { if (Entity.GetComponent<ParticleEmitter2D>() is { } p) { p.Lifetime = MathF.Max(0.05f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public bool HasTrail => Entity.GetComponent<Trail2D>() is not null;
+    public decimal TrailLifetime { get => (decimal)(Entity.GetComponent<Trail2D>()?.Lifetime ?? 0.35f); set { if (Entity.GetComponent<Trail2D>() is { } t) { t.Lifetime = MathF.Max(0.02f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+
     public bool HasRotator => Entity.GetComponent<RotatorComponent>() is not null;
 
     public bool HasOscillator => Entity.GetComponent<OscillatorComponent>() is not null;
@@ -931,6 +950,12 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public bool ColliderOneWay
+    {
+        get => Collider?.OneWay ?? false;
+        set { if (Collider is null || Collider.OneWay == value) return; Collider.OneWay = value; OnPropertyChanged(); _owner.MarkDirty(); }
+    }
+
     public int ColliderLayer
     {
         get => Collider?.Layer ?? 0;
@@ -1399,6 +1424,14 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasCharacterBody));
         OnPropertyChanged(nameof(HasHitbox));
         OnPropertyChanged(nameof(HasKnockback2D));
+        OnPropertyChanged(nameof(HasMovingPlatform));
+        OnPropertyChanged(nameof(HasAnimationFSM));
+        OnPropertyChanged(nameof(AnimationCurrentState));
+        OnPropertyChanged(nameof(HasTransition2D));
+        OnPropertyChanged(nameof(TilemapAutotile));
+        OnPropertyChanged(nameof(HasParticles));
+        OnPropertyChanged(nameof(HasTrail));
+        OnPropertyChanged(nameof(ColliderOneWay));
         OnPropertyChanged(nameof(HasHurtbox));
         OnPropertyChanged(nameof(HasCheckpoint2D));
         OnPropertyChanged(nameof(HasWeapon2D));

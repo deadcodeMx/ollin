@@ -472,6 +472,7 @@
                     </StackPanel>
                   </Border>
                 </Border>
+        <Border IsHitTestVisible="False" Opacity="{Binding TransitionOpacity}" Background="{Binding TransitionBrush}" ZIndex="30" />
                 <Border IsVisible="{Binding #ViewportHost.Viewport.HasError}"
                         HorizontalAlignment="Center" VerticalAlignment="Center"
                         Background="#E6212026" BorderBrush="{DynamicResource Ollin.Danger}"
@@ -663,6 +664,31 @@
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Cadencia" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.Weapon2DCooldown, Mode=TwoWay}" Increment="0.05" Minimum="0.01" FormatString="0.##" /></Grid>
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Munición" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.Weapon2DAmmo, Mode=TwoWay}" Increment="1" Minimum="-1" FormatString="0" /></Grid>
                     </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasMovingPlatform}" Spacing="5">
+                      <TextBlock Classes="section" Text="PLATAFORMA MÓVIL" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Recorrido X" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.MovingTravelX, Mode=TwoWay}" Increment="0.5" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Recorrido Y" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.MovingTravelY, Mode=TwoWay}" Increment="0.5" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.MovingSpeed, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasParticles}" Spacing="5">
+                      <TextBlock Classes="section" Text="PARTÍCULAS" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Cantidad/s" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.ParticleRate, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Vida" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.ParticleLifetime, Mode=TwoWay}" Increment="0.05" Minimum="0.05" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasTrail}" Spacing="5">
+                      <TextBlock Classes="section" Text="ESTELA" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Vida" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TrailLifetime, Mode=TwoWay}" Increment="0.05" Minimum="0.02" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasAnimationFSM}" Spacing="5">
+                      <TextBlock Classes="section" Text="ANIMACIÓN FSM" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Estado inicial" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.AnimationDefaultState, Mode=TwoWay}" /></Grid>
+                      <TextBlock Text="{Binding Selected.AnimationCurrentState, StringFormat=Estado actual: {0}}" Classes="hint" />
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasTransition2D}" Spacing="5">
+                      <TextBlock Classes="section" Text="TRANSICIÓN" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Duración" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TransitionDuration, Mode=TwoWay}" Increment="0.1" Minimum="0.05" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Retardo" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TransitionDelay, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" /></Grid>
+                    </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasRotator}" Spacing="5">
                       <TextBlock Classes="section" Text="ROTADOR" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1">
@@ -704,6 +730,7 @@
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderRadius, Mode=TwoWay}" Increment="0.05" Minimum="0.01" FormatString="0.###" />
                       </Grid>
                       <CheckBox Content="Es disparador (trigger)" IsChecked="{Binding Selected.IsTrigger, Mode=TwoWay}" FontSize="11.5" />
+                      <CheckBox Content="Solo desde arriba" IsChecked="{Binding Selected.ColliderOneWay, Mode=TwoWay}" FontSize="11.5" />
                     </StackPanel>
 
                     <StackPanel IsVisible="{Binding Selected.HasRigidbody}" Spacing="5">
@@ -1574,6 +1601,7 @@
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.TileSize, Mode=TwoWay}" Increment="0.25" Minimum="0.05" FormatString="0.###" />
                     </Grid>
                     <CheckBox Content="Pintar en el viewport" IsChecked="{Binding IsPaintingTiles, Mode=TwoWay}" FontSize="11.5" />
+                      <CheckBox Content="Autotile" IsChecked="{Binding Selected.TilemapAutotile, Mode=TwoWay}" FontSize="11.5" />
                     <StackPanel Orientation="Horizontal" Spacing="5">
                       <Button Classes="tool" Content="Borrador" Click="OnTileEraser" />
                       <ToggleButton Classes="tool" Content="Relleno" IsChecked="{Binding TileFillMode, Mode=TwoWay}" />

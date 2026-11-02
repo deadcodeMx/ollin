@@ -37,6 +37,20 @@ public sealed partial class MainViewModel
     private bool _isGameOverVisible;
     private string _gameOverText = string.Empty;
     private double _masterVolume = Core.Audio.Audio.MasterVolume;
+    private double _transitionOpacity;
+    private IBrush _transitionBrush = new SolidColorBrush(Colors.Black);
+
+    public double TransitionOpacity
+    {
+        get => _transitionOpacity;
+        private set { if (System.Math.Abs(_transitionOpacity - value) < 0.001d) return; _transitionOpacity = value; OnPropertyChanged(); }
+    }
+
+    public IBrush TransitionBrush
+    {
+        get => _transitionBrush;
+        private set { _transitionBrush = value; OnPropertyChanged(); }
+    }
 
     public ObservableCollection<HudBarView> HudBars { get; } = new();
 
@@ -111,6 +125,8 @@ public sealed partial class MainViewModel
     {
         RefreshInventory();
         var hud = _runtime.Hud;
+        TransitionOpacity = hud.TransitionAlpha;
+        TransitionBrush = ToBrush(hud.TransitionColor);
         var signature = BuildHudSignature(hud);
 
         if (signature != _hudSignature)
@@ -373,6 +389,7 @@ public sealed partial class MainViewModel
         HudLabels.Clear();
         HudMessages.Clear();
         IsHudVisible = false;
+        TransitionOpacity = 0d;
         InventoryItems.Clear();
         _inventoryOpen = false;
         _inventorySignature = string.Empty;

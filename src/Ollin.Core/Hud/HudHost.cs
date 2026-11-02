@@ -18,6 +18,8 @@ public static class HudHost
 
     public static Action? ClearHandler { get; set; }
 
+    public static Action<float, Vector4>? TransitionHandler { get; set; }
+
     public static void SetBar(string name, float value, float max, Vector4 color) =>
         BarHandler?.Invoke(name, value, max, color);
 
@@ -29,6 +31,8 @@ public static class HudHost
 
     public static void Clear() => ClearHandler?.Invoke();
 
+    public static void Transition(float seconds, Vector4 color) => TransitionHandler?.Invoke(seconds, color);
+
     public static void Reset()
     {
         BarHandler = null;
@@ -36,5 +40,6 @@ public static class HudHost
         MessageHandler = null;
         GameOverHandler = null;
         ClearHandler = null;
+        TransitionHandler = null;
     }
 }

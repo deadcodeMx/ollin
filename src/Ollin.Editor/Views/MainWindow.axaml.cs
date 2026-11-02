@@ -286,12 +286,12 @@ public partial class MainWindow : Window
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
-            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D")) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D" or "PLATAFORMA MÓVIL" or "PARTÍCULAS" or "ESTELA" or "ANIMACIÓN FSM" or "TRANSICIÓN")) continue;
 
             var index = root.Children.IndexOf(child);
             root.Children.RemoveAt(index);
             child.Children.Remove(title);
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", _ => null };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", "PLATAFORMA MÓVIL" => "movingplatform", "PARTÍCULAS" => "particles", "ESTELA" => "trail", "ANIMACIÓN FSM" => "animfsm", "TRANSICIÓN" => "transition", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
             var expander = new Expander
             {
@@ -1534,6 +1534,7 @@ public partial class MainWindow : Window
         Add(movement, "Cámara 2D", "camera");
         Add(movement, "Rotador", "rotator");
         Add(movement, "Oscilador", "oscillator");
+        Add(movement, "Plataforma móvil", "movingplatform");
         flyout.Items.Add(movement);
 
         var collision = new MenuItem { Header = "Colisión" };
@@ -1557,7 +1558,11 @@ public partial class MainWindow : Window
         var visual = new MenuItem { Header = "Visual" };
         Add(visual, "Sprite", "sprite");
         Add(visual, "Animación", "animator");
+        Add(visual, "Máquina de animación", "animfsm");
+        Add(visual, "Transición de pantalla", "transition");
         Add(visual, "Luz 2D", "light");
+        Add(visual, "Partículas", "particles");
+        Add(visual, "Estela", "trail");
         flyout.Items.Add(visual);
 
         var gameplay = new MenuItem { Header = "Mundo y gameplay" };

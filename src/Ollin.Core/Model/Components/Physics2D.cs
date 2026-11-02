@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using System.Numerics;
 
 namespace Ollin.Core.Model.Components;
@@ -18,6 +19,9 @@ public abstract class Collider2D : Component
     /// <summary>Máscara de capas con las que colisiona.</summary>
     public int Mask { get; set; } = ~0;
 
+    /// <summary>Plataforma de un solo sentido: solo colisiona desde arriba.</summary>
+    public bool OneWay { get; set; }
+
     /// <summary>Esquinas en mundo. La física usa su caja envolvente.</summary>
     public abstract Vector2[] GetWorldCorners(Matrix4x4 world);
 }
@@ -36,6 +40,7 @@ public sealed class BoxCollider : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        OneWay = OneWay,
         Owner = newOwner,
     };
 
@@ -77,6 +82,7 @@ public sealed class CircleCollider2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        OneWay = OneWay,
         Owner = newOwner,
     };
 
@@ -108,6 +114,7 @@ public sealed class CapsuleCollider2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        OneWay = OneWay,
         Owner = newOwner,
     };
 
@@ -152,6 +159,7 @@ public sealed class PolygonCollider2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        OneWay = OneWay,
         Owner = newOwner,
     };
 
@@ -176,6 +184,7 @@ public sealed class EdgeCollider2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        OneWay = OneWay,
         Owner = newOwner,
     };
 
@@ -218,6 +227,7 @@ public sealed class Area2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        OneWay = OneWay,
         Owner = newOwner,
     };
 
@@ -243,6 +253,33 @@ public sealed class Area2D : Collider2D
 
         return points.Select(point => Vector2.Transform(point, world)).ToArray();
     }
+}
+
+/// <summary>Plataforma que oscila entre su origen y un desplazamiento.</summary>
+public sealed class MovingPlatform2D : Component, ITickable
+{
+    public Vector2 Travel { get; set; } = new(3f, 0f);
+
+    public float Speed { get; set; } = 1f;
+
+    public float Phase { get; set; }
+
+    [JsonIgnore] public Vector2 Origin { get; private set; }
+    private bool _initialized;
+
+    public void OnUpdate(float deltaTime)
+    {
+        if (Owner is null) return;
+        if (!_initialized) { Origin = Owner.Transform.Position; _initialized = true; }
+        Phase += deltaTime * MathF.Max(0.01f, Speed);
+        var t = (MathF.Sin(Phase) + 1f) * 0.5f;
+        Owner.Transform.Position = Origin + Travel * t;
+    }
+
+    public override Component CloneFor(Entity newOwner) => new MovingPlatform2D
+    {
+        Enabled = Enabled, Travel = Travel, Speed = Speed, Phase = Phase, Owner = newOwner,
+    };
 }
 
 /// <summary>

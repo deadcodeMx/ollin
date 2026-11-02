@@ -50,6 +50,13 @@ public sealed class HudModel
 
     public IReadOnlyList<HudMessage> Messages => _messages;
 
+    public float TransitionAlpha { get; private set; }
+
+    public Vector4 TransitionColor { get; private set; } = Vector4.Zero;
+
+    private float _transitionRemaining;
+    private float _transitionDuration;
+
     public bool IsGameOver { get; private set; }
 
     public string? GameOverText { get; private set; }
@@ -89,6 +96,14 @@ public sealed class HudModel
         _messages.Add(new HudMessage { Text = text, Remaining = duration, Duration = duration });
     }
 
+    public void ShowTransition(float seconds, Vector4 color)
+    {
+        _transitionDuration = System.Math.Max(0.05f, seconds);
+        _transitionRemaining = _transitionDuration;
+        TransitionColor = color;
+        TransitionAlpha = 1f;
+    }
+
     public void GameOver(string text)
     {
         IsGameOver = true;
@@ -102,10 +117,20 @@ public sealed class HudModel
         _messages.Clear();
         IsGameOver = false;
         GameOverText = null;
+        TransitionAlpha = 0f;
+        _transitionRemaining = 0f;
+        _transitionDuration = 0f;
     }
 
     public void Update(float deltaTime)
     {
+        if (_transitionRemaining > 0f)
+        {
+            _transitionRemaining = System.Math.Max(0f, _transitionRemaining - deltaTime);
+            TransitionAlpha = _transitionDuration <= 0f ? 0f : _transitionRemaining / _transitionDuration;
+        }
+        else TransitionAlpha = 0f;
+
         if (_messages.Count == 0)
         {
             return;

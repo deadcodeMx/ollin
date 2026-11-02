@@ -65,6 +65,14 @@ internal sealed class PhysicsSystem
                     continue;
                 }
 
+                var aPosition = scene.GetWorldPosition(a.Entity);
+                var bPosition = scene.GetWorldPosition(b.Entity);
+                if ((a.Collider.OneWay && bPosition.Y <= aPosition.Y) ||
+                    (b.Collider.OneWay && aPosition.Y <= bPosition.Y))
+                {
+                    continue;
+                }
+
                 GetBounds(scene, a.Entity, a.Collider, out var minA, out var maxA);
                 GetBounds(scene, b.Entity, b.Collider, out var minB, out var maxB);
 

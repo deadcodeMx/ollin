@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.109.0] — 2026-11-02
+
+### Añadido
+
+- Plataformas móviles y de un solo sentido.
+- Partículas y estela.
+- Máquina de estados de animación.
+- Autotile básico por vecinos.
+- Transición de pantalla con fundido.
+
 ## [6.108.0] — 2026-11-02
 
 ### Cambiado

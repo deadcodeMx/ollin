@@ -147,6 +147,35 @@ public sealed class Renderer2D : IDisposable
         DrawLighting(scene, camera, cameraPosition, width, height, viewProjection);
     }
 
+    private void DrawParticles(Scene scene)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<ParticleEmitter2D>() is not { Enabled: true } emitter) continue;
+            var size = new Vector2(System.Math.Max(0.01f, emitter.Size));
+            foreach (var particle in emitter.Particles)
+            {
+                if (particle.Life <= 0f) continue;
+                _batch.DrawRect(null, particle.Position, size, particle.Color);
+            }
+        }
+    }
+
+    private void DrawTrails(Scene scene)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<Trail2D>() is not { Enabled: true } trail) continue;
+            for (var i = 0; i < trail.Points.Count - 1; i++)
+            {
+                var point = trail.Points[i];
+                var next = trail.Points[i + 1];
+                var color = trail.Color;
+                color.W = System.Math.Clamp(point.Life / System.Math.Max(0.001f, point.MaxLife), 0f, 1f) * trail.Color.W;
+                _batch.DrawLine(null, point.Position, next.Position, System.Math.Max(0.01f, trail.Width), color);
+            }
+        }
+    }
     private void DrawSprites(Scene scene, Vector2 cameraPosition)
     {
         var drawables = new List<(Entity Entity, SpriteRenderer Sprite)>();
@@ -249,7 +278,7 @@ public sealed class Renderer2D : IDisposable
             {
                 for (var x = 0; x < map.Width; x++)
                 {
-                    var tile = map.TileAt(x, y);
+                    var tile = map.DisplayTileAt(x, y);
                     if (tile < 0)
                     {
                         continue;

@@ -71,6 +71,7 @@
                   <Grid>
                     <TextBlock Text="{Binding Initial}" FontSize="26" FontWeight="Bold" Foreground="#E9A23B" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding QuantityText}" FontSize="10" Foreground="#E7EAF0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
+    <Border IsHitTestVisible="False" Opacity="{Binding TransitionOpacity}" Background="{Binding TransitionBrush}" />
                   </Grid>
                 </Border>
               </DataTemplate>

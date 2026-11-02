@@ -328,6 +328,32 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new PolygonCollider2D());
                 break;
 
+            case "movingplatform":
+                if (entity.HasComponent<MovingPlatform2D>()) { added = false; break; }
+                entity.AddComponent(new MovingPlatform2D());
+                break;
+
+            case "animfsm":
+                if (entity.HasComponent<AnimationStateMachine>()) { added = false; break; }
+                if (!entity.HasComponent<SpriteAnimator>()) entity.AddComponent(new SpriteAnimator());
+                entity.AddComponent(new AnimationStateMachine());
+                break;
+
+            case "transition":
+                if (entity.HasComponent<ScreenTransition2D>()) { added = false; break; }
+                entity.AddComponent(new ScreenTransition2D());
+                break;
+
+            case "particles":
+                if (entity.HasComponent<ParticleEmitter2D>()) { added = false; break; }
+                entity.AddComponent(new ParticleEmitter2D());
+                break;
+
+            case "trail":
+                if (entity.HasComponent<Trail2D>()) { added = false; break; }
+                entity.AddComponent(new Trail2D());
+                break;
+
             case "hitbox":
                 if (entity.HasComponent<Hitbox>()) { added = false; break; }
                 if (!entity.HasComponent<Collider2D>()) entity.AddComponent(new BoxCollider());

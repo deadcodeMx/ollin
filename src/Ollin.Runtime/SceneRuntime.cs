@@ -113,6 +113,7 @@ public sealed class SceneRuntime
         HudHost.MessageHandler = _hud.ShowMessage;
         HudHost.GameOverHandler = _hud.GameOver;
         HudHost.ClearHandler = _hud.Clear;
+        HudHost.TransitionHandler = _hud.ShowTransition;
         DialogueHost.PlayHandler = PlayDialogue;
         DialogueHost.IsActiveHandler = () => _dialogue.IsActive;
         DialogueHost.AdvanceHandler = _dialogue.Advance;

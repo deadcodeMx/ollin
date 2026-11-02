@@ -26,6 +26,12 @@ public sealed class Tilemap : Component
     /// <summary>Si está activo, sus celdas bloquean a los cuerpos dinámicos.</summary>
     public bool Collides { get; set; }
 
+    /// <summary>Elige la variante de autotile según vecinos (16 variantes).</summary>
+    public bool Autotile { get; set; }
+
+    /// <summary>Primer índice de las 16 variantes de autotile.</summary>
+    public int AutotileBase { get; set; }
+
     /// <summary>Índices por fila: <c>Tiles[y * Width + x]</c> (-1 = celda vacía).</summary>
     public int[] Tiles { get; set; } = CreateEmpty(16, 8);
 
@@ -46,6 +52,8 @@ public sealed class Tilemap : Component
         TilesetColumns = TilesetColumns,
         SortingOrder = SortingOrder,
         Collides = Collides,
+        Autotile = Autotile,
+        AutotileBase = AutotileBase,
         Tiles = (int[])Tiles.Clone(),
         Owner = newOwner,
     };
@@ -69,6 +77,19 @@ public sealed class Tilemap : Component
         Width = width;
         Height = height;
         Tiles = resized;
+    }
+
+    /// <summary>Índice que debe dibujarse, aplicando autotile si está activo.</summary>
+    public int DisplayTileAt(int x, int y)
+    {
+        var tile = TileAt(x, y);
+        if (!Autotile || tile < 0) return tile;
+        var mask = 0;
+        if (TileAt(x, y - 1) >= 0) mask |= 1;
+        if (TileAt(x + 1, y) >= 0) mask |= 2;
+        if (TileAt(x, y + 1) >= 0) mask |= 4;
+        if (TileAt(x - 1, y) >= 0) mask |= 8;
+        return AutotileBase + mask;
     }
 
     public int TileAt(int x, int y)
