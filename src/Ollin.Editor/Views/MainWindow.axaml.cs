@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Reflection;
 using System.Xml;
 using AvaloniaEdit.Highlighting;
@@ -394,6 +395,28 @@ public partial class MainWindow : Window
 
     private void OnSnapToggle(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewportHost.Viewport.Snap3D = (sender as Avalonia.Controls.Primitives.ToggleButton)?.IsChecked == true;
+
+    private void OnSnap2DToggle(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewportHost?.Viewport is { } viewport)
+        {
+            viewport.Snap2D = (sender as Avalonia.Controls.Primitives.ToggleButton)?.IsChecked == true;
+        }
+    }
+
+    private void OnSnap2DSizeChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (ViewportHost?.Viewport is not { } viewport || sender is not ComboBox combo ||
+            combo.SelectedItem is not ComboBoxItem item)
+        {
+            return;
+        }
+
+        if (float.TryParse(item.Tag?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var step))
+        {
+            viewport.Snap2DStep = Math.Clamp(step, 0.01f, 10f);
+        }
+    }
 
     private void OnDuplicateSeries(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.DuplicateSelectedSeries();
 

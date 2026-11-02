@@ -122,6 +122,11 @@ public sealed class ViewportControl : OpenGlControlBase
 
     public bool Snap3D { get; set; }
 
+    /// <summary>Ajuste de posición 2D a la rejilla.</summary>
+    public bool Snap2D { get; set; }
+
+    public float Snap2DStep { get; set; } = 0.25f;
+
     public float SnapStep { get; set; } = 0.5f;
 
     /// <summary>Coloca una pared o suelo en el punto del plano del suelo bajo el puntero.</summary>

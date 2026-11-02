@@ -73,47 +73,69 @@
     <!-- Barra de herramientas -->
     <Border Grid.Row="1" Classes="toolbar">
       <Grid ColumnDefinitions="*,Auto">
-        <StackPanel Orientation="Horizontal" Spacing="6">
-          <Button Classes="tool" Content="Proyecto…" Click="OnNewProject" ToolTip.Tip="Crear o abrir un proyecto" />
-          <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
-          <Button Classes="tool" Content="Nueva" Click="OnNewScene" ToolTip.Tip="Nueva escena (Ctrl+N)" />
-          <Button Classes="tool" Content="Abrir" Click="OnOpenScene" ToolTip.Tip="Abrir escena (Ctrl+O)" />
+        <StackPanel Orientation="Horizontal" Spacing="5">
           <Button Classes="tool" Content="Guardar" Click="OnSaveScene" ToolTip.Tip="Guardar escena (Ctrl+S)" />
           <Button Classes="tool" Content="↶" Click="OnUndo" IsEnabled="{Binding CanUndo}" ToolTip.Tip="{Binding UndoText}" />
           <Button Classes="tool" Content="↷" Click="OnRedo" IsEnabled="{Binding CanRedo}" ToolTip.Tip="{Binding RedoText}" />
           <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
-          <Button Classes="tool" Content="+ Sprite" Click="OnAddSprite" />
-          <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" />
-          <Button Classes="tool" Content="Duplicar" Click="OnDuplicate" />
-          <Button Classes="tool" Content="Eliminar" Click="OnDelete" />
+          <Button Classes="tool accent" Content="+ Sprite" Click="OnAddSprite" ToolTip.Tip="Añadir entidad 2D con sprite" />
+          <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" ToolTip.Tip="Añadir entidad vacía" />
+          <Button Classes="tool" Content="Duplicar" Click="OnDuplicate" ToolTip.Tip="Duplicar selección" />
+          <Button Classes="tool" Content="Eliminar" Click="OnDelete" ToolTip.Tip="Eliminar selección" />
+          <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
+          <ToggleButton Classes="tool" Content="Rejilla" IsChecked="{Binding ShowGrid, Mode=TwoWay}"
+                        ToolTip.Tip="Mostrar u ocultar la cuadrícula" />
+          <ToggleButton x:Name="Snap2DToggle" Classes="tool" Content="Imán 2D"
+                        Click="OnSnap2DToggle" ToolTip.Tip="Ajustar posiciones 2D a la rejilla" />
+          <ComboBox x:Name="Snap2DSize" Width="76" SelectedIndex="0"
+                    SelectionChanged="OnSnap2DSizeChanged"
+                    ToolTip.Tip="Tamaño de la rejilla 2D">
+            <ComboBoxItem Content="0.25" Tag="0.25" />
+            <ComboBoxItem Content="0.5" Tag="0.5" />
+            <ComboBoxItem Content="1" Tag="1" />
+            <ComboBoxItem Content="2" Tag="2" />
+          </ComboBox>
+          <Button Classes="tool" Content="Herramientas ▾">
+            <Button.Flyout>
+              <Flyout>
+                <StackPanel Width="230" Spacing="4">
+                  <TextBlock Text="Transformar" Classes="section" Margin="4,2" />
+                  <Button Classes="tool" Content="Mover (1)" Click="OnGizmoMove" />
+                  <Button Classes="tool" Content="Rotar (2)" Click="OnGizmoRotate" />
+                  <Button Classes="tool" Content="Escalar (3)" Click="OnGizmoScale" />
+                  <Separator />
+                  <TextBlock Text="2.5D / 3D" Classes="section" Margin="4,2" />
+                  <Button Classes="tool" Content="Pared 3D" Click="OnBrushWall" />
+                  <Button Classes="tool" Content="Suelo 3D" Click="OnBrushFloor" />
+                  <ToggleButton Classes="tool" Content="Imán 3D" Click="OnSnapToggle" />
+                  <Button Classes="tool" Content="Serie x4" Click="OnDuplicateSeries" />
+                  <Button Classes="tool" Content="Grafo de nodos" Click="OnOpenGraph" />
+                  <Separator />
+                  <TextBlock Text="Cámara y scripts" Classes="section" Margin="4,2" />
+                  <Button Classes="tool" Content="Centrar cámara" Click="OnResetCamera" />
+                  <Button Classes="tool" Content="Enfocar selección" Click="OnFrameSelected" />
+                  <Button Classes="tool" Content="Recargar scripts" Click="OnReloadScripts" />
+                </StackPanel>
+              </Flyout>
+            </Button.Flyout>
+          </Button>
           <TextBlock Text="{Binding ProjectName}" VerticalAlignment="Center" Margin="10,0,0,0"
                      Foreground="{DynamicResource Ollin.Jade}" FontSize="11.5" />
         </StackPanel>
-        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
           <Button Classes="tool" Content="⟳ Scripts" Click="OnReloadScripts" ToolTip.Tip="Recompilar scripts" />
-          <Button Classes="tool" Content="Centrar" Click="OnResetCamera" />
-          <Button Classes="tool" Content="Enfocar" Click="OnFrameSelected" />
-          <Button Classes="tool" Content="Mover" Click="OnGizmoMove" ToolTip.Tip="Gizmo 3D: mover (tecla 1)" />
-          <Button Classes="tool" Content="Rotar" Click="OnGizmoRotate" ToolTip.Tip="Gizmo 3D: rotar alrededor de Y (tecla 2)" />
-          <Button Classes="tool" Content="Escalar" Click="OnGizmoScale" ToolTip.Tip="Gizmo 3D: escalar (tecla 3)" />
-          <Button Classes="tool" Content="Pared" Click="OnBrushWall" ToolTip.Tip="Pincel: colocar pared 3D" />
-          <Button Classes="tool" Content="Suelo" Click="OnBrushFloor" ToolTip.Tip="Pincel: colocar suelo 3D" />
-          <ToggleButton Classes="tool" Content="Imán" Click="OnSnapToggle" ToolTip.Tip="Ajustar a la rejilla" />
-          <Button Classes="tool" Content="Serie x4" Click="OnDuplicateSeries" ToolTip.Tip="Duplicar la selección 4 veces en fila" />
-          <Button Classes="tool" Content="Grafo" Click="OnOpenGraph" ToolTip.Tip="Abrir el grafo de nodos de la entidad seleccionada" />
-          <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
-          <Button Classes="tool accent" Content="▶  Reproducir" Click="OnPlay"
+          <Button Classes="tool accent" Content="▶ Reproducir" Click="OnPlay"
                   IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
-          <Button Classes="tool" Content="⏸  Pausa" Click="OnPause"
+          <Button Classes="tool" Content="⏸ Pausa" Click="OnPause"
                   IsEnabled="{Binding IsPlaying}" ToolTip.Tip="Pausar o reanudar (F6)" />
-          <Button Classes="tool" Content="⬆  Exportar" Click="OnExportGame"
-                  IsEnabled="{Binding HasProject}" ToolTip.Tip="Exportar el juego como aplicación independiente" />
-          <Button Classes="tool" Content="⏹  Detener" Click="OnStopPlay"
+          <Button Classes="tool" Content="⏹ Detener" Click="OnStopPlay"
                   IsEnabled="{Binding IsPlaying}" ToolTip.Tip="Detener y restaurar la escena" />
+          <Button Classes="tool" Content="⬆ Exportar" Click="OnExportGame"
+                  IsEnabled="{Binding HasProject}" ToolTip.Tip="Exportar el juego" />
         </StackPanel>
       </Grid>
     </Border>
-
     <!-- Cuerpo -->
     <Grid Grid.Row="2" RowDefinitions="*,4,230" Margin="8,8,8,6">
 

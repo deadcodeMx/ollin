@@ -981,3 +981,11 @@ error de sintaxis.
 - El estado del grafo es una región viva para lectores de pantalla.
 - El buscador tiene nombre y texto de ayuda.
 - Guía manual para Narrator/NVDA en `docs/ACCESIBILIDAD.md`.
+
+## 55. Pulido de interfaz y 2D (6.57)
+
+- Barra principal limpia: guardar, undo/redo, + Sprite, + Vacía, duplicar, eliminar.
+- **Rejilla** visible/oculta desde la barra.
+- **Imán 2D** configurable: 0.25, 0.5, 1 o 2 unidades.
+- Herramientas 3D/2.5D y cámara/scripts en **Herramientas ▾**.
+- Reproducir, pausa, detener y exportar agrupados a la derecha.
