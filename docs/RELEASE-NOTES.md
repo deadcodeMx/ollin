@@ -1,22 +1,23 @@
-## Ollin Beta 6.60.0 — lazo de selección 2D
+## Ollin Beta 6.61.0 — selección múltiple desde jerarquía
 
 ### Incluye
 
-- Lazo de selección arrastrando sobre el viewport.
-- Rectángulo visual translúcido.
-- Selección por intersección al soltar.
-- Ctrl para añadir a la selección.
+- **Ctrl+clic** y **Shift+clic** en la jerarquía.
+- Sincronización con el viewport.
+- Inspector de resumen con **Alinear ▾**.
+- Borrado de toda la selección.
 - **205 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 6.60.0 y abre una escena 2D.
-2. Arrastra sobre una zona vacía para dibujar el lazo.
-3. Suelta sobre dos o más entidades.
-4. Usa **Alinear ▾** con el resultado.
+1. Instala 6.61.0 y abre una escena.
+2. Haz clic en una entidad de la jerarquía.
+3. `Ctrl+clic` en otra.
+4. Comprueba que el viewport y el inspector reflejan la selección.
+5. Usa **Alinear ▾** o Supr.
 
 ### Limitaciones
 
-- El lazo solo está en el viewport 2D; en vista 3D se sigue seleccionando por clic.
-- No hay lazo desde la jerarquía.
+- La selección múltiple no incluye lazos desde la jerarquía.
+- El inspector de multi selección no edita transformaciones en lote.
 - La demo técnica no se publica.

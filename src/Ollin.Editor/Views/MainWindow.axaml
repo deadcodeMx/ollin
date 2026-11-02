@@ -173,7 +173,8 @@
                 </Grid>
                 <TreeView Grid.Row="2" x:Name="SceneTree"
                           ItemsSource="{Binding Roots}"
-                          SelectedItem="{Binding Selected, Mode=TwoWay}"
+                          SelectionMode="Multiple"
+                          SelectionChanged="OnHierarchySelectionChanged"
                           DoubleTapped="OnHierarchyDoubleTapped"
                           Background="Transparent" Margin="4,0,4,4">
                   <TreeView.ItemTemplate>
@@ -511,7 +512,7 @@
               </StackPanel>
             </Border>
 
-            <TabControl Grid.Row="1" IsVisible="{Binding HasSelection}" Margin="6,0,6,6" Padding="0">
+            <TabControl Grid.Row="1" IsVisible="{Binding HasSingleSelection}" Margin="6,0,6,6" Padding="0">
               <TabItem Header="Entidad">
                 <ScrollViewer>
                   <StackPanel Margin="8" Spacing="10">

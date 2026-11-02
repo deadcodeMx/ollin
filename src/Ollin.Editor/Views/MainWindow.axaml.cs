@@ -29,6 +29,7 @@ public partial class MainWindow : Window
     };
 
     private bool _loadingScript;
+    private bool _syncingHierarchy;
     private GameWindow? _gameWindow;
     private CompletionWindow? _completionWindow;
 
@@ -150,6 +151,43 @@ public partial class MainWindow : Window
         _loadingScript = false;
     }
 
+    private void OnHierarchySelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_syncingHierarchy || ViewModel is null) return;
+
+        var nodes = SceneTree.SelectedItems?
+            .OfType<EntityNode>()
+            .ToList() ?? new List<EntityNode>();
+
+        if (nodes.Count == 0)
+        {
+            ViewModel.ClearSelection();
+            return;
+        }
+
+        ViewModel.SelectMany(nodes.Select(node => node.Entity));
+    }
+
+    private void SyncHierarchySelection()
+    {
+        if (ViewModel is null || SceneTree.SelectedItems is null) return;
+
+        _syncingHierarchy = true;
+        try
+        {
+            SceneTree.SelectedItems.Clear();
+
+            foreach (var node in ViewModel.Selection)
+            {
+                SceneTree.SelectedItems.Add(node);
+            }
+        }
+        finally
+        {
+            _syncingHierarchy = false;
+        }
+    }
+
     private MainViewModel? ViewModel => DataContext as MainViewModel;
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -166,6 +204,7 @@ public partial class MainWindow : Window
             if (args.PropertyName is nameof(ViewModels.MainViewModel.ActiveDocument) or nameof(ViewModels.MainViewModel.ActiveScript))
             {
                 LoadActiveScriptText();
+        SyncHierarchySelection();
             }
         };
 

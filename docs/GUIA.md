@@ -1014,3 +1014,11 @@ error de sintaxis.
 - `Ctrl` mantiene la selección existente y añade el lazo.
 - Clic vacío sin arrastrar limpia la selección.
 - Las entidades seleccionadas muestran contorno; el gizmo sigue en la principal.
+
+## 59. Selección múltiple desde la jerarquía (6.61)
+
+- `Ctrl+clic` en la jerarquía añade o quita entidades.
+- `Shift+clic` selecciona un rango visible.
+- La selección se sincroniza con el viewport en ambos sentidos.
+- Con varias entidades, el inspector muestra el resumen y **Alinear ▾**.
+- Supr borra todas las entidades seleccionadas.

@@ -214,6 +214,7 @@ public sealed partial class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(HasNoSelection));
             OnPropertyChanged(nameof(SelectionText));
             OnPropertyChanged(nameof(HasMultipleSelection));
+            OnPropertyChanged(nameof(HasSingleSelection));
             OnPropertyChanged(nameof(SelectionCount));
             OnPropertyChanged(nameof(SelectionIds));
             RequestRedraw();
@@ -227,6 +228,8 @@ public sealed partial class MainViewModel : ObservableObject
     public int SelectionCount => _selection.Count;
 
     public bool HasMultipleSelection => _selection.Count > 1;
+
+    public bool HasSingleSelection => _selection.Count <= 1 && Selected is not null;
     public bool HasSelection => Selected is not null;
 
     public bool HasNoSelection => Selected is null;
@@ -1117,28 +1120,35 @@ public sealed partial class MainViewModel : ObservableObject
 
     public void DeleteSelected()
     {
-        if (IsPlaying || Selected is null)
-        {
-            return;
-        }
+        if (IsPlaying) return;
 
-        if (Selected.HasCamera && Scene.Entities.Count(e => e.GetComponent<Camera2D>() is not null) == 1)
+        var nodes = _selection.Count > 0
+            ? _selection.ToList()
+            : Selected is { } primary ? new List<EntityNode> { primary } : new List<EntityNode>();
+        if (nodes.Count == 0) return;
+
+        var cameras = nodes.Count(node => node.HasCamera);
+        if (cameras > 0 && Scene.Entities.Count(e => e.GetComponent<Camera2D>() is not null) <= cameras)
         {
             Log.Warn("No se puede eliminar la única cámara de la escena", "Editor");
             return;
         }
 
-        var name = Selected.Entity.Name;
-        Scene.Remove(Selected.Entity.Id);
+        foreach (var node in nodes)
+        {
+            Scene.Remove(node.Entity.Id);
+        }
+
         Selected = null;
         RebuildTree();
         IsDirty = true;
-        CommitEdit("Eliminar entidad");
+        CommitEdit(nodes.Count == 1 ? "Eliminar entidad" : $"Eliminar {nodes.Count} entidades");
         OnPropertyChanged(nameof(EntityCountText));
-        Log.Info($"Entidad eliminada: {name}", "Editor");
+        Log.Info(nodes.Count == 1
+            ? $"Entidad eliminada: {nodes[0].Entity.Name}"
+            : $"{nodes.Count} entidades eliminadas", "Editor");
         RequestRedraw();
     }
-
     /// <summary>Crea una pared o un suelo 3D en la posición indicada por el pincel.</summary>
     public void AddBrush3D(Vector2 position, bool floor)
     {
@@ -1297,6 +1307,7 @@ public sealed partial class MainViewModel : ObservableObject
             _selectionAdd = false;
             OnPropertyChanged(nameof(SelectionText));
             OnPropertyChanged(nameof(HasMultipleSelection));
+            OnPropertyChanged(nameof(HasSingleSelection));
             OnPropertyChanged(nameof(SelectionCount));
             OnPropertyChanged(nameof(SelectionIds));
             RequestRedraw();
@@ -1340,6 +1351,7 @@ public sealed partial class MainViewModel : ObservableObject
             _selectionAdd = false;
             OnPropertyChanged(nameof(SelectionText));
             OnPropertyChanged(nameof(HasMultipleSelection));
+            OnPropertyChanged(nameof(HasSingleSelection));
             OnPropertyChanged(nameof(SelectionCount));
             OnPropertyChanged(nameof(SelectionIds));
             RequestRedraw();

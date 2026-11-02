@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.61.0] — 2026-11-02
+
+### Añadido
+
+- Selección múltiple desde la jerarquía.
+- Sincronización jerarquía/viewport.
+- Inspector de resumen en selección múltiple.
+- Supr elimina todas las seleccionadas.
+- 205 pruebas automatizadas.
+
 ## [6.60.0] — 2026-11-02
 
 ### Añadido
