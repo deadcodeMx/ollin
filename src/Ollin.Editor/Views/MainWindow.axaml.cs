@@ -8,6 +8,7 @@ using AvaloniaEdit.Highlighting.Xshd;
 using Ollin.Scripting;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -36,6 +37,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        ConsolidateInspector();
         DataContextChanged += OnDataContextChanged;
         SetupScriptEditor();
         SetupAudio();
@@ -501,6 +503,159 @@ public partial class MainWindow : Window
             : current + direction;
 
         selected.SortingOrder = value;
+    }
+
+    /// <summary>Convierte las pestañas del inspector en una sola vista con secciones.</summary>
+    private void ConsolidateInspector()
+    {
+        var tabs = InspectorTabs.Items.OfType<TabItem>().ToList();
+        var panel = new StackPanel { Spacing = 8, Margin = new Thickness(8, 4, 8, 8) };
+        var entityTab = new TabItem { Header = "Entidad" };
+
+        var occurrences = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var tab in tabs)
+        {
+            var headerText = tab.Header?.ToString() ?? string.Empty;
+            occurrences.TryGetValue(headerText, out var occurrence);
+            occurrences[headerText] = occurrence + 1;
+
+            var content = tab.Content as Control;
+            if (content is ScrollViewer scroll && scroll.Content is Control inner)
+            {
+                scroll.Content = null;
+                content = inner;
+            }
+
+            tab.Content = null;
+
+            var section = new StackPanel { Spacing = 4 };
+            var visibilityProperty = VisibilityPropertyFor(headerText, occurrence);
+            if (visibilityProperty is not null)
+            {
+                section.Bind(Visual.IsVisibleProperty, new Binding(visibilityProperty));
+            }
+            var header = new TextBlock
+            {
+                Text = tab.Header?.ToString()?.ToUpperInvariant() ?? string.Empty,
+                FontSize = 10,
+                FontWeight = Avalonia.Media.FontWeight.Bold,
+                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+                Margin = new Thickness(0, 8, 0, 2),
+            };
+
+            section.Children.Add(header);
+            if (content is not null) section.Children.Add(content);
+            panel.Children.Add(section);
+            panel.Children.Add(new Border
+            {
+                Height = 1,
+                Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#2B3342")),
+                Margin = new Thickness(0, 6),
+            });
+        }
+
+        entityTab.Content = new ScrollViewer { Content = panel };
+        InspectorTabs.Items.Clear();
+        InspectorTabs.Items.Add(entityTab);
+        InspectorTabs.Items.Add(BuildTagsTab());
+    }
+
+    private static string? VisibilityPropertyFor(string header, int occurrence)
+    {
+        return header switch
+        {
+            "Entidad" or "Nivel" or "Mundo" => null,
+            "Visual" => occurrence == 0 ? "Selected.HasSprite" : "Selected.HasVisualScript",
+            "Audio" => "Selected.HasAudio",
+            "Interacción" => "Selected.HasInteractable",
+            "Inventario" => "Selected.HasInventory",
+            "Estadísticas" => "Selected.HasStats",
+            "Día/Noche" => "Selected.HasDayNight",
+            "IA" => "Selected.HasAi",
+            "Cámara 3D" => "Selected.HasCamera3D",
+            "Pared 3D" => "Selected.HasWall3D",
+            "FPS" => "Selected.HasFps",
+            "IA 3D" => "Selected.HasAi3D",
+            "Salud" => "Selected.HasHealth",
+            "Arma" => "Selected.HasWeapon",
+            "Recogible" => "Selected.HasPickup",
+            "Puerta" => "Selected.HasDoor",
+            "Reglas" => "Selected.HasRules",
+            "Mensaje" => "Selected.HasIntro",
+            "Reaparición" => "Selected.HasRespawn",
+            "Botón 3D" => "Selected.HasButton",
+            "Trigger" => "Selected.HasTrigger",
+            "Generador" => "Selected.HasSpawner",
+            "Checkpoint" => "Selected.HasCheckpoint",
+            "Peligro" => "Selected.HasHazard",
+            "Teletransporte" => "Selected.HasTeleporter",
+            "Seguidor" => "Selected.HasFollower",
+            "Tilemap" => "Selected.HasTilemap",
+            "Luz" => "Selected.HasLight",
+            "Cámara" => "Selected.HasCamera",
+            _ => null,
+        };
+    }
+
+    private TabItem BuildTagsTab()
+    {
+        var panel = new StackPanel { Margin = new Thickness(12), Spacing = 7 };
+        panel.Children.Add(new TextBlock
+        {
+            Text = "TAGS DE LA ENTIDAD",
+            FontSize = 10,
+            FontWeight = Avalonia.Media.FontWeight.Bold,
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+        });
+
+        var tagsBox = new TextBox { Watermark = "player, enemy" };
+        tagsBox.Bind(TextBox.TextProperty, new Binding("Selected.TagsText") { Mode = BindingMode.TwoWay });
+        panel.Children.Add(tagsBox);
+        panel.Children.Add(new TextBlock
+        {
+            Text = "Separa las etiquetas con comas.",
+            FontSize = 10,
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")),
+        });
+
+        panel.Children.Add(new Border
+        {
+            Height = 1,
+            Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#2B3342")),
+            Margin = new Thickness(0, 8),
+        });
+        panel.Children.Add(new TextBlock
+        {
+            Text = "CREAR TAG",
+            FontSize = 10,
+            FontWeight = Avalonia.Media.FontWeight.Bold,
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+        });
+
+        var newTag = new TextBox { Watermark = "nuevo_tag" };
+        var add = new Button { Content = "Añadir a la entidad", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch };
+        add.Click += (_, _) =>
+        {
+            if (ViewModel?.Selected is not { } selected) return;
+            var tag = newTag.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(tag)) return;
+            var tags = selected.Entity.Tags.ToList();
+            if (!tags.Contains(tag, StringComparer.OrdinalIgnoreCase)) tags.Add(tag);
+            selected.TagsText = string.Join(", ", tags);
+            newTag.Text = string.Empty;
+        };
+        panel.Children.Add(newTag);
+        panel.Children.Add(add);
+        panel.Children.Add(new TextBlock
+        {
+            Text = "El tag se crea al asignarlo a una entidad.",
+            FontSize = 10,
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")),
+            TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+        });
+
+        return new TabItem { Header = "Tags", Content = new ScrollViewer { Content = panel } };
     }
 
     private void OnSnapToggle(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>

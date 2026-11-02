@@ -95,31 +95,15 @@
             <ComboBoxItem Content="1" Tag="1" />
             <ComboBoxItem Content="2" Tag="2" />
           </ComboBox>
-          <Button Classes="tool" Content="Herramientas ▾">
-            <Button.Flyout>
-              <Flyout>
-                <StackPanel Width="230" Spacing="4">
-                  <TextBlock Text="Transformar" Classes="section" Margin="4,2" />
-                  <Button Classes="tool" Content="Mover (1)" Click="OnGizmoMove" />
-                  <Button Classes="tool" Content="Rotar (2)" Click="OnGizmoRotate" />
-                  <Button Classes="tool" Content="Escalar (3)" Click="OnGizmoScale" />
-                  <Separator />
-                  <TextBlock Text="2.5D / 3D" Classes="section" Margin="4,2" />
-                  <Button Classes="tool" Content="Pared 3D" Click="OnBrushWall" />
-                  <Button Classes="tool" Content="Suelo 3D" Click="OnBrushFloor" />
-                  <ToggleButton Classes="tool" Content="Imán 3D" Click="OnSnapToggle" />
-                  <Button Classes="tool" Content="Serie x4" Click="OnDuplicateSeries" />
-                  <Button Classes="tool" Content="Grafo de nodos" Click="OnOpenGraph" />
-                  <Separator />
-                  <TextBlock Text="Cámara y scripts" Classes="section" Margin="4,2" />
-                  <Button Classes="tool" Content="Centrar cámara" Click="OnResetCamera" />
-                  <Button Classes="tool" Content="Enfocar selección" Click="OnFrameSelected" />
-                  <Button Classes="tool" Content="Recargar scripts" Click="OnReloadScripts" />
-                </StackPanel>
-              </Flyout>
-            </Button.Flyout>
-          </Button>
-          <Button Classes="tool" Content="Alinear ▾">
+          <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
+          <Button Classes="tool" Content="✥" Click="OnGizmoMove" ToolTip.Tip="Mover (1)" />
+          <Button Classes="tool" Content="↻" Click="OnGizmoRotate" ToolTip.Tip="Rotar (2)" />
+          <Button Classes="tool" Content="⤢" Click="OnGizmoScale" ToolTip.Tip="Escalar (3)" />
+          <Button Classes="tool" Content="▦" Click="OnBrushWall" ToolTip.Tip="Pincel: pared 3D" />
+          <Button Classes="tool" Content="▤" Click="OnBrushFloor" ToolTip.Tip="Pincel: suelo 3D" />
+          <ToggleButton Classes="tool" Content="⌗" Click="OnSnapToggle" ToolTip.Tip="Imán 3D" />
+          <Button Classes="tool" Content="⇉" Click="OnDuplicateSeries" ToolTip.Tip="Duplicar serie x4" />
+          <Button Classes="tool" Content="⛓" Click="OnOpenGraph" ToolTip.Tip="Abrir grafo de nodos" />          <Button Classes="tool" Content="Alinear ▾">
             <Button.Flyout>
               <Flyout>
                 <StackPanel Width="200" Spacing="4">
@@ -530,7 +514,7 @@
               </StackPanel>
             </Border>
 
-            <TabControl Grid.Row="1" IsVisible="{Binding HasSingleSelection}" Margin="6,0,6,6" Padding="0">
+            <TabControl x:Name="InspectorTabs" Grid.Row="1" IsVisible="{Binding HasSingleSelection}" Margin="6,0,6,6" Padding="0">
               <TabItem Header="Entidad">
                 <ScrollViewer>
                   <StackPanel Margin="8" Spacing="10">
@@ -538,10 +522,6 @@
                       <TextBlock Classes="section" Text="NOMBRE" />
                       <TextBox Text="{Binding Selected.Name, Mode=TwoWay}" />
                       <TextBlock Classes="hint" Text="{Binding Selected.ComponentsSummary}" />
-                      <Grid ColumnDefinitions="86,*" Margin="0,1">
-                        <TextBlock Text="Etiquetas" VerticalAlignment="Center" Classes="hint" />
-                        <TextBox Grid.Column="1" Text="{Binding Selected.TagsText, Mode=TwoWay}" Watermark="player, enemy" />
-                      </Grid>
                       <Grid ColumnDefinitions="86,*" Margin="0,1">
                         <TextBlock Text="Símbolo" VerticalAlignment="Center" Classes="hint" />
                         <TextBox Grid.Column="1" Text="{Binding Selected.EditorIcon, Mode=TwoWay}" Watermark="★, 👾, ▲" />

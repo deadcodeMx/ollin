@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.66.0] — 2026-11-02
+
+### Cambiado
+
+- Inspector unificado en una sola pestaña.
+- Tags en pestaña independiente.
+- Herramientas directas en la barra, sin menú desplegable.
+- 205 pruebas automatizadas.
+
 ## [6.65.0] — 2026-11-02
 
 ### Corregido

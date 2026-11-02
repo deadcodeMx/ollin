@@ -1060,3 +1060,11 @@ error de sintaxis.
 - Espera a que termine el proceso padre antes de borrar.
 - Reintenta si Windows mantiene archivos bloqueados.
 - También se añade **Desinstalar Ollin** al menú Inicio.
+
+## 64. Inspector unificado y herramientas tipo Godot (6.66)
+
+- El inspector tiene una sola pestaña **Entidad** con secciones condicionales:
+  transformación, visual, física, IA, 3D, tilemap, etc.
+- **Tags** queda en una pestaña aparte, con edición y creación de etiquetas.
+- Se eliminó **Herramientas ▾**; mover, rotar, escalar, pared, suelo, imán,
+  serie y grafo son botones directos de la barra.
