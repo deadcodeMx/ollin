@@ -127,7 +127,9 @@ public sealed partial class LauncherWindow : Window
                 result.ParentFolder,
                 result.Name,
                 Directory.Exists(templateAssets) ? templateAssets : null,
-                result.Template);
+                result.Template,
+                result.ContentMode,
+                result.Genre);
 
             OpenEditor(project.ProjectFile);
         }
@@ -138,6 +140,41 @@ public sealed partial class LauncherWindow : Window
         }
     }
 
+    private async void OnDeleteSelected(object? sender, RoutedEventArgs e)
+    {
+        if (RecentList.SelectedItem is not RecentProjectItem item)
+        {
+            return;
+        }
+
+        var confirm = new ConfirmWindow(
+            $"¿Eliminar el proyecto «{item.Name}»?",
+            "Eliminar",
+            item.Path + "\n\nSe borrará la carpeta completa del proyecto. Esta acción no se puede deshacer.");
+
+        if (!await confirm.ShowDialog<bool>(this))
+        {
+            return;
+        }
+
+        try
+        {
+            if (Directory.Exists(item.Path)) Directory.Delete(item.Path, recursive: true);
+            else if (File.Exists(item.Path)) File.Delete(item.Path);
+        }
+        catch
+        {
+            // Si no se puede borrar, se mantiene en la lista.
+            return;
+        }
+
+        _settings.RecentProjects.RemoveAll(path => string.Equals(path, item.Path, StringComparison.OrdinalIgnoreCase));
+        if (string.Equals(_settings.LastProject, item.Path, StringComparison.OrdinalIgnoreCase))
+            _settings.LastProject = null;
+        _settings.Save();
+        _recent.Remove(item);
+        EmptyHint.IsVisible = _recent.Count == 0;
+    }
     private void OnExit(object? sender, RoutedEventArgs e) => Close();
 
     private void OpenEditor(string path)

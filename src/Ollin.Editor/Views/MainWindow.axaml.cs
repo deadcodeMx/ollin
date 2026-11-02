@@ -1510,6 +1510,45 @@ public partial class MainWindow : Window
         }
     }
 
+    private bool IsComponentAllowed(string kind)
+    {
+        var project = ViewModel?.Project;
+        if (project is null || project.ContentMode == Ollin.Core.Projects.ProjectContentMode.Full) return true;
+        if (project.ContentMode == Ollin.Core.Projects.ProjectContentMode.Empty)
+            return kind is "sprite" or "collider" or "rigidbody" or "camera" or "script";
+
+        var allowed = project.Genre switch
+        {
+            Ollin.Core.Projects.ProjectGenre.Platformer => new[]
+            {
+                "character", "sprite", "animator", "collider", "rigidbody", "camera", "tilemap",
+                "audio", "particles", "trail", "checkpoint2d", "hitbox", "hurtbox", "knockback2d",
+                "weapon2d", "transition", "script",
+            },
+            Ollin.Core.Projects.ProjectGenre.TopDown => new[]
+            {
+                "sprite", "animator", "collider", "rigidbody", "camera", "interactable", "inventory",
+                "equipment", "questlog", "audio", "particles", "ai", "hitbox", "hurtbox", "knockback2d",
+                "checkpoint2d", "transition", "script",
+            },
+            Ollin.Core.Projects.ProjectGenre.Horror => new[]
+            {
+                "sprite", "animator", "collider", "camera", "light", "audio", "interactable",
+                "inventory", "ai", "trigger", "particles", "checkpoint2d", "transition", "script",
+            },
+            Ollin.Core.Projects.ProjectGenre.Shooter => new[]
+            {
+                "sprite", "animator", "collider", "rigidbody", "camera", "weapon2d", "hitbox",
+                "hurtbox", "knockback2d", "health", "particles", "trail", "ai", "transition", "script",
+            },
+            Ollin.Core.Projects.ProjectGenre.Puzzle => new[]
+            {
+                "sprite", "animator", "collider", "interactable", "inventory", "audio", "transition", "script",
+            },
+            _ => Array.Empty<string>(),
+        };
+        return allowed.Contains(kind);
+    }
     private Button BuildAddComponentButton()
     {
         var button = new Button
@@ -1535,7 +1574,7 @@ public partial class MainWindow : Window
         Add(movement, "Rotador", "rotator");
         Add(movement, "Oscilador", "oscillator");
         Add(movement, "Plataforma móvil", "movingplatform");
-        flyout.Items.Add(movement);
+        if (movement.Items.Count > 0) flyout.Items.Add(movement);
 
         var collision = new MenuItem { Header = "Colisión" };
         Add(collision, "Caja", "collider");
@@ -1545,30 +1584,31 @@ public partial class MainWindow : Window
         Add(collision, "Polígono", "polygon");
         Add(collision, "Borde", "edge");
         Add(collision, "Disparador", "trigger");
-        flyout.Items.Add(collision);
+        if (collision.Items.Count > 0) flyout.Items.Add(collision);
 
         var combat = new MenuItem { Header = "Combate" };
+        Add(combat, "Salud", "health");
         Add(combat, "Hitbox", "hitbox");
         Add(combat, "Hurtbox", "hurtbox");
         Add(combat, "Knockback 2D", "knockback2d");
         Add(combat, "Checkpoint 2D", "checkpoint2d");
         Add(combat, "Arma 2D", "weapon2d");
-        flyout.Items.Add(combat);
+        if (combat.Items.Count > 0) flyout.Items.Add(combat);
 
         var strategy = new MenuItem { Header = "Estrategia" };
         Add(strategy, "Actor de turno", "turnactor");
         Add(strategy, "Gestor de turnos", "turnmanager");
         Add(strategy, "Mazo de cartas", "carddeck");
-        flyout.Items.Add(strategy);
+        if (strategy.Items.Count > 0) flyout.Items.Add(strategy);
 
         var world = new MenuItem { Header = "Mundo" };
         Add(world, "Generador de mazmorra", "dungeon");
-        flyout.Items.Add(world);
+        if (world.Items.Count > 0) flyout.Items.Add(world);
 
         var player = new MenuItem { Header = "Jugador" };
         Add(player, "Equipo", "equipment");
         Add(player, "Misiones", "questlog");
-        flyout.Items.Add(player);
+        if (player.Items.Count > 0) flyout.Items.Add(player);
 
         var visual = new MenuItem { Header = "Visual" };
         Add(visual, "Sprite", "sprite");
@@ -1579,14 +1619,14 @@ public partial class MainWindow : Window
         Add(visual, "Partículas", "particles");
         Add(visual, "Esqueleto 2D", "skeleton");
         Add(visual, "Estela", "trail");
-        flyout.Items.Add(visual);
+        if (visual.Items.Count > 0) flyout.Items.Add(visual);
 
         var gameplay = new MenuItem { Header = "Mundo y gameplay" };
         Add(gameplay, "Interactuable", "interactable");
         Add(gameplay, "Tilemap", "tilemap");
         Add(gameplay, "Audio", "audio");
         Add(gameplay, "IA", "ai");
-        flyout.Items.Add(gameplay);
+        if (gameplay.Items.Count > 0) flyout.Items.Add(gameplay);
 
         var scripts = new MenuItem { Header = "Scripts" };
         var scriptItem = new MenuItem { Header = "Script C#…" };

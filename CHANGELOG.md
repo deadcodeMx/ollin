@@ -17,6 +17,20 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.113.0] — 2026-11-02
+
+### Corregido
+
+- Los menús de componentes vacíos se ocultan en el modo vacío.
+
+## [6.112.0] — 2026-11-02
+
+### Añadido
+
+- Proyecto vacío con solo componentes esenciales.
+- Proyecto por género con componentes recomendados.
+- Botón para eliminar proyectos en la ventana de proyectos.
+
 ## [6.111.0] — 2026-11-02
 
 ### Añadido

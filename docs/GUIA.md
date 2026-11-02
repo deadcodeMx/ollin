@@ -40,11 +40,18 @@ editor se abre después de elegir un proyecto.
 
 `Archivo → Nuevo proyecto…` (o el botón del escritorio de bienvenida).
 
-- **Plantilla**: Vacío (solo la cámara), Plataformas, Terror o Tutorial. La de
-  Tutorial crea un recorrido guiado con HUD, inventario, diálogo, IA y guardado.
+- **Modo de contenido**:
+  - **Vacío**: solo aparecen los componentes esenciales que no se pueden hacer
+    fácilmente con scripts: Sprite, Collider, Rigidbody, Cámara y Script.
+  - **Por género**: sugiere componentes según el género (Plataformas, Top-down/RPG,
+    Terror, Shooter o Puzzle) y crea una escena inicial acorde.
+  - **Completo**: todos los componentes, para usuarios avanzados.
 - **Nombre**: se usa también como nombre de la carpeta (los espacios pasan a `_`).
 - **Carpeta**: dónde se creará. El diálogo tiene desplazamiento si la pantalla es
   pequeña y valida que la carpeta no esté ocupada.
+
+En el **lanzador de proyectos** hay un botón **Eliminar proyecto** para borrar la
+carpeta completa del proyecto seleccionado, con confirmación previa.
 
 El proyecto se crea con esta estructura:
 

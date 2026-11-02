@@ -19,6 +19,57 @@ public enum ProjectTemplate
 /// <summary>Contenido inicial de un proyecto nuevo, según su plantilla.</summary>
 public static class StarterProject
 {
+    /// <summary>Escena inicial mínima según el género elegido.</summary>
+    public static Scene CreateGenre(ProjectGenre genre)
+    {
+        var scene = new Scene { Name = "Inicio" };
+        var camera = scene.Create("Cámara principal", Vector2.Zero);
+        camera.AddComponent(new Camera2D { OrthographicSize = 7f, FollowTag = "player", FollowSmoothing = 6f });
+
+        var player = scene.Create("Jugador", new Vector2(0f, -1f));
+        player.Tags.Add("player");
+        player.AddComponent(new SpriteRenderer { Size = new Vector2(0.8f, 1f), Tint = new Vector4(0.95f, 0.75f, 0.35f, 1f) });
+
+        if (genre is ProjectGenre.Platformer or ProjectGenre.Shooter)
+        {
+            player.AddComponent(new CharacterBody2D());
+            player.AddComponent(new Rigidbody2D { AffectedByGravity = false });
+            player.AddComponent(new BoxCollider { Size = new Vector2(0.8f, 1f) });
+        }
+        else
+        {
+            player.AddComponent(new CircleCollider2D { Radius = 0.45f });
+            player.AddComponent(new Rigidbody2D());
+        }
+
+        switch (genre)
+        {
+            case ProjectGenre.Platformer:
+                player.AddComponent(new Health());
+                player.AddComponent(new Checkpoint2D());
+                break;
+            case ProjectGenre.TopDown:
+                player.AddComponent(new Inventory());
+                player.AddComponent(new Equipment());
+                player.AddComponent(new QuestLog());
+                break;
+            case ProjectGenre.Horror:
+                player.AddComponent(new Inventory());
+                player.AddComponent(new Health());
+                camera.AddComponent(new Light2D { Radius = 6f, Intensity = 0.8f });
+                break;
+            case ProjectGenre.Shooter:
+                player.AddComponent(new Health());
+                player.AddComponent(new Weapon2D());
+                break;
+            case ProjectGenre.Puzzle:
+                player.AddComponent(new Inventory());
+                player.AddComponent(new Equipment());
+                break;
+        }
+
+        return scene;
+    }
     public static Scene CreateScene(ProjectTemplate template = ProjectTemplate.Empty) => template switch
     {
         ProjectTemplate.Platformer => CreatePlatformer(),

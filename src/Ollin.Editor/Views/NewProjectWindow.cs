@@ -8,14 +8,20 @@ using Ollin.Core.Projects;
 namespace Ollin.Editor.Views;
 
 /// <summary>Resultado del diálogo de proyecto nuevo.</summary>
-public sealed record NewProjectResult(string Name, string ParentFolder, ProjectTemplate Template);
+public sealed record NewProjectResult(
+    string Name,
+    string ParentFolder,
+    ProjectTemplate Template,
+    ProjectContentMode ContentMode,
+    ProjectGenre Genre);
 
 /// <summary>Diálogo para crear un proyecto con su propia carpeta.</summary>
 public sealed class NewProjectWindow : Window
 {
     private readonly TextBox _name;
     private readonly TextBox _folder;
-    private readonly ComboBox _template;
+    private readonly ComboBox _mode;
+    private readonly ComboBox _genre;
     private readonly TextBlock _error;
 
     public NewProjectWindow()
@@ -24,9 +30,9 @@ public sealed class NewProjectWindow : Window
         var suggested = Path.Combine(documents, "Ollin Projects");
 
         Title = "Nuevo proyecto";
-        Width = 560;
-        Height = 460;
-        MinHeight = 320;
+        Width = 600;
+        Height = 540;
+        MinHeight = 420;
         CanResize = true;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         Background = new SolidColorBrush(Color.Parse("#151922"));
@@ -34,12 +40,25 @@ public sealed class NewProjectWindow : Window
 
         _name = new TextBox { Text = "MiJuego", Watermark = "Nombre del proyecto" };
         _folder = new TextBox { Text = suggested };
-        _template = new ComboBox
+        _mode = new ComboBox
         {
-            ItemsSource = new[] { "Vacío (solo cámara)", "Plataformas", "Terror", "Tutorial (recorrido)" },
+            ItemsSource = new[]
+            {
+                "Vacío — solo componentes esenciales",
+                "Por género — con componentes recomendados",
+                "Completo — todos los componentes",
+            },
             SelectedIndex = 0,
             HorizontalAlignment = HorizontalAlignment.Stretch,
         };
+        _genre = new ComboBox
+        {
+            ItemsSource = new[] { "Plataformas", "Top-down / RPG", "Terror", "Shooter", "Puzzle" },
+            SelectedIndex = 0,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            IsEnabled = false,
+        };
+        _mode.SelectionChanged += (_, _) => _genre.IsEnabled = _mode.SelectedIndex == 1;
 
         _error = new TextBlock
         {
@@ -59,10 +78,7 @@ public sealed class NewProjectWindow : Window
             });
 
             var path = folders.Count > 0 ? folders[0].TryGetLocalPath() : null;
-            if (!string.IsNullOrWhiteSpace(path))
-            {
-                _folder.Text = path;
-            }
+            if (!string.IsNullOrWhiteSpace(path)) _folder.Text = path;
         };
 
         var create = new Button
@@ -91,23 +107,22 @@ public sealed class NewProjectWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Se crearán las carpetas scenes, scripts, assets y prefabs.",
+                    Text = "Elige cuánta ayuda quieres: componentes mínimos para programar o un conjunto guiado por género.",
                     FontSize = 11.5,
+                    TextWrapping = TextWrapping.Wrap,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
-                new TextBlock { Text = "Plantilla", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
-                _template,
+                new TextBlock { Text = "Modo", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                _mode,
+                new TextBlock { Text = "Género (solo modo por género)", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                _genre,
                 new TextBlock { Text = "Nombre", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
                 _name,
                 new TextBlock { Text = "Carpeta", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
                 new Grid
                 {
                     ColumnDefinitions = new ColumnDefinitions("*,Auto"),
-                    Children =
-                    {
-                        _folder,
-                        browse,
-                    },
+                    Children = { _folder, browse },
                 },
                 _error,
                 new StackPanel
@@ -121,7 +136,6 @@ public sealed class NewProjectWindow : Window
             },
         };
 
-        // Con ventanas pequeñas o pantallas escaladas, todo el contenido debe poder desplazarse.
         var panel = Content as Control;
         Content = null;
         Content = new ScrollViewer
@@ -143,27 +157,38 @@ public sealed class NewProjectWindow : Window
             return;
         }
 
-        try
-        {
-            Directory.CreateDirectory(folder!);
-        }
+        try { Directory.CreateDirectory(folder!); }
         catch (Exception exception)
         {
             ShowError($"No se puede usar esa carpeta: {exception.Message}");
             return;
         }
 
-        var template = _template.SelectedIndex switch
+        var mode = _mode.SelectedIndex switch
         {
-            1 => ProjectTemplate.Platformer,
-            2 => ProjectTemplate.Horror,
-            3 => ProjectTemplate.Tutorial,
-            4 => ProjectTemplate.Corridor,
-            5 => ProjectTemplate.TechnicalDemo,
+            1 => ProjectContentMode.Genre,
+            2 => ProjectContentMode.Full,
+            _ => ProjectContentMode.Empty,
+        };
+        var genre = mode == ProjectContentMode.Genre
+            ? _genre.SelectedIndex switch
+            {
+                1 => ProjectGenre.TopDown,
+                2 => ProjectGenre.Horror,
+                3 => ProjectGenre.Shooter,
+                4 => ProjectGenre.Puzzle,
+                _ => ProjectGenre.Platformer,
+            }
+            : ProjectGenre.None;
+
+        var template = genre switch
+        {
+            ProjectGenre.Platformer => ProjectTemplate.Platformer,
+            ProjectGenre.Horror => ProjectTemplate.Horror,
             _ => ProjectTemplate.Empty,
         };
 
-        Close(new NewProjectResult(name!, folder!, template));
+        Close(new NewProjectResult(name!, folder!, template, mode, genre));
     }
 
     private void ShowError(string message)

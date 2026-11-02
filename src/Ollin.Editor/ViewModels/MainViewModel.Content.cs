@@ -390,6 +390,11 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new Trail2D());
                 break;
 
+            case "health":
+                if (entity.HasComponent<Health>()) { added = false; break; }
+                entity.AddComponent(new Health());
+                break;
+
             case "hitbox":
                 if (entity.HasComponent<Hitbox>()) { added = false; break; }
                 if (!entity.HasComponent<Collider2D>()) entity.AddComponent(new BoxCollider());
@@ -559,6 +564,7 @@ public sealed partial class MainViewModel
             "rigidbody" => entity.GetComponent<Rigidbody2D>(),
             "character" => entity.GetComponent<CharacterBody2D>(),
             "hitbox" => entity.GetComponent<Hitbox>(),
+            "health" => entity.GetComponent<Health>(),
             "hurtbox" => entity.GetComponent<Hurtbox>(),
             "knockback2d" => entity.GetComponent<Knockback2D>(),
             "equipment" => entity.GetComponent<Equipment>(),

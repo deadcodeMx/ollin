@@ -3,6 +3,25 @@ using Ollin.Core.Input;
 
 namespace Ollin.Core.Projects;
 
+/// <summary>Modo de contenido de un proyecto nuevo.</summary>
+public enum ProjectContentMode
+{
+    Full,
+    Empty,
+    Genre,
+}
+
+/// <summary>Género que guía los componentes sugeridos.</summary>
+public enum ProjectGenre
+{
+    None,
+    Platformer,
+    TopDown,
+    Horror,
+    Shooter,
+    Puzzle,
+}
+
 /// <summary>Datos de un proyecto de Ollin (`project.ollin`) y su carpeta raíz.</summary>
 public sealed class ProjectInfo
 {
@@ -14,6 +33,10 @@ public sealed class ProjectInfo
     public string StartScene { get; set; } = "scenes/inicio.ollin.json";
 
     public string? Description { get; set; }
+
+    public ProjectContentMode ContentMode { get; set; } = ProjectContentMode.Full;
+
+    public ProjectGenre Genre { get; set; } = ProjectGenre.None;
 
     /// <summary>Acciones del Input Map del proyecto.</summary>
     public List<InputActionDefinition> InputActions { get; set; } = InputMap.CreateDefaults();
@@ -50,7 +73,7 @@ public static class ProjectService
     /// script iniciales. Si se indica <paramref name="templateAssets"/>, copia esas
     /// texturas al proyecto.
     /// </summary>
-    public static ProjectInfo Create(string parentFolder, string name, string? templateAssets = null, ProjectTemplate template = ProjectTemplate.Empty)
+    public static ProjectInfo Create(string parentFolder, string name, string? templateAssets = null, ProjectTemplate template = ProjectTemplate.Empty, ProjectContentMode contentMode = ProjectContentMode.Full, ProjectGenre genre = ProjectGenre.None)
     {
         var folderName = Sanitize(name);
         var root = Path.Combine(parentFolder, folderName);
@@ -73,6 +96,8 @@ public static class ProjectService
             Name = name.Trim(),
             RootPath = root,
             StartScene = "scenes/inicio.ollin.json",
+            ContentMode = contentMode,
+            Genre = genre,
         };
 
         if (!string.IsNullOrWhiteSpace(templateAssets) && Directory.Exists(templateAssets))
@@ -80,7 +105,9 @@ public static class ProjectService
             CopyDirectory(templateAssets, Path.Combine(root, "assets"));
         }
 
-        var scene = StarterProject.CreateScene(template);
+        var scene = genre != ProjectGenre.None && template == ProjectTemplate.Empty
+            ? StarterProject.CreateGenre(genre)
+            : StarterProject.CreateScene(template);
         Serialization.SceneSerializer.Save(scene, project.StartSceneFullPath);
 
         if (template is not (ProjectTemplate.Corridor or ProjectTemplate.TechnicalDemo))
