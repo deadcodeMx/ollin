@@ -43,6 +43,8 @@
         <MenuItem Header="Eliminar entidad" Click="OnDelete" />
         <Separator />
         <MenuItem Header="Abrir script de la selección" Click="OnOpenSelectedScript" />
+        <Separator />
+        <MenuItem Header="Atajos del teclado…" Click="OnEditShortcuts" />
       </MenuItem>
       <MenuItem Header="Ver">
         <MenuItem Header="Centrar cámara" InputGesture="Home" Click="OnResetCamera" />
@@ -174,6 +176,25 @@
                         <StackPanel.ContextMenu>
                           <ContextMenu>
                             <MenuItem Header="Crear hijo" Click="OnCreateChild" />
+                            <MenuItem Header="Símbolo">
+                              <MenuItem Header="★" Tag="★" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="●" Tag="●" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="▲" Tag="▲" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="◆" Tag="◆" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="♥" Tag="♥" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="☠" Tag="☠" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="⚑" Tag="⚑" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="Ninguno" Tag="" Click="OnSetEntitySymbol" />
+                            </MenuItem>
+                            <MenuItem Header="Color">
+                              <MenuItem Header="Ámbar" Tag="#E9A23B" Click="OnSetEntityColor" />
+                              <MenuItem Header="Jade" Tag="#47B8A8" Click="OnSetEntityColor" />
+                              <MenuItem Header="Azul" Tag="#5B9CE0" Click="OnSetEntityColor" />
+                              <MenuItem Header="Rojo" Tag="#E05B5B" Click="OnSetEntityColor" />
+                              <MenuItem Header="Violeta" Tag="#A78BFA" Click="OnSetEntityColor" />
+                              <MenuItem Header="Blanco" Tag="#FFFFFF" Click="OnSetEntityColor" />
+                              <MenuItem Header="Restablecer" Tag="" Click="OnSetEntityColor" />
+                            </MenuItem>
                             <MenuItem Header="Añadir componente">
                               <MenuItem Header="Colisión (caja)" Click="OnAddCollider" />
                               <MenuItem Header="Disparador (trigger)" Click="OnAddTrigger" />
@@ -514,15 +535,7 @@
                       <TextBlock Classes="section" Text="NOMBRE" />
                       <TextBox Text="{Binding Selected.Name, Mode=TwoWay}" />
                       <TextBlock Classes="hint" Text="{Binding Selected.ComponentsSummary}" />
-                      <Grid ColumnDefinitions="86,*" Margin="0,1">
-                        <TextBlock Text="Símbolo" VerticalAlignment="Center" Classes="hint" />
-                        <TextBox Grid.Column="1" Text="{Binding Selected.EditorIcon, Mode=TwoWay}" Watermark="★, 👾, ▲" />
-                      </Grid>
-                      <Grid ColumnDefinitions="86,*" Margin="0,1">
-                        <TextBlock Text="Color" VerticalAlignment="Center" Classes="hint" />
-                        <TextBox Grid.Column="1" Text="{Binding Selected.EditorColorHex, Mode=TwoWay}" Watermark="#E9A23B" />
-                      </Grid>
-                      <Button Classes="tool accent" Content="+ Añadir componente" HorizontalAlignment="Stretch" Margin="0,6,0,0">
+                      <Button Classes="tool accent" Content="+ Añadir componente" HorizontalAlignment="Stretch" IsVisible="False" Margin="0,6,0,0">
                         <Button.Flyout>
                           <MenuFlyout>
                             <MenuItem Header="Colisión (caja)" Click="OnAddCollider" />
@@ -1408,6 +1421,13 @@
 
                     <StackPanel IsVisible="{Binding Selected.HasScript}" Spacing="5">
                       <TextBlock Classes="section" Text="SCRIPT" />
+                      <ComboBox ItemsSource="{Binding Selected.ScriptComponents}" SelectedItem="{Binding Selected.ActiveScript, Mode=TwoWay}" HorizontalAlignment="Stretch" Margin="0,1">
+                        <ComboBox.ItemTemplate>
+                          <DataTemplate>
+                            <TextBlock Text="{Binding ClassName}" />
+                          </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                      </ComboBox>
                       <Grid ColumnDefinitions="86,*" Margin="0,1">
                         <TextBlock Text="Archivo" VerticalAlignment="Center" Classes="hint" />
                         <TextBox Grid.Column="1" Text="{Binding Selected.ScriptPath, Mode=TwoWay}" Watermark="scripts/MiScript.cs" />
@@ -1418,6 +1438,7 @@
                       </Grid>
                       <Button Classes="tool accent" Content="Abrir script" Click="OnOpenSelectedScript" HorizontalAlignment="Stretch" />
                       <Button Classes="tool" Content="Crear script para esta entidad" Click="OnCreateScript" HorizontalAlignment="Stretch" />
+                      <Button Classes="tool" Content="Añadir otra ranura de script" Click="OnAddScriptComponent" HorizontalAlignment="Stretch" />
                       <Button Classes="tool" Content="Quitar script" Click="OnRemoveScript" HorizontalAlignment="Stretch" />
                     </StackPanel>
                   </StackPanel>

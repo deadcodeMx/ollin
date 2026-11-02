@@ -204,7 +204,7 @@ public sealed partial class MainViewModel
     /// <summary>Quita el componente de script de la entidad seleccionada.</summary>
     public void RemoveScriptFromSelected()
     {
-        if (IsPlaying || Selected?.Entity.GetComponent<ScriptComponent>() is not { } component)
+        if (IsPlaying || Selected?.ActiveScript is not { } component)
         {
             return;
         }

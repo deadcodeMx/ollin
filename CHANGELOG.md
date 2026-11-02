@@ -17,6 +17,27 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.68.0] — 2026-11-02
+
+### Corregido
+
+- La rejilla mantiene densidad y grosor al hacer zoom.
+- Los ejes X/Y no desaparecen.
+- El contorno de selección conserva su grosor.
+- El inspector ya no muestra separadores raros.
+
+### Añadido
+
+- Varias ranuras de script por entidad.
+- Atajos del teclado configurables.
+- Símbolo y color desde el menú contextual de Jerarquía.
+- Botón de añadir componente fijo al final del inspector.
+
+### Cambiado
+
+- Lista de componentes reducida a los esenciales 2D.
+- 205 pruebas automatizadas.
+
 ## [6.67.0] — 2026-11-02
 
 ### Cambiado

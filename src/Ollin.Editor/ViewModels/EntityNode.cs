@@ -187,13 +187,32 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasScript => Entity.GetComponent<ScriptComponent>() is not null;
 
+    private ScriptComponent? _activeScript;
+
+    public IReadOnlyList<ScriptComponent> ScriptComponents => Entity.Components.OfType<ScriptComponent>().ToList();
+
+    public ScriptComponent? ActiveScript
+    {
+        get => _activeScript ??= Entity.Components.OfType<ScriptComponent>().FirstOrDefault();
+        set
+        {
+            if (ReferenceEquals(_activeScript, value)) return;
+            _activeScript = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ScriptPath));
+            OnPropertyChanged(nameof(ScriptClass));
+        }
+    }
+
+    public int ScriptCount => ScriptComponents.Count;
+
     public bool HasRotator => Entity.GetComponent<RotatorComponent>() is not null;
 
     public bool HasOscillator => Entity.GetComponent<OscillatorComponent>() is not null;
 
     public RotatorComponent? Rotator => Entity.GetComponent<RotatorComponent>();
 
-    public ScriptComponent? Script => Entity.GetComponent<ScriptComponent>();
+    public ScriptComponent? Script => ActiveScript;
 
     public string ScriptPath
     {

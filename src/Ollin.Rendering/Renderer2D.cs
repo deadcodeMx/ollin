@@ -336,7 +336,7 @@ public sealed class Renderer2D : IDisposable
             var box = collider.GetWorldCorners(scene.GetWorldMatrix(entity));
             for (var i = 0; i < 4; i++)
             {
-                _batch.DrawLine(null, box[i], box[(i + 1) % 4], 0.02f, ColliderColor);
+                _batch.DrawLine(null, box[i], box[(i + 1) % 4], 1f / ppu, ColliderColor);
             }
         }
 
@@ -367,34 +367,48 @@ public sealed class Renderer2D : IDisposable
         var bottom = cameraPosition.Y - visibleHalfHeight;
         var top = cameraPosition.Y + visibleHalfHeight;
 
-        // Une las líneas más finas serán más densas, pero nunca menos de 1 unidad.
+        // Secuencia 1, 2, 5, 10… para que la rejilla no salte de golpe al hacer zoom.
         var step = 1f;
-        while (step * ppu < 18f)
+        while (step * ppu < 24f)
         {
-            step *= 5f;
+            step = step < 2f ? 2f : step < 5f ? 5f : step * 2f;
         }
+
+        var minorThickness = 0.8f / ppu;
+        var majorThickness = 1.2f / ppu;
+        var axisThickness = 2f / ppu;
 
         var startX = MathF.Floor(left / step) * step;
         for (var x = startX; x <= right; x += step)
         {
-            var isAxis = MathF.Abs(x) < step * 0.01f;
+            if (MathF.Abs(x) < step * 0.01f) continue;
             var isMajor = MathF.Abs(x % (step * 5f)) < step * 0.01f;
-            var color = isAxis ? AxisYColor : isMajor ? GridMajorColor : GridMinorColor;
-            var thickness = isAxis ? 0.02f : isMajor ? 0.012f : 0.008f;
+            var color = isMajor ? GridMajorColor : GridMinorColor;
+            var thickness = isMajor ? majorThickness : minorThickness;
             _batch.DrawLine(null, new Vector2(x, bottom), new Vector2(x, top), thickness, color);
         }
 
         var startY = MathF.Floor(bottom / step) * step;
         for (var y = startY; y <= top; y += step)
         {
-            var isAxis = MathF.Abs(y) < step * 0.01f;
+            if (MathF.Abs(y) < step * 0.01f) continue;
             var isMajor = MathF.Abs(y % (step * 5f)) < step * 0.01f;
-            var color = isAxis ? AxisXColor : isMajor ? GridMajorColor : GridMinorColor;
-            var thickness = isAxis ? 0.02f : isMajor ? 0.012f : 0.008f;
+            var color = isMajor ? GridMajorColor : GridMinorColor;
+            var thickness = isMajor ? majorThickness : minorThickness;
             _batch.DrawLine(null, new Vector2(left, y), new Vector2(right, y), thickness, color);
         }
-    }
 
+        // Ejes X/Y siempre visibles y con grosor constante en pantalla.
+        if (left <= 0f && right >= 0f)
+        {
+            _batch.DrawLine(null, new Vector2(0f, bottom), new Vector2(0f, top), axisThickness, AxisYColor);
+        }
+
+        if (bottom <= 0f && top >= 0f)
+        {
+            _batch.DrawLine(null, new Vector2(left, 0f), new Vector2(right, 0f), axisThickness, AxisXColor);
+        }
+    }
     /// <summary>Esquinas del sprite en mundo: TL, TR, BR, BL.</summary>
     /// <summary>Desplazamiento de un sprite con paralaje respecto a la cámara.</summary>
     /// <summary>

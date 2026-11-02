@@ -23,7 +23,7 @@ Ollin es **gratis y de código abierto (MIT)**: puedes usarlo, modificarlo y dis
 
 ## Descargas
 
-- **Última beta**: [Ollin-Setup-6.67.0-beta.exe](https://github.com/deadcodeMx/ollin/releases/latest)
+- **Última beta**: [Ollin-Setup-6.68.0-beta.exe](https://github.com/deadcodeMx/ollin/releases/latest)
 - **Todas las versiones**: [Releases del proyecto](https://github.com/deadcodeMx/ollin/releases)
 - **Guía completa de uso**: [docs/GUIA.md](docs/GUIA.md)
 

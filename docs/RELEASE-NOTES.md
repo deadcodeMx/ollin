@@ -1,24 +1,30 @@
-## Ollin Beta 6.67.0 — enfoque 2D
+## Ollin Beta 6.68.0 — viewport e inspector
 
-### Incluye
+### Corregido
 
-- Interfaz centrada en **2D**.
-- Herramientas y componentes **2.5D/3D ocultos**.
-- Plantillas **2.5D ocultas**.
-- Menú **+** dentro de Jerarquía.
-- **+ Sprite / + Vacía** fuera de la barra superior.
-- **205 pruebas automatizadas**.
+- Rejilla estable al acercar y alejar.
+- Ejes X/Y siempre visibles.
+- Contorno de selección con grosor constante.
+- Inspector sin líneas separadoras extrañas.
 
-### Cómo probarlo
+### Añadido
 
-1. Instala 6.67.0.
-2. Abre Jerarquía y pulsa **+**.
-3. Crea un **Sprite 2D** o entidad vacía.
-4. Comprueba que la barra no tiene botones 2.5D.
-5. Crea un proyecto: no aparecen plantillas 2.5D.
+- Varias ranuras de script por entidad.
+- **Editar → Atajos del teclado…**
+- Símbolo y color desde clic derecho en Jerarquía.
+- **+ Añadir componente** fijo al final del inspector.
+
+### Cambiado
+
+- Componentes esenciales 2D: colisión, trigger, física, cámara, animación,
+  tilemap, audio, luz, rotador, oscilador, IA y script.
+
+### Pruebas
+
+- **205/205 pruebas automatizadas**.
+- Captura de interfaz verificada.
 
 ### Limitaciones
 
-- Las escenas 2.5D existentes siguen abriendo, pero sus componentes están ocultos.
-- El motor conserva internamente el código 2.5D.
+- Los valores públicos internos de un script C# todavía no se reflejan como campos editables.
 - La demo técnica no se publica.

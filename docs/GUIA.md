@@ -1079,3 +1079,16 @@ error de sintaxis.
   - Entidad vacía
   - Hijo de la selección
 - Se quitaron **+ Sprite / + Vacía** de la barra superior.
+
+## 66. Viewport, inspector y atajos (6.68)
+
+- La rejilla usa pasos 1, 2, 5, 10… y grosor constante en pantalla.
+- Los ejes X/Y se dibujan siempre que estén en vista.
+- El contorno de selección mantiene su grosor al hacer zoom.
+- El inspector oculta componentes que la entidad no tiene.
+- **+ Añadir componente** queda fijo al final del inspector.
+- Solo aparecen componentes esenciales: colisión, trigger, física, cámara,
+  animación, tilemap, audio, luz, rotador, oscilador, IA y scripts.
+- Una entidad puede tener varias ranuras de script.
+- Símbolo y color se cambian con clic derecho en Jerarquía.
+- **Editar → Atajos del teclado…** permite reasignar teclas.

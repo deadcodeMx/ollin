@@ -554,15 +554,15 @@ public partial class MainWindow : Window
             section.Children.Add(header);
             if (content is not null) section.Children.Add(content);
             panel.Children.Add(section);
-            panel.Children.Add(new Border
-            {
-                Height = 1,
-                Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#2B3342")),
-                Margin = new Thickness(0, 6),
-            });
         }
 
-        entityTab.Content = new ScrollViewer { Content = panel };
+        var addButton = BuildAddComponentButton();
+        DockPanel.SetDock(addButton, Dock.Bottom);
+        var inspectorBody = new ScrollViewer { Content = panel };
+        var inspectorDock = new DockPanel();
+        inspectorDock.Children.Add(addButton);
+        inspectorDock.Children.Add(inspectorBody);
+        entityTab.Content = inspectorDock;
         InspectorTabs.Items.Clear();
         InspectorTabs.Items.Add(entityTab);
         InspectorTabs.Items.Add(BuildTagsTab());
@@ -1130,6 +1130,65 @@ public partial class MainWindow : Window
         }
     }
 
+    private Button BuildAddComponentButton()
+    {
+        var button = new Button
+        {
+            Content = "+ Añadir componente",
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+            Margin = new Thickness(0, 10, 0, 4),
+            Classes = { "tool", "accent" },
+        };
+
+        var flyout = new MenuFlyout();
+        void Add(string label, string kind)
+        {
+            var item = new MenuItem { Header = label };
+            item.Click += (_, _) => ViewModel?.AddComponentTo(kind);
+            flyout.Items.Add(item);
+        }
+
+        Add("Colisión (caja)", "collider");
+        Add("Disparador (trigger)", "trigger");
+        Add("Cuerpo físico", "rigidbody");
+        Add("Cámara 2D", "camera");
+        Add("Animación", "animator");
+        Add("Tilemap", "tilemap");
+        Add("Audio", "audio");
+        Add("Luz 2D", "light");
+        Add("Rotador", "rotator");
+        Add("Oscilador", "oscillator");
+        Add("IA", "ai");
+        Add("Script C#", "script");
+
+        button.Flyout = flyout;
+        return button;
+    }
+
+    private async void OnEditShortcuts(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null) return;
+        var window = new ShortcutsWindow(ViewModel.Settings);
+        await window.ShowDialog<bool?>(this);
+    }
+
+    private void OnSetEntitySymbol(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is MenuItem item && MenuEntity(sender) is { } node)
+        {
+            node.EditorIcon = item.Tag?.ToString() ?? string.Empty;
+            ViewModel?.CommitEdit("Cambiar símbolo");
+        }
+    }
+
+    private void OnSetEntityColor(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is MenuItem item && MenuEntity(sender) is { } node)
+        {
+            node.EditorColorHex = item.Tag?.ToString() ?? string.Empty;
+            ViewModel?.CommitEdit("Cambiar color");
+        }
+    }
     private void OnFocusEntity(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (MenuEntity(sender) is { } node)
@@ -1361,6 +1420,20 @@ public partial class MainWindow : Window
 
     // ---------- Atajos ----------
 
+    private bool ShortcutMatches(string action, string fallback, KeyEventArgs e)
+    {
+        var text = ViewModel?.Settings.GetShortcut(action, fallback) ?? fallback;
+        try
+        {
+            var gesture = KeyGesture.Parse(text);
+            return gesture.Key == e.Key && gesture.KeyModifiers == e.KeyModifiers;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     protected override void OnKeyDown(KeyEventArgs e)
     {
         var vm = ViewModel;
@@ -1451,63 +1524,19 @@ public partial class MainWindow : Window
             return;
         }
 
-        var control = e.KeyModifiers.HasFlag(KeyModifiers.Control);
-        switch (e.Key)
-        {
-            case Key.Z when control:
-                vm.Undo();
-                e.Handled = true;
-                break;
-            case Key.Y when control:
-                vm.Redo();
-                e.Handled = true;
-                break;
-            case Key.S when control:
-                OnSaveScene(this, new Avalonia.Interactivity.RoutedEventArgs());
-                e.Handled = true;
-                break;
-            case Key.C when control:
-                vm.CopySelected();
-                e.Handled = true;
-                break;
-            case Key.V when control:
-                vm.PasteCopied();
-                e.Handled = true;
-                break;
-            case Key.Delete:
-                vm.DeleteSelected();
-                e.Handled = true;
-                break;
-            case Key.F:
-                vm.FrameSelected();
-                e.Handled = true;
-                break;
-            case Key.Home:
-                vm.ResetCamera();
-                e.Handled = true;
-                break;
-            case Key.Escape:
-                vm.Selected = null;
-                e.Handled = true;
-                break;
-            case Key.O when control:
-                OnOpenScene(this, new Avalonia.Interactivity.RoutedEventArgs());
-                e.Handled = true;
-                break;
-            case Key.N when control:
-                vm.NewScene();
-                e.Handled = true;
-                break;
-            case Key.F5:
-                vm.TogglePlay();
-                e.Handled = true;
-                break;
-            case Key.F6:
-                vm.TogglePause();
-                e.Handled = true;
-                break;
-        }
-
+        if (ShortcutMatches("undo", "Ctrl+Z", e)) { vm.Undo(); e.Handled = true; return; }
+        if (ShortcutMatches("redo", "Ctrl+Y", e)) { vm.Redo(); e.Handled = true; return; }
+        if (ShortcutMatches("save", "Ctrl+S", e)) { OnSaveScene(this, new Avalonia.Interactivity.RoutedEventArgs()); e.Handled = true; return; }
+        if (ShortcutMatches("copy", "Ctrl+C", e)) { vm.CopySelected(); e.Handled = true; return; }
+        if (ShortcutMatches("paste", "Ctrl+V", e)) { vm.PasteCopied(); e.Handled = true; return; }
+        if (ShortcutMatches("delete", "Delete", e)) { vm.DeleteSelected(); e.Handled = true; return; }
+        if (ShortcutMatches("focus", "F", e)) { vm.FrameSelected(); e.Handled = true; return; }
+        if (ShortcutMatches("home", "Home", e)) { vm.ResetCamera(); e.Handled = true; return; }
+        if (ShortcutMatches("openscene", "Ctrl+O", e)) { OnOpenScene(this, new Avalonia.Interactivity.RoutedEventArgs()); e.Handled = true; return; }
+        if (ShortcutMatches("newscene", "Ctrl+N", e)) { vm.NewScene(); e.Handled = true; return; }
+        if (ShortcutMatches("play", "F5", e)) { vm.TogglePlay(); e.Handled = true; return; }
+        if (ShortcutMatches("pause", "F6", e)) { vm.TogglePause(); e.Handled = true; return; }
+        if (e.Key == Key.Escape) { vm.Selected = null; e.Handled = true; return; }
         base.OnKeyDown(e);
     }
     protected override void OnKeyUp(KeyEventArgs e)

@@ -10,6 +10,8 @@ namespace Ollin.Editor.ViewModels;
 public sealed partial class MainViewModel
 {
     private readonly EditorSettings _settings = EditorSettings.Load();
+
+    public EditorSettings Settings => _settings;
     private ProjectInfo? _project;
     private DocumentTab? _activeDocument;
 
