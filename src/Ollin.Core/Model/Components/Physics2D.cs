@@ -34,17 +34,28 @@ public sealed class BoxCollider : Collider2D
     public override Vector2[] GetWorldCorners(Matrix4x4 world)
     {
         var half = Size * 0.5f;
-        return new[]
+        var radius = MathF.Max(0.01f, MathF.Min(half.X, half.Y));
+        var topY = half.Y - radius;
+        var bottomY = -half.Y + radius;
+        const int segments = 12;
+        var points = new List<Vector2>(segments * 4);
+
+        for (var i = 0; i <= segments; i++)
         {
-            Vector2.Transform(new Vector2(-half.X, half.Y) + Offset, world),
-            Vector2.Transform(new Vector2(half.X, half.Y) + Offset, world),
-            Vector2.Transform(new Vector2(half.X, -half.Y) + Offset, world),
-            Vector2.Transform(new Vector2(-half.X, -half.Y) + Offset, world),
-        };
+            var angle = MathF.PI * i / segments;
+            points.Add(new Vector2(MathF.Cos(angle) * radius, topY + MathF.Sin(angle) * radius) + Offset);
+        }
+        for (var i = 0; i <= segments; i++)
+        {
+            var angle = MathF.PI + MathF.PI * i / segments;
+            points.Add(new Vector2(MathF.Cos(angle) * radius, bottomY + MathF.Sin(angle) * radius) + Offset);
+        }
+
+        return points.Select(point => Vector2.Transform(point, world)).ToArray();
     }
 }
 
-/// <summary>Colisión circular. Se resuelve con su caja envolvente.</summary>
+/// <summary>Colisión circular exacta.</summary>
 public sealed class CircleCollider2D : Collider2D
 {
     public float Radius { get; set; } = 0.5f;
@@ -62,17 +73,18 @@ public sealed class CircleCollider2D : Collider2D
     public override Vector2[] GetWorldCorners(Matrix4x4 world)
     {
         var r = MathF.Max(0.01f, Radius);
-        return new[]
+        const int segments = 32;
+        var points = new Vector2[segments];
+        for (var i = 0; i < segments; i++)
         {
-            Vector2.Transform(new Vector2(-r, r) + Offset, world),
-            Vector2.Transform(new Vector2(r, r) + Offset, world),
-            Vector2.Transform(new Vector2(r, -r) + Offset, world),
-            Vector2.Transform(new Vector2(-r, -r) + Offset, world),
-        };
+            var angle = MathF.Tau * i / segments;
+            points[i] = Vector2.Transform(new Vector2(MathF.Cos(angle) * r, MathF.Sin(angle) * r) + Offset, world);
+        }
+        return points;
     }
 }
 
-/// <summary>Cápsula 2D. Se resuelve con su caja envolvente.</summary>
+/// <summary>Cápsula 2D representada por un contorno convexo.</summary>
 public sealed class CapsuleCollider2D : Collider2D
 {
     public Vector2 Size { get; set; } = new(0.7f, 1.4f);
@@ -90,13 +102,24 @@ public sealed class CapsuleCollider2D : Collider2D
     public override Vector2[] GetWorldCorners(Matrix4x4 world)
     {
         var half = Size * 0.5f;
-        return new[]
+        var radius = MathF.Max(0.01f, MathF.Min(half.X, half.Y));
+        var topY = half.Y - radius;
+        var bottomY = -half.Y + radius;
+        const int segments = 12;
+        var points = new List<Vector2>(segments * 4);
+
+        for (var i = 0; i <= segments; i++)
         {
-            Vector2.Transform(new Vector2(-half.X, half.Y) + Offset, world),
-            Vector2.Transform(new Vector2(half.X, half.Y) + Offset, world),
-            Vector2.Transform(new Vector2(half.X, -half.Y) + Offset, world),
-            Vector2.Transform(new Vector2(-half.X, -half.Y) + Offset, world),
-        };
+            var angle = MathF.PI * i / segments;
+            points.Add(new Vector2(MathF.Cos(angle) * radius, topY + MathF.Sin(angle) * radius) + Offset);
+        }
+        for (var i = 0; i <= segments; i++)
+        {
+            var angle = MathF.PI + MathF.PI * i / segments;
+            points.Add(new Vector2(MathF.Cos(angle) * radius, bottomY + MathF.Sin(angle) * radius) + Offset);
+        }
+
+        return points.Select(point => Vector2.Transform(point, world)).ToArray();
     }
 }
 
@@ -142,13 +165,24 @@ public sealed class Area2D : Collider2D
     public override Vector2[] GetWorldCorners(Matrix4x4 world)
     {
         var half = Size * 0.5f;
-        return new[]
+        var radius = MathF.Max(0.01f, MathF.Min(half.X, half.Y));
+        var topY = half.Y - radius;
+        var bottomY = -half.Y + radius;
+        const int segments = 12;
+        var points = new List<Vector2>(segments * 4);
+
+        for (var i = 0; i <= segments; i++)
         {
-            Vector2.Transform(new Vector2(-half.X, half.Y) + Offset, world),
-            Vector2.Transform(new Vector2(half.X, half.Y) + Offset, world),
-            Vector2.Transform(new Vector2(half.X, -half.Y) + Offset, world),
-            Vector2.Transform(new Vector2(-half.X, -half.Y) + Offset, world),
-        };
+            var angle = MathF.PI * i / segments;
+            points.Add(new Vector2(MathF.Cos(angle) * radius, topY + MathF.Sin(angle) * radius) + Offset);
+        }
+        for (var i = 0; i <= segments; i++)
+        {
+            var angle = MathF.PI + MathF.PI * i / segments;
+            points.Add(new Vector2(MathF.Cos(angle) * radius, bottomY + MathF.Sin(angle) * radius) + Offset);
+        }
+
+        return points.Select(point => Vector2.Transform(point, world)).ToArray();
     }
 }
 

@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.100.0] — 2026-11-02
+
+### Corregido
+
+- Los círculos se dibujan como círculos, no como cuadrados.
+- Las cápsulas se dibujan con su contorno real.
+- La física usa el contorno real de la cápsula.
+
 ## [6.99.0] — 2026-11-02
 
 ### Añadido

@@ -1,19 +1,14 @@
-## Ollin Beta 6.99.0 — colisión por formas y menú organizado
+## Ollin Beta 6.100.0 — formas de colisión correctas
 
-### Añadido
+### Corregido
 
-- Colisión **círculo-polígono** exacta.
-- Colisión **polígono-polígono** por SAT.
-- Cápsula resuelta como polígono convexo.
-- Menú **Añadir componente** por categorías:
-  - Movimiento.
-  - Colisión.
-  - Visual.
-  - Mundo y gameplay.
-  - Scripts.
+- **Círculo** se dibuja con 32 segmentos, no como cuadrado.
+- **Cápsula** se dibuja con su contorno real.
+- Física y luces usan el contorno real de la cápsula.
+- El triángulo/polígono se dibuja con sus vértices.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.99.0 instalado y abierto sin crash.
+- Instalador 6.100.0 instalado y abierto con `player-test`.
 - Demo técnica no publicada.

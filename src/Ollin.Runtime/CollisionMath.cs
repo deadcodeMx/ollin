@@ -136,26 +136,6 @@ internal static class CollisionMath
         if (collider is PolygonCollider2D polygon)
             return polygon.Points.Select(point => Vector2.Transform(point + polygon.Offset, world)).ToArray();
 
-        if (collider is CapsuleCollider2D capsule)
-        {
-            var half = capsule.Size * 0.5f;
-            var radius = MathF.Min(half.X, half.Y);
-            var points = new List<Vector2>();
-            const int segments = 8;
-            // Semicírculo superior e inferior aproximan la cápsula.
-            for (var i = 0; i <= segments; i++)
-            {
-                var angle = MathF.PI * i / segments;
-                points.Add(new Vector2(MathF.Cos(angle) * half.X, half.Y - radius + MathF.Sin(angle) * radius) + capsule.Offset);
-            }
-            for (var i = 0; i <= segments; i++)
-            {
-                var angle = MathF.PI + MathF.PI * i / segments;
-                points.Add(new Vector2(MathF.Cos(angle) * half.X, -half.Y + radius + MathF.Sin(angle) * radius) + capsule.Offset);
-            }
-            return points.Select(point => Vector2.Transform(point, world)).ToArray();
-        }
-
         return collider.GetWorldCorners(world);
     }
 
