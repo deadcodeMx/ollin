@@ -1510,39 +1510,52 @@ public partial class MainWindow : Window
         };
 
         var flyout = new MenuFlyout();
-        void Add(string label, string kind)
+        void Add(MenuItem parent, string label, string kind)
         {
             var item = new MenuItem { Header = label };
             item.Click += (_, _) => ViewModel?.AddComponentTo(kind);
-            flyout.Items.Add(item);
+            parent.Items.Add(item);
         }
 
-        Add("Personaje 2D", "character");
-        Add("Área 2D (trigger)", "area");
-        Add("Colisión circular", "circle");
-        Add("Colisión cápsula", "capsule");
-        Add("Colisión polígono", "polygon");
-        Add("Visual (Sprite)", "sprite");
-        Add("Interactuable", "interactable");
-        Add("Colisión (caja)", "collider");
-        Add("Disparador (trigger)", "trigger");
-        Add("Cuerpo físico", "rigidbody");
-        Add("Cámara 2D", "camera");
-        Add("Animación", "animator");
-        Add("Tilemap", "tilemap");
-        Add("Audio", "audio");
-        Add("Luz 2D", "light");
-        Add("Rotador", "rotator");
-        Add("Oscilador", "oscillator");
-        Add("IA", "ai");
+        var movement = new MenuItem { Header = "Movimiento" };
+        Add(movement, "Personaje 2D", "character");
+        Add(movement, "Cuerpo físico", "rigidbody");
+        Add(movement, "Cámara 2D", "camera");
+        Add(movement, "Rotador", "rotator");
+        Add(movement, "Oscilador", "oscillator");
+        flyout.Items.Add(movement);
+
+        var collision = new MenuItem { Header = "Colisión" };
+        Add(collision, "Caja", "collider");
+        Add(collision, "Área 2D (trigger)", "area");
+        Add(collision, "Círculo", "circle");
+        Add(collision, "Cápsula", "capsule");
+        Add(collision, "Polígono", "polygon");
+        Add(collision, "Disparador", "trigger");
+        flyout.Items.Add(collision);
+
+        var visual = new MenuItem { Header = "Visual" };
+        Add(visual, "Sprite", "sprite");
+        Add(visual, "Animación", "animator");
+        Add(visual, "Luz 2D", "light");
+        flyout.Items.Add(visual);
+
+        var gameplay = new MenuItem { Header = "Mundo y gameplay" };
+        Add(gameplay, "Interactuable", "interactable");
+        Add(gameplay, "Tilemap", "tilemap");
+        Add(gameplay, "Audio", "audio");
+        Add(gameplay, "IA", "ai");
+        flyout.Items.Add(gameplay);
+
+        var scripts = new MenuItem { Header = "Scripts" };
         var scriptItem = new MenuItem { Header = "Script C#…" };
         scriptItem.Click += OnAddScriptComponentDialog;
-        flyout.Items.Add(scriptItem);
+        scripts.Items.Add(scriptItem);
+        flyout.Items.Add(scripts);
 
         button.Flyout = flyout;
         return button;
     }
-
     private async void OnEditShortcuts(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel is null) return;

@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.99.0] — 2026-11-02
+
+### Añadido
+
+- Colisión exacta círculo-polígono y polígono-polígono.
+- Cápsulas como polígono convexo.
+- Añadir componente organizado por categorías.
+
 ## [6.98.0] — 2026-11-02
 
 ### Añadido

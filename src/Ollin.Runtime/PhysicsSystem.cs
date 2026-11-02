@@ -87,19 +87,15 @@ internal sealed class PhysicsSystem
                     Notify(scripts, a.Entity, b.Entity, entered: true);
                 }
 
-                var overlapX = MathF.Min(maxA.X - minB.X, maxB.X - minA.X);
-                var overlapY = MathF.Min(maxA.Y - minB.Y, maxB.Y - minA.Y);
+                if (!CollisionMath.TryGetPenetration(
+                        a.Collider, scene.GetWorldMatrix(a.Entity),
+                        b.Collider, scene.GetWorldMatrix(b.Entity),
+                        out var normal, out var penetration) || penetration <= 0.0001f)
+                {
+                    continue;
+                }
 
-                if (overlapX < overlapY)
-                {
-                    var direction = a.Entity.Transform.Position.X < b.Entity.Transform.Position.X ? -1f : 1f;
-                    Push(a, b, new Vector2(overlapX * direction, 0f));
-                }
-                else
-                {
-                    var direction = a.Entity.Transform.Position.Y < b.Entity.Transform.Position.Y ? -1f : 1f;
-                    Push(a, b, new Vector2(0f, overlapY * direction));
-                }
+                Push(a, b, normal * penetration);
             }
         }
 
