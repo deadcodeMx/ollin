@@ -17,6 +17,22 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.106.0] — 2026-11-02
+
+### Corregido
+
+- Projectile2D choca contra colliders sólidos y no atraviesa paredes.
+
+## [6.105.0] — 2026-11-02
+
+### Añadido
+
+- Collision layers y masks.
+- EdgeCollider2D.
+- Hitbox y Hurtbox con daño por equipo.
+- Checkpoint2D.
+- Weapon2D y Projectile2D.
+
 ## [6.104.0] — 2026-11-02
 
 ### Añadido

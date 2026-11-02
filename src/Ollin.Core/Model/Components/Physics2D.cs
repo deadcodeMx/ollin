@@ -12,6 +12,12 @@ public abstract class Collider2D : Component
 
     public bool ShowInEditor { get; set; } = true;
 
+    /// <summary>Capa física (0-31).</summary>
+    public int Layer { get; set; }
+
+    /// <summary>Máscara de capas con las que colisiona.</summary>
+    public int Mask { get; set; } = ~0;
+
     /// <summary>Esquinas en mundo. La física usa su caja envolvente.</summary>
     public abstract Vector2[] GetWorldCorners(Matrix4x4 world);
 }
@@ -28,6 +34,8 @@ public sealed class BoxCollider : Collider2D
         Offset = Offset,
         IsTrigger = IsTrigger,
         ShowInEditor = ShowInEditor,
+        Layer = Layer,
+        Mask = Mask,
         Owner = newOwner,
     };
 
@@ -67,6 +75,8 @@ public sealed class CircleCollider2D : Collider2D
         Offset = Offset,
         IsTrigger = IsTrigger,
         ShowInEditor = ShowInEditor,
+        Layer = Layer,
+        Mask = Mask,
         Owner = newOwner,
     };
 
@@ -96,6 +106,8 @@ public sealed class CapsuleCollider2D : Collider2D
         Offset = Offset,
         IsTrigger = IsTrigger,
         ShowInEditor = ShowInEditor,
+        Layer = Layer,
+        Mask = Mask,
         Owner = newOwner,
     };
 
@@ -138,11 +150,56 @@ public sealed class PolygonCollider2D : Collider2D
         Offset = Offset,
         IsTrigger = IsTrigger,
         ShowInEditor = ShowInEditor,
+        Layer = Layer,
+        Mask = Mask,
         Owner = newOwner,
     };
 
     public override Vector2[] GetWorldCorners(Matrix4x4 world) =>
         Points.Select(point => Vector2.Transform(point + Offset, world)).ToArray();
+}
+
+/// <summary>Borde o cadena de segmentos con grosor, para suelos y rampas.</summary>
+public sealed class EdgeCollider2D : Collider2D
+{
+    public float Thickness { get; set; } = 0.12f;
+
+    public List<Vector2> Points { get; set; } = new() { new(-1f, 0f), new(1f, 0f) };
+
+    public override Component CloneFor(Entity newOwner) => new EdgeCollider2D
+    {
+        Enabled = Enabled,
+        Thickness = Thickness,
+        Points = new List<Vector2>(Points),
+        Offset = Offset,
+        IsTrigger = IsTrigger,
+        ShowInEditor = ShowInEditor,
+        Layer = Layer,
+        Mask = Mask,
+        Owner = newOwner,
+    };
+
+    public override Vector2[] GetWorldCorners(Matrix4x4 world)
+    {
+        if (Points.Count < 2) return Array.Empty<Vector2>();
+        var half = MathF.Max(0.01f, Thickness) * 0.5f;
+        var left = new List<Vector2>();
+        var right = new List<Vector2>();
+
+        for (var i = 0; i < Points.Count; i++)
+        {
+            var previous = Points[System.Math.Max(0, i - 1)];
+            var next = Points[System.Math.Min(Points.Count - 1, i + 1)];
+            var direction = next - previous;
+            if (direction.LengthSquared() < 0.0001f) direction = new Vector2(1f, 0f);
+            var normal = Vector2.Normalize(new Vector2(-direction.Y, direction.X));
+            left.Add(Points[i] + normal * half + Offset);
+            right.Add(Points[i] - normal * half + Offset);
+        }
+
+        right.Reverse();
+        return left.Concat(right).Select(point => Vector2.Transform(point, world)).ToArray();
+    }
 }
 
 /// <summary>Zona de detección: no bloquea, solo notifica solapamientos.</summary>
@@ -159,6 +216,8 @@ public sealed class Area2D : Collider2D
         Offset = Offset,
         IsTrigger = true,
         ShowInEditor = ShowInEditor,
+        Layer = Layer,
+        Mask = Mask,
         Owner = newOwner,
     };
 

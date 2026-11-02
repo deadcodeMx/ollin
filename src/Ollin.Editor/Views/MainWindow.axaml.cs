@@ -286,7 +286,7 @@ public partial class MainWindow : Window
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
-            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE")) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "CHECKPOINT" or "ARMA 2D")) continue;
 
             var index = root.Children.IndexOf(child);
             root.Children.RemoveAt(index);
@@ -1531,8 +1531,16 @@ public partial class MainWindow : Window
         Add(collision, "Círculo", "circle");
         Add(collision, "Cápsula", "capsule");
         Add(collision, "Polígono", "polygon");
+        Add(collision, "Borde", "edge");
         Add(collision, "Disparador", "trigger");
         flyout.Items.Add(collision);
+
+        var combat = new MenuItem { Header = "Combate" };
+        Add(combat, "Hitbox", "hitbox");
+        Add(combat, "Hurtbox", "hurtbox");
+        Add(combat, "Checkpoint 2D", "checkpoint2d");
+        Add(combat, "Arma 2D", "weapon2d");
+        flyout.Items.Add(combat);
 
         var visual = new MenuItem { Header = "Visual" };
         Add(visual, "Sprite", "sprite");

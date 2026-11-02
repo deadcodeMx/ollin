@@ -638,6 +638,27 @@
                       </Grid>
                       <TextBlock Classes="hint" TextWrapping="Wrap" Text="A/D o flechas para mover. Espacio/W/Arriba para saltar." />
                     </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasHitbox}" Spacing="5">
+                      <TextBlock Classes="section" Text="HITBOX" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Daño" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.HitboxDamage, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Equipo" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.HitboxTeam, Mode=TwoWay}" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Empuje" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.HitboxKnockback, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasHurtbox}" Spacing="5">
+                      <TextBlock Classes="section" Text="HURTBOX" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Equipo" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.HurtboxTeam, Mode=TwoWay}" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Multiplicador" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.HurtboxMultiplier, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasCheckpoint2D}" Spacing="5">
+                      <TextBlock Classes="section" Text="CHECKPOINT" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.Checkpoint2DRadius, Mode=TwoWay}" Increment="0.1" Minimum="0.1" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasWeapon2D}" Spacing="5">
+                      <TextBlock Classes="section" Text="ARMA 2D" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Daño" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.Weapon2DDamage, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Cadencia" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.Weapon2DCooldown, Mode=TwoWay}" Increment="0.05" Minimum="0.01" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Munición" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.Weapon2DAmmo, Mode=TwoWay}" Increment="1" Minimum="-1" FormatString="0" /></Grid>
+                    </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasRotator}" Spacing="5">
                       <TextBlock Classes="section" Text="ROTADOR" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1">
@@ -667,6 +688,14 @@
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderHeight, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.###" />
                       </Grid>
                       <Grid ColumnDefinitions="96,*" Margin="0,1" IsVisible="{Binding Selected.HasCircleCollider}">
+                      <Grid ColumnDefinitions="96,*" Margin="0,1">
+                        <TextBlock Text="Capa" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderLayer, Mode=TwoWay}" Increment="1" Minimum="0" Maximum="31" FormatString="0" />
+                      </Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1">
+                        <TextBlock Text="Máscara" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderMask, Mode=TwoWay}" Increment="1" Minimum="0" Maximum="2147483647" FormatString="0" />
+                      </Grid>
                         <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderRadius, Mode=TwoWay}" Increment="0.05" Minimum="0.01" FormatString="0.###" />
                       </Grid>

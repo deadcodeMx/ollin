@@ -396,6 +396,21 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public bool HasHitbox => Entity.GetComponent<Hitbox>() is not null;
+    public bool HasHurtbox => Entity.GetComponent<Hurtbox>() is not null;
+    public bool HasCheckpoint2D => Entity.GetComponent<Checkpoint2D>() is not null;
+    public bool HasWeapon2D => Entity.GetComponent<Weapon2D>() is not null;
+
+    public decimal HitboxDamage { get => (decimal)(Entity.GetComponent<Hitbox>()?.Damage ?? 10f); set { if (Entity.GetComponent<Hitbox>() is { } h) { h.Damage = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public string HitboxTeam { get => Entity.GetComponent<Hitbox>()?.Team ?? "player"; set { if (Entity.GetComponent<Hitbox>() is { } h) { h.Team = value ?? "player"; OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal HitboxKnockback { get => (decimal)(Entity.GetComponent<Hitbox>()?.Knockback ?? 0f); set { if (Entity.GetComponent<Hitbox>() is { } h) { h.Knockback = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public string HurtboxTeam { get => Entity.GetComponent<Hurtbox>()?.Team ?? "enemy"; set { if (Entity.GetComponent<Hurtbox>() is { } h) { h.Team = value ?? "enemy"; OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal HurtboxMultiplier { get => (decimal)(Entity.GetComponent<Hurtbox>()?.DamageMultiplier ?? 1f); set { if (Entity.GetComponent<Hurtbox>() is { } h) { h.DamageMultiplier = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal Checkpoint2DRadius { get => (decimal)(Entity.GetComponent<Checkpoint2D>()?.Radius ?? 1.2f); set { if (Entity.GetComponent<Checkpoint2D>() is { } c) { c.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal Weapon2DDamage { get => (decimal)(Entity.GetComponent<Weapon2D>()?.Damage ?? 10f); set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Damage = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal Weapon2DCooldown { get => (decimal)(Entity.GetComponent<Weapon2D>()?.Cooldown ?? 0.25f); set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Cooldown = MathF.Max(0.01f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public int Weapon2DAmmo { get => Entity.GetComponent<Weapon2D>()?.Ammo ?? -1; set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Ammo = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
+
     public bool HasRotator => Entity.GetComponent<RotatorComponent>() is not null;
 
     public bool HasOscillator => Entity.GetComponent<OscillatorComponent>() is not null;
@@ -825,6 +840,8 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasCircleCollider => Entity.GetComponent<CircleCollider2D>() is not null;
 
+    public bool HasEdgeCollider => Entity.GetComponent<EdgeCollider2D>() is not null;
+
     public bool HasArea2D => Entity.GetComponent<Area2D>() is not null;
 
     public Collider2D? Collider => Entity.GetComponent<Collider2D>();
@@ -835,9 +852,18 @@ public sealed class EntityNode : ObservableObject
         CapsuleCollider2D capsule => capsule.Size,
         Area2D area => area.Size,
         CircleCollider2D circle => new Vector2(circle.Radius * 2f),
+        EdgeCollider2D edge => EdgeSize(edge),
         PolygonCollider2D polygon => PolygonSize(polygon),
         _ => Vector2.One,
     };
+
+    private static Vector2 EdgeSize(EdgeCollider2D edge)
+    {
+        if (edge.Points.Count == 0) return Vector2.One;
+        var min = edge.Points[0]; var max = edge.Points[0];
+        foreach (var point in edge.Points) { min = Vector2.Min(min, point); max = Vector2.Max(max, point); }
+        return Vector2.Max(new Vector2(0.01f), max - min);
+    }
 
     private static Vector2 PolygonSize(PolygonCollider2D polygon)
     {
@@ -900,6 +926,28 @@ public sealed class EntityNode : ObservableObject
             if (Collider is not CircleCollider2D circle || MathF.Abs(circle.Radius - (float)value) < 0.001f) return;
             circle.Radius = MathF.Max(0.01f, (float)value);
             OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public int ColliderLayer
+    {
+        get => Collider?.Layer ?? 0;
+        set
+        {
+            if (Collider is null || Collider.Layer == Math.Clamp(value, 0, 31)) return;
+            Collider.Layer = Math.Clamp(value, 0, 31);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public int ColliderMask
+    {
+        get => Collider?.Mask ?? ~0;
+        set
+        {
+            if (Collider is null || Collider.Mask == value) return;
+            Collider.Mask = value;
+            OnPropertyChanged(); _owner.MarkDirty();
         }
     }
 
@@ -1341,9 +1389,16 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasSprite));
         OnPropertyChanged(nameof(HasCollider));
         OnPropertyChanged(nameof(HasCircleCollider));
+        OnPropertyChanged(nameof(HasEdgeCollider));
+        OnPropertyChanged(nameof(ColliderLayer));
+        OnPropertyChanged(nameof(ColliderMask));
         OnPropertyChanged(nameof(HasArea2D));
         OnPropertyChanged(nameof(HasRigidbody));
         OnPropertyChanged(nameof(HasCharacterBody));
+        OnPropertyChanged(nameof(HasHitbox));
+        OnPropertyChanged(nameof(HasHurtbox));
+        OnPropertyChanged(nameof(HasCheckpoint2D));
+        OnPropertyChanged(nameof(HasWeapon2D));
         OnPropertyChanged(nameof(CharacterMoveSpeed));
         OnPropertyChanged(nameof(CharacterJumpSpeed));
         OnPropertyChanged(nameof(CharacterGravity));

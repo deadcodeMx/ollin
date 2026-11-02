@@ -318,9 +318,35 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new CapsuleCollider2D());
                 break;
 
+            case "edge":
+                if (entity.HasComponent<Collider2D>()) { added = false; break; }
+                entity.AddComponent(new EdgeCollider2D());
+                break;
+
             case "polygon":
                 if (entity.HasComponent<Collider2D>()) { added = false; break; }
                 entity.AddComponent(new PolygonCollider2D());
+                break;
+
+            case "hitbox":
+                if (entity.HasComponent<Hitbox>()) { added = false; break; }
+                if (!entity.HasComponent<Collider2D>()) entity.AddComponent(new BoxCollider());
+                entity.AddComponent(new Hitbox());
+                break;
+
+            case "hurtbox":
+                if (entity.HasComponent<Hurtbox>()) { added = false; break; }
+                entity.AddComponent(new Hurtbox());
+                break;
+
+            case "checkpoint2d":
+                if (entity.HasComponent<Checkpoint2D>()) { added = false; break; }
+                entity.AddComponent(new Checkpoint2D());
+                break;
+
+            case "weapon2d":
+                if (entity.HasComponent<Weapon2D>()) { added = false; break; }
+                entity.AddComponent(new Weapon2D());
                 break;
 
             case "collider":
@@ -465,6 +491,11 @@ public sealed partial class MainViewModel
             "collider" => entity.GetComponent<Collider2D>(),
             "rigidbody" => entity.GetComponent<Rigidbody2D>(),
             "character" => entity.GetComponent<CharacterBody2D>(),
+            "hitbox" => entity.GetComponent<Hitbox>(),
+            "hurtbox" => entity.GetComponent<Hurtbox>(),
+            "checkpoint2d" => entity.GetComponent<Checkpoint2D>(),
+            "weapon2d" => entity.GetComponent<Weapon2D>(),
+            "edge" => entity.GetComponent<EdgeCollider2D>(),
             "audio" => entity.GetComponent<AudioSource>(),
             "light" => entity.GetComponent<Light2D>(),
             "interactable" => entity.GetComponent<Interactable>(),

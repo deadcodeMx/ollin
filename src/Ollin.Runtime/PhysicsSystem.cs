@@ -58,6 +58,13 @@ internal sealed class PhysicsSystem
                     continue;
                 }
 
+                var layerA = Math.Clamp(a.Collider.Layer, 0, 31);
+                var layerB = Math.Clamp(b.Collider.Layer, 0, 31);
+                if ((a.Collider.Mask & (1 << layerB)) == 0 || (b.Collider.Mask & (1 << layerA)) == 0)
+                {
+                    continue;
+                }
+
                 GetBounds(scene, a.Entity, a.Collider, out var minA, out var maxA);
                 GetBounds(scene, b.Entity, b.Collider, out var minB, out var maxB);
 

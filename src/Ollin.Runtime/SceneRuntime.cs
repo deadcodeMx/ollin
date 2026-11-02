@@ -29,6 +29,7 @@ public sealed class SceneRuntime
     private readonly List<OllinScript> _scripts = new();
     private readonly List<CoroutineEntry> _coroutines = new();
     private readonly PhysicsSystem _physics = new();
+    private readonly CombatSystem _combat = new();
     private readonly DialogueRunner _dialogue = new();
     private readonly HudModel _hud = new();
     private readonly GameState _gameState = new();
