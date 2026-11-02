@@ -228,6 +228,36 @@ public partial class MainWindow : Window
         _ => null,
     };
 
+    private Grid BuildSectionHeader(string title, string? kind)
+    {
+        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
+        grid.Children.Add(new TextBlock
+        {
+            Text = title,
+            FontSize = 10,
+            FontWeight = Avalonia.Media.FontWeight.Bold,
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        });
+        if (kind is not null)
+        {
+            var remove = new Button
+            {
+                Content = "✕",
+                Width = 22,
+                Height = 20,
+                Padding = new Thickness(0),
+                Background = Avalonia.Media.Brushes.Transparent,
+                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")),
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
+            };
+            remove.Click += (_, _) => ViewModel?.RemoveComponent(kind);
+            Grid.SetColumn(remove, 1);
+            grid.Children.Add(remove);
+        }
+        return grid;
+    }
+
     private ContextMenu BuildComponentMenu(string kind)
     {
         var menu = new ContextMenu();
@@ -246,13 +276,8 @@ public partial class MainWindow : Window
 
             root.Children.Remove(child);
             child.Children.Remove(title);
-            var header = new TextBlock
-            {
-                Text = title.Text,
-                FontSize = 10,
-                FontWeight = Avalonia.Media.FontWeight.Bold,
-                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
-            };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", _ => null };
+            var header = BuildSectionHeader(title.Text, kind);
             var expander = new Expander
             {
                 Header = header,
@@ -262,7 +287,6 @@ public partial class MainWindow : Window
                 Margin = new Thickness(0, 2),
             };
             expander.Bind(Visual.IsVisibleProperty, new Binding("IsVisible") { Source = child });
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", _ => null };
             if (kind is not null) expander.ContextMenu = BuildComponentMenu(kind);
             root.Children.Add(expander);
         }
@@ -811,14 +835,8 @@ public partial class MainWindow : Window
                 section.Bind(Visual.IsVisibleProperty, new Binding($"DataContext.{visibilityProperty}") { Source = this });
             }
 
-            var header = new TextBlock
-            {
-                Text = tab.Header?.ToString()?.ToUpperInvariant() ?? string.Empty,
-                FontSize = 10,
-                FontWeight = Avalonia.Media.FontWeight.Bold,
-                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
-                Margin = new Thickness(0, 8, 0, 2),
-            };
+            var kind = ComponentKindForHeader(headerText);
+            var header = BuildSectionHeader(tab.Header?.ToString()?.ToUpperInvariant() ?? string.Empty, kind);
 
             var expander = new Expander
             {
@@ -833,7 +851,6 @@ public partial class MainWindow : Window
             }
 
             if (content is not null) expander.Content = content;
-            var kind = ComponentKindForHeader(headerText);
             if (kind is not null) expander.ContextMenu = BuildComponentMenu(kind);
             panel.Children.Add(expander);
         }

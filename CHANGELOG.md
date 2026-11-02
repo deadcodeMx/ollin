@@ -17,6 +17,19 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.87.0] — 2026-11-02
+
+### Corregido
+
+- Al quitar un script se invalida la caché del inspector.
+
+## [6.86.0] — 2026-11-02
+
+### Corregido
+
+- Cada componente tiene botón ✕ para eliminarlo.
+- Los campos públicos usan el valor inicial real del script, no 0.
+
 ## [6.85.0] — 2026-11-02
 
 ### Corregido

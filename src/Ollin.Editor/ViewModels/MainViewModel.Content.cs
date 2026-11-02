@@ -56,16 +56,37 @@ public sealed partial class MainViewModel
 
         static bool Supported(Type type) => type == typeof(float) || type == typeof(int) ||
             type == typeof(bool) || type == typeof(string) || type == typeof(double);
-        static string Default(Type type) => type == typeof(bool) ? "false" : type == typeof(string) ? string.Empty : "0";
+
+        static string Format(object? value, Type type)
+        {
+            if (value is null) return string.Empty;
+            if (type == typeof(bool)) return (bool)value ? "true" : "false";
+            if (type == typeof(float)) return ((float)value).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+            if (type == typeof(double)) return ((double)value).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+            if (type == typeof(int)) return ((int)value).ToString(System.Globalization.CultureInfo.InvariantCulture);
+            return value.ToString() ?? string.Empty;
+        }
+
+        object? instance = null;
+        try { instance = Activator.CreateInstance(type); } catch { }
 
         var flags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance;
-        var fields = type.GetFields(flags)
-            .Where(field => Supported(field.FieldType))
-            .Select(field => new ScriptFieldDefinition(field.Name, field.FieldType.Name, Default(field.FieldType)));
-        var properties = type.GetProperties(flags)
-            .Where(property => property.CanRead && property.CanWrite && Supported(property.PropertyType))
-            .Select(property => new ScriptFieldDefinition(property.Name, property.PropertyType.Name, Default(property.PropertyType)));
-        return fields.Concat(properties).ToList();
+        var result = new List<ScriptFieldDefinition>();
+        foreach (var field in type.GetFields(flags))
+        {
+            if (!Supported(field.FieldType)) continue;
+            object? value = null;
+            try { value = field.GetValue(instance); } catch { }
+            result.Add(new ScriptFieldDefinition(field.Name, field.FieldType.Name, Format(value, field.FieldType)));
+        }
+        foreach (var property in type.GetProperties(flags))
+        {
+            if (!property.CanRead || !property.CanWrite || !Supported(property.PropertyType)) continue;
+            object? value = null;
+            try { value = property.GetValue(instance); } catch { }
+            result.Add(new ScriptFieldDefinition(property.Name, property.PropertyType.Name, Format(value, property.PropertyType)));
+        }
+        return result;
     }
     public void ClearSearch() => SearchText = string.Empty;
 
