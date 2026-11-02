@@ -1,22 +1,19 @@
-## Ollin Beta 6.84.0 — scripts editables
+## Ollin Beta 6.85.0 — auditoría de componentes
 
 ### Corregido
 
-- Quitar un script lo elimina del inspector.
-- Los campos **y propiedades públicas** aparecen tras recargar scripts.
-- Los valores públicos se aplican al reproducir.
+- **Rotador** y **Oscilador** ahora tienen sección en el inspector.
+- Se envían notificaciones de visibilidad de todos los componentes.
+- Los scripts se muestran dentro de la entidad.
+- Los componentes añadidos aparecen sin reiniciar.
 
-### Cómo probarlo
+### Componentes revisados
 
-1. Instala 6.84.0.
-2. Añade un script desde Archivos.
-3. Añade un `public float velocidad = 5f;` al script y guarda.
-4. Pulsa **Scripts → Recargar**.
-5. El campo aparece en **SCRIPT · Nombre** y puedes editarlo.
-6. Pulsa **Quitar componente** y desaparece del inspector.
+Sprite, Animación, Colisión, Cuerpo físico, Audio, Cámara 2D, Tilemap,
+Luz 2D, IA, Rotador, Oscilador y Scripts.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.84.0 instalado.
+- Instalador 6.85.0 instalado.
 - Demo técnica no publicada.

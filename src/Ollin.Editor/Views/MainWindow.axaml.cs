@@ -242,7 +242,7 @@ public partial class MainWindow : Window
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
-            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT")) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR")) continue;
 
             root.Children.Remove(child);
             child.Children.Remove(title);
@@ -262,7 +262,7 @@ public partial class MainWindow : Window
                 Margin = new Thickness(0, 2),
             };
             expander.Bind(Visual.IsVisibleProperty, new Binding("IsVisible") { Source = child });
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", _ => null };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", _ => null };
             if (kind is not null) expander.ContextMenu = BuildComponentMenu(kind);
             root.Children.Add(expander);
         }

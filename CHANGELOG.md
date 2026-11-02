@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.85.0] — 2026-11-02
+
+### Corregido
+
+- Rotador y Oscilador ya tienen sección en el inspector.
+- Se notifican todos los cambios de visibilidad de componentes.
+
 ## [6.84.0] — 2026-11-02
 
 ### Corregido

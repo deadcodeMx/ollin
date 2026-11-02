@@ -1243,6 +1243,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasAnimator));
         OnPropertyChanged(nameof(HasScript));
         OnPropertyChanged(nameof(HasAi));
+        OnPropertyChanged(nameof(HasRotator));
+        OnPropertyChanged(nameof(HasOscillator));
         OnPropertyChanged(nameof(HasCamera3D));
         OnPropertyChanged(nameof(HasWall3D));
         OnPropertyChanged(nameof(ScriptPath));
