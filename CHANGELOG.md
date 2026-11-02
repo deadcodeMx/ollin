@@ -17,6 +17,12 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.97.0] — 2026-11-02
+
+### Añadido
+
+- Cámara 2D con zona muerta y límites de mapa.
+
 ## [6.96.0] — 2026-11-02
 
 ### Añadido

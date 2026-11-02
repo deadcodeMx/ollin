@@ -26,6 +26,15 @@ public sealed class Camera2D : Component
     /// <summary>Velocidad de seguimiento (mayor = más pegada).</summary>
     public float FollowSmoothing { get; set; } = 6f;
 
+    /// <summary>Zona muerta alrededor del centro; el objetivo puede moverse dentro sin mover la cámara.</summary>
+    public Vector2 Deadzone { get; set; } = new(0.75f, 0.5f);
+
+    public bool UseBounds { get; set; }
+
+    public Vector2 BoundsMin { get; set; } = new(-100f, -100f);
+
+    public Vector2 BoundsMax { get; set; } = new(100f, 100f);
+
     public override Component CloneFor(Entity newOwner) => new Camera2D
     {
         Enabled = Enabled,
@@ -36,6 +45,10 @@ public sealed class Camera2D : Component
         Ambient = Ambient,
         FollowTag = FollowTag,
         FollowSmoothing = FollowSmoothing,
+        Deadzone = Deadzone,
+        UseBounds = UseBounds,
+        BoundsMin = BoundsMin,
+        BoundsMax = BoundsMax,
         Owner = newOwner,
     };
 }

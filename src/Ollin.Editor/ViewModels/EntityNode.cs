@@ -1252,6 +1252,13 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(FlipY));
         OnPropertyChanged(nameof(OrthographicSize));
         OnPropertyChanged(nameof(CameraZoom));
+        OnPropertyChanged(nameof(CameraDeadzoneX));
+        OnPropertyChanged(nameof(CameraDeadzoneY));
+        OnPropertyChanged(nameof(CameraUseBounds));
+        OnPropertyChanged(nameof(CameraBoundsMinX));
+        OnPropertyChanged(nameof(CameraBoundsMinY));
+        OnPropertyChanged(nameof(CameraBoundsMaxX));
+        OnPropertyChanged(nameof(CameraBoundsMaxY));
         OnPropertyChanged(nameof(ComponentsSummary));
         OnPropertyChanged(nameof(RotationSpeed));
         OnPropertyChanged(nameof(WallWidthInput));
@@ -1594,6 +1601,63 @@ _scriptFields = null;
             OnPropertyChanged();
             _owner.MarkDirty();
         }
+    }
+
+    public decimal CameraDeadzoneX
+    {
+        get => (decimal)(Camera?.Deadzone.X ?? 0.75f);
+        set
+        {
+            if (Camera is null || MathF.Abs(Camera.Deadzone.X - (float)value) < 0.001f) return;
+            Camera.Deadzone = new Vector2(MathF.Max(0f, (float)value), Camera.Deadzone.Y);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal CameraDeadzoneY
+    {
+        get => (decimal)(Camera?.Deadzone.Y ?? 0.5f);
+        set
+        {
+            if (Camera is null || MathF.Abs(Camera.Deadzone.Y - (float)value) < 0.001f) return;
+            Camera.Deadzone = new Vector2(Camera.Deadzone.X, MathF.Max(0f, (float)value));
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public bool CameraUseBounds
+    {
+        get => Camera?.UseBounds ?? false;
+        set
+        {
+            if (Camera is null || Camera.UseBounds == value) return;
+            Camera.UseBounds = value;
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal CameraBoundsMinX
+    {
+        get => (decimal)(Camera?.BoundsMin.X ?? -100f);
+        set { if (Camera is null) return; Camera.BoundsMin = new Vector2((float)value, Camera.BoundsMin.Y); OnPropertyChanged(); _owner.MarkDirty(); }
+    }
+
+    public decimal CameraBoundsMinY
+    {
+        get => (decimal)(Camera?.BoundsMin.Y ?? -100f);
+        set { if (Camera is null) return; Camera.BoundsMin = new Vector2(Camera.BoundsMin.X, (float)value); OnPropertyChanged(); _owner.MarkDirty(); }
+    }
+
+    public decimal CameraBoundsMaxX
+    {
+        get => (decimal)(Camera?.BoundsMax.X ?? 100f);
+        set { if (Camera is null) return; Camera.BoundsMax = new Vector2((float)value, Camera.BoundsMax.Y); OnPropertyChanged(); _owner.MarkDirty(); }
+    }
+
+    public decimal CameraBoundsMaxY
+    {
+        get => (decimal)(Camera?.BoundsMax.Y ?? 100f);
+        set { if (Camera is null) return; Camera.BoundsMax = new Vector2(Camera.BoundsMax.X, (float)value); OnPropertyChanged(); _owner.MarkDirty(); }
     }
 
     public decimal FollowSmoothing

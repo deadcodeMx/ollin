@@ -1,18 +1,20 @@
-## Ollin Beta 6.96.0 — Personaje 2D
+## Ollin Beta 6.97.0 — núcleo 2D: personaje y cámara
 
 ### Añadido
 
-- Componente **Personaje 2D** para plataformas y acción.
-- Movimiento A/D o flechas.
-- Salto con Espacio, W o flecha arriba.
-- Gravedad, aceleración, velocidad máxima de caída.
-- Coyote time y buffer de salto.
-- Salto variable al soltar.
-- Añade automáticamente Rigidbody2D y BoxCollider si faltan.
-- Campos editables en el inspector.
+- **Personaje 2D**:
+  - Movimiento A/D o flechas.
+  - Salto con Espacio/W/Arriba.
+  - Gravedad, aceleración y caída máxima.
+  - Coyote time, buffer y salto variable.
+  - Rigidbody y collider automáticos.
+- **Cámara 2D**:
+  - Zona muerta X/Y.
+  - Límites de mapa.
+  - Seguimiento con suavizado.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.96.0 instalado y abierto sin crash.
+- Instalador 6.97.0 instalado y abierto sin crash.
 - Demo técnica no publicada.

@@ -1580,6 +1580,31 @@
                       <TextBlock Text="Suavizado" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.FollowSmoothing, Mode=TwoWay}" Increment="0.5" Minimum="0.1" FormatString="0.#" />
                     </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Zona muerta X" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraDeadzoneX, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Zona muerta Y" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraDeadzoneY, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" />
+                    </Grid>
+                    <CheckBox Content="Limitar a bordes" IsChecked="{Binding Selected.CameraUseBounds, Mode=TwoWay}" FontSize="11.5" />
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Borde mín. X" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraBoundsMinX, Mode=TwoWay}" Increment="1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Borde mín. Y" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraBoundsMinY, Mode=TwoWay}" Increment="1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Borde máx. X" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraBoundsMaxX, Mode=TwoWay}" Increment="1" FormatString="0.##" />
+                    </Grid>
+                    <Grid ColumnDefinitions="86,*" Margin="0,1">
+                      <TextBlock Text="Borde máx. Y" VerticalAlignment="Center" Classes="hint" />
+                      <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraBoundsMaxY, Mode=TwoWay}" Increment="1" FormatString="0.##" />
+                    </Grid>
                   </StackPanel>
                 </ScrollViewer>
               </TabItem>
