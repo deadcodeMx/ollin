@@ -1,18 +1,16 @@
-## Ollin Beta 6.109.0 — Etapa B
+## Ollin Beta 6.110.0 — Etapa C
 
 ### Añadido
 
-- **Plataformas móviles** con recorrido y velocidad.
-- **Plataformas de un solo sentido**.
-- **Partículas** con tasa, vida, velocidad, dispersión y gravedad.
-- **Estela** de posiciones.
-- **Máquina de estados de animación**.
-- **Autotile** básico por vecinos.
-- **Transición de pantalla** con fundido.
-- Parallax existente por sprite.
+- **Equipment** por ranuras y datos de ItemId.
+- **QuestLog** con objetivos y HUD de objetivo.
+- **Audio mixer**: master, música, efectos y UI.
+- Sliders de música y efectos en ajustes del juego.
+- **Localización** por `localization/*.json`.
+- Diálogos localizables por clave.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.109.0 instalado y abierto sin crash.
+- Instalador 6.110.0 instalado y abierto sin crash.
 - Demo técnica no publicada.

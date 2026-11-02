@@ -32,6 +32,8 @@ public sealed class PlayerWindow : Window
     private bool _paused;
     private TextBlock? _saveStatus;
     private Slider? _volumeSlider;
+    private Slider? _musicSlider;
+    private Slider? _effectsSlider;
     private Slider? _sensitivityXSlider;
     private Slider? _sensitivityYSlider;
     private Slider? _smoothingSlider;
@@ -308,6 +310,16 @@ public sealed class PlayerWindow : Window
         };
         _optionsPanel.Children.Add(_volumeSlider);
 
+        _optionsPanel.Children.Add(new TextBlock { Text = "Música", FontSize = 12, Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")) });
+        _musicSlider = new Slider { Minimum = 0, Maximum = 1, Value = Audio.MusicVolume, Width = 290 };
+        _musicSlider.PropertyChanged += (_, args) => { if (args.Property == Slider.ValueProperty) { Audio.MusicVolume = (float)_musicSlider.Value; SaveSettings(); } };
+        _optionsPanel.Children.Add(_musicSlider);
+
+        _optionsPanel.Children.Add(new TextBlock { Text = "Efectos", FontSize = 12, Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")) });
+        _effectsSlider = new Slider { Minimum = 0, Maximum = 1, Value = Audio.EffectsVolume, Width = 290 };
+        _effectsSlider.PropertyChanged += (_, args) => { if (args.Property == Slider.ValueProperty) { Audio.EffectsVolume = (float)_effectsSlider.Value; SaveSettings(); } };
+        _optionsPanel.Children.Add(_effectsSlider);
+
         _optionsPanel.Children.Add(new TextBlock
         {
             Text = "Sensibilidad horizontal",
@@ -510,8 +522,12 @@ public sealed class PlayerWindow : Window
         {
             var settings = PlayerSettings.Load(SettingsPath);
             Audio.MasterVolume = settings.Volume;
+            Audio.MusicVolume = settings.MusicVolume;
+            Audio.EffectsVolume = settings.EffectsVolume;
 
             if (_volumeSlider is not null) _volumeSlider.Value = settings.Volume;
+            if (_musicSlider is not null) _musicSlider.Value = settings.MusicVolume;
+            if (_effectsSlider is not null) _effectsSlider.Value = settings.EffectsVolume;
             if (_sensitivityXSlider is not null) _sensitivityXSlider.Value = settings.SensitivityX;
             if (_sensitivityYSlider is not null) _sensitivityYSlider.Value = settings.SensitivityY;
             if (_invertYCheck is not null) _invertYCheck.IsChecked = settings.InvertY;
@@ -538,6 +554,8 @@ public sealed class PlayerWindow : Window
             var settings = new PlayerSettings
             {
                 Volume = _volumeSlider is null ? Audio.MasterVolume : (float)_volumeSlider.Value,
+                MusicVolume = _musicSlider is null ? Audio.MusicVolume : (float)_musicSlider.Value,
+                EffectsVolume = _effectsSlider is null ? Audio.EffectsVolume : (float)_effectsSlider.Value,
                 SensitivityX = _sensitivityXSlider is null ? 0.0022f : (float)_sensitivityXSlider.Value,
                 SensitivityY = _sensitivityYSlider is null ? 0.0022f : (float)_sensitivityYSlider.Value,
                 InvertY = _invertYCheck?.IsChecked == true,

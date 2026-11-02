@@ -112,7 +112,7 @@ public class AudioTests
             Assert.Equal(1, handle);
             var call = Assert.Single(backend.Calls);
             Assert.Equal(Path.Combine(audioFolder, "eco.wav"), call.Path);
-            Assert.Equal(0.5f, call.Volume, 3);
+            Assert.Equal(0.5f * TestAudio.MasterVolume * TestAudio.MusicVolume, call.Volume, 3);
             Assert.True(call.Loop);
             Assert.Equal(AudioChannel.Music, call.Channel);
 

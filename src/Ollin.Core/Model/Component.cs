@@ -27,6 +27,8 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.Trail2D), "trail2d")]
 [JsonDerivedType(typeof(Components.AnimationStateMachine), "animationfsm")]
 [JsonDerivedType(typeof(Components.ScreenTransition2D), "transition2d")]
+[JsonDerivedType(typeof(Components.Equipment), "equipment")]
+[JsonDerivedType(typeof(Components.QuestLog), "questlog")]
 [JsonDerivedType(typeof(Components.Hurtbox), "hurtbox")]
 [JsonDerivedType(typeof(Components.Checkpoint2D), "checkpoint2d")]
 [JsonDerivedType(typeof(Components.Projectile2D), "projectile2d")]

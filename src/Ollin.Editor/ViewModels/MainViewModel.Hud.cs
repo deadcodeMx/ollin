@@ -1,3 +1,4 @@
+using Ollin.Core.Model.Components;
 using System.Collections.ObjectModel;
 using System.Numerics;
 using Avalonia.Media;
@@ -15,6 +16,7 @@ public sealed partial class MainViewModel
     private bool _inventoryOpen;
 
     public ObservableCollection<InventorySlotView> InventoryItems { get; } = new();
+    public ObservableCollection<EquipmentSlotView> EquipmentItems { get; } = new();
 
     public bool IsInventoryVisible => _inventoryOpen && IsPlaying;
 
@@ -183,6 +185,10 @@ public sealed partial class MainViewModel
         if (signature == _inventorySignature) return;
         _inventorySignature = signature;
         InventoryItems.Clear();
+        EquipmentItems.Clear();
+        var equipment = inventory?.Owner?.GetComponent<Equipment>();
+        if (equipment is not null)
+            foreach (var slot in equipment.Slots) EquipmentItems.Add(new EquipmentSlotView(slot.Key, slot.Value));
         if (inventory is not null)
         {
             foreach (var slot in inventory.Slots)
@@ -391,6 +397,7 @@ public sealed partial class MainViewModel
         IsHudVisible = false;
         TransitionOpacity = 0d;
         InventoryItems.Clear();
+        EquipmentItems.Clear();
         _inventoryOpen = false;
         _inventorySignature = string.Empty;
         IsPauseMenuVisible = false;

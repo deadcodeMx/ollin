@@ -413,6 +413,15 @@ public sealed class EntityNode : ObservableObject
     public decimal Weapon2DCooldown { get => (decimal)(Entity.GetComponent<Weapon2D>()?.Cooldown ?? 0.25f); set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Cooldown = MathF.Max(0.01f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public int Weapon2DAmmo { get => Entity.GetComponent<Weapon2D>()?.Ammo ?? -1; set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Ammo = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public bool HasEquipment => Entity.GetComponent<Equipment>() is not null;
+    public string EquipmentSlotsText => Entity.GetComponent<Equipment>() is { } equipment
+        ? string.Join(", ", equipment.Slots.Select(pair => $"{pair.Key}: {pair.Value}"))
+        : string.Empty;
+    public bool HasQuestLog => Entity.GetComponent<QuestLog>() is not null;
+    public string QuestSummary => Entity.GetComponent<QuestLog>() is { } log
+        ? string.Join(" | ", log.Quests.Select(quest => $"{quest.Title}: {quest.Objectives.Count(objective => objective.Completed)}/{quest.Objectives.Count}"))
+        : string.Empty;
+
     public bool HasAnimationFSM => Entity.GetComponent<AnimationStateMachine>() is not null;
     public string AnimationDefaultState { get => Entity.GetComponent<AnimationStateMachine>()?.DefaultState ?? "idle"; set { if (Entity.GetComponent<AnimationStateMachine>() is { } f) { f.DefaultState = value ?? "idle"; OnPropertyChanged(); _owner.MarkDirty(); } } }
     public string AnimationCurrentState => Entity.GetComponent<AnimationStateMachine>()?.CurrentState ?? "-";
@@ -1426,6 +1435,10 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasKnockback2D));
         OnPropertyChanged(nameof(HasMovingPlatform));
         OnPropertyChanged(nameof(HasAnimationFSM));
+        OnPropertyChanged(nameof(HasEquipment));
+        OnPropertyChanged(nameof(EquipmentSlotsText));
+        OnPropertyChanged(nameof(HasQuestLog));
+        OnPropertyChanged(nameof(QuestSummary));
         OnPropertyChanged(nameof(AnimationCurrentState));
         OnPropertyChanged(nameof(HasTransition2D));
         OnPropertyChanged(nameof(TilemapAutotile));

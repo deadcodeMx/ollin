@@ -333,6 +333,16 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new MovingPlatform2D());
                 break;
 
+            case "equipment":
+                if (entity.HasComponent<Equipment>()) { added = false; break; }
+                entity.AddComponent(new Equipment());
+                break;
+
+            case "questlog":
+                if (entity.HasComponent<QuestLog>()) { added = false; break; }
+                entity.AddComponent(new QuestLog());
+                break;
+
             case "animfsm":
                 if (entity.HasComponent<AnimationStateMachine>()) { added = false; break; }
                 if (!entity.HasComponent<SpriteAnimator>()) entity.AddComponent(new SpriteAnimator());
@@ -525,6 +535,8 @@ public sealed partial class MainViewModel
             "hitbox" => entity.GetComponent<Hitbox>(),
             "hurtbox" => entity.GetComponent<Hurtbox>(),
             "knockback2d" => entity.GetComponent<Knockback2D>(),
+            "equipment" => entity.GetComponent<Equipment>(),
+            "questlog" => entity.GetComponent<QuestLog>(),
             "checkpoint2d" => entity.GetComponent<Checkpoint2D>(),
             "weapon2d" => entity.GetComponent<Weapon2D>(),
             "edge" => entity.GetComponent<EdgeCollider2D>(),

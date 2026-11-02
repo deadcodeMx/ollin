@@ -6,6 +6,7 @@ public enum AudioChannel
 {
     Effect,
     Music,
+    Ui,
 }
 
 /// <summary>Salida de audio concreta (NAudio en Windows, silencio en pruebas).</summary>
@@ -31,6 +32,9 @@ public static class Audio
     private static readonly object Gate = new();
     private static IAudioBackend? _backend;
     private static float _masterVolume = 0.8f;
+    private static float _musicVolume = 1f;
+    private static float _effectsVolume = 1f;
+    private static float _uiVolume = 1f;
 
     /// <summary>Carpeta base para rutas relativas.</summary>
     public static string? Root { get; set; }
@@ -45,6 +49,31 @@ public static class Audio
         get => _masterVolume;
         set => _masterVolume = System.Math.Clamp(value, 0f, 1f);
     }
+
+    public static float MusicVolume
+    {
+        get => _musicVolume;
+        set => _musicVolume = System.Math.Clamp(value, 0f, 1f);
+    }
+
+    public static float EffectsVolume
+    {
+        get => _effectsVolume;
+        set => _effectsVolume = System.Math.Clamp(value, 0f, 1f);
+    }
+
+    public static float UiVolume
+    {
+        get => _uiVolume;
+        set => _uiVolume = System.Math.Clamp(value, 0f, 1f);
+    }
+
+    public static float BusVolume(AudioChannel channel) => channel switch
+    {
+        AudioChannel.Music => MusicVolume,
+        AudioChannel.Ui => UiVolume,
+        _ => EffectsVolume,
+    };
 
     public static void Initialize(IAudioBackend backend)
     {
@@ -97,7 +126,7 @@ public static class Audio
 
         try
         {
-            var handle = _backend.Play(fullPath, System.Math.Clamp(volume, 0f, 1f), loop, channel);
+            var handle = _backend.Play(fullPath, System.Math.Clamp(volume, 0f, 1f) * MasterVolume * BusVolume(channel), loop, channel);
 
             if (VerboseLogging)
             {

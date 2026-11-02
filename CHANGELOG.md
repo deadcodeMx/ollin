@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.110.0] — 2026-11-02
+
+### Añadido
+
+- Equipment y QuestLog.
+- Mixer de audio con música/efectos/UI.
+- Localización por JSON y diálogos localizables.
+
 ## [6.109.0] — 2026-11-02
 
 ### Añadido

@@ -60,3 +60,11 @@ public sealed class InventorySlotView
     public string Initial { get; }
     public string QuantityText => Quantity > 1 ? $"x{Quantity}" : string.Empty;
 }
+/// <summary>Ranura de equipo visible.</summary>
+public sealed class EquipmentSlotView
+{
+    public EquipmentSlotView(string slot, string itemId) { Slot = slot; ItemId = itemId; }
+    public string Slot { get; }
+    public string ItemId { get; }
+    public string Display => $"{Slot}: {ItemId}";
+}

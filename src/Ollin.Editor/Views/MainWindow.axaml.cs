@@ -286,12 +286,12 @@ public partial class MainWindow : Window
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
-            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D" or "PLATAFORMA MÓVIL" or "PARTÍCULAS" or "ESTELA" or "ANIMACIÓN FSM" or "TRANSICIÓN")) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D" or "PLATAFORMA MÓVIL" or "PARTÍCULAS" or "ESTELA" or "ANIMACIÓN FSM" or "TRANSICIÓN" or "EQUIPO" or "MISIONES")) continue;
 
             var index = root.Children.IndexOf(child);
             root.Children.RemoveAt(index);
             child.Children.Remove(title);
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", "PLATAFORMA MÓVIL" => "movingplatform", "PARTÍCULAS" => "particles", "ESTELA" => "trail", "ANIMACIÓN FSM" => "animfsm", "TRANSICIÓN" => "transition", _ => null };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", "PLATAFORMA MÓVIL" => "movingplatform", "PARTÍCULAS" => "particles", "ESTELA" => "trail", "ANIMACIÓN FSM" => "animfsm", "TRANSICIÓN" => "transition", "EQUIPO" => "equipment", "MISIONES" => "questlog", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
             var expander = new Expander
             {
@@ -1554,6 +1554,11 @@ public partial class MainWindow : Window
         Add(combat, "Checkpoint 2D", "checkpoint2d");
         Add(combat, "Arma 2D", "weapon2d");
         flyout.Items.Add(combat);
+
+        var player = new MenuItem { Header = "Jugador" };
+        Add(player, "Equipo", "equipment");
+        Add(player, "Misiones", "questlog");
+        flyout.Items.Add(player);
 
         var visual = new MenuItem { Header = "Visual" };
         Add(visual, "Sprite", "sprite");
