@@ -590,6 +590,38 @@
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ScaleY, Mode=TwoWay}" Increment="0.1" FormatString="0.###" />
                       </Grid>
                     </StackPanel>
+                    <ItemsControl ItemsSource="{Binding Selected.ScriptEditors}" Margin="0,4">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <Expander IsExpanded="True" Margin="0,2">
+                            <Expander.Header>
+                              <TextBlock Text="{Binding Title, StringFormat='SCRIPT · {0}'}" FontSize="10" FontWeight="Bold" Foreground="#E9A23B" />
+                            </Expander.Header>
+                            <StackPanel Spacing="4">
+                              <Grid ColumnDefinitions="96,*" Margin="0,1">
+                                <TextBlock Text="Archivo" VerticalAlignment="Center" Classes="hint" />
+                                <TextBox Grid.Column="1" Text="{Binding ScriptPath, Mode=TwoWay}" Watermark="scripts/MiScript.cs" />
+                              </Grid>
+                              <Grid ColumnDefinitions="96,*" Margin="0,1">
+                                <TextBlock Text="Clase" VerticalAlignment="Center" Classes="hint" />
+                                <TextBox Grid.Column="1" Text="{Binding ClassName, Mode=TwoWay}" Watermark="NombreDeLaClase" />
+                              </Grid>
+                              <ItemsControl ItemsSource="{Binding Fields}">
+                                <ItemsControl.ItemTemplate>
+                                  <DataTemplate>
+                                    <Grid ColumnDefinitions="96,*" Margin="0,1">
+                                      <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Classes="hint" ToolTip.Tip="{Binding TypeName}" />
+                                      <TextBox Grid.Column="1" Text="{Binding Value, Mode=TwoWay}" />
+                                    </Grid>
+                                  </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                              </ItemsControl>
+                              <Button Classes="tool" Content="Quitar componente" Click="OnRemoveScriptEditor" HorizontalAlignment="Stretch" />
+                            </StackPanel>
+                          </Expander>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                     <StackPanel IsVisible="{Binding Selected.HasCollider}" Spacing="5">
                       <TextBlock Classes="section" Text="COLISIÓN" />
                       <Grid ColumnDefinitions="86,*" Margin="0,1">

@@ -17,6 +17,31 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.83.0] — 2026-11-02
+
+### Corregido
+
+- Los scripts aparecen dentro de la entidad, antes de colisión/física.
+
+## [6.82.0] — 2026-11-02
+
+### Corregido
+
+- Los scripts se enlazan directamente a la entidad y siempre se dibujan en el inspector.
+
+## [6.81.0] — 2026-11-02
+
+### Corregido
+
+- Los scripts aparecen justo después de la entidad, no al final del inspector.
+
+## [6.80.0] — 2026-11-02
+
+### Corregido
+
+- El host de scripts se añade al inspector.
+- Los scripts añadidos desde Archivos aparecen y se pueden editar.
+
 ## [6.79.0] — 2026-11-02
 
 ### Corregido

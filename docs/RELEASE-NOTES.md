@@ -1,20 +1,21 @@
-## Ollin Beta 6.79.0 — scripts como componentes
+## Ollin Beta 6.83.0 — scripts visibles en la entidad
 
 ### Corregido
 
-- Añadir un script desde Archivos refresca el inspector automáticamente.
-- Cada script aparece como un componente independiente.
-- Los títulos de los componentes usan el color de acento.
-- Script eliminado de “Añadir componente”.
+- El script añadido aparece **dentro de la entidad**, antes de colisión/física.
+- Se puede editar archivo, clase y campos públicos.
+- Varios scripts se muestran como componentes independientes.
+- Los títulos de componentes están resaltados en ámbar.
 
-### Cómo se añaden scripts
+### Cómo probarlo
 
-- En **Archivos**, clic derecho en un `.cs` → **Añadir a la entidad seleccionada**.
-- O clic derecho en la carpeta `scripts` → **Crear script aquí…**.
-- Se pueden añadir varios scripts a la misma entidad.
+1. Selecciona una entidad.
+2. En Archivos, clic derecho en un `.cs` → **Añadir a la entidad seleccionada**.
+3. Aparece **SCRIPT · Nombre** debajo de Transformación.
+4. Repite con otro script para tener varias secciones.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.79.0 instalado.
+- Instalador 6.83.0 instalado.
 - Demo técnica no publicada.

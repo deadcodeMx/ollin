@@ -289,6 +289,7 @@ public partial class MainWindow : Window
         _scriptHost.Children.Clear();
 
         var selected = ViewModel?.Selected;
+        try { System.IO.File.AppendAllText(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "ollin-scripts.txt"), $"selected={selected?.Name} count={selected?.ScriptComponents.Count}" + Environment.NewLine); } catch { }
         if (selected is null) return;
 
         foreach (var component in selected.ScriptComponents)
@@ -834,7 +835,7 @@ public partial class MainWindow : Window
             if (content is not null) expander.Content = content;
             var kind = ComponentKindForHeader(headerText);
             if (kind is not null) expander.ContextMenu = BuildComponentMenu(kind);
-            panel.Children.Add(expander);            panel.Children.Add(section);
+            panel.Children.Add(expander);
         }
 
         var addButton = BuildAddComponentButton();
@@ -944,6 +945,14 @@ public partial class MainWindow : Window
         });
 
         return new TabItem { Header = "Tags", Content = new ScrollViewer { Content = panel } };
+    }
+
+    private void OnRemoveScriptEditor(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Button { DataContext: ScriptComponentEditor editor })
+        {
+            editor.Remove();
+        }
     }
 
     private void OnSnapToggle(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>

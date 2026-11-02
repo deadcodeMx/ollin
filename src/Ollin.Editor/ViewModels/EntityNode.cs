@@ -322,6 +322,26 @@ public sealed class EntityNode : ObservableObject
 
     public void NotifyEdit() => _owner.MarkDirty();
 
+    private IReadOnlyList<ScriptComponentEditor>? _scriptEditors;
+
+    public IReadOnlyList<ScriptComponentEditor> ScriptEditors
+    {
+        get
+        {
+            if (_scriptEditors is not null) return _scriptEditors;
+            _scriptEditors = ScriptComponents.Select(component => new ScriptComponentEditor(
+                this,
+                component,
+                () =>
+                {
+                    Entity.RemoveComponent(component);
+                    RefreshAll();
+                    _owner.NotifyComponentsChanged();
+                })).ToList();
+            return _scriptEditors;
+        }
+    }
+
     public bool HasRotator => Entity.GetComponent<RotatorComponent>() is not null;
 
     public bool HasOscillator => Entity.GetComponent<OscillatorComponent>() is not null;
