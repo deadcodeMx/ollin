@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.92.0] — 2026-11-02
+
+### Añadido
+
+- Añadir componente → Script C#… abre lista de scripts existentes.
+- El diálogo permite crear uno nuevo con nombre y carpeta.
+
 ## [6.91.0] — 2026-11-02
 
 ### Corregido

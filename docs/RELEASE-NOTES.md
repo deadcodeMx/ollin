@@ -1,15 +1,16 @@
-## Ollin Beta 6.91.0 — crash corregido y colisión eliminable
+## Ollin Beta 6.92.0 — añadir scripts desde el inspector
 
-### Corregido
+### Añadido
 
-- Crash al abrir el motor por reparentar componentes de física.
-- El inspector abre correctamente.
-- Colisión muestra el botón **✕** para quitarla.
-- Los componentes conservan el orden.
-- Los scripts se cargan en el host dinámico.
+- **Añadir componente → Script C#…**
+- Lista de scripts `.cs` existentes en `scripts/`.
+- Añadir el script seleccionado a la entidad.
+- Crear un script nuevo con:
+  - Nombre.
+  - Carpeta de guardado relativa al proyecto.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.91.0 instalado y abierto sin crash.
+- Instalador 6.92.0 instalado y abierto sin crash.
 - Demo técnica no publicada.

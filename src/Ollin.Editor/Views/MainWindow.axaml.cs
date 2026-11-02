@@ -695,6 +695,23 @@ public partial class MainWindow : Window
         ViewModel.StatusMessage = $"Carpeta creada: {window.Value}";
     }
 
+    private async void OnAddScriptComponentDialog(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected is not { } selected) return;
+
+        var window = new AddScriptWindow(ViewModel.GetProjectScripts(), "scripts");
+        if (!await window.ShowDialog<bool>(this)) return;
+
+        if (window.CreateNew)
+        {
+            ViewModel.CreateScriptForSelected(window.ScriptName, window.ScriptFolder);
+        }
+        else if (window.SelectedPath is { } path)
+        {
+            ViewModel.AttachScript(selected.Entity, path);
+        }
+    }
+
     private async void OnCreateScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel?.Selected is null) return;
@@ -1510,7 +1527,9 @@ public partial class MainWindow : Window
         Add("Rotador", "rotator");
         Add("Oscilador", "oscillator");
         Add("IA", "ai");
-        Add("Script C#", "script");
+        var scriptItem = new MenuItem { Header = "Script C#…" };
+        scriptItem.Click += OnAddScriptComponentDialog;
+        flyout.Items.Add(scriptItem);
 
         button.Flyout = flyout;
         return button;

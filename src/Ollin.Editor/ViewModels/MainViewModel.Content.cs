@@ -47,6 +47,24 @@ public sealed partial class MainViewModel
     /// <summary>Carpeta de prefabs del proyecto (o una local si no hay proyecto).</summary>
     public string PrefabsFolder => Project?.PrefabsFolder ?? Path.Combine(ProjectRoot, "prefabs");
 
+    /// <summary>Scripts .cs disponibles en la carpeta scripts del proyecto.</summary>
+    public IReadOnlyList<string> GetProjectScripts()
+    {
+        var folder = Path.Combine(ProjectRoot, "scripts");
+        if (!Directory.Exists(folder)) return Array.Empty<string>();
+
+        try
+        {
+            return Directory.EnumerateFiles(folder, "*.cs", SearchOption.AllDirectories)
+                .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+        catch
+        {
+            return Array.Empty<string>();
+        }
+    }
+
     /// <summary>Campos públicos del script compilado, para el inspector.</summary>
     public IReadOnlyList<ScriptFieldDefinition> GetScriptFields(string className)
     {
