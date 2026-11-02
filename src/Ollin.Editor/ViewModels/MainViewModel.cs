@@ -898,7 +898,7 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     /// <summary>Crea (o reutiliza) un script para la entidad seleccionada y lo enlaza.</summary>
-    public void CreateScriptForSelected()
+    public void CreateScriptForSelected(string? requestedName = null, string? requestedFolder = null)
     {
         if (IsPlaying || Selected is null)
         {
@@ -906,27 +906,33 @@ public sealed partial class MainViewModel : ObservableObject
         }
 
         var entity = Selected.Entity;
-        var className = SanitizeIdentifier(entity.Name) + "Script";
-        var folder = _scripts.ScriptsFolder;
+        var suggested = string.IsNullOrWhiteSpace(requestedName) ? SanitizeIdentifier(entity.Name) + "Script" : requestedName!;
+        var className = SanitizeIdentifier(suggested);
+        var folder = string.IsNullOrWhiteSpace(requestedFolder)
+            ? _scripts.ScriptsFolder
+            : Path.Combine(ProjectRoot, requestedFolder);
         Directory.CreateDirectory(folder);
         var fullPath = Path.Combine(folder, className + ".cs");
 
-        if (!File.Exists(fullPath))
+        if (File.Exists(fullPath))
         {
-            File.WriteAllText(fullPath, ScriptTemplate(className, entity.Name));
+            StatusMessage = $"Ya existe {className}.cs en esa carpeta";
+            return;
         }
 
-        var component = entity.GetComponent<ScriptComponent>() ?? entity.AddComponent(new ScriptComponent());
-        component.ScriptPath = $"scripts/{className}.cs";
+        File.WriteAllText(fullPath, ScriptTemplate(className, entity.Name));
+
+        var component = entity.AddComponent(new ScriptComponent());
+        var relative = Path.GetRelativePath(ProjectRoot, fullPath).Replace('\\', '/');
+        component.ScriptPath = relative;
         component.ClassName = className;
 
         ReloadScripts();
         Selected.RefreshAll();
         MarkDirty();
         StatusMessage = $"Script {className} enlazado a {entity.Name}";
-        Log.Info($"Script creado: scripts/{className}.cs", "Scripts");
+        Log.Info($"Script creado: {relative}", "Scripts");
     }
-
     private static string SanitizeIdentifier(string name)
     {
         var builder = new System.Text.StringBuilder();

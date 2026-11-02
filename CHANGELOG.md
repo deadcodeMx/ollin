@@ -17,6 +17,20 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.69.0] — 2026-11-02
+
+### Añadido
+
+- Diálogo de nombre y carpeta al crear un script.
+- Crear carpetas desde Archivos.
+- El explorador muestra todas las carpetas raíz.
+
+### Cambiado
+
+- Inspector sin sección Física; cada componente aparece solo si existe.
+- Botón de añadir componente fijo al final.
+- 205 pruebas automatizadas.
+
 ## [6.68.0] — 2026-11-02
 
 ### Corregido

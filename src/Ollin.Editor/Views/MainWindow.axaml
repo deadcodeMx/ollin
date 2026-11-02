@@ -1577,7 +1577,10 @@
             <Grid RowDefinitions="Auto,*">
               <Grid ColumnDefinitions="*,Auto" Margin="12,6,10,2">
                 <TextBlock Classes="section" Text="{Binding ProjectPathText}" />
-                <Button Grid.Column="1" Classes="tool" Content="⟳" Click="OnRefreshFiles" ToolTip.Tip="Actualizar archivos" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                  <Button Classes="tool" Content="+ Carpeta" Click="OnCreateFolder" ToolTip.Tip="Crear carpeta" />
+                  <Button Classes="tool" Content="⟳" Click="OnRefreshFiles" ToolTip.Tip="Actualizar archivos" />
+                </StackPanel>
               </Grid>
               <TreeView Grid.Row="1" x:Name="FileTree" ItemsSource="{Binding ProjectFiles}" Background="Transparent"
                         Margin="4,0,4,6" DoubleTapped="OnFileDoubleTapped">

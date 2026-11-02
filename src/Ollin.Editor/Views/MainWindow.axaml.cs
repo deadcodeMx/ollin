@@ -399,9 +399,47 @@ public partial class MainWindow : Window
 
     private void OnReloadScripts(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ReloadScripts();
 
-    private void OnCreateScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
-        ViewModel?.CreateScriptForSelected();
+    private async void OnCreateFolder(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null) return;
 
+        var selected = FileTree.SelectedItem as ViewModels.FileNode;
+        var basePath = selected is { IsFolder: true }
+            ? selected.FullPath
+            : selected is not null ? Path.GetDirectoryName(selected.FullPath)! : ViewModel.ProjectRoot;
+        var window = new NamePromptWindow("Nueva carpeta", "Nombre de la carpeta dentro de Archivos", "NuevaCarpeta");
+        if (!await window.ShowDialog<bool>(this)) return;
+
+        try
+        {
+            var target = Path.Combine(basePath, window.Value);
+            if (Directory.Exists(target))
+            {
+                ViewModel.StatusMessage = "La carpeta ya existe";
+                return;
+            }
+
+            Directory.CreateDirectory(target);
+            ViewModel.RefreshProjectFiles();
+            ViewModel.StatusMessage = $"Carpeta creada: {window.Value}";
+        }
+        catch (Exception exception)
+        {
+            ViewModel.StatusMessage = $"No se pudo crear la carpeta: {exception.Message}";
+        }
+    }
+
+    private async void OnCreateScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected is null) return;
+
+        var suggested = ViewModel.Selected.Name.Replace(" ", string.Empty) + "Script";
+        var window = new CreateScriptWindow(suggested, "scripts");
+        if (await window.ShowDialog<bool>(this))
+        {
+            ViewModel.CreateScriptForSelected(window.ScriptName, window.ScriptFolder);
+        }
+    }
     // ---------- Modo juego ----------
 
     private void OnPlay(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.TogglePlay();
@@ -535,6 +573,16 @@ public partial class MainWindow : Window
             }
 
             tab.Content = null;
+
+            if (headerText == "Física" && content is StackPanel physics)
+            {
+                foreach (var child in physics.Children.OfType<Control>().ToList())
+                {
+                    physics.Children.Remove(child);
+                    panel.Children.Add(child);
+                }
+                continue;
+            }
 
             var section = new StackPanel { Spacing = 4 };
             var visibilityProperty = VisibilityPropertyFor(headerText, occurrence);

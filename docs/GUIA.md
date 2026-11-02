@@ -1092,3 +1092,14 @@ error de sintaxis.
 - Una entidad puede tener varias ranuras de script.
 - Símbolo y color se cambian con clic derecho en Jerarquía.
 - **Editar → Atajos del teclado…** permite reasignar teclas.
+
+## 67. Scripts con nombre, carpetas y componentes (6.69)
+
+- Crear script abre un diálogo con **nombre** y **carpeta de guardado**.
+- **Archivos → + Carpeta** crea carpetas dentro del proyecto.
+- El explorador de Archivos muestra todas las carpetas de la raíz.
+- El inspector ya no tiene la sección **Física**:
+  - Colisión, cuerpo físico y script aparecen solo si existen.
+- **+ Añadir componente** queda fijo al final del inspector.
+- Componentes disponibles: colisión, trigger, cuerpo físico, cámara 2D,
+  animación, tilemap, audio, luz 2D, rotador, oscilador, IA y script.

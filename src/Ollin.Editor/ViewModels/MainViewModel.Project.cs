@@ -365,13 +365,16 @@ public sealed partial class MainViewModel
             return;
         }
 
-        foreach (var folder in new[] { "scenes", "scripts", "assets", "prefabs" })
+        try
         {
-            var path = Path.Combine(Project.RootPath, folder);
-            if (Directory.Exists(path))
+            foreach (var path in Directory.EnumerateDirectories(Project.RootPath).OrderBy(d => Path.GetFileName(d), StringComparer.OrdinalIgnoreCase))
             {
                 ProjectFiles.Add(BuildFileNode(path));
             }
+        }
+        catch
+        {
+            // Sin permisos para listar la raíz: se ignora.
         }
 
         try
