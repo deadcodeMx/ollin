@@ -590,6 +590,26 @@
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ScaleY, Mode=TwoWay}" Increment="0.1" FormatString="0.###" />
                       </Grid>
                     </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasCharacterBody}" Spacing="5">
+                      <TextBlock Classes="section" Text="PERSONAJE" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1">
+                        <TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.CharacterMoveSpeed, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" />
+                      </Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1">
+                        <TextBlock Text="Salto" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.CharacterJumpSpeed, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" />
+                      </Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1">
+                        <TextBlock Text="Gravedad" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.CharacterGravity, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0.##" />
+                      </Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1">
+                        <TextBlock Text="Aceleración" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.CharacterAcceleration, Mode=TwoWay}" Increment="1" Minimum="0.01" FormatString="0.##" />
+                      </Grid>
+                      <TextBlock Classes="hint" TextWrapping="Wrap" Text="A/D o flechas para mover. Espacio/W/Arriba para saltar." />
+                    </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasRotator}" Spacing="5">
                       <TextBlock Classes="section" Text="ROTADOR" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1">

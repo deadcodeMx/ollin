@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.96.0] — 2026-11-02
+
+### Añadido
+
+- Personaje 2D con movimiento, salto, gravedad, coyote time y jump buffer.
+- Se añade con Rigidbody y collider automáticamente.
+
 ## [6.95.0] — 2026-11-02
 
 ### Corregido

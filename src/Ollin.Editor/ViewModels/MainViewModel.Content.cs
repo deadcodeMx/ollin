@@ -315,6 +315,16 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new BoxCollider { Size = triggerSize, IsTrigger = true });
                 break;
 
+            case "character":
+                if (entity.HasComponent<CharacterBody2D>()) { added = false; break; }
+                var characterSize = entity.GetComponent<SpriteRenderer>()?.Size ?? Vector2.One;
+                entity.AddComponent(new CharacterBody2D());
+                if (!entity.HasComponent<Rigidbody2D>())
+                    entity.AddComponent(new Rigidbody2D { AffectedByGravity = false });
+                if (!entity.HasComponent<BoxCollider>())
+                    entity.AddComponent(new BoxCollider { Size = characterSize });
+                break;
+
             case "rigidbody":
                 if (entity.HasComponent<Rigidbody2D>()) { added = false; break; }
                 entity.AddComponent(new Rigidbody2D());
@@ -434,6 +444,7 @@ public sealed partial class MainViewModel
             "tilemap" => entity.GetComponent<Tilemap>(),
             "collider" => entity.GetComponent<BoxCollider>(),
             "rigidbody" => entity.GetComponent<Rigidbody2D>(),
+            "character" => entity.GetComponent<CharacterBody2D>(),
             "audio" => entity.GetComponent<AudioSource>(),
             "light" => entity.GetComponent<Light2D>(),
             "interactable" => entity.GetComponent<Interactable>(),

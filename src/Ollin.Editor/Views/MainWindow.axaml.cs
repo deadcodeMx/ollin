@@ -286,12 +286,12 @@ public partial class MainWindow : Window
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
-            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR")) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE")) continue;
 
             var index = root.Children.IndexOf(child);
             root.Children.RemoveAt(index);
             child.Children.Remove(title);
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", _ => null };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
             var expander = new Expander
             {
@@ -1517,6 +1517,7 @@ public partial class MainWindow : Window
             flyout.Items.Add(item);
         }
 
+        Add("Personaje 2D", "character");
         Add("Visual (Sprite)", "sprite");
         Add("Interactuable", "interactable");
         Add("Colisión (caja)", "collider");

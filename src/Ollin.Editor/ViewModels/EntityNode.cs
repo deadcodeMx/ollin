@@ -348,6 +348,54 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public bool HasCharacterBody => Entity.GetComponent<CharacterBody2D>() is not null;
+
+    public CharacterBody2D? CharacterBody => Entity.GetComponent<CharacterBody2D>();
+
+    public decimal CharacterMoveSpeed
+    {
+        get => (decimal)(CharacterBody?.MoveSpeed ?? 6f);
+        set
+        {
+            if (CharacterBody is null || MathF.Abs(CharacterBody.MoveSpeed - (float)value) < 0.001f) return;
+            CharacterBody.MoveSpeed = MathF.Max(0f, (float)value);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal CharacterJumpSpeed
+    {
+        get => (decimal)(CharacterBody?.JumpSpeed ?? 12f);
+        set
+        {
+            if (CharacterBody is null || MathF.Abs(CharacterBody.JumpSpeed - (float)value) < 0.001f) return;
+            CharacterBody.JumpSpeed = MathF.Max(0f, (float)value);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal CharacterGravity
+    {
+        get => (decimal)(CharacterBody?.Gravity ?? 30f);
+        set
+        {
+            if (CharacterBody is null || MathF.Abs(CharacterBody.Gravity - (float)value) < 0.001f) return;
+            CharacterBody.Gravity = MathF.Max(0f, (float)value);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
+    public decimal CharacterAcceleration
+    {
+        get => (decimal)(CharacterBody?.Acceleration ?? 60f);
+        set
+        {
+            if (CharacterBody is null || MathF.Abs(CharacterBody.Acceleration - (float)value) < 0.001f) return;
+            CharacterBody.Acceleration = MathF.Max(0.01f, (float)value);
+            OnPropertyChanged(); _owner.MarkDirty();
+        }
+    }
+
     public bool HasRotator => Entity.GetComponent<RotatorComponent>() is not null;
 
     public bool HasOscillator => Entity.GetComponent<OscillatorComponent>() is not null;
@@ -1242,6 +1290,11 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasSprite));
         OnPropertyChanged(nameof(HasCollider));
         OnPropertyChanged(nameof(HasRigidbody));
+        OnPropertyChanged(nameof(HasCharacterBody));
+        OnPropertyChanged(nameof(CharacterMoveSpeed));
+        OnPropertyChanged(nameof(CharacterJumpSpeed));
+        OnPropertyChanged(nameof(CharacterGravity));
+        OnPropertyChanged(nameof(CharacterAcceleration));
         OnPropertyChanged(nameof(HasAudio));
         OnPropertyChanged(nameof(HasLight));
         OnPropertyChanged(nameof(HasCamera));

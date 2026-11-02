@@ -16,6 +16,7 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.Tilemap), "tilemap")]
 [JsonDerivedType(typeof(Components.BoxCollider), "collider")]
 [JsonDerivedType(typeof(Components.Rigidbody2D), "rigidbody")]
+[JsonDerivedType(typeof(Components.CharacterBody2D), "character")]
 [JsonDerivedType(typeof(Components.AudioSource), "audio")]
 [JsonDerivedType(typeof(Components.Interactable), "interactable")]
 [JsonDerivedType(typeof(Components.Light2D), "light")]

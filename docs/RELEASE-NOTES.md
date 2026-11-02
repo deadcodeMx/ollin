@@ -1,15 +1,18 @@
-## Ollin Beta 6.95.0 — todos los componentes visibles
+## Ollin Beta 6.96.0 — Personaje 2D
 
-### Corregido
+### Añadido
 
-- Los componentes se pliegan por defecto; así se ven todos los encabezados.
-- **INTERACCIÓN** aparece al añadir Interactuable.
-- Colisión, Visual, Interacción y Scripts muestran su botón ✕.
-- Todos los `Has...` notifican cambios al inspector.
+- Componente **Personaje 2D** para plataformas y acción.
+- Movimiento A/D o flechas.
+- Salto con Espacio, W o flecha arriba.
+- Gravedad, aceleración, velocidad máxima de caída.
+- Coyote time y buffer de salto.
+- Salto variable al soltar.
+- Añade automáticamente Rigidbody2D y BoxCollider si faltan.
+- Campos editables en el inspector.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.95.0 instalado.
-- Captura con Visual, Interacción y Colisión visibles.
+- Instalador 6.96.0 instalado y abierto sin crash.
 - Demo técnica no publicada.
