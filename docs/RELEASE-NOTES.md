@@ -1,15 +1,16 @@
-## Ollin Beta 6.103.0 — inventario runtime
+## Ollin Beta 6.104.0 — guardado y carga
 
 ### Añadido
 
-- Overlay de inventario en editor y juego exportado.
-- Cuadrícula de slots con inicial y cantidad.
-- **I** abre/cierra el inventario.
-- Detecta el inventario del jugador por tag `player`.
-- HUD y menús de pausa/fin de partida se mantienen.
+- Tres ranuras de guardado en **Escena → Guardar/Cargar partida**.
+- Guardado atómico: archivo temporal y reemplazo final.
+- Respaldo automático `.bak`.
+- Carga con recuperación desde `.bak` si el archivo principal falla.
+- Versión en el archivo de partida.
+- El juego exportado mantiene sus 3 ranuras y autoguardado.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.103.0 instalado y abierto sin crash.
+- Instalador 6.104.0 instalado y abierto sin crash.
 - Demo técnica no publicada.

@@ -253,8 +253,14 @@ public sealed partial class MainViewModel
     /// <summary>Detiene la reproducción desde un menú.</summary>
     public void StopFromMenu() => StopPlay();
 
+    private SaveSlotService Slots => new(Path.Combine(Project?.RootPath ?? ProjectRoot, "saves"));
+
+    public bool HasSaveSlot(int slot) => IsPlaying && Slots.Exists(Project?.Name ?? "Ollin", slot);
+
     /// <summary>Guarda la partida actual (posición, componentes y estado).</summary>
-    public void SaveGame()
+    public void SaveGame() => SaveGameSlot(1);
+
+    public void SaveGameSlot(int slot)
     {
         if (!IsPlaying)
         {
@@ -264,11 +270,10 @@ public sealed partial class MainViewModel
 
         try
         {
-            var root = Project?.RootPath ?? ProjectRoot;
-            var path = SaveService.DefaultPath(root);
-            SaveService.Save(Scene, path, ScenePath, "Partida", _runtime.GameState);
-            StatusMessage = "Partida guardada";
-            Log.Info($"Partida guardada: {path}", "Guardado");
+            var game = Project?.Name ?? "Ollin";
+            Slots.Save(game, slot, Scene, _runtime.GameState, ScenePath);
+            StatusMessage = $"Partida guardada en ranura {slot}";
+            Log.Info($"Partida guardada en ranura {slot}", "Guardado");
         }
         catch (Exception exception)
         {
@@ -277,32 +282,24 @@ public sealed partial class MainViewModel
         }
     }
 
-    /// <summary>Carga la última partida guardada y continúa jugando.</summary>
-    public void LoadGame()
+    public void LoadGameSlot(int slot)
     {
         try
         {
-            var root = Project?.RootPath ?? ProjectRoot;
-            var path = SaveService.DefaultPath(root);
-
-            if (!File.Exists(path))
+            var game = Project?.Name ?? "Ollin";
+            var save = Slots.TryLoad(game, slot);
+            if (save is null)
             {
-                StatusMessage = "No hay ninguna partida guardada";
+                StatusMessage = $"La ranura {slot} está vacía";
                 return;
             }
 
-            var save = SaveService.Load(path);
-
-            if (IsPlaying)
-            {
-                StopPlay();
-            }
-
+            if (IsPlaying) StopPlay();
             LoadScene(save.Scene!, save.ScenePath);
             _runtime.GameState.CopyFrom(save.State);
             StartPlay(keepState: true);
-            StatusMessage = "Partida cargada";
-            Log.Info($"Partida cargada: {path}", "Guardado");
+            StatusMessage = $"Partida cargada de la ranura {slot}";
+            Log.Info($"Partida cargada de ranura {slot}", "Guardado");
         }
         catch (Exception exception)
         {
@@ -310,6 +307,10 @@ public sealed partial class MainViewModel
             StatusMessage = "Error al cargar la partida";
         }
     }
+
+
+    /// <summary>Carga la última partida guardada y continúa jugando.</summary>
+    public void LoadGame() => LoadGameSlot(1);
 
     /// <summary>Guarda la partida en una ruta concreta (juego exportado).</summary>
     public void SaveGameTo(string path)

@@ -1767,6 +1767,18 @@ public partial class MainWindow : Window
         }
     }
 
+    private void OnSaveGameSlot(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is MenuItem { Tag: string tag } && int.TryParse(tag, out var slot))
+            ViewModel?.SaveGameSlot(slot);
+    }
+
+    private void OnLoadGameSlot(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is MenuItem { Tag: string tag } && int.TryParse(tag, out var slot))
+            ViewModel?.LoadGameSlot(slot);
+    }
+
     private void OnSaveGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveGame();
 
     private void OnThemeDark(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTheme(Ollin.Editor.Styles.EditorThemeMode.Dark);
