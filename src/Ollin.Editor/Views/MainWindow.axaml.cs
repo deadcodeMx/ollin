@@ -1556,6 +1556,18 @@ public partial class MainWindow : Window
         button.Flyout = flyout;
         return button;
     }
+    private async void OnEditInputMap(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Project is null)
+        {
+            if (ViewModel is not null) ViewModel.StatusMessage = "Abre un proyecto para editar el mapa de entrada";
+            return;
+        }
+
+        var window = new InputMapWindow(ViewModel.Project);
+        await window.ShowDialog<bool>(this);
+    }
+
     private async void OnEditShortcuts(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel is null) return;

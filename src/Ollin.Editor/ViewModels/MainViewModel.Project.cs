@@ -1,3 +1,4 @@
+using Ollin.Core.Input;
 using System.Collections.ObjectModel;
 using Ollin.Core.Assets;
 using Ollin.Core.Diagnostics;
@@ -29,6 +30,7 @@ public sealed partial class MainViewModel
             OnPropertyChanged(nameof(IsWelcomeVisible));
             OnPropertyChanged(nameof(ProjectName));
             OnPropertyChanged(nameof(ProjectPathText));
+            InputMap.Set(value?.InputActions);
         }
     }
 

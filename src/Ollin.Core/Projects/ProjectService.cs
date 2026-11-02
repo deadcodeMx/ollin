@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Ollin.Core.Input;
 
 namespace Ollin.Core.Projects;
 
@@ -13,6 +14,9 @@ public sealed class ProjectInfo
     public string StartScene { get; set; } = "scenes/inicio.ollin.json";
 
     public string? Description { get; set; }
+
+    /// <summary>Acciones del Input Map del proyecto.</summary>
+    public List<InputActionDefinition> InputActions { get; set; } = InputMap.CreateDefaults();
 
     /// <summary>Carpeta raíz del proyecto (no se guarda en el archivo).</summary>
     public string RootPath { get; set; } = string.Empty;
@@ -124,6 +128,8 @@ public static class ProjectService
             ?? throw new InvalidOperationException("El archivo de proyecto no es válido.");
 
         project.RootPath = Path.GetDirectoryName(fullPath)!;
+        if (project.InputActions is null || project.InputActions.Count == 0)
+            project.InputActions = InputMap.CreateDefaults();
         return project;
     }
 

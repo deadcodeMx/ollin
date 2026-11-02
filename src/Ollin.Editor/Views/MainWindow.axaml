@@ -45,6 +45,7 @@
         <MenuItem Header="Abrir script de la selección" Click="OnOpenSelectedScript" />
         <Separator />
         <MenuItem Header="Atajos del teclado…" Click="OnEditShortcuts" />
+        <MenuItem Header="Mapa de entrada…" Click="OnEditInputMap" />
       </MenuItem>
       <MenuItem Header="Ver">
         <MenuItem Header="Centrar cámara" InputGesture="Home" Click="OnResetCamera" />

@@ -1,14 +1,23 @@
-## Ollin Beta 6.101.0 — círculo visible correctamente
+## Ollin Beta 6.102.0 — Input Map y gamepad
 
-### Corregido
+### Añadido
 
-- El render del collider recorre **todos** los puntos de la forma.
-- El círculo se dibuja circular, no como un arco o cuadrado.
-- La cápsula conserva su contorno.
-- Verificado con `player-test` y una entidad con CircleCollider2D.
+- **Input Map** por proyecto, guardado en `project.ollin`.
+- **Editar → Mapa de entrada…**
+- Acciones por defecto:
+  - move_left, move_right, move_up, move_down.
+  - jump, interact, attack, pause.
+- Bindings de teclado y gamepad.
+- Editor para añadir, quitar y restablecer acciones.
+- Gamepad vía XInput.
+- API de scripts:
+  - `Input.GetAction("jump")`
+  - `Input.GetActionDown("jump")`
+  - `Input.GetActionUp("jump")`
+- Personaje 2D usa move_left/move_right/jump.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.101.0 instalado.
+- Instalador 6.102.0 instalado y abierto sin crash.
 - Demo técnica no publicada.

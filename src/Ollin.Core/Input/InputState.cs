@@ -92,6 +92,7 @@ public static class InputState
     /// <summary>Limpia todo el estado (al empezar o detener la reproducción).</summary>
     public static void Reset()
     {
+        GamepadInput.Reset();
         Down.Clear();
         Previous.Clear();
         Array.Clear(MouseDown);

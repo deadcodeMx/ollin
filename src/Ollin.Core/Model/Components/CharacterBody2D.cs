@@ -62,17 +62,19 @@ public sealed class CharacterBody2D : Component, ITickable
         IsGrounded = MathF.Abs(velocity.Y) < 0.05f;
         _coyote = IsGrounded ? MathF.Max(0.001f, CoyoteTime) : MathF.Max(0f, _coyote - deltaTime);
 
-        var left = InputState.IsKeyDown(KeyCode.A) || InputState.IsKeyDown(KeyCode.Left);
-        var right = InputState.IsKeyDown(KeyCode.D) || InputState.IsKeyDown(KeyCode.Right);
+        var left = InputMap.IsDown("move_left") || InputState.IsKeyDown(KeyCode.A) || InputState.IsKeyDown(KeyCode.Left);
+        var right = InputMap.IsDown("move_right") || InputState.IsKeyDown(KeyCode.D) || InputState.IsKeyDown(KeyCode.Right);
         var direction = (right ? 1f : 0f) - (left ? 1f : 0f);
         var target = direction * MathF.Max(0f, MoveSpeed);
         var rate = direction == 0f ? MathF.Max(0.01f, Deceleration) : MathF.Max(0.01f, Acceleration);
         velocity.X = MoveTowards(velocity.X, target, rate * deltaTime);
 
-        var jumpPressed = InputState.WasKeyPressed(KeyCode.Space) ||
+        var jumpPressed = InputMap.WasPressed("jump") ||
+                          InputState.WasKeyPressed(KeyCode.Space) ||
                           InputState.WasKeyPressed(KeyCode.W) ||
                           InputState.WasKeyPressed(KeyCode.Up);
-        var jumpDown = InputState.IsKeyDown(KeyCode.Space) ||
+        var jumpDown = InputMap.IsDown("jump") ||
+                       InputState.IsKeyDown(KeyCode.Space) ||
                        InputState.IsKeyDown(KeyCode.W) ||
                        InputState.IsKeyDown(KeyCode.Up);
 

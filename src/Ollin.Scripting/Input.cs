@@ -10,6 +10,12 @@ namespace Ollin.Scripting;
 public static class Input
 {
     /// <summary>¿Está la tecla pulsada ahora mismo?</summary>
+    public static bool GetAction(string action) => InputMap.IsDown(action);
+
+    public static bool GetActionDown(string action) => InputMap.WasPressed(action);
+
+    public static bool GetActionUp(string action) => InputMap.WasReleased(action);
+
     public static bool GetKey(KeyCode key) => InputState.IsKeyDown(key);
 
     /// <summary>¿Se pulsó la tecla en este cuadro?</summary>

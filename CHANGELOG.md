@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.102.0] — 2026-11-02
+
+### Añadido
+
+- Input Map configurable por proyecto.
+- Acciones para scripts: GetAction, GetActionDown, GetActionUp.
+- Soporte de gamepad mediante XInput.
+- Editor de mapa de entrada en Editar.
+- Personaje 2D usa move_left/move_right/jump.
+
 ## [6.101.0] — 2026-11-02
 
 ### Corregido
