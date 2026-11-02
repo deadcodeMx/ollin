@@ -316,6 +316,30 @@ Falta o está incompleto:
 21. Audio mixer.
 22. Localization.
 
+#### Estado real de la Etapa C (Beta 6.110.0)
+
+| Punto | Estado | Detalle |
+|---|---|---|
+| 15. Inventory/equipment | ⚠️ Parcial | Inventario y `Equipment` existen; falta pantalla para equipar/desequipar y arrastrar objetos. |
+| 16. Dialogue | ✅ | Diálogos por JSON y localizables por clave. |
+| 17. Quest/objectives | ⚠️ Parcial | `QuestLog` y HUD de objetivo; no hay editor visual ni carga de misiones desde assets. |
+| 18. Save/load + settings | ✅ | 3 ranuras, autoguardado, respaldo `.bak` y ajustes del jugador. |
+| 19. UI runtime/HUD/menus | ✅ | HUD, pausa, fin de partida e inventario. |
+| 20. Input rebinding/gamepad | ⚠️ Parcial | Input Map editable como texto y gamepad XInput; falta captura automática de tecla/botón. |
+| 21. Audio mixer | ⚠️ Parcial | Master, música, efectos y UI; el volumen se aplica al iniciar cada sonido, no a los ya activos. |
+| 22. Localization | ⚠️ Parcial | Carga `localization/*.json` y localiza diálogos; falta selector de idioma en ajustes. |
+
+#### Limitaciones actuales de la Etapa C
+
+- No existe pantalla de equipamiento; `Equipment` solo tiene datos, API e inspector de lectura.
+- No hay editor visual de misiones; `QuestLog` se rellena por código y no hay carpeta `quests/*.json`.
+- La localización no tiene selector de idioma ni textos localizados en todos los menús.
+- El rebinding se edita manualmente en el Input Map; no hay captura automática de tecla o botón.
+- El gamepad usa XInput y solo está probado en Windows.
+- El mixer no cambia el volumen de sonidos ya reproduciéndose.
+- El inventario no tiene arrastrar/soltar ni combinación de objetos.
+- El HUD de misiones muestra un solo objetivo activo.
+
 ### Etapa D — Géneros
 23. Pathfinding/AI.
 24. Grid/hex + turn manager.
