@@ -996,3 +996,13 @@ error de sintaxis.
 - Botones **Al fondo / Atrás / Adelante / Al frente** para ordenar sprites.
 - Barra flotante de zoom en el viewport: −, porcentaje, + y Enfocar.
 - El zoom usa el mismo valor que la rueda y actualiza el porcentaje.
+
+## 57. Alinear y distribuir entidades (6.59)
+
+- **Ctrl+clic** en el viewport añade/quita entidades de la selección.
+- **Alinear ▾** en la barra:
+  - Izquierda, centro horizontal, derecha.
+  - Arriba, centro vertical, abajo.
+  - Distribuir horizontal/vertical.
+- El inspector muestra cuántas entidades hay seleccionadas.
+- Las entidades se alinean usando el tamaño real del sprite y su escala.

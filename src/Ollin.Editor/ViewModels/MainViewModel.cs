@@ -26,6 +26,8 @@ public sealed partial class MainViewModel : ObservableObject
     private Vector2 _fallbackCameraPosition;
     private Scene _scene = new();
     private EntityNode? _selected;
+    private readonly List<EntityNode> _selection = new();
+    private bool _selectionAdd;
     private bool _showGrid = true;
     private string _statusMessage = "Listo";
     private string? _scenePath;
@@ -202,13 +204,29 @@ public sealed partial class MainViewModel : ObservableObject
                 return;
             }
 
+            if (!_selectionAdd)
+            {
+                _selection.Clear();
+                if (value is not null) _selection.Add(value);
+            }
+
             OnPropertyChanged(nameof(HasSelection));
             OnPropertyChanged(nameof(HasNoSelection));
             OnPropertyChanged(nameof(SelectionText));
+            OnPropertyChanged(nameof(HasMultipleSelection));
+            OnPropertyChanged(nameof(SelectionCount));
+            OnPropertyChanged(nameof(SelectionIds));
             RequestRedraw();
         }
     }
 
+    public IReadOnlyList<EntityNode> Selection => _selection;
+
+    public IReadOnlyList<Guid> SelectionIds => _selection.Select(node => node.Id).ToList();
+
+    public int SelectionCount => _selection.Count;
+
+    public bool HasMultipleSelection => _selection.Count > 1;
     public bool HasSelection => Selected is not null;
 
     public bool HasNoSelection => Selected is null;
@@ -273,7 +291,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     public string ScenePathText => ScenePath is null ? "Sin guardar" : ScenePath;
 
-    public string SelectionText => Selected is null ? "Nada seleccionado" : Selected.Entity.Name;
+    public string SelectionText => _selection.Count > 1
+        ? $"{_selection.Count} entidades seleccionadas"
+        : Selected?.Entity.Name ?? "Nada seleccionado";
 
     public string EntityCountText => $"{Scene.Entities.Count} entidades";
 
@@ -1241,17 +1261,117 @@ public sealed partial class MainViewModel : ObservableObject
         RequestRedraw();
     }
 
-    public void Select(Entity? entity)
+    public void Select(Entity? entity, bool additive = false)
     {
         if (entity is null)
         {
-            Selected = null;
+            if (!additive) Selected = null;
             return;
         }
 
-        Selected = FindNode(entity.Id);
+        var node = FindNode(entity.Id);
+        if (node is null) return;
+
+        if (!additive)
+        {
+            Selected = node;
+            return;
+        }
+
+        _selectionAdd = true;
+        try
+        {
+            if (_selection.Contains(node))
+            {
+                _selection.Remove(node);
+                Selected = _selection.LastOrDefault();
+            }
+            else
+            {
+                _selection.Add(node);
+                Selected = node;
+            }
+        }
+        finally
+        {
+            _selectionAdd = false;
+            OnPropertyChanged(nameof(SelectionText));
+            OnPropertyChanged(nameof(HasMultipleSelection));
+            OnPropertyChanged(nameof(SelectionCount));
+            OnPropertyChanged(nameof(SelectionIds));
+            RequestRedraw();
+        }
     }
 
+    public void AlignSelected(string mode)
+    {
+        if (_selection.Count < 2) return;
+
+        var bounds = _selection.ToDictionary(node => node, GetSelectionBounds);
+        var left = bounds.Values.Min(value => value.Left);
+        var right = bounds.Values.Max(value => value.Right);
+        var top = bounds.Values.Min(value => value.Top);
+        var bottom = bounds.Values.Max(value => value.Bottom);
+        var centerX = (left + right) / 2m;
+        var centerY = (top + bottom) / 2m;
+
+        foreach (var node in _selection)
+        {
+            var size = bounds[node];
+
+            switch (mode)
+            {
+                case "left": node.X = left + size.Width / 2m; break;
+                case "right": node.X = right - size.Width / 2m; break;
+                case "centerH": node.X = centerX; break;
+                case "top": node.Y = top - size.Height / 2m; break;
+                case "bottom": node.Y = bottom + size.Height / 2m; break;
+                case "centerV": node.Y = centerY; break;
+            }
+        }
+
+        StatusMessage = $"Alineadas {_selection.Count} entidades";
+    }
+
+    public void DistributeSelected(bool horizontal)
+    {
+        if (_selection.Count < 3) return;
+
+        var ordered = horizontal
+            ? _selection.OrderBy(node => node.X).ToList()
+            : _selection.OrderBy(node => node.Y).ToList();
+        var sizes = ordered.Select(GetSelectionBounds).ToList();
+        var first = horizontal ? sizes[0].Left : sizes[0].Bottom;
+        var last = horizontal ? sizes[^1].Right : sizes[^1].Top;
+        var total = horizontal ? sizes.Sum(size => size.Width) : sizes.Sum(size => size.Height);
+        var gap = (last - first - total) / (ordered.Count - 1);
+        var cursor = first;
+
+        foreach (var (node, size) in ordered.Zip(sizes))
+        {
+            if (horizontal)
+            {
+                node.X = cursor + size.Width / 2m;
+                cursor += size.Width + gap;
+            }
+            else
+            {
+                node.Y = cursor + size.Height / 2m;
+                cursor += size.Height + gap;
+            }
+        }
+
+        StatusMessage = $"Distribuidas {_selection.Count} entidades";
+    }
+
+    private static (decimal Left, decimal Top, decimal Right, decimal Bottom, decimal Width, decimal Height) GetSelectionBounds(EntityNode node)
+    {
+        var width = Math.Max(0m, node.SpriteWidth * Math.Abs(node.ScaleX));
+        var height = Math.Max(0m, node.SpriteHeight * Math.Abs(node.ScaleY));
+        var left = node.X - width / 2m;
+        var top = node.Y + height / 2m;
+        return (left, top, left + width, top - height, width, height);
+    }
     public void ZoomBy(float factor)
     {
         var camera = ActiveCamera;

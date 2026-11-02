@@ -109,7 +109,7 @@ public sealed class Renderer2D : IDisposable
 
     /// <summary>Dibuja un frame completo de la escena.</summary>
     public void RenderFrame(Scene scene, Vector2 cameraPosition, Camera2D camera, int width, int height,
-        Guid? selectedEntityId, bool showGrid, bool showHelpers = true)
+        Guid? selectedEntityId, bool showGrid, bool showHelpers = true, IReadOnlyCollection<Guid>? selectedEntityIds = null)
     {
         if (width <= 0 || height <= 0)
         {
@@ -132,11 +132,17 @@ public sealed class Renderer2D : IDisposable
         DrawSprites(scene, cameraPosition);
         DrawDebugDraw(camera, height);
 
-        if (selectedEntityId is { } id && showHelpers)
+        if (showHelpers)
         {
-            DrawSelection(scene, id, camera, height);
-        }
+            var ids = selectedEntityIds is { Count: > 0 }
+                ? selectedEntityIds
+                : selectedEntityId is { } selected ? new[] { selected } : Array.Empty<Guid>();
 
+            foreach (var id in ids.Distinct())
+            {
+                DrawSelection(scene, id, camera, height);
+            }
+        }
         _batch.End();
         DrawLighting(scene, camera, cameraPosition, width, height, viewProjection);
     }

@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.59.0] — 2026-11-02
+
+### Añadido
+
+- Selección múltiple con Ctrl+clic en el viewport.
+- Menú Alinear: izquierda, centro, derecha, arriba, centro vertical, abajo.
+- Distribuir horizontal y vertical.
+- 205 pruebas automatizadas.
+
 ## [6.58.0] — 2026-11-02
 
 ### Añadido

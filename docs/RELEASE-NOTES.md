@@ -1,21 +1,22 @@
-## Ollin Beta 6.58.0 — pulido 2D
+## Ollin Beta 6.59.0 — alinear y distribuir
 
 ### Incluye
 
-- **Volteo vertical** de sprite.
-- Botones de **orden de capas**.
-- Barra flotante de **zoom** en el viewport.
+- **Ctrl+clic** para seleccionar varias entidades.
+- Menú **Alinear ▾**.
+- Alinear izquierda/centro/derecha y arriba/centro/abajo.
+- Distribuir horizontal y vertical.
 - **205 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 6.58.0 y selecciona un sprite.
-2. En **Visual**, prueba voltear horizontal/vertical.
-3. Usa **Al fondo/Atrás/Adelante/Al frente**.
-4. Usa la barra de zoom inferior derecha.
+1. Instala 6.59.0 y abre una escena 2D.
+2. Haz clic en una entidad y `Ctrl+clic` en otra.
+3. Abre **Alinear ▾**.
+4. Prueba alinear y distribuir.
 
 ### Limitaciones
 
-- El orden de capas se guarda en el sprite, no como lista de escena.
-- La barra de zoom no reemplaza el zoom con rueda.
+- La selección múltiple es por Ctrl+clic; no hay lazo.
+- La jerarquía sigue seleccionando una entidad.
 - La demo técnica no se publica.

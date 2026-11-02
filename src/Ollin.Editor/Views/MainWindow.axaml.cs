@@ -393,6 +393,22 @@ public partial class MainWindow : Window
     private void OnBrushFloor(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewportHost.Viewport.Brush3DMode = ViewportHost.Viewport.Brush3DMode == Controls.Brush3DMode.Floor ? Controls.Brush3DMode.None : Controls.Brush3DMode.Floor;
 
+    private void OnAlignLeft(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AlignSelected("left");
+
+    private void OnAlignCenterH(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AlignSelected("centerH");
+
+    private void OnAlignRight(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AlignSelected("right");
+
+    private void OnAlignTop(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AlignSelected("top");
+
+    private void OnAlignCenterV(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AlignSelected("centerV");
+
+    private void OnAlignBottom(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AlignSelected("bottom");
+
+    private void OnDistributeH(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.DistributeSelected(true);
+
+    private void OnDistributeV(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.DistributeSelected(false);
+
     private void OnZoomIn(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ZoomBy(1.2f);
 
     private void OnZoomOut(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ZoomBy(1f / 1.2f);

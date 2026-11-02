@@ -80,7 +80,7 @@ public sealed class ViewportSurface : Border
                 }
                 else
                 {
-                    Viewport.Select3DAt(position);
+                    Viewport.Select3DAt(position, e.KeyModifiers.HasFlag(KeyModifiers.Control));
                 }
 
                 e.Handled = true;
@@ -114,7 +114,7 @@ public sealed class ViewportSurface : Border
                 return;
             }
 
-            Viewport.SelectAt(position);
+            Viewport.SelectAt(position, e.KeyModifiers.HasFlag(KeyModifiers.Control));
             e.Handled = true;
         }
     }

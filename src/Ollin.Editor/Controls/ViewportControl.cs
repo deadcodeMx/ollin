@@ -327,7 +327,8 @@ public sealed class ViewportControl : OpenGlControlBase
                     width,
                     height,
                     _viewModel.Selected?.Id,
-                    _viewModel.ShowGrid);
+                    _viewModel.ShowGrid,
+                    selectedEntityIds: _viewModel.SelectionIds);
             }
 
             if (_hasError)
@@ -399,7 +400,7 @@ public sealed class ViewportControl : OpenGlControlBase
     public bool IsGizmo3DDragging => _gizmo3DDragging;
 
     /// <summary>Selecciona una entidad del modo 2.5D lanzando un rayo desde la cámara.</summary>
-    public void Select3DAt(Point position)
+    public void Select3DAt(Point position, bool additive = false)
     {
         if (_viewModel?.ActiveCamera3D is not { } camera)
         {
@@ -447,7 +448,7 @@ public sealed class ViewportControl : OpenGlControlBase
             }
         }
 
-        _viewModel.Select(hit);
+        _viewModel.Select(hit, additive);
         RequestNextFrameRendering();
     }
 
@@ -826,7 +827,7 @@ public sealed class ViewportControl : OpenGlControlBase
     }
 
     /// <summary>Selecciona la entidad bajo un punto del viewport (coordenadas locales).</summary>
-    public void SelectAt(Point position)
+    public void SelectAt(Point position, bool additive = false)
     {
         if (_viewModel is null)
         {
@@ -862,7 +863,7 @@ public sealed class ViewportControl : OpenGlControlBase
         }
 
         Diag($"hit={(hit?.Name ?? "nada")} order={bestOrder}");
-        _viewModel.Select(hit);
+        _viewModel.Select(hit, additive);
         RequestNextFrameRendering();
     }
 
