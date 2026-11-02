@@ -1042,3 +1042,11 @@ error de sintaxis.
   - **Relleno** rellena una región conectada del mismo mosaico.
   - **Limpiar** vacía todo el tilemap.
   - El trazo de pintura se registra como una sola operación de deshacer.
+
+## 62. Paleta de mosaicos y pegado entre escenas (6.64)
+
+- **Paleta visual**: la pestaña Tilemap muestra los mosaicos del tileset.
+- Clic en un mosaico lo selecciona y activa el pincel.
+- **Columnas** configura la cuadrícula del tileset.
+- **Copiar/pegar entre escenas**: el portapapeles interno se conserva al cambiar de escena;
+  copia en una escena y pega en otra.

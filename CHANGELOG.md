@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.64.0] — 2026-11-02
+
+### Añadido
+
+- Paleta visual de mosaicos con selección por clic.
+- Columnas de tileset configurables.
+- Pegado entre escenas con el portapapeles interno.
+- 205 pruebas automatizadas.
+
 ## [6.63.0] — 2026-11-02
 
 ### Añadido

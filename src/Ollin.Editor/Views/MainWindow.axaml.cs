@@ -432,6 +432,15 @@ public partial class MainWindow : Window
     private void OnBrushFloor(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         ViewportHost.Viewport.Brush3DMode = ViewportHost.Viewport.Brush3DMode == Controls.Brush3DMode.Floor ? Controls.Brush3DMode.None : Controls.Brush3DMode.Floor;
 
+    private void OnTilePaletteClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null || sender is not Button button || button.Tag is null) return;
+        if (!int.TryParse(button.Tag.ToString(), out var index)) return;
+        ViewModel.PaintTileIndex = index;
+        ViewModel.TileFillMode = false;
+        ViewModel.IsPaintingTiles = true;
+    }
+
     private void OnTileEraser(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTileEraser();
 
     private void OnTileClear(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ClearTilemap();

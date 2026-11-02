@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Numerics;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia;
 using Ollin.Core.Math;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
@@ -12,6 +13,8 @@ namespace Ollin.Editor.ViewModels;
 /// Nodo del árbol de escena. Envuelve una <see cref="Entity"/> y expone las
 /// propiedades que edita el inspector (con conversión a unidades amigables).
 /// </summary>
+public sealed record TilePaletteItem(int Index, IImage Preview);
+
 public sealed class EntityNode : ObservableObject
 {
     private readonly MainViewModel _owner;
@@ -482,6 +485,12 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasTilemap => Entity.GetComponent<Tilemap>() is not null;
 
+    private IReadOnlyList<TilePaletteItem>? _tilePalette;
+
+    public IReadOnlyList<TilePaletteItem> TilePalette => _tilePalette ??= LoadTilePalette();
+
+    public bool HasTilePalette => TilePalette.Count > 0;
+
     public Tilemap? Tilemap => Entity.GetComponent<Tilemap>();
 
     public string TilemapTexture
@@ -498,6 +507,55 @@ public sealed class EntityNode : ObservableObject
             OnPropertyChanged();
             _owner.MarkDirty();
             _owner.RequestRedraw();
+        }
+    }
+
+    public decimal TilemapColumns
+    {
+        get => Tilemap?.TilesetColumns ?? 4;
+        set
+        {
+            if (Tilemap is null || Tilemap.TilesetColumns == (int)value) return;
+            Tilemap.TilesetColumns = Math.Clamp((int)value, 1, 64);
+            _tilePalette = null;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TilePalette));
+            OnPropertyChanged(nameof(HasTilePalette));
+            _owner.MarkDirty();
+            _owner.RequestRedraw();
+        }
+    }
+
+    private IReadOnlyList<TilePaletteItem> LoadTilePalette()
+    {
+        var map = Tilemap;
+        if (map is null || string.IsNullOrWhiteSpace(map.TexturePath)) return Array.Empty<TilePaletteItem>();
+
+        var fullPath = Path.IsPathRooted(map.TexturePath) ? map.TexturePath : Path.Combine(_owner.ProjectRoot, map.TexturePath);
+        if (!File.Exists(fullPath)) return Array.Empty<TilePaletteItem>();
+
+        try
+        {
+            using var stream = File.OpenRead(fullPath);
+            var bitmap = new Bitmap(stream);
+            var columns = Math.Clamp(map.TilesetColumns, 1, 64);
+            var tileWidth = Math.Max(1, bitmap.PixelSize.Width / columns);
+            var rows = Math.Max(1, bitmap.PixelSize.Height / tileWidth);
+            var items = new List<TilePaletteItem>();
+
+            for (var index = 0; index < columns * rows; index++)
+            {
+                var x = (index % columns) * tileWidth;
+                var y = (index / columns) * tileWidth;
+                if (x + tileWidth > bitmap.PixelSize.Width || y + tileWidth > bitmap.PixelSize.Height) break;
+                items.Add(new TilePaletteItem(index, new CroppedBitmap(bitmap, new PixelRect(x, y, tileWidth, tileWidth))));
+            }
+
+            return items;
+        }
+        catch
+        {
+            return Array.Empty<TilePaletteItem>();
         }
     }
 
