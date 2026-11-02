@@ -1,19 +1,22 @@
-## Ollin Beta 6.55.0 — cierre de 6.53
+## Ollin Beta 6.56.0 — accesibilidad del grafo
 
 ### Incluye
 
-- **Ventana de atajos accionable**: cada fila ejecuta la acción y cierra.
-- **Smoke UIA** que valida nombres de accesibilidad del buscador y Más.
+- La ventana **F1** enfoca la primera acción y se cierra con `Esc`.
+- El estado del grafo se anuncia como región viva.
+- El buscador tiene nombre y ayuda accesible.
+- Guía manual para Narrator/NVDA.
 - **205 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 6.55.0 y abre el grafo.
-2. Pulsa **F1**.
-3. Haz clic en **Ordenar** o **Distribuir H**: debe ejecutar y cerrar.
-4. Ejecuta `tools/ui-smoke.ps1` para validar UIA.
+1. Instala 6.56.0 y abre el grafo.
+2. Pulsa **F1**; la primera acción debe tener el foco.
+3. Pulsa **Esc** para cerrar.
+4. Ejecuta `tools/ui-smoke.ps1` para validar nombres UIA.
+5. Sigue `docs/ACCESIBILIDAD.md` para Narrator/NVDA.
 
 ### Limitaciones
 
-- No se ha probado con lector de pantalla real (Narrator/NVDA).
+- La prueba con lector de pantalla real queda pendiente de ejecución manual.
 - La demo técnica no se publica.

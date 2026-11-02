@@ -974,3 +974,10 @@ error de sintaxis.
 - El **UI smoke** comprueba nombres de accesibilidad UIA de buscador y Más.
 - **Más acciones del grafo** expone nombre ASCII para automatización.
 - La validación con lector de pantalla real sigue siendo una prueba manual.
+
+## 54. Accesibilidad del grafo (6.56)
+
+- La ventana **F1** recibe el foco en la primera acción y se cierra con `Esc`.
+- El estado del grafo es una región viva para lectores de pantalla.
+- El buscador tiene nombre y texto de ayuda.
+- Guía manual para Narrator/NVDA en `docs/ACCESIBILIDAD.md`.

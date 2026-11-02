@@ -12,6 +12,7 @@ using Ollin.Editor.ViewModels;
 using Ollin.Editor.Controls;
 using Ollin.Core.Scripting;
 using Avalonia.Automation;
+using Avalonia.Automation.Peers;
 
 namespace Ollin.Editor.Views;
 
@@ -108,6 +109,9 @@ public sealed class NodeGraphWindow : Window
         root.Children.Add(_status);
 
         Content = root;
+        AutomationProperties.SetName(this, "Grafo de nodos");
+        AutomationProperties.SetName(_status, "Estado del grafo");
+        AutomationProperties.SetLiveSetting(_status, AutomationLiveSetting.Polite);
         SizeChanged += (_, _) =>
         {
             var compact = Bounds.Width < 1080;
@@ -283,6 +287,7 @@ public sealed class NodeGraphWindow : Window
         };
         _searchBox.GotFocus += (_, _) => _searchBox.Width = Bounds.Width >= 1080 ? 170 : 76;
         AutomationProperties.SetName(_searchBox, "Buscar nodo");
+        AutomationProperties.SetHelpText(_searchBox, "Escribe para resaltar nodos; Escape limpia.");
         _searchBox.LostFocus += (_, _) => _searchBox.Width = Bounds.Width < 1080 ? 60 : 76;
         toolbar.Children.Add(_searchBox);
         UpdateZoomText();
@@ -487,6 +492,7 @@ public sealed class NodeGraphWindow : Window
     private void ShowShortcuts()
     {
         Window? help = null;
+        Button? firstAction = null;
         var panel = new StackPanel { Spacing = 6, Margin = new Thickness(16) };
 
         void AddAction(string label, Action action)
@@ -504,6 +510,7 @@ public sealed class NodeGraphWindow : Window
                 help?.Close();
             };
             panel.Children.Add(button);
+            firstAction ??= button;
         }
 
         AddAction("Deshacer · Ctrl+Z", Undo);
@@ -530,6 +537,17 @@ public sealed class NodeGraphWindow : Window
             Background = new SolidColorBrush(Color.Parse("#0B0D12")),
             Content = new ScrollViewer { Content = panel },
         };
+        AutomationProperties.SetName(help, "Atajos del grafo");
+        AutomationProperties.SetHelpText(help, "Elige una acción con Enter o pulsa Escape para cerrar.");
+        help.KeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Escape)
+            {
+                help.Close();
+                e.Handled = true;
+            }
+        };
+        help.Opened += (_, _) => firstAction?.Focus();
         help.Show();
     }
     private void StepTraceBack()

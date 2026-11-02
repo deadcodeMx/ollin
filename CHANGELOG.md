@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.56.0] — 2026-11-02
+
+### Añadido
+
+- Foco inicial y Escape en la ventana de atajos.
+- Región viva para el estado del grafo.
+- Texto de ayuda del buscador.
+- Guía de accesibilidad para Narrator/NVDA.
+- 205 pruebas automatizadas.
+
 ## [6.55.0] — 2026-11-02
 
 ### Cambiado
