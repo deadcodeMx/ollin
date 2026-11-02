@@ -286,12 +286,12 @@ public partial class MainWindow : Window
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
-            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "CHECKPOINT" or "ARMA 2D")) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D")) continue;
 
             var index = root.Children.IndexOf(child);
             root.Children.RemoveAt(index);
             child.Children.Remove(title);
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", _ => null };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
             var expander = new Expander
             {
@@ -1549,6 +1549,7 @@ public partial class MainWindow : Window
         var combat = new MenuItem { Header = "Combate" };
         Add(combat, "Hitbox", "hitbox");
         Add(combat, "Hurtbox", "hurtbox");
+        Add(combat, "Knockback 2D", "knockback2d");
         Add(combat, "Checkpoint 2D", "checkpoint2d");
         Add(combat, "Arma 2D", "weapon2d");
         flyout.Items.Add(combat);

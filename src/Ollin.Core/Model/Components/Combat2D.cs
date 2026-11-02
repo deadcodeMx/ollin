@@ -10,8 +10,6 @@ public sealed class Hitbox : Component, ITickable
 
     public string Team { get; set; } = "player";
 
-    public float Knockback { get; set; } = 0f;
-
     public float Cooldown { get; set; } = 0.4f;
 
     [JsonIgnore] public bool CanHit => _cooldown <= 0f;
@@ -29,7 +27,20 @@ public sealed class Hitbox : Component, ITickable
 
     public override Component CloneFor(Entity newOwner) => new Hitbox
     {
-        Enabled = Enabled, Damage = Damage, Team = Team, Knockback = Knockback, Cooldown = Cooldown, Owner = newOwner,
+        Enabled = Enabled, Damage = Damage, Team = Team, Cooldown = Cooldown, Owner = newOwner,
+    };
+}
+
+/// <summary>Empuje aplicado al objetivo cuando una Hitbox lo alcanza.</summary>
+public sealed class Knockback2D : Component
+{
+    public float Force { get; set; } = 6f;
+
+    public float Upward { get; set; } = 2f;
+
+    public override Component CloneFor(Entity newOwner) => new Knockback2D
+    {
+        Enabled = Enabled, Force = Force, Upward = Upward, Owner = newOwner,
     };
 }
 

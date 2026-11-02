@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.108.0] — 2026-11-02
+
+### Cambiado
+
+- Knockback sale de Hitbox y pasa a Knockback2D.
+- Reglas de diseño documentadas y auditadas.
+
 ## [6.107.0] — 2026-11-02
 
 ### Corregido

@@ -36,8 +36,8 @@ internal sealed class CombatSystem
                         out var normal, out var depth) || depth <= 0.0001f) continue;
 
                 health.TakeDamage(hitbox.Damage * MathF.Max(0f, hurtbox.DamageMultiplier));
-                if (hitbox.Knockback > 0.001f && target.GetComponent<Rigidbody2D>() is { } body)
-                    body.Velocity += normal * hitbox.Knockback;
+                if (source.GetComponent<Knockback2D>() is { } knockback && target.GetComponent<Rigidbody2D>() is { } body)
+                    body.Velocity += normal * knockback.Force + Vector2.UnitY * knockback.Upward;
                 hitbox.TryConsume();
                 break;
             }

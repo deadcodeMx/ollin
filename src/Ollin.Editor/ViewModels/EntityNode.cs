@@ -403,7 +403,9 @@ public sealed class EntityNode : ObservableObject
 
     public decimal HitboxDamage { get => (decimal)(Entity.GetComponent<Hitbox>()?.Damage ?? 10f); set { if (Entity.GetComponent<Hitbox>() is { } h) { h.Damage = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public string HitboxTeam { get => Entity.GetComponent<Hitbox>()?.Team ?? "player"; set { if (Entity.GetComponent<Hitbox>() is { } h) { h.Team = value ?? "player"; OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public decimal HitboxKnockback { get => (decimal)(Entity.GetComponent<Hitbox>()?.Knockback ?? 0f); set { if (Entity.GetComponent<Hitbox>() is { } h) { h.Knockback = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public bool HasKnockback2D => Entity.GetComponent<Knockback2D>() is not null;
+    public decimal KnockbackForce { get => (decimal)(Entity.GetComponent<Knockback2D>()?.Force ?? 6f); set { if (Entity.GetComponent<Knockback2D>() is { } k) { k.Force = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal KnockbackUpward { get => (decimal)(Entity.GetComponent<Knockback2D>()?.Upward ?? 2f); set { if (Entity.GetComponent<Knockback2D>() is { } k) { k.Upward = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public string HurtboxTeam { get => Entity.GetComponent<Hurtbox>()?.Team ?? "enemy"; set { if (Entity.GetComponent<Hurtbox>() is { } h) { h.Team = value ?? "enemy"; OnPropertyChanged(); _owner.MarkDirty(); } } }
     public decimal HurtboxMultiplier { get => (decimal)(Entity.GetComponent<Hurtbox>()?.DamageMultiplier ?? 1f); set { if (Entity.GetComponent<Hurtbox>() is { } h) { h.DamageMultiplier = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public decimal Checkpoint2DRadius { get => (decimal)(Entity.GetComponent<Checkpoint2D>()?.Radius ?? 1.2f); set { if (Entity.GetComponent<Checkpoint2D>() is { } c) { c.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
@@ -1396,6 +1398,7 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasRigidbody));
         OnPropertyChanged(nameof(HasCharacterBody));
         OnPropertyChanged(nameof(HasHitbox));
+        OnPropertyChanged(nameof(HasKnockback2D));
         OnPropertyChanged(nameof(HasHurtbox));
         OnPropertyChanged(nameof(HasCheckpoint2D));
         OnPropertyChanged(nameof(HasWeapon2D));

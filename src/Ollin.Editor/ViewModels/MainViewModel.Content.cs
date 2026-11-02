@@ -334,6 +334,11 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new Hitbox());
                 break;
 
+            case "knockback2d":
+                if (entity.HasComponent<Knockback2D>()) { added = false; break; }
+                entity.AddComponent(new Knockback2D());
+                break;
+
             case "hurtbox":
                 if (entity.HasComponent<Hurtbox>()) { added = false; break; }
                 entity.AddComponent(new Hurtbox());
@@ -493,6 +498,7 @@ public sealed partial class MainViewModel
             "character" => entity.GetComponent<CharacterBody2D>(),
             "hitbox" => entity.GetComponent<Hitbox>(),
             "hurtbox" => entity.GetComponent<Hurtbox>(),
+            "knockback2d" => entity.GetComponent<Knockback2D>(),
             "checkpoint2d" => entity.GetComponent<Checkpoint2D>(),
             "weapon2d" => entity.GetComponent<Weapon2D>(),
             "edge" => entity.GetComponent<EdgeCollider2D>(),

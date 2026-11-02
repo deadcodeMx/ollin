@@ -642,12 +642,16 @@
                       <TextBlock Classes="section" Text="HITBOX" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Daño" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.HitboxDamage, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0.##" /></Grid>
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Equipo" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.HitboxTeam, Mode=TwoWay}" /></Grid>
-                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Empuje" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.HitboxKnockback, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" /></Grid>
                     </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasHurtbox}" Spacing="5">
                       <TextBlock Classes="section" Text="HURTBOX" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Equipo" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.HurtboxTeam, Mode=TwoWay}" /></Grid>
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Multiplicador" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.HurtboxMultiplier, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasKnockback2D}" Spacing="5">
+                      <TextBlock Classes="section" Text="KNOCKBACK" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Fuerza" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.KnockbackForce, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Hacia arriba" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.KnockbackUpward, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" /></Grid>
                     </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasCheckpoint2D}" Spacing="5">
                       <TextBlock Classes="section" Text="CHECKPOINT" />

@@ -21,6 +21,7 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.Area2D), "area")]
 [JsonDerivedType(typeof(Components.EdgeCollider2D), "edgecollider")]
 [JsonDerivedType(typeof(Components.Hitbox), "hitbox")]
+[JsonDerivedType(typeof(Components.Knockback2D), "knockback2d")]
 [JsonDerivedType(typeof(Components.Hurtbox), "hurtbox")]
 [JsonDerivedType(typeof(Components.Checkpoint2D), "checkpoint2d")]
 [JsonDerivedType(typeof(Components.Projectile2D), "projectile2d")]
