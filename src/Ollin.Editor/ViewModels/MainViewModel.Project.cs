@@ -140,7 +140,8 @@ public sealed partial class MainViewModel
     }
 
     /// <summary>Crea un proyecto nuevo con su propia carpeta y lo abre.</summary>
-    public void CreateProject(string parentFolder, string name, ProjectTemplate template = ProjectTemplate.Empty)
+    public void CreateProject(string parentFolder, string name, ProjectTemplate template = ProjectTemplate.Empty,
+        ProjectContentMode contentMode = ProjectContentMode.Full, ProjectGenre genre = ProjectGenre.None)
     {
         try
         {
@@ -151,7 +152,7 @@ public sealed partial class MainViewModel
                 templateAssets = root is null ? templateAssets : Path.Combine(root, "assets");
             }
 
-            var project = ProjectService.Create(parentFolder, name, Directory.Exists(templateAssets) ? templateAssets : null, template);
+            var project = ProjectService.Create(parentFolder, name, Directory.Exists(templateAssets) ? templateAssets : null, template, contentMode, genre);
             ApplyProject(project);
             StatusMessage = $"Proyecto '{project.Name}' creado en {project.RootPath}";
             Log.Info($"Proyecto creado: {project.ProjectFile}", "Proyecto");

@@ -1153,6 +1153,19 @@ public partial class MainWindow : Window
 
     // ---------- Proyectos ----------
 
+    private void OnProjectContentMode(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is not MenuItem { Tag: string tag } || ViewModel?.Project is null) return;
+        if (!Enum.TryParse<Ollin.Core.Projects.ProjectContentMode>(tag, out var mode)) return;
+        ViewModel.Project.ContentMode = mode;
+        Ollin.Core.Projects.ProjectService.Save(ViewModel.Project);
+        ViewModel.StatusMessage = mode switch
+        {
+            Ollin.Core.Projects.ProjectContentMode.Empty => "Modo vacío: solo componentes esenciales",
+            Ollin.Core.Projects.ProjectContentMode.Genre => "Modo por género: componentes recomendados",
+            _ => "Modo completo: todos los componentes",
+        };
+    }
     private async void OnNewProject(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel is null)
@@ -1165,7 +1178,7 @@ public partial class MainWindow : Window
 
         if (result is not null)
         {
-            ViewModel.CreateProject(result.ParentFolder, result.Name, result.Template);
+            ViewModel.CreateProject(result.ParentFolder, result.Name, result.Template, result.ContentMode, result.Genre);
         }
     }
 

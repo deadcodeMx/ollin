@@ -21,6 +21,11 @@
         <MenuItem Header="Nuevo proyecto…" Click="OnNewProject" />
         <MenuItem Header="Abrir proyecto…" Click="OnOpenProject" />
         <MenuItem Header="Cerrar proyecto" Click="OnCloseProject" IsEnabled="{Binding HasProject}" />
+        <MenuItem Header="Modo de componentes" IsEnabled="{Binding HasProject}">
+          <MenuItem Header="Vacío (esenciales)" Tag="Empty" Click="OnProjectContentMode" />
+          <MenuItem Header="Por género" Tag="Genre" Click="OnProjectContentMode" />
+          <MenuItem Header="Completo" Tag="Full" Click="OnProjectContentMode" />
+        </MenuItem>
         <Separator />
         <MenuItem Header="Nueva escena" InputGesture="Ctrl+N" Click="OnNewScene" />
         <MenuItem Header="Abrir escena…" InputGesture="Ctrl+O" Click="OnOpenScene" />
