@@ -36,7 +36,7 @@ public sealed class NewProjectWindow : Window
         _folder = new TextBox { Text = suggested };
         _template = new ComboBox
         {
-            ItemsSource = new[] { "Vacío (solo cámara)", "Plataformas", "Terror", "Tutorial (recorrido)", "2.5D (pasillo)", "Demo técnico 2.5D" },
+            ItemsSource = new[] { "Vacío (solo cámara)", "Plataformas", "Terror", "Tutorial (recorrido)" },
             SelectedIndex = 0,
             HorizontalAlignment = HorizontalAlignment.Stretch,
         };

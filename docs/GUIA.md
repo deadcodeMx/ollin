@@ -1068,3 +1068,14 @@ error de sintaxis.
 - **Tags** queda en una pestaña aparte, con edición y creación de etiquetas.
 - Se eliminó **Herramientas ▾**; mover, rotar, escalar, pared, suelo, imán,
   serie y grafo son botones directos de la barra.
+
+## 65. Enfoque 2D y jerarquía estilo Godot (6.67)
+
+- Se ocultaron herramientas y componentes **2.5D/3D** de la interfaz.
+- Se ocultaron las plantillas **2.5D** al crear proyecto.
+- El inspector solo muestra secciones 2D.
+- **+** en Jerarquía abre:
+  - Sprite 2D
+  - Entidad vacía
+  - Hijo de la selección
+- Se quitaron **+ Sprite / + Vacía** de la barra superior.

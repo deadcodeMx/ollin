@@ -1,21 +1,24 @@
-## Ollin Beta 6.66.0 — inspector unificado
+## Ollin Beta 6.67.0 — enfoque 2D
 
 ### Incluye
 
-- Inspector en **una sola pestaña** con secciones condicionales.
-- **Tags** en pestaña independiente.
-- Herramientas directas en la barra, estilo Godot.
+- Interfaz centrada en **2D**.
+- Herramientas y componentes **2.5D/3D ocultos**.
+- Plantillas **2.5D ocultas**.
+- Menú **+** dentro de Jerarquía.
+- **+ Sprite / + Vacía** fuera de la barra superior.
 - **205 pruebas automatizadas**.
 
 ### Cómo probarlo
 
-1. Instala 6.66.0 y selecciona una entidad.
-2. Recorre el inspector: solo aparecen las secciones de sus componentes.
-3. Abre la pestaña **Tags**.
-4. Usa los botones de mover/rotar/escalar/pared/suelo/imán/serie/grafo.
+1. Instala 6.67.0.
+2. Abre Jerarquía y pulsa **+**.
+3. Crea un **Sprite 2D** o entidad vacía.
+4. Comprueba que la barra no tiene botones 2.5D.
+5. Crea un proyecto: no aparecen plantillas 2.5D.
 
 ### Limitaciones
 
-- La creación de tags asigna la etiqueta a la entidad seleccionada; el catálogo global es básico.
-- La pestaña Mundo se integró en la vista única y puede resultar extensa.
+- Las escenas 2.5D existentes siguen abriendo, pero sus componentes están ocultos.
+- El motor conserva internamente el código 2.5D.
 - La demo técnica no se publica.

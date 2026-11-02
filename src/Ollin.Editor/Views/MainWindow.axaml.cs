@@ -514,9 +514,16 @@ public partial class MainWindow : Window
 
         var occurrences = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
+        var hidden25D = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Nivel", "Cámara 3D", "Pared 3D", "FPS", "IA 3D", "Botón 3D",
+            "Trigger 3D", "Generador", "Checkpoint", "Peligro", "Teletransporte", "Seguidor",
+        };
+
         foreach (var tab in tabs)
         {
             var headerText = tab.Header?.ToString() ?? string.Empty;
+            if (hidden25D.Contains(headerText)) continue;
             occurrences.TryGetValue(headerText, out var occurrence);
             occurrences[headerText] = occurrence + 1;
 

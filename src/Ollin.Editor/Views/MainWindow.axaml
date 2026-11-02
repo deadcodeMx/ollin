@@ -78,8 +78,6 @@
           <Button Classes="tool" Content="↶" Click="OnUndo" IsEnabled="{Binding CanUndo}" ToolTip.Tip="{Binding UndoText}" />
           <Button Classes="tool" Content="↷" Click="OnRedo" IsEnabled="{Binding CanRedo}" ToolTip.Tip="{Binding RedoText}" />
           <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
-          <Button Classes="tool accent" Content="+ Sprite" Click="OnAddSprite" ToolTip.Tip="Añadir entidad 2D con sprite" />
-          <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" ToolTip.Tip="Añadir entidad vacía" />
           <Button Classes="tool" Content="Duplicar" Click="OnDuplicate" ToolTip.Tip="Duplicar selección" />
           <Button Classes="tool" Content="Eliminar" Click="OnDelete" ToolTip.Tip="Eliminar selección" />
           <Border Width="1" Background="{DynamicResource Ollin.Border}" Margin="6,2" />
@@ -99,9 +97,6 @@
           <Button Classes="tool" Content="✥" Click="OnGizmoMove" ToolTip.Tip="Mover (1)" />
           <Button Classes="tool" Content="↻" Click="OnGizmoRotate" ToolTip.Tip="Rotar (2)" />
           <Button Classes="tool" Content="⤢" Click="OnGizmoScale" ToolTip.Tip="Escalar (3)" />
-          <Button Classes="tool" Content="▦" Click="OnBrushWall" ToolTip.Tip="Pincel: pared 3D" />
-          <Button Classes="tool" Content="▤" Click="OnBrushFloor" ToolTip.Tip="Pincel: suelo 3D" />
-          <ToggleButton Classes="tool" Content="⌗" Click="OnSnapToggle" ToolTip.Tip="Imán 3D" />
           <Button Classes="tool" Content="⇉" Click="OnDuplicateSeries" ToolTip.Tip="Duplicar serie x4" />
           <Button Classes="tool" Content="⛓" Click="OnOpenGraph" ToolTip.Tip="Abrir grafo de nodos" />          <Button Classes="tool" Content="Alinear ▾">
             <Button.Flyout>
@@ -148,8 +143,20 @@
         <Border Grid.Column="0" Classes="card" IsEnabled="{Binding CanEdit}" Padding="0">
           <TabControl Background="Transparent" Padding="0">
             <TabItem Header="Jerarquía">
-              <Grid RowDefinitions="Auto,Auto,*,Auto">
-                <TextBlock Classes="section" Text="{Binding EntityCountText}" Margin="12,8,12,4" />
+              <Grid RowDefinitions="Auto,Auto,*">
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="12,8,10,4">
+                  <TextBlock Classes="section" Text="{Binding EntityCountText}" VerticalAlignment="Center" />
+                  <Button Grid.Column="1" Classes="tool" Content="+" Width="28" Height="26" Padding="0" ToolTip.Tip="Añadir entidad">
+                    <Button.Flyout>
+                      <MenuFlyout>
+                        <MenuItem Header="Sprite 2D" Click="OnAddSprite" />
+                        <MenuItem Header="Entidad vacía" Click="OnAddEmpty" />
+                        <Separator />
+                        <MenuItem Header="Hijo de la selección" Click="OnCreateChild" />
+                      </MenuFlyout>
+                    </Button.Flyout>
+                  </Button>
+                </Grid>
                 <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="10,0,10,6">
                   <TextBox Text="{Binding SearchText, Mode=TwoWay}" Watermark="Buscar entidad…" />
                   <Button Grid.Column="1" Classes="tool" Content="✕" Margin="6,0,0,0"
@@ -193,10 +200,6 @@
                               <MenuItem Header="Estadísticas" Tag="stats" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Día/Noche" Tag="daynight" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="IA" Tag="ai" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Cámara 3D" Tag="camera3d" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Pared 3D" Tag="wall3d" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Controlador FPS" Tag="fps" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="IA 3D" Tag="ai3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Salud" Tag="health" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Arma" Tag="weapon" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Recogible" Tag="pickup" Click="OnRemoveComponentFromMenu" />
@@ -204,14 +207,7 @@
                               <MenuItem Header="Reglas" Tag="rules" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Mensaje inicial" Tag="intro" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Reaparición" Tag="respawn" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Botón 3D" Tag="button3d" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Trigger 3D" Tag="trigger3d" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Generador" Tag="spawner3d" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Checkpoint" Tag="checkpoint3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Script visual" Tag="visual" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Peligro 3D" Tag="hazard3d" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Teletransporte" Tag="teleporter3d" Click="OnRemoveComponentFromMenu" />
-                              <MenuItem Header="Seguidor 3D" Tag="follower3d" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Grafo de nodos" Tag="nodegraph" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Script" Tag="script" Click="OnRemoveComponentFromMenu" />
                               <MenuItem Header="Rotador" Tag="rotator" Click="OnRemoveComponentFromMenu" />
@@ -233,10 +229,6 @@
                     </TreeDataTemplate>
                   </TreeView.ItemTemplate>
                 </TreeView>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="6" Margin="10">
-                  <Button Classes="tool" Content="+ Sprite" Click="OnAddSprite" />
-                  <Button Classes="tool" Content="+ Vacía" Click="OnAddEmpty" />
-                </StackPanel>
               </Grid>
             </TabItem>
 
@@ -545,10 +537,6 @@
                             <MenuItem Header="Estadísticas" Click="OnAddStats" />
                             <MenuItem Header="Día/Noche" Click="OnAddDayNight" />
                             <MenuItem Header="IA (agente)" Click="OnAddAi" />
-                            <MenuItem Header="Cámara 3D" Click="OnAddCamera3D" />
-                            <MenuItem Header="Pared 3D" Click="OnAddWall3D" />
-                            <MenuItem Header="Controlador FPS" Click="OnAddFps" />
-                            <MenuItem Header="IA 3D" Click="OnAddAi3D" />
                             <MenuItem Header="Salud" Click="OnAddHealth" />
                             <MenuItem Header="Arma" Click="OnAddWeapon" />
                             <MenuItem Header="Recogible" Click="OnAddPickup" />
@@ -556,14 +544,7 @@
                             <MenuItem Header="Reglas de juego" Click="OnAddRules" />
                             <MenuItem Header="Mensaje inicial" Click="OnAddIntro" />
                             <MenuItem Header="Reaparición" Click="OnAddRespawn" />
-                            <MenuItem Header="Botón 3D" Click="OnAddButton3D" />
-                            <MenuItem Header="Trigger 3D" Click="OnAddTrigger3D" />
-                            <MenuItem Header="Generador" Click="OnAddSpawner3D" />
-                            <MenuItem Header="Checkpoint" Click="OnAddCheckpoint3D" />
                             <MenuItem Header="Script visual" Click="OnAddVisualScript" />
-                            <MenuItem Header="Peligro 3D" Click="OnAddHazard3D" />
-                            <MenuItem Header="Teletransporte" Click="OnAddTeleporter3D" />
-                            <MenuItem Header="Seguidor 3D" Click="OnAddFollower3D" />
                             <MenuItem Header="Grafo de nodos" Click="OnAddNodeGraph" />
                             <MenuItem Header="Rotador" Click="OnAddRotator" />
                             <MenuItem Header="Oscilador" Click="OnAddOscillator" />
@@ -1394,7 +1375,7 @@
                 </StackPanel>
               </TabItem>
 
-              <TabItem Header="Mundo">
+              <TabItem Header="Física">
                 <ScrollViewer>
                   <StackPanel Margin="8" Spacing="8">
                     <StackPanel IsVisible="{Binding Selected.HasCollider}" Spacing="5">
