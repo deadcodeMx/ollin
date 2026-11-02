@@ -45,3 +45,18 @@ public sealed class HudMessageView
 
     public string Text { get; }
 }
+/// <summary>Slot visible del inventario.</summary>
+public sealed class InventorySlotView
+{
+    public InventorySlotView(string itemId, int quantity)
+    {
+        ItemId = itemId;
+        Quantity = quantity;
+        Initial = string.IsNullOrWhiteSpace(itemId) ? "?" : itemId[..1].ToUpperInvariant();
+    }
+
+    public string ItemId { get; }
+    public int Quantity { get; }
+    public string Initial { get; }
+    public string QuantityText => Quantity > 1 ? $"x{Quantity}" : string.Empty;
+}

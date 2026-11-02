@@ -11,6 +11,27 @@ namespace Ollin.Editor.ViewModels;
 public sealed partial class MainViewModel
 {
     private string _hudSignature = string.Empty;
+    private string _inventorySignature = string.Empty;
+    private bool _inventoryOpen;
+
+    public ObservableCollection<InventorySlotView> InventoryItems { get; } = new();
+
+    public bool IsInventoryVisible => _inventoryOpen && IsPlaying;
+
+    public void ToggleInventory()
+    {
+        if (!IsPlaying || IsGameOverVisible) return;
+        _inventoryOpen = !_inventoryOpen;
+        OnPropertyChanged(nameof(IsInventoryVisible));
+        if (_inventoryOpen) RefreshInventory();
+    }
+
+    public void CloseInventory()
+    {
+        if (!_inventoryOpen) return;
+        _inventoryOpen = false;
+        OnPropertyChanged(nameof(IsInventoryVisible));
+    }
     private bool _isHudVisible;
     private bool _isPauseMenuVisible;
     private bool _isGameOverVisible;
@@ -88,6 +109,7 @@ public sealed partial class MainViewModel
     /// <summary>Copia el HUD del runtime a las colecciones de la interfaz.</summary>
     private void RefreshHud()
     {
+        RefreshInventory();
         var hud = _runtime.Hud;
         var signature = BuildHudSignature(hud);
 
@@ -134,6 +156,23 @@ public sealed partial class MainViewModel
 
             NotifyPlayState();
         }
+    }
+
+    private void RefreshInventory()
+    {
+        var inventory = _runtime.PlayerInventory;
+        var signature = inventory is null
+            ? "none"
+            : string.Join("|", inventory.Slots.Select(slot => $"{slot.ItemId}:{slot.Quantity}"));
+        if (signature == _inventorySignature) return;
+        _inventorySignature = signature;
+        InventoryItems.Clear();
+        if (inventory is not null)
+        {
+            foreach (var slot in inventory.Slots)
+                InventoryItems.Add(new InventorySlotView(slot.ItemId, slot.Quantity));
+        }
+        OnPropertyChanged(nameof(IsInventoryVisible));
     }
 
     private static string BuildHudSignature(HudModel hud)
@@ -333,6 +372,9 @@ public sealed partial class MainViewModel
         HudLabels.Clear();
         HudMessages.Clear();
         IsHudVisible = false;
+        InventoryItems.Clear();
+        _inventoryOpen = false;
+        _inventorySignature = string.Empty;
         IsPauseMenuVisible = false;
         IsGameOverVisible = false;
         GameOverText = string.Empty;

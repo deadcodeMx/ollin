@@ -1873,6 +1873,7 @@ public partial class MainWindow : Window
         // Durante la reproducción el teclado pertenece al juego.
         if (vm.IsPlaying)
         {
+            if (e.Key == Key.I) { vm.ToggleInventory(); e.Handled = true; return; }
             if (e.Key == Key.F5)
             {
                 vm.TogglePlay();

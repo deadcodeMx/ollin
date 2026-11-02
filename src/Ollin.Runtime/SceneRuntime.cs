@@ -52,6 +52,22 @@ public sealed class SceneRuntime
     /// <summary>HUD de la partida (barras, etiquetas, mensajes y fin de partida).</summary>
     public HudModel Hud => _hud;
 
+    /// <summary>Inventario del jugador (etiqueta "player") o del primer inventario activo.</summary>
+    public Ollin.Core.Model.Components.Inventory? PlayerInventory
+    {
+        get
+        {
+            if (_scene is null) return null;
+            var player = _scene.Entities.FirstOrDefault(entity => entity.Active &&
+                entity.Tags.Any(tag => tag.Equals("player", StringComparison.OrdinalIgnoreCase)) &&
+                entity.GetComponent<Ollin.Core.Model.Components.Inventory>() is not null);
+            if (player is not null) return player.GetComponent<Ollin.Core.Model.Components.Inventory>();
+            return _scene.Entities.FirstOrDefault(entity => entity.Active &&
+                entity.GetComponent<Ollin.Core.Model.Components.Inventory>() is not null)
+                ?.GetComponent<Ollin.Core.Model.Components.Inventory>();
+        }
+    }
+
     /// <summary>Datos globales que los scripts pueden guardar entre partidas.</summary>
     public GameState GameState => _gameState;
 

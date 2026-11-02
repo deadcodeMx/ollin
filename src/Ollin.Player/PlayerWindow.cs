@@ -560,6 +560,13 @@ public sealed class PlayerWindow : Window
             return;
         }
 
+        if (e.Key == Key.I)
+        {
+            _viewModel.ToggleInventory();
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key == Key.Escape)
         {
             SetPaused(!_paused);

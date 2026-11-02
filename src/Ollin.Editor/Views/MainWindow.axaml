@@ -411,6 +411,33 @@
                 </ItemsControl>
 
                 <!-- Menú de pausa -->
+        <Border IsVisible="{Binding IsInventoryVisible}" Background="#B305070B" ZIndex="8">
+          <Border Background="{DynamicResource Ollin.Panel}" BorderBrush="{DynamicResource Ollin.Border}"
+                  BorderThickness="1" CornerRadius="10" Padding="20" Width="430"
+                  HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Spacing="12">
+              <TextBlock Text="INVENTARIO" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource Ollin.Accent}" />
+              <ItemsControl ItemsSource="{Binding InventoryItems}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Width="72" Height="72" Margin="3" CornerRadius="6" Background="#182030" BorderBrush="#2B3342" BorderThickness="1">
+                      <Grid>
+                        <TextBlock Text="{Binding Initial}" FontSize="26" FontWeight="Bold" Foreground="#E9A23B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding QuantityText}" FontSize="10" Foreground="#E7EAF0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Text="I para cerrar" FontSize="10" Foreground="#8B94A7" HorizontalAlignment="Right" />
+            </StackPanel>
+          </Border>
+        </Border>
                 <Border IsVisible="{Binding IsPauseMenuVisible}" Background="#B305070B">
                   <Border Background="{DynamicResource Ollin.Panel}" BorderBrush="{DynamicResource Ollin.Border}"
                           BorderThickness="1" CornerRadius="10" Padding="26" Width="330"

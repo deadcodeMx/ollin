@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.103.0] — 2026-11-02
+
+### Añadido
+
+- Inventario runtime con cuadrícula de slots.
+- I abre/cierra el inventario en editor y juego exportado.
+- El jugador se detecta por tag player.
+
 ## [6.102.0] — 2026-11-02
 
 ### Añadido
