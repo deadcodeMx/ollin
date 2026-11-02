@@ -618,7 +618,7 @@
                       <CheckBox Content="Cinemático (no lo empujan)" IsChecked="{Binding Selected.IsKinematicBody, Mode=TwoWay}" FontSize="11.5" />
                     </StackPanel>
 
-                    <StackPanel IsVisible="{Binding Selected.HasScript}" Spacing="5">
+                    <StackPanel IsVisible="False" Spacing="5">
                       <TextBlock Classes="section" Text="SCRIPT" />
                       <ComboBox ItemsSource="{Binding Selected.ScriptComponents}" SelectedItem="{Binding Selected.ActiveScript, Mode=TwoWay}" HorizontalAlignment="Stretch" Margin="0,1">
                         <ComboBox.ItemTemplate>

@@ -10,6 +10,8 @@ namespace Ollin.Editor.ViewModels;
 public sealed partial class MainViewModel
 {
     public event Action? ComponentsChanged;
+
+    public void NotifyComponentsChanged() => ComponentsChanged?.Invoke();
     private List<string> _clipboard = new();
     private string _searchText = string.Empty;
 

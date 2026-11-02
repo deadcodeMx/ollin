@@ -41,6 +41,68 @@ public sealed class ScriptField
 /// </summary>
 public sealed record TilePaletteItem(int Index, IImage Preview);
 
+public sealed class ScriptComponentEditor
+{
+    private readonly EntityNode _owner;
+    private IReadOnlyList<ScriptField>? _fields;
+
+    public ScriptComponentEditor(EntityNode owner, ScriptComponent component, Action remove)
+    {
+        _owner = owner;
+        Component = component;
+        Remove = remove;
+    }
+
+    public ScriptComponent Component { get; }
+
+    public Action Remove { get; }
+
+    public string Title => string.IsNullOrWhiteSpace(Component.ClassName) ? "Script" : Component.ClassName;
+
+    public string ScriptPath
+    {
+        get => Component.ScriptPath ?? string.Empty;
+        set
+        {
+            if (Component.ScriptPath == value) return;
+            Component.ScriptPath = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            _owner.NotifyEdit();
+        }
+    }
+
+    public string ClassName
+    {
+        get => Component.ClassName;
+        set
+        {
+            if (Component.ClassName == value) return;
+            Component.ClassName = value ?? string.Empty;
+            _fields = null;
+            _owner.NotifyEdit();
+        }
+    }
+
+    public IReadOnlyList<ScriptField> Fields
+    {
+        get
+        {
+            if (_fields is not null) return _fields;
+            _fields = _owner.GetScriptFields(ClassName)
+                .Select(definition => new ScriptField(
+                    definition.Name,
+                    definition.TypeName,
+                    Component.Values?.TryGetValue(definition.Name, out var value) == true ? value : definition.DefaultValue,
+                    newValue =>
+                    {
+                        Component.Values ??= new Dictionary<string, string>();
+                        Component.Values[definition.Name] = newValue;
+                        _owner.NotifyEdit();
+                    }))
+                .ToList();
+            return _fields;
+        }
+    }
+}
 public sealed class EntityNode : ObservableObject
 {
     private readonly MainViewModel _owner;
@@ -255,6 +317,10 @@ public sealed class EntityNode : ObservableObject
             return _scriptFields;
         }
     }
+
+    public IReadOnlyList<ScriptFieldDefinition> GetScriptFields(string className) => _owner.GetScriptFields(className);
+
+    public void NotifyEdit() => _owner.MarkDirty();
 
     public bool HasRotator => Entity.GetComponent<RotatorComponent>() is not null;
 

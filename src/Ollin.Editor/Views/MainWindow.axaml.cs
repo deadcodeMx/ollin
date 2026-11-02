@@ -33,6 +33,7 @@ public partial class MainWindow : Window
     private bool _syncingHierarchy;
     private bool _inspectorConsolidated;
     private readonly List<(Control Control, string Property)> _physicsSections = new();
+    private StackPanel? _scriptHost;
     private GameWindow? _gameWindow;
     private CompletionWindow? _completionWindow;
 
@@ -267,6 +268,79 @@ public partial class MainWindow : Window
         }
     }
 
+    private static Grid FieldRow(string label, Control field)
+    {
+        var row = new Grid { ColumnDefinitions = new ColumnDefinitions("96,*"), Margin = new Thickness(0, 1) };
+        row.Children.Add(new TextBlock
+        {
+            Text = label,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+            FontSize = 11,
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")),
+        });
+        Grid.SetColumn(field, 1);
+        row.Children.Add(field);
+        return row;
+    }
+
+    private void RefreshScriptSections()
+    {
+        if (_scriptHost is null) return;
+        _scriptHost.Children.Clear();
+
+        var selected = ViewModel?.Selected;
+        if (selected is null) return;
+
+        foreach (var component in selected.ScriptComponents)
+        {
+            var editor = new ScriptComponentEditor(selected, component, () => { });
+            var content = new StackPanel { Spacing = 4 };
+
+            var path = new TextBox { Watermark = "scripts/MiScript.cs" };
+            path.Bind(TextBox.TextProperty, new Binding(nameof(ScriptComponentEditor.ScriptPath)) { Source = editor, Mode = BindingMode.TwoWay });
+            content.Children.Add(FieldRow("Archivo", path));
+
+            var className = new TextBox { Watermark = "NombreDeLaClase" };
+            className.Bind(TextBox.TextProperty, new Binding(nameof(ScriptComponentEditor.ClassName)) { Source = editor, Mode = BindingMode.TwoWay });
+            content.Children.Add(FieldRow("Clase", className));
+
+            var fields = new StackPanel { Spacing = 3 };
+            foreach (var field in editor.Fields)
+            {
+                var value = new TextBox();
+                value.Bind(TextBox.TextProperty, new Binding(nameof(ScriptField.Value)) { Source = field, Mode = BindingMode.TwoWay });
+                fields.Children.Add(FieldRow(field.Name, value));
+            }
+            content.Children.Add(fields);
+
+            var remove = new Button { Content = "Quitar componente", Classes = { "tool" }, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch };
+            remove.Click += (_, _) =>
+            {
+                if (ViewModel is null) return;
+                selected.Entity.RemoveComponent(component);
+                selected.RefreshAll();
+                ViewModel.NotifyComponentsChanged();
+            };
+            content.Children.Add(remove);
+
+            var header = new TextBlock
+            {
+                Text = $"SCRIPT · {editor.Title}",
+                FontSize = 10,
+                FontWeight = Avalonia.Media.FontWeight.Bold,
+                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+            };
+            _scriptHost.Children.Add(new Expander
+            {
+                Header = header,
+                Content = content,
+                IsExpanded = true,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 2),
+            });
+        }
+    }
+
     private void EnsureInspectorConsolidated()
     {
         if (_inspectorConsolidated || DataContext is not MainViewModel) return;
@@ -283,9 +357,14 @@ public partial class MainWindow : Window
 
         ViewportHost.Viewport.ViewModel = vm;
         vm.ComponentsChanged += RefreshPhysicsSections;
+        vm.ComponentsChanged += RefreshScriptSections;
         vm.PropertyChanged += (_, args) =>
         {
-            if (args.PropertyName == nameof(ViewModels.MainViewModel.Selected)) RefreshPhysicsSections();
+            if (args.PropertyName == nameof(ViewModels.MainViewModel.Selected))
+            {
+                RefreshPhysicsSections();
+                RefreshScriptSections();
+            }
         };
         vm.Logs.CollectionChanged += OnLogsChanged;
         vm.PropertyChanged += (_, args) =>
@@ -514,6 +593,13 @@ public partial class MainWindow : Window
         {
             ViewModel.StatusMessage = $"No se pudo crear la carpeta: {exception.Message}";
         }
+    }
+
+    private void OnAttachScriptToEntity(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected is not { } selected) return;
+        if ((sender as MenuItem)?.DataContext is not ViewModels.FileNode node || !node.FullPath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)) return;
+        ViewModel.AttachScript(selected.Entity, node.FullPath);
     }
 
     private async void OnCreateScriptHere(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
