@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.52.0] — 2026-11-02
+
+### Cambiado
+
+- Migración de grupos con deshacer.
+- Variables por nodo después de la acción.
+- Cancelar “ejecutar hasta”.
+- Persistencia de “mover hijos ocultos”.
+- 205 pruebas automatizadas.
+
 ## [6.51.0] — 2026-10-31
 
 ### Cambiado

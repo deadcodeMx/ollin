@@ -76,6 +76,7 @@ public sealed class NodeGraphWindow : Window
         _historyKey = $"{_viewModel.ScenePath ?? "sin-guardar"}|{entity.Id}";
         _historyStore.Load(_historyKey, entity.Id, _history, _graph.Breakpoints);
         _stepMode = _graph.StepModeEnabled;
+        _moveHiddenMembers = _graph.MoveHiddenMembers;
         _graph.StepModeEnabled = _stepMode;
         GraphDebugger.StepMode = _stepMode;
         MigrateLegacyGroups();
@@ -248,6 +249,7 @@ public sealed class NodeGraphWindow : Window
         AddMore("Separar H", () => Separate(true));
         AddMore("Separar V", () => Separate(false));
         AddMore("Ejecutar hasta seleccionado", RunToSelected);
+        AddMore("Cancelar ejecutar hasta", CancelRunTo);
         AddMore("Mover hijos ocultos", ToggleMoveHidden);
         AddMore("Modo paso", ToggleStepMode);
         var snapItem = new MenuItem { Header = _snapNodes ? "Rejilla: activada" : "Rejilla: desactivada" };
@@ -437,9 +439,16 @@ public sealed class NodeGraphWindow : Window
         }
     }
 
+    private void CancelRunTo()
+    {
+        GraphDebugger.RunToNodeId = null;
+        _status.Text = "Ejecutar hasta cancelado.";
+    }
+
     private void ToggleMoveHidden()
     {
         _moveHiddenMembers = !_moveHiddenMembers;
+        _graph.MoveHiddenMembers = _moveHiddenMembers;
         _status.Text = _moveHiddenMembers
             ? "Los grupos plegados moverán también a sus hijos ocultos."
             : "Los grupos plegados moverán solo el grupo.";
@@ -917,7 +926,7 @@ public sealed class NodeGraphWindow : Window
                         TextWrapping = TextWrapping.Wrap,
                     });
 
-                    foreach (var (key, value) in frame.Variables.Take(4))
+                    foreach (var (key, value) in (frame.VariablesAfter ?? frame.VariablesBefore).Take(4))
                     {
                         _inspector.Children.Add(new TextBlock
                         {

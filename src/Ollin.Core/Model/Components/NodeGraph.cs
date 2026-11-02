@@ -31,7 +31,20 @@ public enum GraphConditionKind
     Expression,
 }
 
-public sealed record GraphDebugFrame(Guid NodeId, Dictionary<string, string> Variables);
+public sealed class GraphDebugFrame
+{
+    public GraphDebugFrame(Guid nodeId, Dictionary<string, string> variablesBefore)
+    {
+        NodeId = nodeId;
+        VariablesBefore = variablesBefore;
+    }
+
+    public Guid NodeId { get; }
+
+    public Dictionary<string, string> VariablesBefore { get; }
+
+    public Dictionary<string, string>? VariablesAfter { get; internal set; }
+}
 
 /// <summary>Nodo de un grafo visual de ejecución.</summary>
 public sealed class GraphNode
@@ -147,8 +160,13 @@ public sealed class NodeGraph : Component, ITickable
     [JsonIgnore]
     public bool StepModeEnabled { get; set; }
 
+    public bool MoveHiddenMembers { get; set; }
+
     [JsonIgnore]
     public List<GraphDebugFrame> DebugFrames { get; } = new();
+
+    [JsonIgnore]
+    private GraphDebugFrame? _currentDebugFrame;
 
     [JsonIgnore]
     public List<Guid> ExecutionHistory { get; } = new();
@@ -247,6 +265,7 @@ public sealed class NodeGraph : Component, ITickable
                 return;
             }
 
+            CompleteDebugFrame();
             Execute(scene, player, Link(node, "next"));
         }
     }
@@ -294,6 +313,8 @@ public sealed class NodeGraph : Component, ITickable
                 next = Link(node, "next");
             }
 
+            CompleteDebugFrame();
+
             if (singleStep)
             {
                 DebugCursor = next;
@@ -318,6 +339,16 @@ public sealed class NodeGraph : Component, ITickable
         Execute(scene, player, cursor, singleStep: true, ignoreBreakpoint: true);
         return true;
     }
+    private void CompleteDebugFrame()
+    {
+        if (_currentDebugFrame is null) return;
+
+        _currentDebugFrame.VariablesAfter = GameStateHost.Current is { } state
+            ? new Dictionary<string, string>(state.Values, StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        _currentDebugFrame = null;
+    }
+
     /// <summary>Destino de un puerto, respetando conexiones deshabilitadas.</summary>
     public Guid? Link(GraphNode node, string port)
     {
@@ -358,7 +389,8 @@ public sealed class NodeGraph : Component, ITickable
         var variables = GameStateHost.Current is { } state
             ? new Dictionary<string, string>(state.Values, StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        DebugFrames.Add(new GraphDebugFrame(nodeId, variables));
+        _currentDebugFrame = new GraphDebugFrame(nodeId, variables);
+        DebugFrames.Add(_currentDebugFrame);
 
         while (ExecutionHistory.Count > 24)
         {

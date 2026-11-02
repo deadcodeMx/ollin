@@ -946,3 +946,11 @@ error de sintaxis.
 - **Conexiones desactivadas cortas** muestran `OFF` en la línea.
 - **Distribuir H/V** iguala huecos; **Separar H/V** conserva los existentes.
 - El historial mantiene el tope por archivos/MB y elimina lo más antiguo.
+
+## 50. Cierre de limitaciones de 0.49 (6.52)
+
+- La migración de grupos se registra en el historial de deshacer.
+- Las variables por nodo muestran el estado **después** de la acción.
+- **Cancelar ejecutar hasta** en **Más ▾**.
+- **Mover hijos ocultos** se guarda en el grafo.
+- El paso atrás sigue pendiente.
