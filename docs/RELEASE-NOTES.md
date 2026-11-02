@@ -1,28 +1,13 @@
-## Ollin Beta 6.106.0 — Etapa A completa
+## Ollin Beta 6.107.0 — quitar componentes
 
-### Añadido
+### Corregido
 
-- Collision **layers y masks**.
-- **EdgeCollider2D** para suelos y rampas.
-- **Hitbox** y **Hurtbox** con daño por equipo y knockback.
-- **Checkpoint2D** que guarda la posición del jugador.
-- **Weapon2D** y **Projectile2D**.
-- El proyectil 2D choca con colliders sólidos.
-- Menú **Combate** en Añadir componente.
-
-### Etapa A
-
-- CharacterBody2D ✅
-- Circle/capsule/polygon/edge ✅
-- Layers/masks ✅
-- Area2D/trigger ✅
-- CameraFollow + deadzone + bounds ✅
-- Health + Hitbox/Hurtbox ✅
-- Projectile + Weapon 2D ✅
-- Checkpoint2D + Respawn ✅
+- **Todas** las secciones del inspector tienen botón **✕ Quitar componente**.
+- Hitbox, Hurtbox, Checkpoint 2D y Arma 2D ahora se pueden quitar.
+- El botón de la cabecera y el del contenido llaman al mismo RemoveComponent.
 
 ### Verificación
 
 - **205/205 pruebas**.
-- Instalador 6.106.0 instalado y abierto sin crash.
+- Instalador 6.107.0 instalado y abierto sin crash.
 - Demo técnica no publicada.

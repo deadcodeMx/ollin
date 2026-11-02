@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.107.0] — 2026-11-02
+
+### Corregido
+
+- Todas las secciones del inspector incluyen "✕ Quitar componente".
+- Hitbox, Hurtbox, Checkpoint 2D y Arma 2D se pueden quitar.
+
 ## [6.106.0] — 2026-11-02
 
 ### Corregido

@@ -291,7 +291,7 @@ public partial class MainWindow : Window
             var index = root.Children.IndexOf(child);
             root.Children.RemoveAt(index);
             child.Children.Remove(title);
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", _ => null };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
             var expander = new Expander
             {
@@ -900,7 +900,18 @@ public partial class MainWindow : Window
                 expander.Bind(Visual.IsVisibleProperty, new Binding($"DataContext.{visibilityProperty}") { Source = this });
             }
 
-            if (content is not null) expander.Content = content;
+            if (kind is not null)
+            {
+                var wrapper = new StackPanel { Spacing = 4 };
+                if (content is not null)
+                {
+                    expander.Content = null;
+                    wrapper.Children.Add(content);
+                }
+                wrapper.Children.Add(BuildRemoveButton(kind));
+                expander.Content = wrapper;
+            }
+            else if (content is not null) expander.Content = content;
             if (kind is not null) expander.ContextMenu = BuildComponentMenu(kind);
             panel.Children.Add(expander);
         }
