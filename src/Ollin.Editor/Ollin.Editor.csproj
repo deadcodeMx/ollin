@@ -1,12 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OllinTargetLinux>false</OllinTargetLinux>
+    <OllinTargetLinux Condition="'$(RuntimeIdentifier)' == 'linux-x64' or $([MSBuild]::IsOSPlatform('Linux'))">true</OllinTargetLinux>
+    <OutputType Condition="!$(OllinTargetLinux)">WinExe</OutputType>
+    <OutputType Condition="$(OllinTargetLinux)">Exe</OutputType>
     <RootNamespace>Ollin.Editor</RootNamespace>
     <AssemblyName>Ollin.Editor</AssemblyName>
     <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>Assets\ollin.ico</ApplicationIcon>
+    <ApplicationManifest Condition="!$(OllinTargetLinux)">app.manifest</ApplicationManifest>
+    <ApplicationIcon Condition="!$(OllinTargetLinux)">Assets\ollin.ico</ApplicationIcon>
+    <DefineConstants Condition="!$(OllinTargetLinux)">$(DefineConstants);WINDOWS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

@@ -17,6 +17,20 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.116.0] — 2026-11-03
+
+### Añadido
+
+- Soporte Linux x64: editor y reproductor.
+- Publicación self-contained y paquete `.tar.gz`.
+- Instalador Linux (`install.sh` y lanzador `.desktop`).
+- Gamepad Linux por `/dev/input/js*`.
+- Exportación de juegos multiplataforma.
+
+### Limitaciones
+
+- Audio silencioso en Linux en esta primera versión.
+
 ## [6.115.0] — 2026-11-02
 
 ### Mejorado

@@ -1,13 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OllinTargetLinux>false</OllinTargetLinux>
+    <OllinTargetLinux Condition="'$(RuntimeIdentifier)' == 'linux-x64' or $([MSBuild]::IsOSPlatform('Linux'))">true</OllinTargetLinux>
+    <OutputType Condition="!$(OllinTargetLinux)">WinExe</OutputType>
+    <OutputType Condition="$(OllinTargetLinux)">Exe</OutputType>
     <RootNamespace>Ollin.Player</RootNamespace>
     <AssemblyName>Ollin.Player</AssemblyName>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
-    <ApplicationIcon>..\Ollin.Editor\Assets\ollin.ico</ApplicationIcon>
+    <ApplicationIcon Condition="!$(OllinTargetLinux)">..\Ollin.Editor\Assets\ollin.ico</ApplicationIcon>
+    <DefineConstants Condition="!$(OllinTargetLinux)">$(DefineConstants);WINDOWS</DefineConstants>
   </PropertyGroup>
 
   <Target Name="BuildEditorBeforePlayer" BeforeTargets="ResolveAssemblyReferences">
@@ -22,7 +26,7 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.22" />
     <PackageReference Include="OneWare.AvaloniaEdit" Version="11.3.20" />
-    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NAudio" Version="2.2.1" Condition="!$(OllinTargetLinux)" />
   </ItemGroup>
 
   <ItemGroup>

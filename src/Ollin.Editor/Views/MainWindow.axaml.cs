@@ -51,12 +51,12 @@ public partial class MainWindow : Window
     {
         try
         {
-            var backend = new Ollin.Editor.Audio.NAudioBackend();
+            Ollin.Core.Audio.IAudioBackend backend = Ollin.Editor.Audio.AudioBackendFactory.Create();
             Ollin.Core.Audio.Audio.Initialize(backend);
             Closed += (_, _) =>
             {
                 Ollin.Core.Audio.Audio.Shutdown();
-                backend.Dispose();
+                if (backend is IDisposable disposable) disposable.Dispose();
             };
         }
         catch (Exception exception)

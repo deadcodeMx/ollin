@@ -70,7 +70,8 @@ public static class GameExporter
 
         File.WriteAllBytes(Path.Combine(target, "game.pak"), package);
 
-        CopyPlayer(playerTemplate, target, SafeName(project.Name) + ".exe");
+        var executable = SafeName(project.Name) + (OperatingSystem.IsWindows() ? ".exe" : string.Empty);
+        CopyPlayer(playerTemplate, target, executable);
 
         File.WriteAllText(Path.Combine(target, "LEEME.txt"), ReadmeText(project.Name, manifest));
         return target;
@@ -103,11 +104,15 @@ public static class GameExporter
         foreach (var file in Directory.EnumerateFiles(template))
         {
             var name = Path.GetFileName(file);
-            var destination = name.Equals("Ollin.Player.exe", StringComparison.OrdinalIgnoreCase)
-                ? executableName
-                : name;
+            var isPlayerExecutable = name.Equals("Ollin.Player.exe", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "Ollin.Player", StringComparison.OrdinalIgnoreCase);
+            var destination = isPlayerExecutable ? executableName : name;
 
-            File.Copy(file, Path.Combine(target, destination), overwrite: true);
+            var output = Path.Combine(target, destination);
+            File.Copy(file, output, overwrite: true);
+            if (!OperatingSystem.IsWindows() && isPlayerExecutable)
+                File.SetUnixFileMode(output, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute |
+                    UnixFileMode.GroupRead | UnixFileMode.GroupExecute | UnixFileMode.OtherRead | UnixFileMode.OtherExecute);
         }
 
         foreach (var directory in Directory.EnumerateDirectories(template))
@@ -146,7 +151,7 @@ public static class GameExporter
         {name}
         Hecho con Ollin {manifest.OllinVersion}
 
-        Ejecuta {name}.exe.
+        Ejecuta {name}{(OperatingSystem.IsWindows() ? ".exe" : string.Empty)}.
 
         Controles:
           F11  pantalla completa

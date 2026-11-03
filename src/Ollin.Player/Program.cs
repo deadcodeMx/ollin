@@ -36,7 +36,7 @@ public sealed class PlayerApp : Application
             }
         };
 
-        Audio.Initialize(new NAudioBackend());
+        Audio.Initialize(Ollin.Editor.Audio.AudioBackendFactory.Create());
         Audio.VerboseLogging = true;
         Log.Info($"Backend de audio: {(Audio.Enabled ? "activo" : "inactivo")}", "Player");
     }
