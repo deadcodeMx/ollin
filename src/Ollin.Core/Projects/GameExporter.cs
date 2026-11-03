@@ -164,8 +164,7 @@ public static class GameExporter
 
     private static string SafeName(string name)
     {
-        var invalid = Path.GetInvalidFileNameChars();
-        var clean = new string(name.Select(c => invalid.Contains(c) ? '-' : c).ToArray()).Trim();
+        var clean = new string(name.Select(c => ProjectService.EsCaracterInvalido(c) ? '-' : c).ToArray()).Trim();
         return string.IsNullOrWhiteSpace(clean) ? "Juego" : clean;
     }
 }

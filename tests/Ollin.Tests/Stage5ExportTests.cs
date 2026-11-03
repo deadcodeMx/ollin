@@ -23,7 +23,9 @@ public class GameExporterTests
             var scripts = new byte[] { 1, 2, 3, 4 };
             var target = GameExporter.Export(project, output, template, scripts);
 
-            Assert.True(File.Exists(Path.Combine(target, "Juego Test.exe")));
+            // En Windows el reproductor se publica como .exe; en Linux/macOS va sin extensión.
+            var ejecutable = "Juego Test" + (OperatingSystem.IsWindows() ? ".exe" : string.Empty);
+            Assert.True(File.Exists(Path.Combine(target, ejecutable)));
             Assert.True(File.Exists(Path.Combine(target, "game.pak")));
             Assert.True(File.Exists(Path.Combine(target, "LEEME.txt")));
             Assert.False(File.Exists(Path.Combine(target, "project.ollin")));

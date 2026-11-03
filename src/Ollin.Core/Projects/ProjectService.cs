@@ -229,10 +229,23 @@ public static class ProjectService
         return true;
     }
 
+    /// <summary>
+    /// Caracteres no válidos en un nombre de archivo o carpeta. Une los del sistema
+    /// actual con los de Windows, para que un proyecto creado en Linux siga abriendo
+    /// sin problemas si la carpeta se copia a Windows.
+    /// </summary>
+    private static readonly char[] InvalidNameChars = Path.GetInvalidFileNameChars()
+        .Concat(new[] { '<', '>', ':', '"', '/', '\\', '|', '?', '*' })
+        .Distinct()
+        .ToArray();
+
+    /// <summary>Indica si el carácter no se puede usar en un nombre de proyecto.</summary>
+    internal static bool EsCaracterInvalido(char character) =>
+        char.IsControl(character) || Array.IndexOf(InvalidNameChars, character) >= 0;
+
     private static string Sanitize(string name)
     {
-        var invalid = Path.GetInvalidFileNameChars();
-        var cleaned = new string(name.Trim().Select(c => invalid.Contains(c) ? '_' : c).ToArray());
+        var cleaned = new string(name.Trim().Select(c => EsCaracterInvalido(c) ? '_' : c).ToArray());
         cleaned = cleaned.Replace(' ', '_');
 
         if (string.IsNullOrWhiteSpace(cleaned))
