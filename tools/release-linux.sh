@@ -12,15 +12,24 @@ PACKAGE="Ollin-${VERSION}-linux-x64"
 mkdir -p "$APP" "$PLAYER"
 
 echo "Publicando Ollin $VERSION para $RID..."
+# IncludeAllContentForSelfExtract deja los ensamblados como archivos reales en disco:
+# Roslyn (scripts del usuario) resuelve sus referencias con TRUSTED_PLATFORM_ASSEMBLIES
+# y en un single-file puro esas rutas no existen, así que los scripts no compilarían.
 dotnet publish "$ROOT/src/Ollin.Editor/Ollin.Editor.csproj" \
   -c Release -r "$RID" --self-contained true \
-  -p:PublishSingleFile=true -p:DebugType=none -o "$APP"
+  -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -p:DebugType=none -o "$APP"
 
 dotnet publish "$ROOT/src/Ollin.Player/Ollin.Player.csproj" \
   -c Release -r "$RID" --self-contained true \
-  -p:PublishSingleFile=true -p:DebugType=none -o "$PLAYER"
+  -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -p:DebugType=none -o "$PLAYER"
 
 chmod +x "$APP/Ollin.Editor" "$PLAYER/Ollin.Player"
+
+# Las plantillas de proyecto buscan las texturas junto al ejecutable
+# (AppContext.BaseDirectory/assets); sin esto, los proyectos nuevos salen sin sprites.
+# La copia con "/." es idempotente: repetir el empaquetado no anida assets/assets.
+mkdir -p "$APP/assets"
+cp -a "$ROOT/assets/." "$APP/assets/"
 
 WORK="$OUT/package/$PACKAGE"
 rm -rf "$OUT/package"
