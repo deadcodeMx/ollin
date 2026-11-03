@@ -18,13 +18,14 @@ sudo apt install libgl1-mesa-dri libgles2 libegl1 libfontconfig1
 ```bash
 tar -xzf Ollin-*-linux-x64.tar.gz
 cd Ollin-*-linux-x64
+chmod +x app/Ollin.Editor player/Ollin.Player
 ./app/Ollin.Editor
 ```
 
 O instalar en el perfil:
 
 ```bash
-./install.sh
+bash install.sh
 ollin
 ```
 
