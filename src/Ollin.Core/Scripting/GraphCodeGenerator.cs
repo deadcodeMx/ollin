@@ -84,6 +84,7 @@ public static class GraphCodeGenerator
                 GraphConditionKind.Always => "true",
                 GraphConditionKind.HasItem => $"Find(\"{Escape(node.TargetName)}\")?.GetComponent<Inventory>()?.Has(\"{Escape(node.ItemId)}\") == true",
                 GraphConditionKind.HealthBelow => $"Find(\"{Escape(node.TargetName)}\")?.GetComponent<Health>()?.Current <= {node.Threshold:0.###}f",
+                GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(node.Expression)}\", new ExpressionContext {{ Player = Find(\"player\") }})",
                 _ => "true",
             };
             sb.AppendLine($"        // Condición: {node.Condition} {(string.IsNullOrWhiteSpace(node.Expression) ? "" : node.Expression)}");

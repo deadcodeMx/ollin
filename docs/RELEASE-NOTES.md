@@ -1,14 +1,13 @@
-## Ollin Beta 6.192.0 — condiciones del grafo
+## Ollin Beta 6.193.0 — expresión del grafo
 
 ### Añadido
 
-- Condiciones del grafo generan código C# real.
-- Always, HasItem y HealthBelow.
-- Expression sigue como TODO editable.
+- La condición `Expression` genera una llamada a `ExpressionEvaluator.EvaluateBool`.
+- El código generado sigue siendo editable.
 
-### Linux`n`n- Paquete `Ollin-6.192.0-linux-x64.tar.gz` actualizado.`n`n### Verificación
+### Verificación
 
 - **237/237 pruebas**.
-- Instalador 6.192.0 instalado.
+- Instalador 6.193.0 instalado.
 
-## [6.191.0] — 2026-11-04
+## [6.192.0] — 2026-11-04

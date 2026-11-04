@@ -22,5 +22,13 @@ public sealed class GraphCodeGeneratorTests
         if (!code.Contains("class MiGrafo : OllinScript")) throw new Exception("Falta la clase.");
         if (!code.Contains("OnStart()")) throw new Exception("Falta OnStart.");
         if (!code.Contains("Hola desde el grafo")) throw new Exception("Falta el mensaje.");
+
+        var condition = graph.AddNode(GraphNodeKind.Condition, 100, 0);
+        condition.Condition = GraphConditionKind.Expression;
+        condition.Expression = "1 < 2";
+        start.Next = condition.Id;
+        var withCondition = GraphCodeGenerator.Generate(graph);
+        if (!withCondition.Contains("EvaluateBool")) throw new Exception("Falta la condición.");
     }
 }
+
