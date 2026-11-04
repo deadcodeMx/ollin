@@ -1,16 +1,15 @@
-## Ollin Beta 6.124.0 — capas y autotile por variantes
+## Ollin Beta 6.125.0 — navegación y oclusión por tile
 
 ### Añadido
 
-- Selector de capa de tilemap.
-- Añadir y quitar capas.
-- Pintado en la capa activa.
-- Terreno por tile.
-- Variantes de autotile de 16 direcciones por tile.
-- Editor de variantes en TileSet.
+- Coste de navegación por tile (-1 bloquea).
+- Oclusión de luces por tile.
+- Editor de coste y oclusión en TileSet.
+- IA respeta la navegación por tile.
+- Prueba de navegación/oclusión.
 
 ### Verificación
 
-- **215/215 pruebas**.
-- Instalador 6.124.0 instalado y abierto.
+- **216/216 pruebas**.
+- Instalador 6.125.0 instalado y abierto.
 - Demo técnica no publicada.

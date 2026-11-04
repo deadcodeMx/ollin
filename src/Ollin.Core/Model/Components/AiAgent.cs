@@ -169,7 +169,7 @@ public sealed class AiAgent : Component, ITickable
         var fromCell = new GridPoint(fromX, fromY);
         var toCell = new GridPoint(toX, toY);
 
-        bool Walkable(int x, int y) => !map.IsSolidAt(x, y);
+        bool Walkable(int x, int y) => map.IsWalkableAt(x, y);
 
         var path = GridPathfinder.FindPath(map.Width, map.Height, fromCell, toCell, Walkable);
 

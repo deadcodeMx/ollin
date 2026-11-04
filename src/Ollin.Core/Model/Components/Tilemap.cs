@@ -26,6 +26,12 @@ public sealed class TileDefinition
 
     public string Terrain { get; set; } = string.Empty;
 
+    /// <summary>Coste de navegación; -1 bloquea el paso.</summary>
+    public int NavigationCost { get; set; }
+
+    /// <summary>Proyecta sombra en las luces 2D.</summary>
+    public bool Occludes { get; set; }
+
     /// <summary>16 variantes para máscara de vecinos (N, E, S, O).</summary>
     public List<int> AutotileVariants { get; set; } = new();
 
@@ -81,6 +87,7 @@ public sealed class TileSet
         {
             Id = tile.Id, Name = tile.Name, Region = tile.Region, CollisionSize = tile.CollisionSize,
             CollisionOffset = tile.CollisionOffset, OneWay = tile.OneWay, Tag = tile.Tag, Terrain = tile.Terrain,
+            NavigationCost = tile.NavigationCost, Occludes = tile.Occludes,
             AutotileVariants = new List<int>(tile.AutotileVariants), SlopeNormal = tile.SlopeNormal,
         }).ToList(),
     };
@@ -114,6 +121,8 @@ public class TileMapLayer : Component
 
     public bool Autotile { get; set; }
 
+    public bool YSort { get; set; }
+
     public int AutotileBase { get; set; }
 
     public int[] Tiles { get; set; } = CreateEmpty(16, 8);
@@ -143,6 +152,7 @@ public class TileMapLayer : Component
         copy.Collides = Collides;
         copy.TileSet = TileSet?.Clone();
         copy.Autotile = Autotile;
+        copy.YSort = YSort;
         copy.AutotileBase = AutotileBase;
         copy.Tiles = (int[])Tiles.Clone();
         copy.Owner = newOwner;
@@ -201,6 +211,15 @@ public class TileMapLayer : Component
     }
 
     public TileDefinition? DefinitionAt(int x, int y) => TileSet?.Get(TileAt(x, y));
+
+    public bool IsWalkableAt(int x, int y)
+    {
+        var tile = TileAt(x, y);
+        if (tile < 0) return false;
+        var definition = TileSet?.Get(tile);
+        if (definition is { NavigationCost: < 0 }) return false;
+        return !IsSolidAt(x, y);
+    }
 
     public bool IsSolidAt(int x, int y)
     {

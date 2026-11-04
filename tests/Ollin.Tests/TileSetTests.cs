@@ -66,4 +66,20 @@ public sealed class TileSetTests
             if (File.Exists(path)) File.Delete(path);
         }
     }
+
+    [Fact]
+    public void NavegacionYObstruccionPorTile()
+    {
+        var layer = new TileMapLayer
+        {
+            Width = 1, Height = 1, Tiles = new[] { 0 },
+            TileSet = new TileSet
+            {
+                Tiles = new() { new TileDefinition { Id = 0, NavigationCost = -1, Occludes = true, CollisionSize = Vector2.Zero } },
+            },
+        };
+
+        Assert.False(layer.IsWalkableAt(0, 0));
+        Assert.True(layer.DefinitionAt(0, 0)!.Occludes);
+    }
 }

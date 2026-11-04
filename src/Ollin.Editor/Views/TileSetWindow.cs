@@ -29,6 +29,8 @@ public sealed class TileSetWindow : Window
     private readonly NumericUpDown _offsetY;
     private readonly TextBox _terrain;
     private readonly TextBox _variants;
+    private readonly NumericUpDown _navigationCost;
+    private readonly CheckBox _occludes;
     private readonly CheckBox _oneWay;
     private readonly NumericUpDown _slopeX;
     private readonly NumericUpDown _slopeY;
@@ -60,6 +62,8 @@ public sealed class TileSetWindow : Window
         _offsetY = new NumericUpDown { Minimum = -64, Maximum = 64, Increment = 0.05m, FormatString = "0.##" };
         _terrain = new TextBox { Watermark = "pasto, piedra..." };
         _variants = new TextBox { Watermark = "0,1,2,... 16 ids" };
+        _navigationCost = new NumericUpDown { Minimum = -1, Maximum = 999, Increment = 1, FormatString = "0" };
+        _occludes = new CheckBox { Content = "Proyecta sombra" };
         _oneWay = new CheckBox { Content = "One-way" };
         _slopeX = new NumericUpDown { Minimum = -1, Maximum = 1, Increment = 0.05m, FormatString = "0.##" };
         _slopeY = new NumericUpDown { Minimum = -1, Maximum = 1, Increment = 0.05m, FormatString = "0.##" };
@@ -95,6 +99,8 @@ public sealed class TileSetWindow : Window
                 Row("Offset X", _offsetX), Row("Offset Y", _offsetY),
                 Row("Terreno", _terrain),
                 Row("Variantes", _variants),
+                Row("Coste nav.", _navigationCost),
+                _occludes,
                 _oneWay,
                 Row("Pendiente X", _slopeX), Row("Pendiente Y", _slopeY),
             },
@@ -173,6 +179,8 @@ public sealed class TileSetWindow : Window
         _oneWay.IsChecked = tile.OneWay;
         _terrain.Text = tile.Terrain;
         _variants.Text = string.Join(", ", tile.AutotileVariants);
+        _navigationCost.Value = tile.NavigationCost;
+        _occludes.IsChecked = tile.Occludes;
         _slopeX.Value = (decimal)tile.SlopeNormal.X;
         _slopeY.Value = (decimal)tile.SlopeNormal.Y;
     }
@@ -207,6 +215,8 @@ public sealed class TileSetWindow : Window
         tile.OneWay = _oneWay.IsChecked == true;
         tile.Terrain = _terrain.Text ?? string.Empty;
         tile.AutotileVariants = (_variants.Text ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries).Select(value => int.TryParse(value.Trim(), out var id) ? id : -1).Where(id => id >= 0).ToList();
+        tile.NavigationCost = (int)(_navigationCost.Value ?? 0);
+        tile.Occludes = _occludes.IsChecked == true;
         tile.SlopeNormal = new Vector2((float)(_slopeX.Value ?? 0), (float)(_slopeY.Value ?? 0));
         _draft.Name = _name.Text ?? "TileSet";
         _draft.TexturePath = string.IsNullOrWhiteSpace(_texture.Text) ? null : _texture.Text;

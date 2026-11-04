@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.125.0] — 2026-11-04
+
+### Añadido
+
+- Navegación por coste de tile.
+- Oclusión de luces por tile.
+- Editor de coste y oclusión en TileSet.
+- IA respeta navegación por tile.
+- Prueba de navegación y oclusión.
+
 ## [6.124.0] — 2026-11-04
 
 ### Añadido
