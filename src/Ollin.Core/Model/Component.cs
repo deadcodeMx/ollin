@@ -70,20 +70,14 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.Stats), "stats")]
 [JsonDerivedType(typeof(Components.DayNightCycle), "daynight")]
 [JsonDerivedType(typeof(Components.AiAgent), "ai")]
-[JsonDerivedType(typeof(Components.Wall3D), "wall3d")]
 [JsonDerivedType(typeof(Components.Health), "health")]
 [JsonDerivedType(typeof(Components.Pickup), "pickup")]
 [JsonDerivedType(typeof(Components.WinLoseRules), "rules")]
 [JsonDerivedType(typeof(Components.IntroMessage), "intro")]
 [JsonDerivedType(typeof(Components.Respawn), "respawn")]
-[JsonDerivedType(typeof(Components.Button3D), "button3d")]
-[JsonDerivedType(typeof(Components.Trigger3D), "trigger3d")]
-[JsonDerivedType(typeof(Components.Spawner3D), "spawner3d")]
-[JsonDerivedType(typeof(Components.Checkpoint3D), "checkpoint3d")]
 [JsonDerivedType(typeof(Components.VisualScript), "visual")]
 [JsonDerivedType(typeof(Components.NodeGraph), "nodegraph")]
 [JsonDerivedType(typeof(Components.VariableHud), "variablehud")]
-[JsonDerivedType(typeof(Components.CylinderCollider3D), "cylinder3d")]
 public abstract class Component
 {
     /// <summary>Entidad propietaria (no se serializa).</summary>

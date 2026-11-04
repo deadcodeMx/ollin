@@ -1237,34 +1237,6 @@ public sealed partial class MainViewModel : ObservableObject
             : $"{nodes.Count} entidades eliminadas", "Editor");
         RequestRedraw();
     }
-    /// <summary>Crea una pared o un suelo 3D en la posición indicada por el pincel.</summary>
-    public void AddBrush3D(Vector2 position, bool floor)
-    {
-        if (IsPlaying)
-        {
-            return;
-        }
-
-        var entity = Scene.Create(floor ? "Suelo 3D" : "Pared 3D", position);
-        entity.AddComponent(new Wall3D
-        {
-            Size = floor
-                ? new Vector3(MathF.Max(0.5f, BrushFloorSize), 0.2f, MathF.Max(0.5f, BrushFloorSize))
-                : new Vector3(MathF.Max(0.2f, BrushWidth), MathF.Max(0.2f, BrushHeight), MathF.Max(0.1f, BrushDepth)),
-            Color = floor ? new Vector3(0.3f, 0.27f, 0.22f) : new Vector3(0.58f, 0.55f, 0.5f),
-            Collides = !floor,
-            BaseY = 0f,
-            TexturePath = floor ? BrushFloorTexture : BrushTexture,
-            TextureScale = 2f,
-        });
-
-        RebuildTree();
-        Select(entity);
-        IsDirty = true;
-        CommitEdit(floor ? "Pincel: suelo 3D" : "Pincel: pared 3D");
-        OnPropertyChanged(nameof(EntityCountText));
-        RequestRedraw();
-    }
 
     /// <summary>Duplica la selección varias veces en fila (una sola entrada de deshacer).</summary>
     public void DuplicateSelectedSeries()
@@ -1281,9 +1253,7 @@ public sealed partial class MainViewModel : ObservableObject
         }
 
         var original = Selected.Entity;
-        var step = original.GetComponent<Wall3D>() is { } wall
-            ? MathF.Max(0.5f, wall.Size.X + MathF.Max(0f, spacing))
-            : MathF.Max(0.5f, 1.5f + spacing);
+        var step = MathF.Max(0.5f, 1.5f + spacing);
         Entity? last = null;
 
         for (var i = 1; i <= count; i++)

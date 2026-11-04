@@ -498,9 +498,6 @@ public sealed partial class MainViewModel
 
                 break;
 
-            case "wall3d":
-                if (entity.HasComponent<Wall3D>()) { added = false; break; }
-                entity.AddComponent(new Wall3D());
                 break;
 
                 break;

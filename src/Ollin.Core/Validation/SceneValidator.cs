@@ -49,7 +49,6 @@ public static class SceneValidator
             {
                 CheckAsset(issues, entity, projectRoot, "Textura", (component as SpriteRenderer)?.TexturePath);
                 CheckAsset(issues, entity, projectRoot, "Animación", (component as SpriteAnimator)?.TexturePath);
-                CheckAsset(issues, entity, projectRoot, "Textura de pared", (component as Wall3D)?.TexturePath);
                 CheckAsset(issues, entity, projectRoot, "Audio", (component as AudioSource)?.Clip);
                 CheckAsset(issues, entity, projectRoot, "Script", (component as ScriptComponent)?.ScriptPath);
             }
