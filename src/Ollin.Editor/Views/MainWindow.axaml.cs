@@ -1920,6 +1920,18 @@ public partial class MainWindow : Window
             ViewModel.RequestRedraw();
         }
     }
+    private async void OnEditUiTheme(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected?.Entity.GetComponent<Ollin.Core.Model.Components.UiCanvas>() is not { } canvas) return;
+        var window = new UiThemeWindow(canvas);
+        if (!await window.ShowDialog<bool>(this) || window.Result is null) return;
+        var entity = ViewModel.Selected.Entity;
+        entity.RemoveComponent(canvas);
+        entity.AddComponent(window.Result);
+        ViewModel.Selected.RefreshAll();
+        ViewModel.CommitEdit("Editar tema de UI");
+        ViewModel.RequestRedraw();
+    }
     private async void OnEditSkin(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel?.Selected?.Entity.GetComponent<Ollin.Core.Model.Components.SkinnedMesh2D>() is not { } mesh) return;

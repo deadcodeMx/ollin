@@ -837,6 +837,7 @@
                       <TextBlock Classes="section" Text="UI CANVAS" />
                       <TextBlock Text="{Binding Selected.UiCanvasSummary}" Classes="hint" />
                       <Button Content="Editar UI…" Click="OnEditUiCanvas" HorizontalAlignment="Stretch" />
+                      <Button Content="Editar tema…" Click="OnEditUiTheme" HorizontalAlignment="Stretch" />
                     </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasSpringJoint}" Spacing="5">
                       <TextBlock Classes="section" Text="MUELLE (JOINT)" />
