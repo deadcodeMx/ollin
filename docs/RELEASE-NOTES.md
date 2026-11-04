@@ -1,13 +1,15 @@
-## Ollin Beta 6.203.0 — viewport 2D limpio
+## Ollin Beta 6.204.0 — 3D fuera de main
 
 ### Eliminado
 
-- Código 3D muerto de ViewportControl: brush, gizmos, selección, raycast y helpers.
-- ~600 líneas menos.
+- Todos los componentes 3D.
+- Renderer, entrada y gizmos 3D.
+- Pruebas 3D dependientes.
 
-### Verificación
+### Cambiado
 
-- **220/220 pruebas**.
-- Instalador 6.203.0 instalado.
+- Inspector 2D como panel principal.
+- Modo 2D de punta a punta.
+- 169 pruebas verdes.
 
-## [6.202.0] — 2026-11-04
+## [6.203.0] — 2026-11-04
