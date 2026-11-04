@@ -331,6 +331,8 @@ public sealed class ViewportControl : OpenGlControlBase
                     selectedEntityIds: _viewModel.SelectionIds);
             }
 
+            RenderSubViewports(width, height);
+            _renderer.ResetViewport(width, height);
             if (_hasError)
             {
                 SetError(null);
@@ -366,6 +368,7 @@ public sealed class ViewportControl : OpenGlControlBase
                 _renderer.RenderFrame(_viewModel.Scene, _viewModel.Scene.GetWorldPosition(cameraEntity), camera, width, height, null, false, false);
                 target.Unbind();
                 _renderer.DrawScreenTexture(target.Texture, viewport.Rect, width, height, System.Numerics.Vector4.One);
+                if (viewport.DebugBorder) _renderer.DrawScreenBorder(viewport.Rect, width, height, viewport.BorderColor);
             }
             else
             {

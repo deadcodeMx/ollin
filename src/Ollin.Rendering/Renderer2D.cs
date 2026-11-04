@@ -129,6 +129,24 @@ public sealed class Renderer2D : IDisposable
             new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1), tint);
         _batch.End();
     }
+    public void DrawScreenBorder(Vector4 rect, int width, int height, Vector4 color)
+    {
+        _gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        _gl.Disable(EnableCap.ScissorTest);
+        _gl.Viewport(0, 0, (uint)System.Math.Max(1, width), (uint)System.Math.Max(1, height));
+        var projection = Matrix4x4.CreateOrthographicOffCenter(0f, width, height, 0f, -1f, 1f);
+        _batch.Begin(projection);
+        var left = rect.X * width;
+        var top = rect.Y * height;
+        var right = (rect.X + rect.Z) * width;
+        var bottom = (rect.Y + rect.W) * height;
+        const float thickness = 2f;
+        _batch.DrawLine(null, new Vector2(left, top), new Vector2(right, top), thickness, color);
+        _batch.DrawLine(null, new Vector2(right, top), new Vector2(right, bottom), thickness, color);
+        _batch.DrawLine(null, new Vector2(right, bottom), new Vector2(left, bottom), thickness, color);
+        _batch.DrawLine(null, new Vector2(left, bottom), new Vector2(left, top), thickness, color);
+        _batch.End();
+    }
     public void ResetViewport(int width, int height)
     {
         _gl.Disable(EnableCap.ScissorTest);

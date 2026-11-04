@@ -500,6 +500,7 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasSubViewport2D => Entity.GetComponent<SubViewport2D>() is not null;
     public string SubViewportCamera { get => Entity.GetComponent<SubViewport2D>()?.CameraTag ?? "main"; set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.CameraTag = value ?? string.Empty; OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public bool SubViewportDebugBorder { get => Entity.GetComponent<SubViewport2D>()?.DebugBorder ?? true; set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.DebugBorder = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
     public bool SubViewportUseTexture { get => Entity.GetComponent<SubViewport2D>()?.UseTexture ?? true; set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.UseTexture = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
     public decimal SubViewportX { get => (decimal)(Entity.GetComponent<SubViewport2D>()?.Rect.X ?? 0.65f); set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.Rect = new Vector4((float)value, v.Rect.Y, v.Rect.Z, v.Rect.W); OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
     public decimal SubViewportY { get => (decimal)(Entity.GetComponent<SubViewport2D>()?.Rect.Y ?? 0.65f); set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.Rect = new Vector4(v.Rect.X, (float)value, v.Rect.Z, v.Rect.W); OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }

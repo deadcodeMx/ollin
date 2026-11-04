@@ -17,6 +17,21 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.172.0] — 2026-11-04
+
+### Corregido
+
+- `RenderSubViewports` no se invocaba desde el render del viewport.
+- Ahora se compone el SubViewport y se restaura el viewport principal.
+
+## [6.171.0] — 2026-11-04
+
+### Añadido
+
+- Borde de depuración de SubViewport.
+- Checkbox de borde.
+- Prueba visual con segunda cámara.
+
 ## [6.170.0] — 2026-11-04
 
 ### Corregido
