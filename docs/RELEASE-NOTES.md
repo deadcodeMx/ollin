@@ -1,18 +1,16 @@
-## Ollin Beta 6.159.0 — auditoría visual y correcciones
-
-### Corregido
-
-- El campo de interpolación de red aparecía en entidades sin `NetworkTransform`.
-- El scissor del viewport podía recortar el render 3D.
+## Ollin Beta 6.160.0 — CanvasItem y arquitectura Godot
 
 ### Añadido
 
-- Al añadir `UiCanvas` se crean una etiqueta y un botón de ejemplo para que la UI sea visible en el juego.
+- CanvasItem2D: visibilidad, modulación, Z-index y Y-sort.
+- Integración en el orden y tinte de sprites.
+- Inspector de CanvasItem.
+- Documento de arquitectura 2D inspirada en Godot.
 
 ### Verificación
 
-- **230/230 pruebas**.
-- Instalador 6.159.0 instalado y abierto.
-- Revisión visual del editor y del viewport.
+- **231/231 pruebas**.
+- Instalador 6.160.0 instalado y abierto.
+- Revisión visual del editor.
 
-## [6.158.0] — 2026-11-04
+## [6.159.0] — 2026-11-04

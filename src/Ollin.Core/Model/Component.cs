@@ -15,6 +15,7 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.SpriteAnimator), "animator")]
 [JsonDerivedType(typeof(Components.Tilemap), "tilemap")]
 [JsonDerivedType(typeof(Components.TileMapLayer), "tilemaplayer")]
+[JsonDerivedType(typeof(Components.CanvasItem2D), "canvasitem2d")]
 [JsonDerivedType(typeof(Components.CanvasLayer), "canvaslayer")]
 [JsonDerivedType(typeof(Components.AnimationPlayer2D), "animationplayer")]
 [JsonDerivedType(typeof(Components.AnimationBlendTree2D), "animationblendtree")]

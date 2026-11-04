@@ -494,6 +494,11 @@ public sealed class EntityNode : ObservableObject
     public bool AnimationPlayerPlaying { get => Entity.GetComponent<AnimationPlayer2D>()?.Playing ?? false; }
     public decimal AnimationPlayerSpeed { get => (decimal)(Entity.GetComponent<AnimationPlayer2D>()?.Speed ?? 1f); set { if (Entity.GetComponent<AnimationPlayer2D>() is { } a) { a.Speed = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public bool HasCanvasItem2D => Entity.GetComponent<CanvasItem2D>() is not null;
+    public bool CanvasItemVisible { get => Entity.GetComponent<CanvasItem2D>()?.Visible ?? true; set { if (Entity.GetComponent<CanvasItem2D>() is { } c) { c.Visible = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+    public bool CanvasItemYSort { get => Entity.GetComponent<CanvasItem2D>()?.YSort ?? false; set { if (Entity.GetComponent<CanvasItem2D>() is { } c) { c.YSort = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+    public decimal CanvasItemZ { get => Entity.GetComponent<CanvasItem2D>()?.ZIndex ?? 0; set { if (Entity.GetComponent<CanvasItem2D>() is { } c) { c.ZIndex = (int)value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+
     public bool HasCanvasLayer => Entity.GetComponent<CanvasLayer>() is not null;
     public decimal CanvasOrder { get => Entity.GetComponent<CanvasLayer>()?.Order ?? 0; set { if (Entity.GetComponent<CanvasLayer>() is { } l) { l.Order = (int)value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
     public bool CanvasYSort { get => Entity.GetComponent<CanvasLayer>()?.YSort ?? false; set { if (Entity.GetComponent<CanvasLayer>() is { } l) { l.YSort = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
@@ -1644,6 +1649,7 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasAnimationFSM));
         OnPropertyChanged(nameof(HasEquipment));
         OnPropertyChanged(nameof(HasCanvasLayer));
+        OnPropertyChanged(nameof(HasCanvasItem2D));
         OnPropertyChanged(nameof(HasAnimationPlayer));
         OnPropertyChanged(nameof(HasAnimationBlendTree));
         OnPropertyChanged(nameof(AnimationBlendTime));

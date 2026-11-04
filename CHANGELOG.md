@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.160.0] — 2026-11-04
+
+### Añadido
+
+- CanvasItem2D: visibilidad, modulación, Z-index y Y-sort.
+- Integración en el orden y tinte de sprites.
+- Inspector de CanvasItem.
+
 ## [6.159.0] — 2026-11-04
 
 ### Corregido

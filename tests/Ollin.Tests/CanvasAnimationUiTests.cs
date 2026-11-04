@@ -221,4 +221,13 @@ public sealed class CanvasAnimationUiTests
         tree.OnUpdate(1f / 60f);
         Assert.InRange(entity.Transform.Position.X, 4.9f, 5.1f);
     }
+
+    [Fact]
+    public void CanvasItemCombinaModulate()
+    {
+        var item = new CanvasItem2D { Modulate = new Vector4(0.5f, 1f, 1f, 1f), SelfModulate = new Vector4(1f, 0.5f, 1f, 1f) };
+        var copy = (CanvasItem2D)item.CloneFor(new Entity());
+        Assert.Equal(0.5f, copy.EffectiveModulate.X);
+        Assert.Equal(0.5f, copy.EffectiveModulate.Y);
+    }
 }

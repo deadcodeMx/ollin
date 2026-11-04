@@ -407,7 +407,7 @@ public sealed class Renderer2D : IDisposable
     }
     private void DrawSprites(Scene scene, Vector2 cameraPosition)
     {
-        var drawables = new List<(Entity Entity, SpriteRenderer Sprite, CanvasLayer? Layer)>();
+        var drawables = new List<(Entity Entity, SpriteRenderer Sprite, CanvasLayer? Layer, CanvasItem2D? Item)>();
         foreach (var entity in scene.Entities)
         {
             if (!entity.Active)
@@ -417,10 +417,11 @@ public sealed class Renderer2D : IDisposable
 
             var sprite = entity.GetComponent<SpriteRenderer>();
             var layer = entity.GetComponent<CanvasLayer>();
-            if (layer is { Visible: false }) continue;
+            var item = entity.GetComponent<CanvasItem2D>();
+            if (layer is { Visible: false } || item is { Visible: false }) continue;
             if (sprite is { Enabled: true, Visible: true })
             {
-                drawables.Add((entity, sprite, layer));
+                drawables.Add((entity, sprite, layer, item));
             }
 
         }
@@ -428,7 +429,9 @@ public sealed class Renderer2D : IDisposable
         {
             var layerOrder = (a.Layer?.Order ?? 0).CompareTo(b.Layer?.Order ?? 0);
             if (layerOrder != 0) return layerOrder;
-            if (a.Layer?.YSort == true || b.Layer?.YSort == true)
+            var zOrder = (a.Item?.ZIndex ?? 0).CompareTo(b.Item?.ZIndex ?? 0);
+            if (zOrder != 0) return zOrder;
+            if (a.Layer?.YSort == true || b.Layer?.YSort == true || a.Item?.YSort == true || b.Item?.YSort == true)
             {
                 var yOrder = b.Entity.Transform.Position.Y.CompareTo(a.Entity.Transform.Position.Y);
                 if (yOrder != 0) return yOrder;
@@ -437,7 +440,7 @@ public sealed class Renderer2D : IDisposable
             return order != 0 ? order : string.CompareOrdinal(a.Entity.Name, b.Entity.Name);
         });
 
-        foreach (var (entity, sprite, _) in drawables)
+        foreach (var (entity, sprite, _, item) in drawables)
         {
             var world = scene.GetWorldMatrix(entity);
             var parallax = ParallaxOffset(cameraPosition, sprite.Parallax);
@@ -445,6 +448,8 @@ public sealed class Renderer2D : IDisposable
             world.M42 += parallax.Y;
             var texture = ResolveTexture(sprite.TexturePath);
             var corners = GetWorldCorners(world, sprite.Size, sprite.Origin);
+            var tint = sprite.Tint;
+            if (item is not null) tint *= item.EffectiveModulate;
 
             // Recorte de animación; en modo edición se usa el cuadro inicial del animador.
             var frame = sprite.FrameRect;
@@ -481,7 +486,7 @@ public sealed class Renderer2D : IDisposable
             _batch.DrawQuad(texture,
                 corners[0], corners[1], corners[2], corners[3],
                 new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1),
-                sprite.Tint);
+                tint);
         }
     }
 
