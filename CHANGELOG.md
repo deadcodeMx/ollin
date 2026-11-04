@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.138.0] — 2026-11-04
+
+### Añadido
+
+- Backend Linux basado en paplay/aplay/ffplay.
+- Fallback silencioso si no hay reproductor.
+- Loop básico reiniciando el proceso.
+
 ## [6.137.0] — 2026-11-04
 
 ### Añadido

@@ -1,13 +1,19 @@
-## Ollin Beta 6.137.0 — listas de UI
+## Ollin Beta 6.138.0 — audio Linux
 
 ### Añadido
 
-- Elemento de lista de UI.
-- Scroll vertical de listas.
-- Texto multilínea con ajuste.
+- Backend Linux basado en `paplay`/`aplay`/`ffplay`.
+- Fallback silencioso si no hay reproductor.
+- Loop básico reiniciando el proceso.
+
+### Limitaciones
+
+- Sin control de volumen por handle en Linux.
+- Sin paneo estéreo.
+- Depende de un reproductor del sistema.
 
 ### Verificación
 
 - **219/219 pruebas**.
-- Instalador 6.137.0 instalado y abierto.
+- Instalador 6.138.0 instalado y abierto.
 - Demo técnica no publicada.

@@ -6,5 +6,5 @@ namespace Ollin.Editor.Audio;
 public static class AudioBackendFactory
 {
     public static IAudioBackend Create() =>
-        OperatingSystem.IsWindows() ? new NAudioBackend() : new SilentAudioBackend();
+        OperatingSystem.IsWindows() ? new NAudioBackend() : new LinuxAudioBackend();
 }
