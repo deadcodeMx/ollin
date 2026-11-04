@@ -32,6 +32,7 @@ public partial class MainWindow : Window
     private bool _loadingScript;
     private bool _syncingHierarchy;
     private bool _inspectorConsolidated;
+    private ComponentInspectorView? _componentInspector;
     private readonly List<(Control Control, string Property)> _physicsSections = new();
     private StackPanel? _scriptHost;
     private GameWindow? _gameWindow;
@@ -409,6 +410,9 @@ public partial class MainWindow : Window
         }
 
         ViewportHost.Viewport.ViewModel = vm;
+        _componentInspector = new ComponentInspectorView(vm);
+        Inspector2DHost.Content = _componentInspector;
+        _componentInspector.ShowEntity(vm.Selected?.Entity);
         vm.ComponentsChanged += RefreshPhysicsSections;
         vm.ComponentsChanged += RefreshScriptSections;
         vm.PropertyChanged += (_, args) =>
@@ -1066,17 +1070,7 @@ public partial class MainWindow : Window
 
     private void OnComponentInspector(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        Ollin.Core.Diagnostics.Log.Info("Inspector 2D solicitado", "Editor");
-        if (ViewModel?.Selected is not { } selected) { Ollin.Core.Diagnostics.Log.Warn("Inspector 2D: sin selección", "Editor"); return; }
-        try
-        {
-            new ComponentInspectorWindow(ViewModel, selected.Entity).Show(this);
-        }
-        catch (Exception ex)
-        {
-            Ollin.Core.Diagnostics.Log.Error($"Inspector 2D: {ex}", "Editor");
-            ViewModel.StatusMessage = $"Inspector 2D: {ex.Message}";
-        }
+        _componentInspector?.ShowEntity(ViewModel?.Selected?.Entity);
     }
     private void OnQuickGuide(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => new QuickGuideWindow().Show(this);
     private void OnAbout(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

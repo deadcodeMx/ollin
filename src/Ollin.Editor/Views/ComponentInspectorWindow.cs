@@ -12,7 +12,7 @@ using Ollin.Editor.ViewModels;
 namespace Ollin.Editor.Views;
 
 /// <summary>Inspector 2D genérico: solo componentes del núcleo, editados por reflexión.</summary>
-public sealed class ComponentInspectorWindow : Window
+public sealed class ComponentInspectorView : UserControl
 {
     private static readonly Type[] Catalog =
     {
@@ -25,23 +25,30 @@ public sealed class ComponentInspectorWindow : Window
     };
 
     private readonly MainViewModel _viewModel;
-    private readonly Entity _entity;
+    private Entity? _entity;
     private readonly StackPanel _root = new() { Spacing = 8, Margin = new Thickness(16) };
 
-    public ComponentInspectorWindow(MainViewModel viewModel, Entity entity)
+    public ComponentInspectorView(MainViewModel viewModel)
     {
-        _viewModel = viewModel; _entity = entity;
-        Title = $"Inspector 2D — {entity.Name}"; Width = 620; Height = 720; MinWidth = 480; MinHeight = 420;
-        WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        _viewModel = viewModel;
         Content = new ScrollViewer { Content = _root };
+        Rebuild();
+    }
+
+    public void ShowEntity(Entity? entity)
+    {
+        _entity = entity;
         Rebuild();
     }
 
     private void Rebuild()
     {
         _root.Children.Clear();
+        if (_entity is null)
+        {
+            _root.Children.Add(new TextBlock { Text = "Selecciona una entidad", Classes = { "hint" } });
+            return;
+        }
         _root.Children.Add(new TextBlock { Text = _entity.Name, FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) });
         _root.Children.Add(new TextBlock { Text = "Solo componentes 2D del motor. Edita valores y guarda al cerrar.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) });
 

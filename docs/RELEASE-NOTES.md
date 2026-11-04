@@ -1,14 +1,15 @@
-## Ollin Beta 6.206.0 — núcleo 2D sin RPG
-
-### Eliminado
-
-- Todos los sistemas RPG 2D y sus pruebas/referencias.
-- Plantillas y escena por defecto con gameplay.
+## Ollin Beta 6.207.0 — inspector integrado
 
 ### Cambiado
 
-- Plantillas 2D mínimas.
-- Inspector 2D como panel principal.
-- **133/133 pruebas**, build 0 errores.
+- Inspector 2D embebido en el panel derecho.
+- Ya no se abre una ventana aparte.
+- Se refresca al cambiar de entidad.
 
-## [6.205.0] — 2026-11-04
+### Verificación
+
+- Build 0 errores.
+- 133/133 pruebas.
+- Instalador 6.207.0 instalado.
+
+## [6.206.0] — 2026-11-04

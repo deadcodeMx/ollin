@@ -585,14 +585,8 @@
             </Border>
 
             <Border Grid.Row="1" IsVisible="{Binding HasSingleSelection}" Background="{DynamicResource Ollin.PanelAlt}"
-                    CornerRadius="6" Padding="14" Margin="14,6" VerticalAlignment="Top">
-              <StackPanel Spacing="8">
-                <TextBlock Text="INSPECTOR 2D" Classes="section" />
-                <TextBlock Text="{Binding Selected.Name}" FontWeight="SemiBold" FontSize="14" />
-                <TextBlock Text="{Binding Selected.ComponentsSummary}" Classes="hint" TextWrapping="Wrap" />
-                <Button Content="Abrir Inspector 2D" Click="OnComponentInspector" HorizontalAlignment="Stretch" />
-                <TextBlock Classes="hint" TextWrapping="Wrap" Text="El inspector genérico edita solo componentes del núcleo 2D." />
-              </StackPanel>
+                    CornerRadius="6" Padding="4" Margin="6,6" VerticalAlignment="Stretch">
+              <ContentControl x:Name="Inspector2DHost" />
             </Border>
             <TabControl x:Name="InspectorTabs" Grid.Row="1" IsVisible="False" Margin="6,0,6,6" Padding="0">
               <TabItem Header="Entidad">
