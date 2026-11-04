@@ -2,6 +2,13 @@ using System.Numerics;
 
 namespace Ollin.Core.Model.Components;
 
+public enum BlendMode2D
+{
+    Normal,
+    Add,
+    Multiply,
+}
+
 /// <summary>
 /// Dibuja un sprite (o un cuadro de color sólido si no hay textura).
 /// El tamaño está en unidades de mundo y el origen es relativo al sprite
@@ -34,6 +41,8 @@ public sealed class SpriteRenderer : Component
 
     public bool Visible { get; set; } = true;
 
+    public BlendMode2D BlendMode { get; set; } = BlendMode2D.Normal;
+
     /// <summary>1 = mundo normal; 0 = fijo a la cámara (fondos con paralaje).</summary>
     public float Parallax { get; set; } = 1f;
 
@@ -49,6 +58,7 @@ public sealed class SpriteRenderer : Component
         FlipX = FlipX,
         FlipY = FlipY,
         Visible = Visible,
+        BlendMode = BlendMode,
         Parallax = Parallax,
         Owner = newOwner,
     };

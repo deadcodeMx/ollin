@@ -1,5 +1,6 @@
 using System.Numerics;
 using Silk.NET.OpenGLES;
+using Ollin.Core.Model.Components;
 
 namespace Ollin.Rendering;
 
@@ -28,6 +29,7 @@ public sealed class SpriteBatch : IDisposable
     private int _uMvp;
     private int _uTexture;
     private Texture2D? _whiteTexture;
+    private BlendMode2D _blendMode = BlendMode2D.Normal;
 
     public SpriteBatch(GL gl)
     {
@@ -98,6 +100,25 @@ public sealed class SpriteBatch : IDisposable
         _gl.UniformMatrix4(_uMvp, 1, false, &viewProjection.M11);
 
         _gl.BindVertexArray(_vao);
+    }
+
+    public void SetBlendMode(BlendMode2D mode)
+    {
+        if (_blendMode == mode) return;
+        Flush();
+        _blendMode = mode;
+        switch (mode)
+        {
+            case BlendMode2D.Add:
+                _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
+                break;
+            case BlendMode2D.Multiply:
+                _gl.BlendFunc(BlendingFactor.DstColor, BlendingFactor.Zero);
+                break;
+            default:
+                _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+                break;
+        }
     }
 
     /// <summary>Agrega un cuadro con esquinas en mundo (TL, TR, BR, BL).</summary>

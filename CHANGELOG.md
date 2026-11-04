@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.126.0] — 2026-11-04
+
+### Añadido
+
+- Blend modes de sprite: Normal, Add y Multiply.
+- Separación automática del batch al cambiar de blend.
+
 ## [6.125.0] — 2026-11-04
 
 ### Añadido
