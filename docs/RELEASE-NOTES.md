@@ -1,14 +1,14 @@
-## Ollin Beta 6.155.0 — pseudo-localización y fuentes
+## Ollin Beta 6.156.0 — blend trees
 
 ### Añadido
 
-- Pseudo-localización para detectar textos sin traducir.
-- Fuente configurable por elemento.
-- Fuente por defecto del tema.
-- Prueba de pseudo-localización.
+- AnimationBlendTree2D.
+- Mezcla lineal de clips por peso.
+- Muestreo de transformaciones sin eventos.
+- Prueba de blend tree.
 
 ### Verificación
 
-- **229/229 pruebas**.
-- Instalador 6.155.0 instalado y abierto.
+- **230/230 pruebas**.
+- Instalador 6.156.0 instalado y abierto.
 - Demo técnica no publicada.

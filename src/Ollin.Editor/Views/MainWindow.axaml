@@ -774,6 +774,7 @@
                       <CheckBox Content="Y-sort" IsChecked="{Binding Selected.CanvasYSort, Mode=TwoWay}" FontSize="11.5" />
                       <CheckBox Content="Visible" IsChecked="{Binding Selected.CanvasVisible, Mode=TwoWay}" FontSize="11.5" />
                     </StackPanel>
+<StackPanel IsVisible="{Binding Selected.HasAnimationBlendTree}" Spacing="5"><TextBlock Classes="section" Text="BLEND TREE" /><TextBlock Text="Entradas y pesos editables en JSON." Classes="hint" /><Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Duración" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.AnimationBlendTime, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.##" /></Grid></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasAnimationPlayer}" Spacing="5">
                       <TextBlock Classes="section" Text="ANIMATION PLAYER" />
                       <TextBlock Text="{Binding Selected.AnimationPlayerClip, StringFormat=Clip: {0}}" Classes="hint" />

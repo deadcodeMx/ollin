@@ -486,6 +486,9 @@ public sealed class EntityNode : ObservableObject
     public decimal JointRestLength { get => (decimal)((Entity.GetComponent<SpringJoint2D>()?.RestLength) ?? (Entity.GetComponent<PinJoint2D>()?.Distance ?? 1f)); set { if (Entity.GetComponent<SpringJoint2D>() is { } s) s.RestLength = MathF.Max(0.01f, (float)value); else if (Entity.GetComponent<PinJoint2D>() is { } p) p.Distance = MathF.Max(0.01f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } }
     public decimal JointStiffness { get => (decimal)(Entity.GetComponent<SpringJoint2D>()?.Stiffness ?? 20f); set { if (Entity.GetComponent<SpringJoint2D>() is { } s) { s.Stiffness = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public bool HasAnimationBlendTree => Entity.GetComponent<AnimationBlendTree2D>() is not null;
+    public decimal AnimationBlendTime { get => (decimal)(Entity.GetComponent<AnimationBlendTree2D>()?.Time ?? 0f); set { if (Entity.GetComponent<AnimationBlendTree2D>() is { } b) { b.Duration = MathF.Max(0.01f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+
     public bool HasAnimationPlayer => Entity.GetComponent<AnimationPlayer2D>() is not null;
     public string AnimationPlayerClip { get => Entity.GetComponent<AnimationPlayer2D>()?.Current ?? "-"; }
     public bool AnimationPlayerPlaying { get => Entity.GetComponent<AnimationPlayer2D>()?.Playing ?? false; }
@@ -1634,6 +1637,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasEquipment));
         OnPropertyChanged(nameof(HasCanvasLayer));
         OnPropertyChanged(nameof(HasAnimationPlayer));
+        OnPropertyChanged(nameof(HasAnimationBlendTree));
+        OnPropertyChanged(nameof(AnimationBlendTime));
         OnPropertyChanged(nameof(HasSpringJoint));
         OnPropertyChanged(nameof(HasPinJoint));
         OnPropertyChanged(nameof(HasUiCanvas));

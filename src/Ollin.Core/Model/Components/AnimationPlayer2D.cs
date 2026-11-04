@@ -179,6 +179,36 @@ public sealed class AnimationPlayer2D : Component, ITickable
         }
     }
 
+    /// <summary>Muestrea solo transformación de un clip, sin eventos ni frame.</summary>
+    public void SampleTransform(string clipName, float time, out Vector2 position, out float rotation, out Vector2 scale)
+    {
+        position = Owner?.Transform.Position ?? Vector2.Zero;
+        rotation = Owner?.Transform.Rotation ?? 0f;
+        scale = Owner?.Transform.Scale ?? Vector2.One;
+        var clip = Clips.FirstOrDefault(item => item.Name == clipName);
+        if (clip is null) return;
+        foreach (var track in clip.Tracks)
+        {
+            if (track.Keys.Count == 0) continue;
+            var keys = track.Keys.OrderBy(key => key.Time).ToList();
+            var previous = keys[0];
+            var next = keys[^1];
+            for (var i = 0; i < keys.Count - 1; i++)
+                if (time >= keys[i].Time && time <= keys[i + 1].Time) { previous = keys[i]; next = keys[i + 1]; break; }
+            var span = MathF.Max(0.0001f, next.Time - previous.Time);
+            var t = Ease(System.Math.Clamp((time - previous.Time) / span, 0f, 1f), next.Easing);
+            var value = (previous.OutTangent.LengthSquared() > 0.0001f || next.InTangent.LengthSquared() > 0.0001f)
+                ? Hermite(previous.Value, previous.OutTangent, next.Value, next.InTangent, t)
+                : Vector2.Lerp(previous.Value, next.Value, t);
+            var number = previous.Number + (next.Number - previous.Number) * t;
+            switch (track.Property)
+            {
+                case "position": position = value; break;
+                case "rotation": rotation = number; break;
+                case "scale": scale = value; break;
+            }
+        }
+    }
     private static Vector2 Hermite(Vector2 a, Vector2 outTangent, Vector2 b, Vector2 inTangent, float t)
     {
         var t2 = t * t;

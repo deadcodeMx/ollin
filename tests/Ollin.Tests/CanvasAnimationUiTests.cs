@@ -206,4 +206,19 @@ public sealed class CanvasAnimationUiTests
         Assert.Equal(4, copy.BoneA.Count + copy.BoneB.Count + copy.BoneC.Count + copy.BoneD.Count);
         Assert.Equal(0.25f, copy.WeightC[0]);
     }
+
+    [Fact]
+    public void BlendTreeMezclaDosClips()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Objeto", Vector2.Zero);
+        entity.AddComponent(new AnimationPlayer2D { Clips = new()
+        {
+            new AnimationTimeline { Name = "a", Duration = 1f, Tracks = new() { new AnimationTrack { Property = "position", Keys = new() { new AnimationKeyframe { Time = 0f, Value = Vector2.Zero }, new AnimationKeyframe { Time = 1f, Value = Vector2.Zero } } } } },
+            new AnimationTimeline { Name = "b", Duration = 1f, Tracks = new() { new AnimationTrack { Property = "position", Keys = new() { new AnimationKeyframe { Time = 0f, Value = new Vector2(10f, 0f) }, new AnimationKeyframe { Time = 1f, Value = new Vector2(10f, 0f) } } } } },
+        } });
+        var tree = entity.AddComponent(new AnimationBlendTree2D { Entries = new() { new AnimationBlendEntry { Clip = "a", Weight = 0.5f }, new AnimationBlendEntry { Clip = "b", Weight = 0.5f } } });
+        tree.OnUpdate(1f / 60f);
+        Assert.InRange(entity.Transform.Position.X, 4.9f, 5.1f);
+    }
 }
