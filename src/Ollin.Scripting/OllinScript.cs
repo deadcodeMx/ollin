@@ -164,6 +164,66 @@ public abstract class OllinScript
 
     /// <summary>Teletransporta la entidad en mundo.</summary>
     public void Teleport(Vector2 worldPoint) => WorldPosition = worldPoint;
+    /// <summary>Instancia un prefab en la escena actual.</summary>
+    public Entity? Instantiate(string prefabPath, Vector2 position)
+    {
+        try
+        {
+            var prefab = Ollin.Core.Prefabs.PrefabSerializer.Load(prefabPath);
+            var entity = Ollin.Core.Prefabs.PrefabSerializer.Instantiate(prefab, position);
+            Scene?.Add(entity);
+            return entity;
+        }
+        catch (Exception exception)
+        {
+            Error($"No se pudo instanciar {prefabPath}: {exception.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>Interpola la posición local durante un tiempo.</summary>
+    public void TweenPosition(Vector2 target, float duration, Action? completed = null)
+    {
+        StartCoroutine(TweenRoutine(target, MathF.Max(0.01f, duration), completed));
+    }
+
+    private IEnumerator TweenRoutine(Vector2 target, float duration, Action? completed)
+    {
+        var start = Position;
+        var elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.DeltaTime;
+            Position = Vector2.Lerp(start, target, MathF.Min(1f, elapsed / duration));
+            yield return null;
+        }
+        Position = target;
+        completed?.Invoke();
+    }
+
+    /// <summary>Sacude la cámara principal durante un tiempo.</summary>
+    public void ShakeCamera(float intensity, float duration)
+    {
+        var camera = Scene?.Entities.FirstOrDefault(entity => entity.GetComponent<Camera2D>() is { Enabled: true });
+        if (camera is null) return;
+        StartCoroutine(ShakeRoutine(camera, intensity, MathF.Max(0.01f, duration)));
+    }
+
+    private IEnumerator ShakeRoutine(Entity camera, float intensity, float duration)
+    {
+        var origin = camera.Transform.Position;
+        var elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.DeltaTime;
+            var falloff = 1f - elapsed / duration;
+            camera.Transform.Position = origin + new Vector2(
+                (Random.Shared.NextSingle() * 2f - 1f) * intensity * falloff,
+                (Random.Shared.NextSingle() * 2f - 1f) * intensity * falloff);
+            yield return null;
+        }
+        camera.Transform.Position = origin;
+    }
     /// <summary>Lanza una rutina: <c>yield return new WaitForSeconds(1f)</c>.</summary>
     public void StartCoroutine(IEnumerator routine) => CoroutineHost.Pending.Add((this, routine));
 

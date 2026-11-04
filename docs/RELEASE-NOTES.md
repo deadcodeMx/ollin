@@ -1,16 +1,15 @@
-## Ollin Beta 6.209.0 — API de scripting
+## Ollin Beta 6.210.0 — API scripting fase 2
 
 ### Añadido
 
-- Canvas, Agent, MoveTo, StopMoving, IsMoving.
-- PlayState, SetUiText, SetUiVisible, ShowMessage.
-- LookAt, DistanceTo, Teleport.
-- Autocompletado de la API.
-- Prueba de integración de scripting.
+- `Instantiate` de prefabs desde script.
+- `TweenPosition`.
+- `ShakeCamera`.
+- Acciones UI `signal:nombre` que emiten `ScriptSignals`.
 
 ### Verificación
 
 - 134/134 pruebas.
-- Instalador 6.209.0 instalado.
+- Instalador 6.210.0 instalado.
 
-## [6.208.0] — 2026-11-04
+## [6.209.0] — 2026-11-04
