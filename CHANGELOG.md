@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.142.0] — 2026-11-04
+
+### Añadido
+
+- Relleno de Polygon2D.
+- Triangulación por ear clipping.
+- Prueba de triangulación.
+
 ## [6.141.0] — 2026-11-04
 
 ### Añadido

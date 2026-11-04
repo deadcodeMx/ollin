@@ -2,6 +2,7 @@ using System.Numerics;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
 using Ollin.Core.Scenes;
+using Ollin.Rendering;
 using Xunit;
 
 namespace Ollin.Tests;
@@ -130,5 +131,13 @@ public sealed class CanvasAnimationUiTests
         player.OnUpdate(0.5f);
         Assert.True(fired);
         Assert.Equal(7.5f, entity.Transform.Position.X, 2);
+    }
+
+    [Fact]
+    public void TriangulaPoligonoRelleno()
+    {
+        var points = new List<Vector2> { new(-1f, -1f), new(1f, -1f), new(1f, 1f), new(-1f, 1f) };
+        var triangles = PolygonTriangulator.Triangulate(points);
+        Assert.Equal(2, triangles.Count);
     }
 }

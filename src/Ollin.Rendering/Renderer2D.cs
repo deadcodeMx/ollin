@@ -214,6 +214,12 @@ public sealed class Renderer2D : IDisposable
             }
             if (entity.GetComponent<Polygon2D>() is { Enabled: true, Visible: true, Points.Count: > 2 } polygon)
             {
+                if (polygon.Filled)
+                {
+                    var worldPoints = polygon.Points.Select(point => Vector2.Transform(point, world)).ToList();
+                    foreach (var triangle in PolygonTriangulator.Triangulate(worldPoints))
+                        _batch.DrawTriangle(null, triangle.A, triangle.B, triangle.C, polygon.Color);
+                }
                 for (var i = 0; i < polygon.Points.Count; i++)
                 {
                     var a = Vector2.Transform(polygon.Points[i], world);

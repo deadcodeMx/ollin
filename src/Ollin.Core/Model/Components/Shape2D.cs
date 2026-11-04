@@ -26,10 +26,11 @@ public sealed class Polygon2D : Component
     };
     public float Width { get; set; } = 0.05f;
     public Vector4 Color { get; set; } = Vector4.One;
+    public bool Filled { get; set; }
     public bool Visible { get; set; } = true;
 
     public override Component CloneFor(Entity newOwner) => new Polygon2D
     {
-        Enabled = Enabled, Points = new List<Vector2>(Points), Width = Width, Color = Color, Visible = Visible, Owner = newOwner,
+        Enabled = Enabled, Points = new List<Vector2>(Points), Width = Width, Color = Color, Filled = Filled, Visible = Visible, Owner = newOwner,
     };
 }

@@ -1,13 +1,13 @@
-## Ollin Beta 6.141.0 — primitivas 2D
+## Ollin Beta 6.142.0 — relleno de polígonos
 
 ### Añadido
 
-- Line2D y Polygon2D.
-- Render de contornos 2D.
-- Componentes en el menú Visual.
+- Relleno de Polygon2D.
+- Triangulación por ear clipping.
+- Prueba de triangulación.
 
 ### Verificación
 
-- **221/221 pruebas**.
-- Instalador 6.141.0 instalado y abierto.
+- **222/222 pruebas**.
+- Instalador 6.142.0 instalado y abierto.
 - Demo técnica no publicada.

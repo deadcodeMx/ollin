@@ -146,6 +146,20 @@ public sealed class SpriteBatch : IDisposable
         _quadCount++;
     }
 
+    /// <summary>Dibuja un triángulo usando un quad degenerado (tercer vértice duplicado).</summary>
+    public void DrawTriangle(Texture2D? texture, Vector2 a, Vector2 b, Vector2 c, Vector4 color)
+    {
+        var effectiveTexture = texture ?? _whiteTexture;
+        if (effectiveTexture is null) return;
+        if (_quadCount >= MaxQuads || (_quadCount > 0 && !ReferenceEquals(_currentTexture, effectiveTexture))) Flush();
+        _currentTexture = effectiveTexture;
+        AddVertex(a, new Vector2(0f, 0f), color);
+        AddVertex(b, new Vector2(0f, 0f), color);
+        AddVertex(c, new Vector2(0f, 0f), color);
+        AddVertex(c, new Vector2(0f, 0f), color);
+        _quadCount++;
+    }
+
     public void DrawRect(Texture2D? texture, Vector2 center, Vector2 size, Vector4 color, float rotation = 0f)
     {
         var half = size * 0.5f;
