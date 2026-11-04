@@ -408,22 +408,6 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
-    public bool HasHitbox => Entity.GetComponent<Hitbox>() is not null;
-    public bool HasHurtbox => Entity.GetComponent<Hurtbox>() is not null;
-    public bool HasCheckpoint2D => Entity.GetComponent<Checkpoint2D>() is not null;
-    public bool HasWeapon2D => Entity.GetComponent<Weapon2D>() is not null;
-
-    public decimal HitboxDamage { get => (decimal)(Entity.GetComponent<Hitbox>()?.Damage ?? 10f); set { if (Entity.GetComponent<Hitbox>() is { } h) { h.Damage = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public string HitboxTeam { get => Entity.GetComponent<Hitbox>()?.Team ?? "player"; set { if (Entity.GetComponent<Hitbox>() is { } h) { h.Team = value ?? "player"; OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public bool HasKnockback2D => Entity.GetComponent<Knockback2D>() is not null;
-    public decimal KnockbackForce { get => (decimal)(Entity.GetComponent<Knockback2D>()?.Force ?? 6f); set { if (Entity.GetComponent<Knockback2D>() is { } k) { k.Force = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public decimal KnockbackUpward { get => (decimal)(Entity.GetComponent<Knockback2D>()?.Upward ?? 2f); set { if (Entity.GetComponent<Knockback2D>() is { } k) { k.Upward = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public string HurtboxTeam { get => Entity.GetComponent<Hurtbox>()?.Team ?? "enemy"; set { if (Entity.GetComponent<Hurtbox>() is { } h) { h.Team = value ?? "enemy"; OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public decimal HurtboxMultiplier { get => (decimal)(Entity.GetComponent<Hurtbox>()?.DamageMultiplier ?? 1f); set { if (Entity.GetComponent<Hurtbox>() is { } h) { h.DamageMultiplier = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public decimal Checkpoint2DRadius { get => (decimal)(Entity.GetComponent<Checkpoint2D>()?.Radius ?? 1.2f); set { if (Entity.GetComponent<Checkpoint2D>() is { } c) { c.Radius = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public decimal Weapon2DDamage { get => (decimal)(Entity.GetComponent<Weapon2D>()?.Damage ?? 10f); set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Damage = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public decimal Weapon2DCooldown { get => (decimal)(Entity.GetComponent<Weapon2D>()?.Cooldown ?? 0.25f); set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Cooldown = MathF.Max(0.01f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
-    public int Weapon2DAmmo { get => Entity.GetComponent<Weapon2D>()?.Ammo ?? -1; set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Ammo = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
     public bool HasSkeleton => Entity.GetComponent<Skeleton2D>() is not null;
     public bool SkeletonUseIK { get => Entity.GetComponent<Skeleton2D>()?.UseIK ?? false; set { if (Entity.GetComponent<Skeleton2D>() is { } s) { s.UseIK = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
@@ -504,15 +488,6 @@ public sealed class EntityNode : ObservableObject
     public decimal CanvasOrder { get => Entity.GetComponent<CanvasLayer>()?.Order ?? 0; set { if (Entity.GetComponent<CanvasLayer>() is { } l) { l.Order = (int)value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
     public bool CanvasYSort { get => Entity.GetComponent<CanvasLayer>()?.YSort ?? false; set { if (Entity.GetComponent<CanvasLayer>() is { } l) { l.YSort = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
     public bool CanvasVisible { get => Entity.GetComponent<CanvasLayer>()?.Visible ?? true; set { if (Entity.GetComponent<CanvasLayer>() is { } l) { l.Visible = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
-
-    public bool HasEquipment => Entity.GetComponent<Equipment>() is not null;
-    public string EquipmentSlotsText => Entity.GetComponent<Equipment>() is { } equipment
-        ? string.Join(", ", equipment.Slots.Select(pair => $"{pair.Key}: {pair.Value}"))
-        : string.Empty;
-    public bool HasQuestLog => Entity.GetComponent<QuestLog>() is not null;
-    public string QuestSummary => Entity.GetComponent<QuestLog>() is { } log
-        ? string.Join(" | ", log.Quests.Select(quest => $"{quest.Title}: {quest.Objectives.Count(objective => objective.Completed)}/{quest.Objectives.Count}"))
-        : string.Empty;
 
     public bool HasAnimationFSM => Entity.GetComponent<AnimationStateMachine>() is not null;
     public string AnimationDefaultState { get => Entity.GetComponent<AnimationStateMachine>()?.DefaultState ?? "idle"; set { if (Entity.GetComponent<AnimationStateMachine>() is { } f) { f.DefaultState = value ?? "idle"; OnPropertyChanged(); _owner.MarkDirty(); } } }
@@ -1617,11 +1592,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasArea2D));
         OnPropertyChanged(nameof(HasRigidbody));
         OnPropertyChanged(nameof(HasCharacterBody));
-        OnPropertyChanged(nameof(HasHitbox));
-        OnPropertyChanged(nameof(HasKnockback2D));
         OnPropertyChanged(nameof(HasMovingPlatform));
         OnPropertyChanged(nameof(HasAnimationFSM));
-        OnPropertyChanged(nameof(HasEquipment));
         OnPropertyChanged(nameof(HasCanvasLayer));
         OnPropertyChanged(nameof(HasCanvasItem2D));
         OnPropertyChanged(nameof(HasSubViewport2D));
@@ -1657,9 +1629,6 @@ _scriptFields = null;
         OnPropertyChanged(nameof(SkeletonUseIK));
         OnPropertyChanged(nameof(SkeletonIKX));
         OnPropertyChanged(nameof(SkeletonIKY));
-        OnPropertyChanged(nameof(EquipmentSlotsText));
-        OnPropertyChanged(nameof(HasQuestLog));
-        OnPropertyChanged(nameof(QuestSummary));
         OnPropertyChanged(nameof(AnimationCurrentState));
         OnPropertyChanged(nameof(HasTransition2D));
         OnPropertyChanged(nameof(TilemapAutotile));
@@ -1669,7 +1638,6 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasParticles));
         OnPropertyChanged(nameof(HasTrail));
         OnPropertyChanged(nameof(ColliderOneWay));
-        OnPropertyChanged(nameof(HasHurtbox));
         OnPropertyChanged(nameof(CharacterMoveSpeed));
         OnPropertyChanged(nameof(CharacterJumpSpeed));
         OnPropertyChanged(nameof(CharacterGravity));
@@ -1682,9 +1650,7 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasTilemap));
         OnPropertyChanged(nameof(HasAnimator));
         OnPropertyChanged(nameof(HasScript));
-        OnPropertyChanged(nameof(HasAi));
         OnPropertyChanged(nameof(HasInteractable));
-        OnPropertyChanged(nameof(HasDayNight));
         OnPropertyChanged(nameof(HasRotator));
         OnPropertyChanged(nameof(HasOscillator));
         OnPropertyChanged(nameof(ScriptPath));

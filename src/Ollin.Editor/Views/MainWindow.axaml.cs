@@ -2006,15 +2006,10 @@ public partial class MainWindow : Window
 
     private void OnLoadGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.LoadGame();
 
-    private void OnAddItem(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.AddItemFromText();
 
-    private void OnRemoveItem(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.RemoveItemFromText();
 
-    private void OnClearInventory(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.ClearInventory();
 
-    private void OnApplyStat(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.ApplyStatFromText();
 
-    private void OnClearStats(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.Selected?.ClearStats();
 
     private void OnAddRotator(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "rotator");
 

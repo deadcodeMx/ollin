@@ -1092,9 +1092,6 @@
                     <TextBlock Text="{Binding Selected.InventorySummary}" TextWrapping="Wrap" Classes="hint" />
                     <TextBox Text="{Binding Selected.NewItemText, Mode=TwoWay}" Watermark="pocion x3" />
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                      <Button Classes="tool accent" Content="Añadir" Click="OnAddItem" />
-                      <Button Classes="tool" Content="Quitar" Click="OnRemoveItem" />
-                      <Button Classes="tool" Content="Vaciar" Click="OnClearInventory" />
                     </StackPanel>
                     <TextBlock Classes="hint" TextWrapping="Wrap"
                                Text="Formato: id o id xCantidad. Las definiciones viven en items/*.json." />
@@ -1109,8 +1106,6 @@
                     <TextBlock Text="{Binding Selected.StatsSummary}" TextWrapping="Wrap" Classes="hint" />
                     <TextBox Text="{Binding Selected.NewStatText, Mode=TwoWay}" Watermark="vida=80, hambre+10, energía-5" />
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                      <Button Classes="tool accent" Content="Aplicar" Click="OnApplyStat" />
-                      <Button Classes="tool" Content="Vaciar" Click="OnClearStats" />
                     </StackPanel>
                     <TextBlock Classes="hint" TextWrapping="Wrap"
                                Text="Sintaxis: nombre=valor, nombre+valor o nombre-valor. El desgaste por segundo se ajusta en el JSON." />

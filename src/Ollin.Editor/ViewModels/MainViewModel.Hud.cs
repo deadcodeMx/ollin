@@ -31,7 +31,6 @@ public sealed partial class MainViewModel
         if (!IsPlaying || IsGameOverVisible) return;
         _inventoryOpen = !_inventoryOpen;
         OnPropertyChanged(nameof(IsInventoryVisible));
-        if (_inventoryOpen) RefreshInventory();
     }
 
     public void CloseInventory()
@@ -132,7 +131,6 @@ public sealed partial class MainViewModel
     private void RefreshHud()
     {
         OnPropertyChanged(nameof(ProfilerText));
-        RefreshInventory();
         var hud = _runtime.Hud;
         TransitionOpacity = hud.TransitionAlpha;
         TransitionBrush = ToBrush(hud.TransitionColor);
@@ -236,26 +234,6 @@ public sealed partial class MainViewModel
         OnPropertyChanged(nameof(IsUiVisible));
     }
 
-    private void RefreshInventory()
-    {
-        var inventory = _runtime.PlayerInventory;
-        var signature = inventory is null
-            ? "none"
-            : string.Join("|", inventory.Slots.Select(slot => $"{slot.ItemId}:{slot.Quantity}"));
-        if (signature == _inventorySignature) return;
-        _inventorySignature = signature;
-        InventoryItems.Clear();
-        EquipmentItems.Clear();
-        var equipment = inventory?.Owner?.GetComponent<Equipment>();
-        if (equipment is not null)
-            foreach (var slot in equipment.Slots) EquipmentItems.Add(new EquipmentSlotView(slot.Key, slot.Value));
-        if (inventory is not null)
-        {
-            foreach (var slot in inventory.Slots)
-                InventoryItems.Add(new InventorySlotView(slot.ItemId, slot.Quantity));
-        }
-        OnPropertyChanged(nameof(IsInventoryVisible));
-    }
 
     private static string BuildHudSignature(HudModel hud)
     {
