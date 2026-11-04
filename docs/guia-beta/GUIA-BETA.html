@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Guía de beta — Ollin 6.213</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #1d2430; line-height: 1.55; font-size: 10.5pt; margin: 0; }
+  h1 { font-size: 30pt; margin: 0 0 6pt; color: #101722; letter-spacing: -0.5pt; }
+  h2 { font-size: 17pt; margin: 22pt 0 8pt; color: #b06f14; border-bottom: 2px solid #e7b35a; padding-bottom: 3pt; page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 15pt 0 5pt; color: #1d2a3a; page-break-after: avoid; }
+  h4 { font-size: 10.5pt; margin: 10pt 0 4pt; color: #33465e; }
+  p { margin: 4pt 0 7pt; }
+  code { font-family: "Cascadia Mono", Consolas, monospace; background: #eef2f7; padding: 1px 4px; border-radius: 3px; font-size: 9pt; }
+  pre { font-family: "Cascadia Mono", Consolas, monospace; background: #121a26; color: #e8eef8; padding: 10pt 12pt; border-radius: 6px; font-size: 8.6pt; line-height: 1.45; overflow: hidden; page-break-inside: avoid; }
+  pre code { background: none; color: inherit; padding: 0; }
+  img { max-width: 100%; border: 1px solid #c9d4e3; border-radius: 6px; }
+  .cover { page-break-after: always; padding-top: 30mm; }
+  .cover .kicker { color: #b06f14; font-weight: bold; letter-spacing: 1.5pt; font-size: 10pt; text-transform: uppercase; }
+  .cover .sub { font-size: 14pt; color: #47566b; margin-top: 10pt; }
+  .cover .meta { margin-top: 22mm; font-size: 9.5pt; color: #64748b; border-top: 1px solid #d8e0ea; padding-top: 8pt; }
+  .tag { display: inline-block; background: #f6e3c5; color: #8a5310; border-radius: 4px; padding: 2px 7px; font-size: 8.5pt; font-weight: bold; margin-right: 4px; }
+  .note { background: #fff7e8; border-left: 4px solid #e5a33c; padding: 8pt 11pt; margin: 8pt 0; border-radius: 0 5px 5px 0; page-break-inside: avoid; }
+  .warn { background: #fdecec; border-left: 4px solid #d95c5c; padding: 8pt 11pt; margin: 8pt 0; border-radius: 0 5px 5px 0; page-break-inside: avoid; }
+  .ok { background: #e9f7f1; border-left: 4px solid #3f9c78; padding: 8pt 11pt; margin: 8pt 0; border-radius: 0 5px 5px 0; page-break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; margin: 6pt 0 10pt; font-size: 9pt; page-break-inside: auto; }
+  th { background: #1a2534; color: #f1f5fb; text-align: left; padding: 5pt 6pt; font-size: 9pt; }
+  td { border-bottom: 1px solid #dde5ef; padding: 4.5pt 6pt; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f9fc; }
+  .two { display: flex; gap: 14pt; align-items: flex-start; }
+  .two > div { flex: 1; }
+  .small { font-size: 8.7pt; color: #5b6a7d; }
+  .toc { columns: 2; column-gap: 22pt; font-size: 10pt; }
+  .toc div { margin: 2.5pt 0; }
+  .caption { font-size: 8.5pt; color: #64748b; text-align: center; margin-top: 3pt; }
+  .pagebreak { page-break-before: always; }
+  .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 3pt 16pt; font-size: 9.2pt; }
+  .legend b { color: #b06f14; }
+  .check { font-size: 9.2pt; }
+  .check li { margin: 3pt 0; }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="kicker">Guía oficial de beta</div>
+  <h1>Ollin 6.213</h1>
+  <div class="sub">Motor 2D con C# y editor visual.<br>Guía de interfaz, flujo de trabajo y API de scripting.</div>
+  <p style="margin-top:18pt"><span class="tag">Windows</span><span class="tag">Linux (experimental)</span><span class="tag">Beta</span></p>
+  <div class="meta">
+    Versión de la guía: 4 de noviembre de 2026 · Ollin 6.213.0<br>
+    Para testers de la beta. Incluye el proyecto de ejemplo <b>Jardín de Ollin</b>.<br>
+    Esta guía explica la interfaz actual; el motor sigue en desarrollo y puede cambiar.
+  </div>
+</section>
+
+<h2>Contenido</h2>
+<div class="toc">
+  <div>1. Antes de empezar</div>
+  <div>2. Abrir Ollin y el ejemplo</div>
+  <div>3. Pantalla de proyectos</div>
+  <div>4. Mapa del editor</div>
+  <div>5. Menús</div>
+  <div>6. Barra de herramientas</div>
+  <div>7. Jerarquía</div>
+  <div>8. Visor 2D</div>
+  <div>9. Inspector 2D</div>
+  <div>10. Consola y barra de estado</div>
+  <div>11. Flujo de trabajo</div>
+  <div>12. Programar en Ollin</div>
+  <div>13. Ciclo de vida de un script</div>
+  <div>14. Referencia de la API</div>
+  <div>15. Ejemplo comentado</div>
+  <div>16. Lista de prueba y feedback</div>
+  <div>17. Problemas frecuentes</div>
+</div>
+
+<h2>1. Antes de empezar</h2>
+<p>Ollin es un motor 2D: la escena se compone de <b>entidades</b>, cada entidad tiene una <b>transformación</b> y una lista de <b>componentes</b>. La lógica se escribe en C# o se genera desde el grafo visual.</p>
+<table>
+  <tr><th>Concepto</th><th>Qué es</th><th>Ejemplo</th></tr>
+  <tr><td>Entidad</td><td>Objeto de la escena con nombre, transformación y componentes.</td><td><code>Lina</code>, <code>Jardín</code>, <code>Cámara principal</code></td></tr>
+  <tr><td>Componente</td><td>Dato o comportamiento añadido a una entidad.</td><td><code>SpriteRenderer</code>, <code>Camera2D</code>, <code>Tilemap</code></td></tr>
+  <tr><td>Escena</td><td>Colección de entidades guardada en un archivo <code>.ollin.json</code>.</td><td><code>scenes/inicio.ollin.json</code></td></tr>
+  <tr><td>Proyecto</td><td>Carpeta con escenas, scripts, assets y <code>project.ollin</code>.</td><td><code>samples/JardinOllin</code></td></tr>
+  <tr><td>Script</td><td>Clase C# que hereda de <code>OllinScript</code> y se ejecuta en una entidad.</td><td><code>Jugador.cs</code></td></tr>
+</table>
+<div class="warn"><b>Importante:</b> esta beta ya no incluye salud, inventario, items, combate, quests, diálogo ni cartas. Los proyectos antiguos que usen esos componentes, como <code>Fantasy_IA</code>, mostrarán errores de carga. Usa proyectos nuevos o el ejemplo incluido.</div>
+
+<h2>2. Abrir Ollin y el ejemplo</h2>
+<p>Al iniciar el editor se abre la pantalla de proyectos. También puedes abrir un proyecto directamente:</p>
+<pre><code>dotnet run --project src/Ollin.Editor/Ollin.Editor.csproj -- --project samples/JardinOllin</code></pre>
+<p>El ejemplo <b>Jardín de Ollin</b> incluye cámara, tilemap, luces, partículas, UI y un script de movimiento/recogida. Es la mejor forma de probar la beta sin crear todo desde cero.</p>
+<figure>
+  <img src="img/07-launcher.png" alt="Pantalla de proyectos">
+  <div class="caption">Pantalla de proyectos: recientes, crear, abrir carpeta, eliminar y abrir.</div>
+</figure>
+
+<h2>3. Pantalla de proyectos</h2>
+<table>
+  <tr><th>Botón / zona</th><th>Para qué sirve</th></tr>
+  <tr><td><b>Proyectos recientes</b></td><td>Lista de proyectos abiertos antes. Selecciona uno y pulsa <b>Abrir proyecto</b>.</td></tr>
+  <tr><td><b>Crear proyecto…</b></td><td>Crea una carpeta de proyecto nueva con escena y script inicial.</td></tr>
+  <tr><td><b>Abrir carpeta…</b></td><td>Abre un proyecto que ya existe en disco.</td></tr>
+  <tr><td><b>Eliminar proyecto</b></td><td>Quita el proyecto de la lista reciente. No borra la carpeta del disco.</td></tr>
+  <tr><td><b>Abrir proyecto</b></td><td>Abre el proyecto seleccionado en el editor.</td></tr>
+  <tr><td><b>Salir</b></td><td>Cierra Ollin.</td></tr>
+</table>
+
+<h2 class="pagebreak">4. Mapa del editor</h2>
+<figure>
+  <img src="img/00-overview.png" alt="Editor de Ollin con zonas numeradas">
+  <div class="caption">Vista general del editor con las seis zonas principales.</div>
+</figure>
+<div class="legend">
+  <div><b>1. Menús y barra de herramientas</b><br>Acciones de proyecto, escena, edición y reproducción.</div>
+  <div><b>2. Jerarquía y Assets</b><br>Entidades de la escena y archivos del proyecto.</div>
+  <div><b>3. Visor 2D</b><br>Escena visual: seleccionar, mover, zoom y cámara.</div>
+  <div><b>4. Inspector 2D</b><br>Componentes y propiedades de la entidad seleccionada.</div>
+  <div><b>5. Consola / Archivos</b><br>Errores, avisos, información y archivos del proyecto.</div>
+  <div><b>6. Barra de estado</b><br>Scripts, estado, tiempo, selección, zoom, FPS y draw calls.</div>
+</div>
+
+<h2>5. Menús</h2>
+<table>
+  <tr><th>Menú</th><th>Opciones y para qué sirven</th></tr>
+  <tr><td><b>Archivo</b></td><td><b>Nuevo proyecto</b>, <b>Abrir proyecto</b>, <b>Cerrar proyecto</b>; <b>Modo de componentes</b> (Vacío, Por género, Completo); <b>Nueva escena</b>, <b>Abrir escena</b>, <b>Guardar escena</b>, <b>Guardar como</b>; <b>Exportar juego</b>; <b>Salir</b>.</td></tr>
+  <tr><td><b>Edición</b></td><td><b>Deshacer</b> (Ctrl+Z), <b>Rehacer</b> (Ctrl+Y), <b>Copiar</b> (Ctrl+C), <b>Pegar</b> (Ctrl+V), <b>Guardar como prefab</b>, <b>Duplicar</b>, <b>Eliminar</b>, <b>Abrir script de la selección</b>, <b>Atajos del teclado</b>, <b>Mapa de entrada</b>.</td></tr>
+  <tr><td><b>Ver</b></td><td><b>Centrar cámara</b> (Home), <b>Enfocar selección</b> (F), <b>Mostrar cuadrícula</b>, <b>Ventana de juego</b> (Ctrl+G), <b>Tema</b> (Oscuro, Claro, Ollin).</td></tr>
+  <tr><td><b>Escena</b></td><td><b>Reproducir / detener</b> (F5), <b>Pausar / reanudar</b> (F6), <b>Detener y restaurar</b>, <b>Guardar partida</b>, <b>Cargar partida</b>.</td></tr>
+  <tr><td><b>Ayuda</b></td><td>Guía rápida, atajos y acerca de Ollin.</td></tr>
+</table>
+
+<h2>6. Barra de herramientas</h2>
+<img src="img/02-toolbar.png" alt="Barra de herramientas">
+<table>
+  <tr><th>Control</th><th>Función</th></tr>
+  <tr><td><b>Guardar</b></td><td>Guarda la escena actual. Si hay cambios sin guardar, el título lo indica.</td></tr>
+  <tr><td><b>Deshacer / Rehacer</b></td><td>Revierte o repite la última acción de edición.</td></tr>
+  <tr><td><b>Duplicar</b></td><td>Copia la entidad seleccionada con sus componentes.</td></tr>
+  <tr><td><b>Eliminar</b></td><td>Borra la entidad seleccionada.</td></tr>
+  <tr><td><b>Rejilla</b></td><td>Muestra u oculta la cuadrícula del visor.</td></tr>
+  <tr><td><b>Imán 2D</b></td><td>Activa el ajuste a la cuadrícula al mover entidades.</td></tr>
+  <tr><td><b>Selector de zoom</b></td><td>Cambia el zoom del visor (25 %, 50 %, 100 %...).</td></tr>
+  <tr><td><b>Distintivo 2D</b></td><td>Indica que el editor está en modo 2D. 3D y 2.5D están ocultos.</td></tr>
+  <tr><td><b>⇉</b></td><td>Duplica una serie de entidades seleccionadas.</td></tr>
+  <tr><td><b>⛓</b></td><td>Abre el <b>grafo de nodos</b> para generar lógica C# sin escribir código.</td></tr>
+  <tr><td><b>Alinear ▾</b></td><td>Alinea varias entidades: izquierda, centro, derecha, arriba, medio, abajo.</td></tr>
+  <tr><td><b>Nombre del proyecto</b></td><td>Muestra el proyecto abierto.</td></tr>
+  <tr><td><b>Scripts</b></td><td>Abre el editor de scripts del proyecto.</td></tr>
+  <tr><td><b>Reproducir</b></td><td>Ejecuta la escena en el editor (F5).</td></tr>
+  <tr><td><b>Pausa</b></td><td>Pausa o reanuda la reproducción (F6).</td></tr>
+  <tr><td><b>Detener</b></td><td>Detiene y restaura el estado previo a la reproducción.</td></tr>
+  <tr><td><b>Exportar</b></td><td> genera un ejecutable del juego con la escena y assets.</td></tr>
+</table>
+
+<h2>7. Jerarquía</h2>
+<img src="img/03-hierarchy.png" alt="Panel de jerarquía">
+<table>
+  <tr><th>Elemento</th><th>Uso</th></tr>
+  <tr><td><b>Jerarquía</b></td><td>Lista de entidades de la escena. El punto de color indica el tipo de componente principal.</td></tr>
+  <tr><td><b>Assets</b></td><td>Archivos del proyecto: escenas, scripts, sprites, audio, prefabs.</td></tr>
+  <tr><td><b>Nº de entidades</b></td><td>Cuenta las entidades de la escena actual.</td></tr>
+  <tr><td><b>+</b></td><td>Crea una entidad nueva. Elige nombre y padre si aplica.</td></tr>
+  <tr><td><b>Buscar entidad…</b></td><td>Filtra por nombre en tiempo real.</td></tr>
+  <tr><td><b>Clic en una entidad</b></td><td>La selecciona y abre su inspector a la derecha.</td></tr>
+</table>
+<div class="note">Los iconos indican el componente principal: cuadrado = sprite, cámara = cámara, etc. Si una entidad no tiene icono, sigue siendo seleccionable y editable.</div>
+
+<h2>8. Visor 2D</h2>
+<img src="img/06-viewport.png" alt="Visor 2D">
+<table>
+  <tr><th>Acción</th><th>Cómo</th></tr>
+  <tr><td>Seleccionar</td><td>Clic sobre una entidad o sobre su nombre en la jerarquía.</td></tr>
+  <tr><td>Zoom</td><td>Rueda del ratón.</td></tr>
+  <tr><td>Mover cámara</td><td>Alt + arrastrar, o botón central si está disponible.</td></tr>
+  <tr><td>Mover entidad</td><td>Arrastra la entidad seleccionada. Con Imán 2D se ajusta a la cuadrícula.</td></tr>
+  <tr><td>Enfocar</td><td>Botón <b>Enfocar</b> o tecla F para centrar la selección.</td></tr>
+  <tr><td>Zoom rápido</td><td>Botones − / + y porcentaje; 100 % restaura la escala.</td></tr>
+</table>
+
+<h2>9. Inspector 2D</h2>
+<img src="img/04-inspector.png" alt="Inspector 2D">
+<p>El inspector se abre automáticamente al seleccionar una entidad. No hay que abrir ninguna ventana.</p>
+<table>
+  <tr><th>Parte</th><th>Uso</th></tr>
+  <tr><td><b>Nombre de entidad</b></td><td>Identifica lo que estás editando.</td></tr>
+  <tr><td><b>Componentes</b></td><td>Cada componente aparece en un desplegable con sus campos editables.</td></tr>
+  <tr><td><b>Campos</b></td><td>Números, textos, vectores, colores, booleanos y enums. Los cambios se aplican al instante y marcan la escena como modificada.</td></tr>
+  <tr><td><b>Quitar componente</b></td><td>Elimina el componente de la entidad.</td></tr>
+  <tr><td><b>Añadir componente</b></td><td>Desplegable con los componentes 2D disponibles del núcleo.</td></tr>
+</table>
+<div class="note">El inspector es genérico: se genera por reflexión. Si añades un componente nuevo al núcleo, aparece aquí sin crear una ventana específica.</div>
+
+<h2>10. Consola y barra de estado</h2>
+<img src="img/05-console.png" alt="Consola">
+<table>
+  <tr><th>Elemento</th><th>Uso</th></tr>
+  <tr><td><b>Consola</b></td><td>Mensajes <b>INFO</b>, <b>WARN</b> y <b>ERROR</b> con hora. Los errores de script aparecen aquí.</td></tr>
+  <tr><td><b>Archivos</b></td><td>Árbol de archivos del proyecto.</td></tr>
+  <tr><td><b>Limpiar</b></td><td>Vacía la consola.</td></tr>
+  <tr><td><b>Scripts</b></td><td>Número de scripts compilados y su estado.</td></tr>
+  <tr><td><b>Estado</b></td><td>Detenido, reproduciendo o pausado.</td></tr>
+  <tr><td><b>Tiempo</b></td><td>Tiempo de reproducción.</td></tr>
+  <tr><td><b>Selección</b></td><td>Entidad seleccionada actualmente.</td></tr>
+  <tr><td><b>Zoom / FPS / draw calls</b></td><td>Zoom del visor, cuadros por segundo y llamadas de dibujo.</td></tr>
+</table>
+
+<h2 class="pagebreak">11. Flujo de trabajo</h2>
+<h3>Crear un proyecto</h3>
+<ol>
+  <li>Pulsa <b>Crear proyecto…</b>.</li>
+  <li>Escribe el nombre y elige carpeta.</li>
+  <li>Elige plantilla: vacía, plataformas o género.</li>
+  <li>Se crean <code>project.ollin</code>, <code>scenes/inicio.ollin.json</code> y <code>scripts/Juego.cs</code>.</li>
+</ol>
+<h3>Editar una escena</h3>
+<ol>
+  <li>Selecciona una entidad en la jerarquía.</li>
+  <li>En el inspector, ajusta transformación, sprites, cámara, luces, etc.</li>
+  <li>Añade componentes con <b>Añadir componente</b>.</li>
+  <li>Pulsa <b>Guardar</b> o Ctrl+S.</li>
+</ol>
+<h3>Probar y exportar</h3>
+<ol>
+  <li>Pulsa <b>Reproducir</b> (F5).</li>
+  <li>Prueba el juego; <b>Pausa</b> (F6) y <b>Detener</b> restauran el estado.</li>
+  <li>Pulsa <b>Exportar</b> para generar el ejecutable del juego.</li>
+</ol>
+
+<h2>12. Programar en Ollin</h2>
+<p>Los scripts son clases C# que heredan de <code>OllinScript</code>. Se guardan en <code>scripts/</code> y se asocian a una entidad con <code>ScriptComponent</code>.</p>
+<pre><code>using System.Numerics;
+using Ollin.Core.Input;
+using Ollin.Scripting;
+
+public sealed class Jugador : OllinScript
+{
+    public override void OnStart()
+    {
+        Hud.SetLabel("puntos", "0");
+    }
+
+    public override void OnUpdate(float deltaTime)
+    {
+        var dir = Vector2.Zero;
+        if (Input.GetKey(KeyCode.A)) dir.X -= 1f;
+        if (Input.GetKey(KeyCode.D)) dir.X += 1f;
+        if (Input.GetKey(KeyCode.W)) dir.Y += 1f;
+        if (Input.GetKey(KeyCode.S)) dir.Y -= 1f;
+
+        if (dir.LengthSquared() &gt; 0f)
+            Position += Vector2.Normalize(dir) * 4f * deltaTime;
+    }
+}</code></pre>
+<div class="two">
+  <div>
+    <h4>Asociar el script</h4>
+    <ol>
+      <li>Selecciona la entidad.</li>
+      <li>En el inspector, <b>Añadir componente → ScriptComponent</b>.</li>
+      <li>Escribe la ruta <code>scripts/Jugador.cs</code> y la clase <code>Jugador</code>.</li>
+    </ol>
+  </div>
+  <div>
+    <h4>Compilar y recargar</h4>
+    <p>Al guardar el script, el editor lo compila. Los errores salen en la consola con archivo y línea. Si compila, puedes volver a reproducir sin reiniciar.</p>
+  </div>
+</div>
+<div class="warn"><b>No confundas</b> el nombre del archivo con el nombre de la clase. <code>ScriptComponent.ClassName</code> debe coincidir con la clase pública del archivo.</div>
+
+<h2>13. Ciclo de vida de un script</h2>
+<table>
+  <tr><th>Método</th><th>Cuándo se ejecuta</th><th>Uso típico</th></tr>
+  <tr><td><code>OnStart()</code></td><td>Una vez al iniciar la reproducción.</td><td>Inicializar variables, HUD, buscar entidades.</td></tr>
+  <tr><td><code>OnUpdate(float dt)</code></td><td>Cada cuadro mientras se reproduce.</td><td>Mover, leer input, temporizadores.</td></tr>
+  <tr><td><code>OnDestroy()</code></td><td>Al detener la reproducción o destruir la entidad.</td><td>Liberar recursos, desconectar señales.</td></tr>
+  <tr><td><code>OnReload()</code></td><td>Tras recarga en caliente.</td><td>Reenganchar referencias externas.</td></tr>
+  <tr><td><code>OnCollisionEnter(Entity)</code></td><td>Al chocar con un cuerpo sólido.</td><td>Daño, rebote, abrir puerta.</td></tr>
+  <tr><td><code>OnTriggerEnter(Entity)</code></td><td>Al entrar en un área de disparo.</td><td>Recoger objeto, activar zona.</td></tr>
+  <tr><td><code>OnTriggerExit(Entity)</code></td><td>Al salir del área.</td><td>Desactivar zona.</td></tr>
+  <tr><td><code>OnInteract(Entity)</code></td><td>Al pulsar interactuar cerca.</td><td>Hablar, abrir cofre.</td></tr>
+</table>
+
+<h2 class="pagebreak">14. Referencia de la API</h2>
+<p><span class="tag">OllinScript</span> Miembros disponibles dentro de cualquier script. Los tipos de componentes se obtienen con <code>Get&lt;T&gt;()</code>.</p>
+
+<h3>Entidad, escena y transformación</h3>
+<table>
+  <tr><th>Función / propiedad</th><th>Para qué sirve</th></tr>
+  <tr><td><code>Entity</code></td><td>Entidad del script.</td></tr>
+  <tr><td><code>Scene</code></td><td>Escena actual.</td></tr>
+  <tr><td><code>Position</code></td><td>Posición local; se puede leer y asignar.</td></tr>
+  <tr><td><code>WorldPosition</code></td><td>Posición en mundo incluyendo jerarquía.</td></tr>
+  <tr><td><code>Active</code></td><td>Activa o desactiva la entidad.</td></tr>
+  <tr><td><code>Children</code></td><td>Hijos directos.</td></tr>
+  <tr><td><code>Get&lt;T&gt;()</code></td><td>Obtiene un componente o <code>null</code>.</td></tr>
+  <tr><td><code>Require&lt;T&gt;()</code></td><td>Obtiene un componente o lanza error claro.</td></tr>
+  <tr><td><code>Add&lt;T&gt;()</code></td><td>Añade un componente nuevo.</td></tr>
+  <tr><td><code>Remove&lt;T&gt;()</code></td><td>Quita un componente.</td></tr>
+  <tr><td><code>Find(nombre)</code></td><td>Busca una entidad por nombre.</td></tr>
+  <tr><td><code>FindAll(texto)</code></td><td>Busca entidades cuyo nombre contiene el texto.</td></tr>
+  <tr><td><code>Create(nombre, posición)</code></td><td>Crea una entidad en la escena.</td></tr>
+  <tr><td><code>Destroy(entidad)</code></td><td>Elimina una entidad.</td></tr>
+  <tr><td><code>SetParent(entidad)</code></td><td>Cambia el padre.</td></tr>
+  <tr><td><code>Instantiate(rutaPrefab, posición)</code></td><td>Instancia un prefab JSON.</td></tr>
+  <tr><td><code>Teleport(posiciónMundo)</code></td><td>Teletransporta en mundo.</td></tr>
+  <tr><td><code>LookAt(puntoMundo)</code></td><td>Orienta la entidad hacia un punto.</td></tr>
+  <tr><td><code>DistanceTo(entidad)</code></td><td>Distancia en mundo a otra entidad.</td></tr>
+</table>
+
+<h3>Entrada</h3>
+<table>
+  <tr><th>Función</th><th>Para qué sirve</th></tr>
+  <tr><td><code>Input.GetAction(nombre)</code></td><td>¿Está activa una acción del mapa de entrada?</td></tr>
+  <tr><td><code>Input.GetActionDown(nombre)</code></td><td>¿Se acaba de pulsar?</td></tr>
+  <tr><td><code>Input.GetActionUp(nombre)</code></td><td>¿Se acaba de soltar?</td></tr>
+  <tr><td><code>Input.GetKey(KeyCode)</code></td><td>Tecla mantenida.</td></tr>
+  <tr><td><code>Input.GetKeyDown(KeyCode)</code></td><td>Tecla pulsada este cuadro.</td></tr>
+  <tr><td><code>Input.GetKeyUp(KeyCode)</code></td><td>Tecla soltada este cuadro.</td></tr>
+  <tr><td><code>Input.GetMouseButton(n)</code></td><td>Botón del ratón: 0 izquierdo, 1 derecho, 2 central.</td></tr>
+  <tr><td><code>Input.GetMouseButtonDown(n)</code></td><td>Botón pulsado este cuadro.</td></tr>
+  <tr><td><code>Input.GetMouseButtonUp(n)</code></td><td>Botón soltado este cuadro.</td></tr>
+</table>
+<div class="note">Las acciones se configuran en <b>Edición → Mapa de entrada</b>. Ejemplo: acción <code>salto</code> con la tecla Espacio, luego <code>Input.GetActionDown("salto")</code>.</div>
+
+<h3>Audio y HUD</h3>
+<table>
+  <tr><th>Función</th><th>Para qué sirve</th></tr>
+  <tr><td><code>Audio.Play(clip, volumen, loop)</code></td><td>Reproduce un efecto.</td></tr>
+  <tr><td><code>Audio.Music(clip, volumen, loop)</code></td><td>Música de fondo; corta la anterior.</td></tr>
+  <tr><td><code>Audio.StopAll()</code></td><td>Detiene todo el audio.</td></tr>
+  <tr><td><code>PlaySound(clip, volumen, loop)</code></td><td>Atajo de efecto desde el script.</td></tr>
+  <tr><td><code>Hud.SetBar(nombre, valor, máximo, color)</code></td><td>Barra de progreso/vida.</td></tr>
+  <tr><td><code>Hud.SetLabel(nombre, texto)</code></td><td>Etiqueta de texto.</td></tr>
+  <tr><td><code>Hud.Message(texto, segundos)</code></td><td>Mensaje temporal.</td></tr>
+  <tr><td><code>Hud.GameOver(texto)</code></td><td>Pantalla de fin de partida.</td></tr>
+  <tr><td><code>Hud.Clear()</code></td><td>Vacía el HUD.</td></tr>
+  <tr><td><code>ShowMessage(texto, segundos)</code></td><td>Atajo de mensaje.</td></tr>
+</table>
+
+<h3>UI, animación y navegación</h3>
+<table>
+  <tr><th>Función</th><th>Para qué sirve</th></tr>
+  <tr><td><code>Canvas</code></td><td>Canvas de UI de la entidad.</td></tr>
+  <tr><td><code>SetUiText(id, texto)</code></td><td>Cambia el texto de un elemento por id.</td></tr>
+  <tr><td><code>SetUiVisible(id, visible)</code></td><td>Muestra u oculta un elemento.</td></tr>
+  <tr><td><code>PlayAnimation(clip, fade)</code></td><td>Reproduce un clip de AnimationPlayer2D.</td></tr>
+  <tr><td><code>PlayState(estado)</code></td><td>Cambia el estado de AnimationStateMachine.</td></tr>
+  <tr><td><code>Agent</code></td><td>NavigationAgent2D de la entidad.</td></tr>
+  <tr><td><code>MoveTo(destino, velocidad)</code></td><td>Navega a un punto del mundo.</td></tr>
+  <tr><td><code>StopMoving()</code></td><td>Detiene la navegación.</td></tr>
+  <tr><td><code>IsMoving</code></td><td>¿Queda camino por recorrer?</td></tr>
+  <tr><td><code>ShakeCamera(intensidad, duración)</code></td><td>Sacude la cámara principal.</td></tr>
+</table>
+
+<h3>Señales, tween y corrutinas</h3>
+<table>
+  <tr><th>Función</th><th>Para qué sirve</th></tr>
+  <tr><td><code>Connect(señal, handler)</code></td><td>Escucha una señal global.</td></tr>
+  <tr><td><code>Emit(señal, datos)</code></td><td>Emite una señal global.</td></tr>
+  <tr><td><code>ScriptSignals.Disconnect</code></td><td>Desconecta un handler.</td></tr>
+  <tr><td><code>TweenPosition(destino, duración, callback)</code></td><td>Interpola la posición.</td></tr>
+  <tr><td><code>StartCoroutine(rutina)</code></td><td>Lanza una corrutina.</td></tr>
+  <tr><td><code>yield return new WaitForSeconds(s)</code></td><td>Espera dentro de una corrutina.</td></tr>
+  <tr><td><code>StopAllCoroutines()</code></td><td>Cancela las corrutinas del script.</td></tr>
+</table>
+<pre><code>Connect("puerta.abierta", _ =&gt; Hud.Message("La puerta se abrió"));
+Emit("puerta.abierta", this);</code></pre>
+<p class="small">Las acciones de UI con el formato <code>signal:nombre</code> emiten una señal global; los scripts pueden escucharla con <code>Connect</code>.</p>
+
+<h3>Física, guardado y red</h3>
+<table>
+  <tr><th>Función</th><th>Para qué sirve</th></tr>
+  <tr><td><code>Physics2D.Raycast(escena, origen, dirección, distancia)</code></td><td>Lanza un rayo y devuelve el primer impacto.</td></tr>
+  <tr><td><code>Physics2D.BoxCast(escena, centro, tamaño, dirección, distancia)</code></td><td>Barrido de caja contra colisionadores.</td></tr>
+  <tr><td><code>Save.Set/Get(clave, valor)</code></td><td>Guarda o lee un texto en la partida.</td></tr>
+  <tr><td><code>Save.SetNumber/GetNumber</code></td><td>Guarda o lee un número.</td></tr>
+  <tr><td><code>Save.SetFlag/GetFlag</code></td><td>Guarda o lee un booleano.</td></tr>
+  <tr><td><code>Network.StartHost(puerto)</code></td><td>Inicia un host básico.</td></tr>
+  <tr><td><code>Network.Connect(host, puerto)</code></td><td>Conecta a un host.</td></tr>
+  <tr><td><code>Network.Stop()</code></td><td>Detiene la red.</td></tr>
+</table>
+<div class="warn"><b>RPC todavía no está disponible.</b> La red actual es básica y no tiene llamadas remotas ni autoridad de servidor. No la uses para multijugador competitivo en esta beta.</div>
+
+<h2>15. Ejemplo comentado: Jardín de Ollin</h2>
+<p>El proyecto de ejemplo está en <code>samples/JardinOllin</code>. Abre <code>project.ollin</code> o usa el comando de la sección 2.</p>
+<table>
+  <tr><th>Entidad</th><th>Componentes</th><th>Para qué</th></tr>
+  <tr><td>Cámara principal</td><td>Camera2D</td><td>Sigue a <code>player</code>, límites y ambiente.</td></tr>
+  <tr><td>Jardín</td><td>Tilemap</td><td>Colisión del suelo.</td></tr>
+  <tr><td>Suelo visible / Sendero</td><td>SpriteRenderer</td><td>Color visual del suelo y camino.</td></tr>
+  <tr><td>Árboles</td><td>SpriteRenderer + BoxCollider</td><td>Decoración con colisión.</td></tr>
+  <tr><td>Lina</td><td>SpriteRenderer, BoxCollider, Rigidbody2D, CharacterBody2D, Light2D, ParticleEmitter2D, ScriptComponent</td><td>Jugador con luz y partículas.</td></tr>
+  <tr><td>Semilla, Flor, Lucero</td><td>SpriteRenderer, RotatorComponent, Light2D</td><td>Coleccionables.</td></tr>
+  <tr><td>Interfaz</td><td>UiCanvas</td><td>Título, ayuda y puntos.</td></tr>
+  <tr><td>Luciérnagas</td><td>ParticleEmitter2D</td><td>Ambiente.</td></tr>
+</table>
+<h3>Qué hace el script</h3>
+<pre><code>public sealed class Jugador : OllinScript
+{
+    private int _puntos;
+
+    public override void OnStart()
+    {
+        Hud.SetLabel("puntos", "0 / 3");
+        Hud.Message("Recoge las tres luces del jardín", 3f);
+    }
+
+    public override void OnUpdate(float deltaTime)
+    {
+        // Leer WASD/flechas y mover.
+        // Recorrer entidades con tag "coleccionable".
+        // Si está a menos de 0.9, desactivarla y sumar punto.
+    }
+}</code></pre>
+<div class="ok"><b>Ejercicio para el tester:</b> cambia la velocidad de 4 a 7, añade una cuarta luz y modifica el mensaje final. Guarda y reproduce.</div>
+
+<h2>16. Lista de prueba y feedback</h2>
+<p>Prueba estos puntos y envía feedback con captura, pasos y el log de la consola:</p>
+<ul class="check">
+  <li>Crear un proyecto nuevo desde la pantalla de proyectos.</li>
+  <li>Abrir <code>samples/JardinOllin</code> y seleccionar entidades.</li>
+  <li>Moverte con WASD, recoger las tres luces y ver el HUD.</li>
+  <li>Añadir un componente desde el inspector y editarlo.</li>
+  <li>Guardar, cerrar, reabrir y comprobar que los cambios persisten.</li>
+  <li>Crear un script, asociarlo a una entidad y compilarlo.</li>
+  <li>Reproducir, pausar y detener.</li>
+  <li>Exportar el juego.</li>
+  <li>Probar el grafo de nodos y generar código.</li>
+  <li>Probar el editor de UI, tilemap y animación.</li>
+</ul>
+<h3>Cómo reportar</h3>
+<table>
+  <tr><th>Dato</th><th>Qué incluir</th></tr>
+  <tr><td>Versión</td><td>6.213.0 (o la que estés probando).</td></tr>
+  <tr><td>Pasos</td><td>Qué hiciste, en orden, hasta el fallo.</td></tr>
+  <tr><td>Esperado / real</td><td>Qué esperabas y qué ocurrió.</td></tr>
+  <tr><td>Captura</td><td>Editor completo y consola visible.</td></tr>
+  <tr><td>Log</td><td>Copia de la consola o del archivo de log.</td></tr>
+  <tr><td>Proyecto</td><td>Si puedes, adjunta la carpeta o la escena mínima.</td></tr>
+</table>
+
+<h2>17. Problemas frecuentes</h2>
+<table>
+  <tr><th>Problema</th><th>Causa / solución</th></tr>
+  <tr><td>“No se pudo abrir la escena: tipo desconocido”</td><td>La escena usa componentes eliminados (RPG/3D). Crea una escena nueva o usa el ejemplo.</td></tr>
+  <tr><td>“El script no compila”</td><td>Revisa la consola: archivo, línea y error. Confirma que la clase y <code>ClassName</code> coinciden.</td></tr>
+  <tr><td>El inspector no muestra nada</td><td>Selecciona una entidad en la jerarquía o en el visor. El panel solo aparece con selección única.</td></tr>
+  <tr><td>El juego no se mueve</td><td>Comprueba que el script está asociado y que la escena está en reproducción.</td></tr>
+  <tr><td>Linux no arranca</td><td>El paquete Linux es experimental y no está validado en hardware real.</td></tr>
+  <tr><td>El proyecto antiguo falla</td><td>No es compatible con la beta 6.213; usa el ejemplo o migra los componentes.</td></tr>
+</table>
+
+<div class="note" style="margin-top:18pt"><b>Gracias por probar Ollin.</b> Esta beta está centrada en el núcleo 2D, el inspector y la API de scripting. El feedback más útil es el que describe un flujo real: “quería hacer X, hice Y, ocurrió Z”.</div>
+
+</body>
+</html>
