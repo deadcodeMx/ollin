@@ -1,14 +1,13 @@
-## Ollin Beta 6.151.0 — meshes 2D
+## Ollin Beta 6.152.0 — texto enriquecido
 
 ### Añadido
 
-- Mesh2D con vértices y triángulos.
-- MultiMesh2D con offsets y escala.
-- Render de mallas no deformadas.
-- Prueba de clonado de malla.
+- Texto enriquecido en UI.
+- Marcado `[b]`, `[i]` y `[color=#RRGGBB]`.
+- Integrado en editor y reproductor.
 
 ### Verificación
 
 - **228/228 pruebas**.
-- Instalador 6.151.0 instalado y abierto.
+- Instalador 6.152.0 instalado y abierto.
 - Demo técnica no publicada.
