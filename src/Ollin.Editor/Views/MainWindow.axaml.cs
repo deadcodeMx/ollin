@@ -840,6 +840,11 @@ public partial class MainWindow : Window
         {
             "Nivel", "Cámara 3D", "Pared 3D", "FPS", "IA 3D", "Botón 3D",
             "Trigger 3D", "Generador", "Checkpoint", "Peligro", "Teletransporte", "Seguidor",
+            "Interacción", "Inventario", "Estadísticas", "Día/Noche", "IA", "Salud", "Arma", "Recogible",
+            "Puerta", "Reglas", "Mensaje", "Reaparición", "Botón 3D", "Trigger", "Equipo", "Misiones",
+            "Turno", "Gestor de turnos", "Cartas", "Mazmorra", "HUD variable", "Objetivo", "Spawner",
+            "Checkpoint 2D", "Arma 2D", "Proyectil 2D", "Botín", "Diálogo",
+
         };
 
         foreach (var tab in tabs)
