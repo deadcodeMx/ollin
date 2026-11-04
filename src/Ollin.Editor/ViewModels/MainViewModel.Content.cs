@@ -568,6 +568,8 @@ public sealed partial class MainViewModel
             "audiosource2d" => entity.GetComponent<AudioSource2D>(),
             "line2d" => entity.GetComponent<Line2D>(),
             "skinnedmesh" => entity.GetComponent<SkinnedMesh2D>(),
+            "networkidentity" => entity.GetComponent<NetworkIdentity>(),
+            "networktransform" => entity.GetComponent<NetworkTransform>(),
             "polygon2d" => entity.GetComponent<Polygon2D>(),
             "navigationpolygon" => entity.GetComponent<NavigationPolygon2D>(),
             "navigationagent" => entity.GetComponent<NavigationAgent2D>(),

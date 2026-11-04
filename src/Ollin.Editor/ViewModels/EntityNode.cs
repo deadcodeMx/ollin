@@ -451,6 +451,10 @@ public sealed class EntityNode : ObservableObject
 
     public string ColliderIgnoreTags { get => string.Join(", ", Collider?.IgnoreTags ?? new List<string>()); set { if (Collider is null) return; Collider.IgnoreTags = value.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(tag => tag.Trim()).Where(tag => tag.Length > 0).ToList(); OnPropertyChanged(); _owner.MarkDirty(); } }
 
+    public bool HasNetworkIdentity => Entity.GetComponent<NetworkIdentity>() is not null;
+    public bool HasNetworkTransform => Entity.GetComponent<NetworkTransform>() is not null;
+    public bool NetworkIsLocal { get => Entity.GetComponent<NetworkIdentity>()?.IsLocal ?? true; set { if (Entity.GetComponent<NetworkIdentity>() is { } n) { n.IsLocal = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
+
     public bool HasSkinnedMesh => Entity.GetComponent<SkinnedMesh2D>() is not null;
     public bool HasLine2D => Entity.GetComponent<Line2D>() is not null;
     public bool HasPolygon2D => Entity.GetComponent<Polygon2D>() is not null;
@@ -1631,6 +1635,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasNavigationPolygon));
         OnPropertyChanged(nameof(HasLine2D));
         OnPropertyChanged(nameof(HasSkinnedMesh));
+        OnPropertyChanged(nameof(HasNetworkIdentity));
+        OnPropertyChanged(nameof(HasNetworkTransform));
         OnPropertyChanged(nameof(HasPolygon2D));
         OnPropertyChanged(nameof(HasNavigationAgent));
         OnPropertyChanged(nameof(HasAudioListener));

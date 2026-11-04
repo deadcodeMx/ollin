@@ -1,14 +1,20 @@
-## Ollin Beta 6.145.0 — skinning
+## Ollin Beta 6.146.0 — multijugador básico
 
 ### Añadido
 
-- SkinnedMesh2D con pesos por hueso.
-- Pose de reposo.
-- Render de malla deformada.
-- Prueba de pose de reposo.
+- Transporte UDP de snapshots.
+- NetworkIdentity y NetworkTransform.
+- Sincronización de posición, rotación y escala.
+- API Network para scripts.
+- Prueba de serialización.
+
+### Limitaciones
+
+- Sin predicción, interpolación, autoridad ni salas.
+- Sincronización por snapshots a 20 Hz.
 
 ### Verificación
 
-- **225/225 pruebas**.
-- Instalador 6.145.0 instalado y abierto.
+- **226/226 pruebas**.
+- Instalador 6.146.0 instalado y abierto.
 - Demo técnica no publicada.

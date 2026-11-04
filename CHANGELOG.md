@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.146.0] — 2026-11-04
+
+### Añadido
+
+- Transporte UDP de snapshots.
+- NetworkIdentity y NetworkTransform.
+- Sincronización de posición, rotación y escala.
+- API Network para scripts.
+- Prueba de serialización de snapshots.
+
 ## [6.145.0] — 2026-11-04
 
 ### Añadido
