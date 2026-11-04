@@ -394,10 +394,11 @@ public sealed class Renderer2D : IDisposable
         {
             if (!entity.Active) continue;
             var canvas = entity.GetComponent<CanvasLayer>();
-            if (canvas is { Visible: false }) continue;
+            var item = entity.GetComponent<CanvasItem2D>();
+            if (canvas is { Visible: false } || item is { Visible: false }) continue;
             var layer = canvas?.Order ?? 0;
             if (entity.GetComponent<SpriteRenderer>() is { Enabled: true, Visible: true } sprite)
-                entries.Add((layer, entity.Transform.Position.Y, sprite.SortingOrder, () => DrawYSprite(scene, entity, sprite, cameraPosition)));
+                entries.Add((layer, entity.Transform.Position.Y, sprite.SortingOrder, () => DrawYSprite(scene, entity, sprite, cameraPosition, item)));
 
             foreach (var map in entity.GetComponents<TileMapLayer>())
             {
@@ -428,7 +429,7 @@ public sealed class Renderer2D : IDisposable
         foreach (var entry in entries) entry.Draw();
     }
 
-    private void DrawYSprite(Scene scene, Entity entity, SpriteRenderer sprite, Vector2 cameraPosition)
+    private void DrawYSprite(Scene scene, Entity entity, SpriteRenderer sprite, Vector2 cameraPosition, CanvasItem2D? item)
     {
         var world = scene.GetWorldMatrix(entity);
         var parallax = ParallaxOffset(cameraPosition, sprite.Parallax);
@@ -452,8 +453,10 @@ public sealed class Renderer2D : IDisposable
         if (sprite.FlipX) (u0, u1) = (u1, u0);
         if (sprite.FlipY) (v0, v1) = (v1, v0);
         _batch.SetBlendMode(sprite.BlendMode);
+        var tint = sprite.Tint;
+        if (item is not null) tint *= item.EffectiveModulate;
         _batch.DrawQuad(texture, corners[0], corners[1], corners[2], corners[3],
-            new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1), sprite.Tint);
+            new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1), tint);
     }
 
     private void DrawYTile(Scene scene, Entity entity, TileMapLayer map, int x, int y,

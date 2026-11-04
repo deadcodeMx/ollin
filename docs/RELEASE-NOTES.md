@@ -1,16 +1,13 @@
-## Ollin Beta 6.182.0 — CanvasItem universal
+## Ollin Beta 6.183.0 — CanvasItem en Y-sort
 
-### Añadido
+### Corregido
 
-- `CanvasItem2D` aplica visibilidad y modulación a:
-  - Tilemaps.
-  - Líneas y polígonos.
-  - Meshes.
-  - Skinning.
+- `CanvasItem2D` ahora respeta visibilidad y modulación en el pase Y-sort.
+- Los sprites Y-sort ya no ignoran `Modulate`/`SelfModulate`.
 
 ### Verificación
 
 - **236/236 pruebas**.
-- Instalador 6.182.0 instalado correctamente.
+- Instalador 6.183.0 instalado correctamente.
 
-## [6.181.0] — 2026-11-04
+## [6.182.0] — 2026-11-04
