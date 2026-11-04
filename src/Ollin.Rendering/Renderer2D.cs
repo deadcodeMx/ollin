@@ -115,6 +115,8 @@ public sealed class Renderer2D : IDisposable
 
     public void DrawScreenTexture(Texture2D texture, Vector4 rect, int width, int height, Vector4 tint)
     {
+        _batch.ResetProgram();
+        _batch.SetBlendMode(BlendMode2D.Normal);
         _gl.Disable(EnableCap.ScissorTest);
         _gl.Viewport(0, 0, (uint)System.Math.Max(1, width), (uint)System.Math.Max(1, height));
         var projection = Matrix4x4.CreateOrthographicOffCenter(0f, width, height, 0f, -1f, 1f);
@@ -130,6 +132,8 @@ public sealed class Renderer2D : IDisposable
     }
     public void DrawScreenBorder(Vector4 rect, int width, int height, Vector4 color)
     {
+        _batch.ResetProgram();
+        _batch.SetBlendMode(BlendMode2D.Normal);
         _gl.Disable(EnableCap.ScissorTest);
         _gl.Viewport(0, 0, (uint)System.Math.Max(1, width), (uint)System.Math.Max(1, height));
         var projection = Matrix4x4.CreateOrthographicOffCenter(0f, width, height, 0f, -1f, 1f);
