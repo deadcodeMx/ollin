@@ -430,9 +430,6 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>Cámara activa: la de la escena o una de respaldo si no existe.</summary>
     public Camera2D ActiveCamera => Scene.GetMainCamera() ?? _fallbackCamera;
 
-    /// <summary>Cámara 3D principal (modo 2.5D), si existe.</summary>
-    // Modo 2D: el editor no expone ni renderiza cámaras 3D.
-    public Camera3D? ActiveCamera3D => null;
     public bool Is2DMode => true;
 
     public Vector2 CameraPosition
@@ -1307,40 +1304,6 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     /// <summary>Añade otra arma a la entidad seleccionada, en la siguiente ranura libre.</summary>
-    public void AddWeaponToSelected()
-    {
-        if (IsPlaying || Selected is null)
-        {
-            return;
-        }
-
-        var entity = Selected.Entity;
-        var weapons = entity.Components.OfType<Weapon>().ToList();
-        var slot = Enumerable.Range(1, 3).FirstOrDefault(value => weapons.All(weapon => weapon.Slot != value));
-
-        if (slot == 0)
-        {
-            StatusMessage = "Ya hay tres armas en esta entidad";
-            return;
-        }
-
-        var weapon = new Weapon
-        {
-            Name = slot == 1 ? "Pistola" : slot == 2 ? "Escopeta" : "Rifle",
-            Slot = slot,
-            Ammo = 12,
-            MagazineSize = 12,
-            ReserveAmmo = 48,
-        };
-        entity.AddComponent(weapon);
-        RebuildTree();
-        Selected = FindNode(entity.Id);
-        Selected!.WeaponSlotIndex = slot;
-        IsDirty = true;
-        CommitEdit("Añadir arma");
-        RequestRedraw();
-    }
-
     public void DuplicateSelected()
     {
         if (IsPlaying) return;

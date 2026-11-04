@@ -1767,7 +1767,6 @@ public partial class MainWindow : Window
 
     private void OnAddWeapon(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "weapon");
 
-    private void OnAddWeaponSlot(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.AddWeaponToSelected();
 
     private void OnAddPickup(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => AddComponentToNode(sender, "pickup");
 

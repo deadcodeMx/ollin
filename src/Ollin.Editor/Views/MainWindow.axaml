@@ -1379,7 +1379,6 @@
                 <ScrollViewer>
                   <StackPanel Margin="8" Spacing="5">
                     <TextBlock Classes="section" Text="ARMA FPS" />
-                    <Button Content="Añadir arma a la ranura libre" Click="OnAddWeaponSlot" FontSize="11" HorizontalAlignment="Stretch" />
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Daño" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.WeaponDamage, Mode=TwoWay}" Increment="5" Minimum="0.1" FormatString="0.##" />

@@ -506,21 +506,6 @@ public sealed class PlayerWindow : Window
 
     private void ApplyLookSettings()
     {
-        var x = _sensitivityXSlider is null ? 0.0022f : (float)_sensitivityXSlider.Value;
-        var y = _sensitivityYSlider is null ? 0.0022f : (float)_sensitivityYSlider.Value;
-        var invert = _invertYCheck?.IsChecked == true;
-        var smoothing = _smoothingSlider is null ? 0f : (float)_smoothingSlider.Value;
-
-        foreach (var entity in _viewModel.Scene.Entities)
-        {
-            foreach (var controller in entity.Components.OfType<FirstPersonController>())
-            {
-                controller.MouseSensitivityX = x;
-                controller.MouseSensitivityY = y;
-                controller.InvertY = invert;
-                controller.LookSmoothing = smoothing;
-            }
-        }
     }
 
 

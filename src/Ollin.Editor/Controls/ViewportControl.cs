@@ -253,7 +253,7 @@ public sealed class ViewportControl : OpenGlControlBase
 
     private void RenderSubViewports(int width, int height)
     {
-        if (_viewModel is null || _viewModel.ActiveCamera3D is not null) return;
+        if (_viewModel is null) return;
         foreach (var entity in _viewModel.Scene.Entities)
         {
             if (!entity.Active || entity.GetComponent<SubViewport2D>() is not { Enabled: true } viewport) continue;

@@ -496,9 +496,6 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new AiAgent());
                 break;
 
-            case "camera3d":
-                if (entity.HasComponent<Camera3D>()) { added = false; break; }
-                entity.AddComponent(new Camera3D());
                 break;
 
             case "wall3d":
@@ -506,9 +503,6 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new Wall3D());
                 break;
 
-            case "fps":
-                if (entity.HasComponent<FirstPersonController>()) { added = false; break; }
-                entity.AddComponent(new FirstPersonController());
                 break;
 
             case "rotator":

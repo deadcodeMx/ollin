@@ -380,37 +380,8 @@ public sealed class SceneRuntime
     }
 
     /// <summary>Atenúa los sonidos posicionales según la cámara 3D.</summary>
-    private void UpdateSpatialAudio()
-    {
-        if (_scene is null || _spatialAudio.Count == 0)
-        {
-            return;
-        }
+    private void UpdateSpatialAudio() { }
 
-        var camera = _scene.GetMainCamera3D();
-
-        if (camera is null)
-        {
-            return;
-        }
-
-        var eye = new Vector2(camera.Eye.X, camera.Eye.Z);
-
-        foreach (var (source, handle) in _spatialAudio)
-        {
-            if (source.Owner is null || !source.Enabled)
-            {
-                continue;
-            }
-
-            var position = source.Owner.Transform.Position;
-            var distance = Vector2.Distance(eye, position);
-            var falloff = System.Math.Clamp(1f - distance / MathF.Max(0.01f, source.MaxDistance), 0f, 1f);
-            GameAudio.SetVolume(handle, source.Volume * falloff * falloff);
-        }
-    }
-
-    /// <summary>Ejecuta un solo nodo del grafo desde el breakpoint actual.</summary>
     public bool StepGraph(NodeGraph graph)
     {
         if (!IsPaused || _scene is null)
