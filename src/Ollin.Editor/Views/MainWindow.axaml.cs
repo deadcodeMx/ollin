@@ -744,18 +744,6 @@ public partial class MainWindow : Window
 
     private void OnFrameSelected(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.FrameSelected();
 
-    private void OnGizmoMove(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Move);
-
-    private void OnGizmoRotate(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Rotate);
-
-    private void OnGizmoScale(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Scale);
-
-    private void OnBrushWall(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
-        ViewportHost.Viewport.Brush3DMode = ViewportHost.Viewport.Brush3DMode == Controls.Brush3DMode.Wall ? Controls.Brush3DMode.None : Controls.Brush3DMode.Wall;
-
-    private void OnBrushFloor(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
-        ViewportHost.Viewport.Brush3DMode = ViewportHost.Viewport.Brush3DMode == Controls.Brush3DMode.Floor ? Controls.Brush3DMode.None : Controls.Brush3DMode.Floor;
-
     private void OnTilePaletteClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel is null || sender is not Button button || button.Tag is null) return;
@@ -1049,9 +1037,6 @@ public partial class MainWindow : Window
             editor.Remove();
         }
     }
-
-    private void OnSnapToggle(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
-        ViewportHost.Viewport.Snap3D = (sender as Avalonia.Controls.Primitives.ToggleButton)?.IsChecked == true;
 
     private void OnSnap2DToggle(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
@@ -2089,30 +2074,6 @@ public partial class MainWindow : Window
         {
             base.OnKeyDown(e);
             return;
-        }
-
-        if (!vm.IsPlaying && vm.ActiveCamera3D is not null)
-        {
-            if (e.Key is Key.D1 or Key.NumPad1)
-            {
-                ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Move);
-                e.Handled = true;
-                return;
-            }
-
-            if (e.Key is Key.D2 or Key.NumPad2)
-            {
-                ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Rotate);
-                e.Handled = true;
-                return;
-            }
-
-            if (e.Key is Key.D3 or Key.NumPad3)
-            {
-                ViewportHost.Viewport.SetGizmo3DMode(Ollin.Rendering.Gizmo3DMode.Scale);
-                e.Handled = true;
-                return;
-            }
         }
 
         // Durante la reproducción el teclado pertenece al juego.
