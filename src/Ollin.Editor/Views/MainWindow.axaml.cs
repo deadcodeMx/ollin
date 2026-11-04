@@ -421,6 +421,7 @@ public partial class MainWindow : Window
             {
                 RefreshPhysicsSections();
                 RefreshScriptSections();
+                _componentInspector?.ShowEntity(vm.Selected?.Entity);
             }
         };
         vm.Logs.CollectionChanged += OnLogsChanged;
@@ -1068,10 +1069,6 @@ public partial class MainWindow : Window
 
     // ---------- Ayuda ----------
 
-    private void OnComponentInspector(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        _componentInspector?.ShowEntity(ViewModel?.Selected?.Entity);
-    }
     private void OnQuickGuide(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => new QuickGuideWindow().Show(this);
     private void OnAbout(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {

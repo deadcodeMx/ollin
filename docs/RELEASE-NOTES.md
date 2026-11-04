@@ -1,20 +1,16 @@
-## Ollin Beta 6.212.0 — ejemplo Jardín de Ollin
+## Ollin Beta 6.213.0 — inspector directo
 
-### Añadido
+### Cambiado
 
-- Proyecto de ejemplo `samples/JardinOllin`.
-- Cámara, tilemap, luces, partículas, UI y script C#.
-- Movimiento WASD y recogida de tres luces.
-- README del ejemplo.
-
-### Corregido
-
-- Script inicial de plantillas usa `Input.GetKey` en vez de una API inexistente.
+- El Inspector 2D se abre al seleccionar una entidad.
+- Eliminados botón y menú redundantes.
+- Barra superior simplificada.
+- Panel derecho permanente y limpio.
 
 ### Verificación
 
 - Build 0 errores.
 - 134/134 pruebas.
-- Instalador 6.212.0 instalado.
+- Instalador 6.213.0 instalado.
 
-## [6.211.0] — 2026-11-04
+## [6.212.0] — 2026-11-04
