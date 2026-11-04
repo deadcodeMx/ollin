@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.136.0] — 2026-11-04
+
+### Añadido
+
+- Foco de UI por teclado.
+- Activación de botones con Enter/Espacio.
+- Etiquetas de accesibilidad por elemento.
+- Borde de foco.
+
 ## [6.135.0] — 2026-11-04
 
 ### Añadido

@@ -53,6 +53,8 @@ public sealed class UiElement
     public float Value { get; set; }
     public float Max { get; set; } = 100f;
     public string ParentId { get; set; } = string.Empty;
+    public bool Focusable { get; set; }
+    public string AccessibilityLabel { get; set; } = string.Empty;
     public UiLayout Layout { get; set; } = UiLayout.Free;
     public float Gap { get; set; } = 6f;
     public float Padding { get; set; } = 8f;
@@ -87,6 +89,7 @@ public sealed class UiCanvas : Component
                 FontSize = element.FontSize, Color = element.Color, Visible = element.Visible,
                 Action = element.Action, Value = element.Value, Max = element.Max,
                 ParentId = element.ParentId, Layout = element.Layout, Gap = element.Gap, Padding = element.Padding,
+                Focusable = element.Focusable, AccessibilityLabel = element.AccessibilityLabel,
             };
             if (!string.IsNullOrWhiteSpace(element.ParentId) && Elements.FirstOrDefault(parent => parent.Id == element.ParentId) is { } parent)
             {
@@ -115,6 +118,7 @@ public sealed class UiCanvas : Component
             Width = element.Width, Height = element.Height, FontSize = element.FontSize, Color = element.Color,
             Visible = element.Visible, Action = element.Action, Value = element.Value, Max = element.Max,
             ParentId = element.ParentId, Layout = element.Layout, Gap = element.Gap, Padding = element.Padding,
+            Focusable = element.Focusable, AccessibilityLabel = element.AccessibilityLabel,
         }).ToList(),
         Owner = newOwner,
     };

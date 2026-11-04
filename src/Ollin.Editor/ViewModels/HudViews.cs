@@ -87,6 +87,9 @@ public sealed class UiElementView
             : (theme?.PanelColor ?? element.Color);
         Anchor = element.Anchor;
         Visible = element.Visible;
+        Action = element.Action ?? element.Id;
+        Focusable = element.Focusable || element.Kind == Ollin.Core.Model.Components.UiElementKind.Button;
+        AccessibilityLabel = string.IsNullOrWhiteSpace(element.AccessibilityLabel) ? element.Text : element.AccessibilityLabel;
         Value = element.Max <= 0 ? 0 : System.Math.Clamp(element.Value / element.Max, 0, 1);
         Command = new UiActionCommand(() => invoke(element.Action ?? element.Id));
         Brush = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(
@@ -124,9 +127,15 @@ public sealed class UiElementView
     };
     public Avalonia.Thickness Margin => new Avalonia.Thickness(X, Y, 0, 0);
     public bool Visible { get; }
+    public string Action { get; }
+    public bool Focusable { get; }
+    public string AccessibilityLabel { get; }
+    public bool IsFocused { get; set; }
     public double Value { get; }
     public System.Windows.Input.ICommand Command { get; }
     public Avalonia.Media.IBrush Brush { get; }
+    public Avalonia.Media.IBrush FocusBrush => new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B"));
+    public Avalonia.Media.IBrush FocusBorder => IsFocused ? FocusBrush : new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Transparent);
     public Avalonia.Media.IBrush TextBrush { get; }
     public bool IsPanel => Kind is Ollin.Core.Model.Components.UiElementKind.Panel or Ollin.Core.Model.Components.UiElementKind.Container;
     public bool IsLabel => Kind == Ollin.Core.Model.Components.UiElementKind.Label || Kind == Ollin.Core.Model.Components.UiElementKind.Panel;

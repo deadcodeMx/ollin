@@ -20,6 +20,7 @@ public sealed partial class MainViewModel
     public ObservableCollection<UiElementView> UiElements { get; } = new();
     private string _uiSignature = string.Empty;
     public bool IsUiVisible { get; private set; }
+    public string? FocusedUiId { get; private set; }
 
     public bool IsInventoryVisible => _inventoryOpen && IsPlaying;
 
@@ -179,6 +180,32 @@ public sealed partial class MainViewModel
         }
     }
 
+    public void FocusUi(int direction)
+    {
+        if (!IsUiVisible) return;
+        var focusable = UiElements.Where(view => view.Focusable).ToList();
+        if (focusable.Count == 0) return;
+        var index = focusable.FindIndex(view => view.IsFocused);
+        index = index < 0 ? 0 : (index + direction + focusable.Count) % focusable.Count;
+        FocusedUiId = focusable[index].Id;
+        foreach (var view in UiElements) view.IsFocused = view.Id == FocusedUiId;
+        OnPropertyChanged(nameof(UiElements));
+    }
+
+    public void ActivateFocusedUi()
+    {
+        var focused = UiElements.FirstOrDefault(view => view.IsFocused && view.Focusable);
+        if (focused is not null) InvokeUiAction(focused.Action);
+    }
+
+    private void FocusFirstUi()
+    {
+        var first = UiElements.FirstOrDefault(view => view.Focusable);
+        if (first is null) return;
+        FocusedUiId = first.Id;
+        first.IsFocused = true;
+    }
+
     public void InvokeUiAction(string action)
     {
         _runtime.GameState.SetFlag($"ui.{action}", true);
@@ -197,7 +224,12 @@ public sealed partial class MainViewModel
         UiElements.Clear();
         if (canvas is not null)
             foreach (var element in flattened)
-                UiElements.Add(new UiElementView(element, InvokeUiAction, canvas.Theme));
+            {
+                var view = new UiElementView(element, InvokeUiAction, canvas.Theme);
+                view.IsFocused = view.Focusable && view.Id == FocusedUiId;
+                UiElements.Add(view);
+            }
+            if (UiElements.All(view => !view.IsFocused)) FocusFirstUi();
         OnPropertyChanged(nameof(IsUiVisible));
     }
 

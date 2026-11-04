@@ -77,8 +77,8 @@
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <Border HorizontalAlignment="{Binding HorizontalAlignment}" VerticalAlignment="{Binding VerticalAlignment}" Margin="{Binding Margin}" Width="{Binding Width}" Height="{Binding Height}"
-                  Background="#CC151922" BorderBrush="#40E9A23B" BorderThickness="1" CornerRadius="6"
-                  IsVisible="{Binding Visible}" Padding="6">
+                  Background="#CC151922" BorderBrush="{Binding FocusBorder}" BorderThickness="1" CornerRadius="6"
+                  IsVisible="{Binding Visible}" Padding="6" AutomationProperties.Name="{Binding AccessibilityLabel}">
             <Grid>
               <TextBlock Text="{Binding Text}" FontSize="{Binding FontSize}" Foreground="{Binding TextBrush}" TextWrapping="Wrap" IsVisible="{Binding IsLabel}" VerticalAlignment="Center" />
               <ProgressBar Minimum="0" Maximum="1" Value="{Binding Value}" Height="12" IsVisible="{Binding IsBar}" />
