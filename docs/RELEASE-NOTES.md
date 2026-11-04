@@ -1,13 +1,13 @@
-## Ollin Beta 6.190.0 — grafo y acciones rápidas
+## Ollin Beta 6.191.0 — inspector filtrable
 
 ### Añadido
 
-- Acciones avanzadas del grafo generan llamadas reales a `ActionExecutor`.
-- Acciones rápidas en el inspector vacío: entidad, sprite y guía 2D.
+- Buscador de componentes en el inspector.
+- Filtrado en tiempo real por nombre de sección.
 
 ### Verificación
 
 - **237/237 pruebas**.
-- Instalador 6.190.0 instalado.
+- Instalador 6.191.0 instalado.
 
-## [6.189.0] — 2026-11-04
+## [6.190.0] — 2026-11-04
