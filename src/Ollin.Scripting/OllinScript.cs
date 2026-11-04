@@ -1,4 +1,7 @@
 using System.Collections;
+using System.Numerics;
+using Ollin.Core.Model;
+using Ollin.Core.Model.Components;
 using Ollin.Core.Model;
 
 namespace Ollin.Scripting;
@@ -21,6 +24,41 @@ public abstract class OllinScript
 
     internal List<IEnumerator> Coroutines { get; } = new();
 
+    /// <summary>Obtiene un componente de la entidad del script.</summary>
+    public T? Get<T>() where T : Component => Entity.GetComponent<T>();
+
+    /// <summary>Obtiene un componente o falla con un mensaje claro.</summary>
+    public T Require<T>() where T : Component =>
+        Entity.GetComponent<T>() ?? throw new InvalidOperationException($"La entidad '{Entity.Name}' no tiene {typeof(T).Name}.");
+
+    /// <summary>Añade un componente a la entidad.</summary>
+    public T Add<T>() where T : Component, new()
+    {
+        var component = new T();
+        Entity.AddComponent(component);
+        return component;
+    }
+
+    /// <summary>Quita un componente de la entidad.</summary>
+    public bool Remove<T>() where T : Component =>
+        Entity.GetComponent<T>() is { } component && Entity.RemoveComponent(component);
+
+    /// <summary>Busca una entidad por nombre en la escena.</summary>
+    public Entity? Find(string name) => Scene?.Find(name);
+
+    /// <summary>Crea una entidad en la escena actual.</summary>
+    public Entity? Create(string name, Vector2 position, Guid? parentId = null) =>
+        Scene?.Create(name, position, parentId);
+
+    /// <summary>Elimina una entidad de la escena.</summary>
+    public bool Destroy(Entity entity) => Scene?.Remove(entity.Id) ?? false;
+
+    /// <summary>Posición local de la entidad.</summary>
+    public Vector2 Position
+    {
+        get => Entity.Transform.Position;
+        set => Entity.Transform.Position = value;
+    }
     /// <summary>Lanza una rutina: <c>yield return new WaitForSeconds(1f)</c>.</summary>
     public void StartCoroutine(IEnumerator routine) => CoroutineHost.Pending.Add((this, routine));
 

@@ -2460,7 +2460,7 @@ _scriptFields = null;
 
     public void RefreshAiStatus() => OnPropertyChanged(nameof(AiStatus));
 
-    public bool HasCamera3D => Entity.GetComponent<Camera3D>() is not null;
+    public bool HasCamera3D => false;
 
     public Camera3D? Camera3D => Entity.GetComponent<Camera3D>();
 
@@ -2581,7 +2581,7 @@ _scriptFields = null;
         }
     }
 
-    public bool HasWall3D => Entity.GetComponent<Wall3D>() is not null;
+    public bool HasWall3D => false;
 
     public Wall3D? Wall3D => Entity.GetComponent<Wall3D>();
 
@@ -2807,7 +2807,7 @@ _scriptFields = null;
         }
     }
 
-    public bool HasAi3D => Entity.GetComponent<AiAgent3D>() is not null;
+    public bool HasAi3D => false;
 
     public AiAgent3D? Ai3D => Entity.GetComponent<AiAgent3D>();
 
@@ -3355,7 +3355,7 @@ _scriptFields = null;
         }
     }
 
-    public bool HasButton => Entity.GetComponent<Button3D>() is not null;
+    public bool HasButton => false;
 
     public Button3D? ButtonState => Entity.GetComponent<Button3D>();
 
@@ -3399,7 +3399,7 @@ _scriptFields = null;
         }
     }
 
-    public bool HasTrigger => Entity.GetComponent<Trigger3D>() is not null;
+    public bool HasTrigger => false;
 
     public Trigger3D? TriggerState => Entity.GetComponent<Trigger3D>();
 
@@ -3673,7 +3673,7 @@ _scriptFields = null;
         }
     }
 
-    public bool HasHazard => Entity.GetComponent<Hazard3D>() is not null;
+    public bool HasHazard => false;
 
     public Hazard3D? HazardState => Entity.GetComponent<Hazard3D>();
 
@@ -3721,7 +3721,7 @@ _scriptFields = null;
         }
     }
 
-    public bool HasFollower => Entity.GetComponent<Follower3D>() is not null;
+    public bool HasFollower => false;
 
     public Follower3D? FollowerState => Entity.GetComponent<Follower3D>();
 

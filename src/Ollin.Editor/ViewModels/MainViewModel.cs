@@ -431,7 +431,9 @@ public sealed partial class MainViewModel : ObservableObject
     public Camera2D ActiveCamera => Scene.GetMainCamera() ?? _fallbackCamera;
 
     /// <summary>Cámara 3D principal (modo 2.5D), si existe.</summary>
-    public Camera3D? ActiveCamera3D => Scene.GetMainCamera3D();
+    // Modo 2D: el editor no expone ni renderiza cámaras 3D.
+    public Camera3D? ActiveCamera3D => null;
+    public bool Is2DMode => true;
 
     public Vector2 CameraPosition
     {

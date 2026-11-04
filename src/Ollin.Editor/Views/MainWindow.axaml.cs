@@ -1074,6 +1074,7 @@ public partial class MainWindow : Window
 
     // ---------- Ayuda ----------
 
+    private void OnQuickGuide(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => new QuickGuideWindow().Show(this);
     private void OnAbout(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         var about = new Window

@@ -74,6 +74,7 @@
         <MenuItem Header="Cargar partida" Click="OnLoadGame" />
       </MenuItem>
       <MenuItem Header="Ayuda">
+        <MenuItem Header="Guía rápida 2D" Click="OnQuickGuide" />
         <MenuItem Header="Acerca de Ollin" Click="OnAbout" />
       </MenuItem>
     </Menu>
