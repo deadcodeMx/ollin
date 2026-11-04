@@ -1,4 +1,5 @@
 using Silk.NET.OpenGLES;
+using Ollin.Core.Diagnostics;
 
 namespace Ollin.Rendering;
 

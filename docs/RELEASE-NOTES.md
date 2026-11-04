@@ -1,14 +1,22 @@
-## Ollin Beta 6.178.0 — editor de navegación
+## Ollin Beta 6.180.0 — diagnóstico RTT y limpieza
 
 ### Añadido
 
 - Editor de puntos de `NavigationPolygon2D`.
-- Botón "Editar polígono" en el inspector.
-- Instalador corregido a **6.178.0**.
+- Launcher/instalador corregido y verificado.
 
-### Linux`n`n- Paquete `Ollin-6.178.0-linux-x64.tar.gz` actualizado.`n`n### Verificación
+### Diagnóstico RTT
+
+- `previousFramebuffer=0`.
+- `fbo=2`.
+- `restored=0`.
+
+Avalonia usa el framebuffer 0; por tanto no era un problema de restauración de FBO. La composición del SubViewport sigue sin aparecer; el fallo está en la textura/quad/orden.
+
+### Verificación
 
 - **236/236 pruebas**.
-- Instalador 6.178.0 instalado correctamente.
+- Instalador **6.180.0** instalado correctamente.
+- Escena de ejemplo restaurada.
 
-## [6.177.0] — 2026-11-04
+## [6.178.0] — 2026-11-04
