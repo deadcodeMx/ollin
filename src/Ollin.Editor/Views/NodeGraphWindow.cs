@@ -11,6 +11,7 @@ using Ollin.Core.Model.Components;
 using Ollin.Editor.ViewModels;
 using Ollin.Editor.Controls;
 using Ollin.Core.Scripting;
+using System.IO;
 using Avalonia.Automation;
 using Avalonia.Automation.Peers;
 
@@ -383,6 +384,29 @@ public sealed class NodeGraphWindow : Window
                 },
             },
         };
+        var save = new Button { Content = "Guardar como scripts/GraphScript.cs" };
+        save.Click += (_, _) =>
+        {
+            try
+            {
+                var folder = System.IO.Path.Combine(_viewModel.ProjectRoot, "scripts");
+                System.IO.Directory.CreateDirectory(folder);
+                var fullPath = System.IO.Path.Combine(folder, "GraphScript.cs");
+                File.WriteAllText(fullPath, code);
+                var component = _entity.GetComponent<ScriptComponent>() ?? _entity.AddComponent(new ScriptComponent());
+                component.ScriptPath = "scripts/GraphScript.cs";
+                component.ClassName = "GraphScript";
+                _viewModel.ReloadScripts();
+                _viewModel.RefreshProjectFiles();
+                _viewModel.MarkDirty("script");
+                window.Close();
+            }
+            catch (Exception exception)
+            {
+                _viewModel.StatusMessage = $"No se pudo guardar el script: {exception.Message}";
+            }
+        };
+        ((StackPanel)window.Content!).Children.Add(save);
         window.ShowDialog(this);
     }
     private static Button ToolButton(string text, Action action, string? tooltip = null)

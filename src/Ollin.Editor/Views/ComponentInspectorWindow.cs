@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.IO;
 using System.Numerics;
 using System.Reflection;
 using Avalonia;
@@ -51,34 +52,8 @@ public sealed class ComponentInspectorView : UserControl
         }
         _root.Children.Add(new TextBlock { Text = _entity.Name, FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) });
         _root.Children.Add(new TextBlock { Text = "Solo componentes 2D del motor. Edita valores y guarda al cerrar.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) });
+        _root.Children.Add(new TextBlock { Text = "COMPONENTES", Classes = { "section" }, Margin = new Thickness(0, 8, 0, 0) });
 
-        var topActions = new WrapPanel { Margin = new Thickness(0, 4, 0, 2) };
-        var addScript = new Button
-        {
-            Content = _entity.GetComponent<ScriptComponent>() is null ? "Añadir scripting" : "Añadir otro script",
-            Margin = new Thickness(0, 0, 6, 4),
-        };
-        addScript.Click += (_, _) => { _entity.AddComponent(new ScriptComponent()); _viewModel.MarkDirty("componente"); Rebuild(); };
-        topActions.Children.Add(addScript);
-        var addGraph = new Button
-        {
-            Content = _entity.GetComponent<NodeGraph>() is null ? "Añadir grafo" : "Editar grafo",
-            Margin = new Thickness(0, 0, 6, 4),
-        };
-        addGraph.Click += (_, _) =>
-        {
-            if (_entity.GetComponent<NodeGraph>() is null)
-            {
-                _entity.AddComponent(new NodeGraph());
-                _viewModel.MarkDirty("componente");
-                Rebuild();
-                return;
-            }
-            var window = new NodeGraphWindow(_viewModel, _entity);
-            if (TopLevel.GetTopLevel(this) is Window owner) window.Show(owner); else window.Show();
-        };
-        topActions.Children.Add(addGraph);
-        _root.Children.Add(topActions);
         foreach (var component in _entity.Components.ToList())
         {
             var panel = new StackPanel { Spacing = 4 };
@@ -86,42 +61,45 @@ public sealed class ComponentInspectorView : UserControl
             {
                 panel.Children.Add(Editor(component, property));
             }
-            var remove = new Button { Content = "Quitar componente", HorizontalAlignment = HorizontalAlignment.Right };
+            if (component is ScriptComponent scriptComponent)
+            {
+                var actions = new WrapPanel { Margin = new Thickness(0, 4, 0, 0) };
+                var openScript = new Button { Content = "Abrir script", Margin = new Thickness(0, 0, 6, 4) };
+                openScript.Click += (_, _) =>
+                {
+                    if (string.IsNullOrWhiteSpace(scriptComponent.ScriptPath)) _viewModel.OpenSelectedScript();
+                    else _viewModel.OpenScript(Path.Combine(_viewModel.ProjectRoot, scriptComponent.ScriptPath));
+                };
+                actions.Children.Add(openScript);
+
+                var openGraph = new Button { Content = "Abrir grafo", Margin = new Thickness(0, 0, 6, 4) };
+                openGraph.Click += (_, _) =>
+                {
+                    var graph = _entity.GetComponent<NodeGraph>();
+                    if (graph is null)
+                    {
+                        graph = _entity.AddComponent(new NodeGraph());
+                        graph.Enabled = true;
+                        _viewModel.MarkDirty("componente");
+                    }
+                    var window = new NodeGraphWindow(_viewModel, _entity);
+                    if (TopLevel.GetTopLevel(this) is Window owner) window.Show(owner); else window.Show();
+                };
+                actions.Children.Add(openGraph);
+                panel.Children.Add(actions);
+            }
+            var remove = new Button { Content = "Quitar componente", HorizontalAlignment = HorizontalAlignment.Right, Classes = { "tool" } };
             remove.Click += (_, _) => { _entity.RemoveComponent(component); _viewModel.MarkDirty("componente"); Rebuild(); };
             panel.Children.Add(remove);
             _root.Children.Add(new Expander
             {
-                Header = component.GetType().Name, Content = panel, IsExpanded = true,
+                Header = FriendlyHeader(component.GetType()), Content = panel, IsExpanded = true,
                 HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 2),
             });
         }
 
         var available = Catalog.Where(type => _entity.Components.All(c => c.GetType() != type)).ToList();
 
-        var quick = new WrapPanel { Margin = new Thickness(0, 6, 0, 0) };
-        if (_entity.GetComponent<ScriptComponent>() is null)
-        {
-            var scriptButton = new Button { Content = "Añadir scripting", Margin = new Thickness(0, 0, 6, 4) };
-            scriptButton.Click += (_, _) => { _entity.AddComponent(new ScriptComponent()); _viewModel.MarkDirty("componente"); Rebuild(); };
-            quick.Children.Add(scriptButton);
-        }
-        if (_entity.GetComponent<NodeGraph>() is null)
-        {
-            var graphButton = new Button { Content = "Añadir grafo", Margin = new Thickness(0, 0, 6, 4) };
-            graphButton.Click += (_, _) => { _entity.AddComponent(new NodeGraph()); _viewModel.MarkDirty("componente"); Rebuild(); };
-            quick.Children.Add(graphButton);
-        }
-        else
-        {
-            var editButton = new Button { Content = "Editar grafo", Margin = new Thickness(0, 0, 6, 4) };
-            editButton.Click += (_, _) =>
-            {
-                var window = new NodeGraphWindow(_viewModel, _entity);
-                if (TopLevel.GetTopLevel(this) is Window owner) window.Show(owner); else window.Show();
-            };
-            quick.Children.Add(editButton);
-        }
-        if (quick.Children.Count > 0) _root.Children.Add(quick);
         if (available.Count > 0)
         {
             var combo = new ComboBox { ItemsSource = available.Select(DisplayName).ToList(), SelectedIndex = 0, HorizontalAlignment = HorizontalAlignment.Stretch };
@@ -137,6 +115,10 @@ public sealed class ComponentInspectorView : UserControl
             _root.Children.Add(new StackPanel { Spacing = 6, Margin = new Thickness(0, 8, 0, 0), Children = { combo, add } });
         }
     }
+
+    private static string FriendlyHeader(Type type) =>
+        type == typeof(ScriptComponent) ? "Script" :
+        type == typeof(NodeGraph) ? "Grafo de nodos" : type.Name;
 
     private static string DisplayName(Type type) =>
         type == typeof(ScriptComponent) ? "Script (ScriptComponent)" :
