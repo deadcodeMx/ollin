@@ -494,6 +494,13 @@ public sealed class EntityNode : ObservableObject
     public bool AnimationPlayerPlaying { get => Entity.GetComponent<AnimationPlayer2D>()?.Playing ?? false; }
     public decimal AnimationPlayerSpeed { get => (decimal)(Entity.GetComponent<AnimationPlayer2D>()?.Speed ?? 1f); set { if (Entity.GetComponent<AnimationPlayer2D>() is { } a) { a.Speed = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public bool HasSubViewport2D => Entity.GetComponent<SubViewport2D>() is not null;
+    public string SubViewportCamera { get => Entity.GetComponent<SubViewport2D>()?.CameraTag ?? "main"; set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.CameraTag = value ?? string.Empty; OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal SubViewportX { get => (decimal)(Entity.GetComponent<SubViewport2D>()?.Rect.X ?? 0.65f); set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.Rect = new Vector4((float)value, v.Rect.Y, v.Rect.Z, v.Rect.W); OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+    public decimal SubViewportY { get => (decimal)(Entity.GetComponent<SubViewport2D>()?.Rect.Y ?? 0.65f); set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.Rect = new Vector4(v.Rect.X, (float)value, v.Rect.Z, v.Rect.W); OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+    public decimal SubViewportW { get => (decimal)(Entity.GetComponent<SubViewport2D>()?.Rect.Z ?? 0.3f); set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.Rect = new Vector4(v.Rect.X, v.Rect.Y, Math.Clamp((float)value, 0.05f, 1f), v.Rect.W); OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+    public decimal SubViewportH { get => (decimal)(Entity.GetComponent<SubViewport2D>()?.Rect.W ?? 0.3f); set { if (Entity.GetComponent<SubViewport2D>() is { } v) { v.Rect = new Vector4(v.Rect.X, v.Rect.Y, v.Rect.Z, Math.Clamp((float)value, 0.05f, 1f)); OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+
     public bool HasCanvasItem2D => Entity.GetComponent<CanvasItem2D>() is not null;
     public bool CanvasItemVisible { get => Entity.GetComponent<CanvasItem2D>()?.Visible ?? true; set { if (Entity.GetComponent<CanvasItem2D>() is { } c) { c.Visible = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
     public bool CanvasItemYSort { get => Entity.GetComponent<CanvasItem2D>()?.YSort ?? false; set { if (Entity.GetComponent<CanvasItem2D>() is { } c) { c.YSort = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
@@ -1650,6 +1657,7 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasEquipment));
         OnPropertyChanged(nameof(HasCanvasLayer));
         OnPropertyChanged(nameof(HasCanvasItem2D));
+        OnPropertyChanged(nameof(HasSubViewport2D));
         OnPropertyChanged(nameof(HasAnimationPlayer));
         OnPropertyChanged(nameof(HasAnimationBlendTree));
         OnPropertyChanged(nameof(AnimationBlendTime));

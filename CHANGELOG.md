@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.165.0] — 2026-11-04
+
+### Añadido
+
+- SubViewport2D con cámara secundaria.
+- Render en un rectángulo normalizado.
+- Inspector de subviewport.
+- Prueba de configuración.
+
 ## [6.164.0] — 2026-11-04
 
 ### Añadido

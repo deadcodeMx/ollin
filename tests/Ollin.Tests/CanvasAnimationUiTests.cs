@@ -230,4 +230,13 @@ public sealed class CanvasAnimationUiTests
         Assert.Equal(0.5f, copy.EffectiveModulate.X);
         Assert.Equal(0.5f, copy.EffectiveModulate.Y);
     }
+
+    [Fact]
+    public void SubViewportConservaRectangulo()
+    {
+        var viewport = new SubViewport2D { CameraTag = "minimap", Rect = new Vector4(0.6f, 0.6f, 0.3f, 0.3f) };
+        var copy = (SubViewport2D)viewport.CloneFor(new Entity());
+        Assert.Equal("minimap", copy.CameraTag);
+        Assert.Equal(0.3f, copy.Rect.Z);
+    }
 }

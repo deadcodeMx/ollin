@@ -345,6 +345,27 @@ public sealed class ViewportControl : OpenGlControlBase
         }
     }
 
+    private void RenderSubViewports(int width, int height)
+    {
+        if (_viewModel is null || _viewModel.ActiveCamera3D is not null) return;
+        foreach (var entity in _viewModel.Scene.Entities)
+        {
+            if (!entity.Active || entity.GetComponent<SubViewport2D>() is not { Enabled: true } viewport) continue;
+            var cameraEntity = _viewModel.Scene.Entities.FirstOrDefault(candidate => candidate.Active &&
+                candidate.GetComponent<Camera2D>() is { Enabled: true } &&
+                (string.IsNullOrWhiteSpace(viewport.CameraTag) || candidate.Tags.Contains(viewport.CameraTag) ||
+                 candidate.Name.Equals(viewport.CameraTag, StringComparison.OrdinalIgnoreCase)))
+                ?? _viewModel.Scene.Entities.FirstOrDefault(candidate => candidate.Active && candidate.GetComponent<Camera2D>() is { Enabled: true });
+            if (cameraEntity?.GetComponent<Camera2D>() is not { } source) continue;
+            var camera = (Camera2D)source.CloneFor(cameraEntity);
+            camera.Viewport = new System.Numerics.Vector4(
+                System.Math.Clamp(viewport.Rect.X, 0f, 0.95f),
+                System.Math.Clamp(viewport.Rect.Y, 0f, 0.95f),
+                System.Math.Clamp(viewport.Rect.Z, 0.05f, 1f),
+                System.Math.Clamp(viewport.Rect.W, 0.05f, 1f));
+            _renderer!.RenderFrame(_viewModel.Scene, _viewModel.Scene.GetWorldPosition(cameraEntity), camera, width, height, null, false, false);
+        }
+    }
     private void UpdateStats(int width, int height)
     {
         _frames++;

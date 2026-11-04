@@ -109,6 +109,12 @@ public sealed class Renderer2D : IDisposable
     }
 
     /// <summary>Dibuja un frame completo de la escena.</summary>
+    public void ResetViewport(int width, int height)
+    {
+        _gl.Disable(EnableCap.ScissorTest);
+        _gl.Viewport(0, 0, (uint)System.Math.Max(1, width), (uint)System.Math.Max(1, height));
+    }
+
     public void RenderFrame(Scene scene, Vector2 cameraPosition, Camera2D camera, int width, int height,
         Guid? selectedEntityId, bool showGrid, bool showHelpers = true, IReadOnlyCollection<Guid>? selectedEntityIds = null)
     {

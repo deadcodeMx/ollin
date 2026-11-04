@@ -563,6 +563,7 @@ public sealed partial class MainViewModel
             "tilemaplayer" => entity.GetComponents<TileMapLayer>().LastOrDefault(),
             "canvaslayer" => entity.GetComponent<CanvasLayer>(),
             "canvasitem2d" => entity.GetComponent<CanvasItem2D>(),
+            "subviewport2d" => entity.GetComponent<SubViewport2D>(),
             "animationplayer" => entity.GetComponent<AnimationPlayer2D>(),
             "animationblendtree" => entity.GetComponent<AnimationBlendTree2D>(),
             "uicanvas" => entity.GetComponent<UiCanvas>(),
