@@ -1,16 +1,16 @@
-## Ollin Beta 6.181.0 — editor de skinning
+## Ollin Beta 6.182.0 — CanvasItem universal
 
 ### Añadido
 
-- Editor visual de `SkinnedMesh2D`.
-- Edición de vértices y triángulos.
-- Edición de huesos A/B/C/D.
-- Edición de pesos B/C/D.
-- Botón "Editar skinning" en el inspector.
+- `CanvasItem2D` aplica visibilidad y modulación a:
+  - Tilemaps.
+  - Líneas y polígonos.
+  - Meshes.
+  - Skinning.
 
 ### Verificación
 
 - **236/236 pruebas**.
-- Instalador 6.181.0 instalado correctamente.
+- Instalador 6.182.0 instalado correctamente.
 
-## [6.180.0] — 2026-11-04
+## [6.181.0] — 2026-11-04

@@ -258,22 +258,23 @@ public sealed class Renderer2D : IDisposable
         {
             if (!entity.Active) continue;
             var world = scene.GetWorldMatrix(entity);
+            var canvasTint = CanvasTint(entity);
             if (entity.GetComponent<Mesh2D>() is { Enabled: true, Visible: true } mesh)
-                DrawMesh(mesh.Mesh, world, Vector2.Zero, 1f);
+                DrawMesh(mesh.Mesh, world, Vector2.Zero, 1f, canvasTint);
             if (entity.GetComponent<MultiMesh2D>() is { Enabled: true, Visible: true } multi)
                 foreach (var offset in multi.Offsets)
-                    DrawMesh(multi.Mesh, world, offset, multi.Scale);
+                    DrawMesh(multi.Mesh, world, offset, multi.Scale, canvasTint);
         }
     }
 
-    private void DrawMesh(Mesh2DData mesh, Matrix4x4 world, Vector2 offset, float scale)
+    private void DrawMesh(Mesh2DData mesh, Matrix4x4 world, Vector2 offset, float scale, Vector4 tint)
     {
         for (var i = 0; i + 2 < mesh.Triangles.Count; i += 3)
         {
             var a = Vector2.Transform(mesh.Vertices[mesh.Triangles[i]] * scale + offset, world);
             var b = Vector2.Transform(mesh.Vertices[mesh.Triangles[i + 1]] * scale + offset, world);
             var c = Vector2.Transform(mesh.Vertices[mesh.Triangles[i + 2]] * scale + offset, world);
-            _batch.DrawTriangle(null, a, b, c, mesh.Color);
+            _batch.DrawTriangle(null, a, b, c, mesh.Color * tint);
         }
     }
     private void DrawSkinnedMeshes(Scene scene)
@@ -282,6 +283,7 @@ public sealed class Renderer2D : IDisposable
         {
             if (!entity.Active) continue;
             if (entity.GetComponent<SkinnedMesh2D>() is not { Enabled: true, Visible: true } mesh) continue;
+            var tint = CanvasTint(entity);
             if (entity.GetComponent<Skeleton2D>() is not { } skeleton) continue;
             if (skeleton.BindPoints.Count < 2 || skeleton.WorldPoints.Count < 2) continue;
             for (var i = 0; i + 2 < mesh.Triangles.Count; i += 3)
@@ -289,7 +291,7 @@ public sealed class Renderer2D : IDisposable
                 var a = SkinVertex(entity, mesh, skeleton, mesh.Triangles[i]);
                 var b = SkinVertex(entity, mesh, skeleton, mesh.Triangles[i + 1]);
                 var c = SkinVertex(entity, mesh, skeleton, mesh.Triangles[i + 2]);
-                _batch.DrawTriangle(null, a, b, c, mesh.Color);
+                _batch.DrawTriangle(null, a, b, c, mesh.Color * tint);
             }
         }
     }
@@ -331,6 +333,11 @@ public sealed class Renderer2D : IDisposable
         var rotated = new Vector2(local.X * cos - local.Y * sin, local.X * sin + local.Y * cos) * scale;
         return currentStart + rotated;
     }
+    private static Vector4 CanvasTint(Entity entity) =>
+        entity.GetComponent<CanvasItem2D>() is { } item ? item.EffectiveModulate : Vector4.One;
+
+    private static bool CanvasVisible(Entity entity) =>
+        entity.GetComponent<CanvasItem2D>() is not { Visible: false };
     private uint GetMaterialProgram(string source)
     {
         if (string.IsNullOrWhiteSpace(source)) return 0;
@@ -355,12 +362,13 @@ public sealed class Renderer2D : IDisposable
         {
             if (!entity.Active) continue;
             var world = scene.GetWorldMatrix(entity);
+            var canvasTint = CanvasTint(entity);
             if (entity.GetComponent<Line2D>() is { Enabled: true, Visible: true, Points.Count: > 1 } line)
             {
                 for (var i = 0; i < line.Points.Count - 1; i++)
-                    _batch.DrawLine(null, Vector2.Transform(line.Points[i], world), Vector2.Transform(line.Points[i + 1], world), line.Width, line.Color);
+                    _batch.DrawLine(null, Vector2.Transform(line.Points[i], world), Vector2.Transform(line.Points[i + 1], world), line.Width, line.Color * canvasTint);
                 if (line.Loop && line.Points.Count > 2)
-                    _batch.DrawLine(null, Vector2.Transform(line.Points[^1], world), Vector2.Transform(line.Points[0], world), line.Width, line.Color);
+                    _batch.DrawLine(null, Vector2.Transform(line.Points[^1], world), Vector2.Transform(line.Points[0], world), line.Width, line.Color * canvasTint);
             }
             if (entity.GetComponent<Polygon2D>() is { Enabled: true, Visible: true, Points.Count: > 2 } polygon)
             {
@@ -368,13 +376,13 @@ public sealed class Renderer2D : IDisposable
                 {
                     var worldPoints = polygon.Points.Select(point => Vector2.Transform(point, world)).ToList();
                     foreach (var triangle in PolygonTriangulator.Triangulate(worldPoints))
-                        _batch.DrawTriangle(null, triangle.A, triangle.B, triangle.C, polygon.Color);
+                        _batch.DrawTriangle(null, triangle.A, triangle.B, triangle.C, polygon.Color * canvasTint);
                 }
                 for (var i = 0; i < polygon.Points.Count; i++)
                 {
                     var a = Vector2.Transform(polygon.Points[i], world);
                     var b = Vector2.Transform(polygon.Points[(i + 1) % polygon.Points.Count], world);
-                    _batch.DrawLine(null, a, b, polygon.Width, polygon.Color);
+                    _batch.DrawLine(null, a, b, polygon.Width, polygon.Color * canvasTint);
                 }
             }
         }
