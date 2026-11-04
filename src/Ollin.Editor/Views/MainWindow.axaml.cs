@@ -193,7 +193,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private MainViewModel? ViewModel => DataContext as MainViewModel;
+    private MainViewModel? ViewModel => (DataContext as MainViewModel) ?? (TopLevel.GetTopLevel(this)?.DataContext as MainViewModel);
 
     private bool HasSelected(string property) => property switch
     {
@@ -1076,7 +1076,8 @@ public partial class MainWindow : Window
 
     private void OnComponentInspector(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (ViewModel?.Selected is not { } selected) return;
+        Ollin.Core.Diagnostics.Log.Info("Inspector 2D solicitado", "Editor");
+        if (ViewModel?.Selected is not { } selected) { Ollin.Core.Diagnostics.Log.Warn("Inspector 2D: sin selección", "Editor"); return; }
         try
         {
             new ComponentInspectorWindow(ViewModel, selected.Entity).Show(this);

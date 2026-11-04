@@ -1,15 +1,17 @@
-## Ollin Beta 6.195.0 — Inspector 2D genérico
+## Ollin Beta 6.196.0 — Inspector 2D funcional
+
+### Corregido
+
+- El menú Ver no heredaba el DataContext; el Inspector 2D recibía ViewModel nulo.
+- El Inspector 2D abre desde el menú y la barra.
 
 ### Añadido
 
-- Inspector 2D basado en reflexión.
-- Lista blanca de componentes del motor.
-- Edición de números, texto, booleanos, enums y vectores.
-- Botón "Inspector 2D" en la barra.
+- Entrada "Inspector 2D" en el menú Ver.
 
 ### Verificación
 
 - **220/220 pruebas**.
-- Instalador 6.195.0 instalado.
+- Instalador 6.196.0 instalado.
 
-## [6.194.0] — 2026-11-04
+## [6.195.0] — 2026-11-04

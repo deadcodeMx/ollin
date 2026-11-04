@@ -53,6 +53,7 @@
         <MenuItem Header="Mapa de entrada…" Click="OnEditInputMap" />
       </MenuItem>
       <MenuItem Header="Ver">
+        <MenuItem Header="Inspector 2D" Click="OnComponentInspector" />
         <MenuItem Header="Centrar cámara" InputGesture="Home" Click="OnResetCamera" />
         <MenuItem Header="Enfocar selección" InputGesture="F" Click="OnFrameSelected" />
         <MenuItem Header="Mostrar cuadrícula" ToggleType="CheckBox" IsChecked="{Binding ShowGrid}" />
