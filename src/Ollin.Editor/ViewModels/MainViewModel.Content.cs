@@ -333,14 +333,8 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new MovingPlatform2D());
                 break;
 
-            case "turnactor":
-                if (entity.HasComponent<TurnActor>()) { added = false; break; }
-                entity.AddComponent(new TurnActor());
                 break;
 
-            case "turnmanager":
-                if (entity.HasComponent<TurnManager>()) { added = false; break; }
-                entity.AddComponent(new TurnManager());
                 break;
 
             case "skeleton":
@@ -348,15 +342,10 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new Skeleton2D());
                 break;
 
-            case "carddeck":
-                if (entity.HasComponent<CardDeck>()) { added = false; break; }
-                entity.AddComponent(new CardDeck());
                 break;
 
             case "dungeon":
-                if (entity.HasComponent<DungeonGenerator2D>()) { added = false; break; }
                 if (!entity.HasComponent<Tilemap>()) entity.AddComponent(new Tilemap());
-                entity.AddComponent(new DungeonGenerator2D());
                 break;
 
             case "equipment":
@@ -582,10 +571,6 @@ public sealed partial class MainViewModel
             "hurtbox" => entity.GetComponent<Hurtbox>(),
             "knockback2d" => entity.GetComponent<Knockback2D>(),
             "equipment" => entity.GetComponent<Equipment>(),
-            "turnactor" => entity.GetComponent<TurnActor>(),
-            "turnmanager" => entity.GetComponent<TurnManager>(),
-            "carddeck" => entity.GetComponent<CardDeck>(),
-            "dungeon" => entity.GetComponent<DungeonGenerator2D>(),
             "skeleton" => entity.GetComponent<Skeleton2D>(),
             "questlog" => entity.GetComponent<QuestLog>(),
             "checkpoint2d" => entity.GetComponent<Checkpoint2D>(),
