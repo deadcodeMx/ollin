@@ -1,20 +1,14 @@
-## Ollin Beta 6.177.0 — editor de mallas y arreglo del instalador
+## Ollin Beta 6.178.0 — editor de navegación
 
 ### Añadido
 
-- Editor visual de `Mesh2D`.
-- Edición de vértices y triángulos.
-- Botón "Editar malla" en el inspector.
-
-### Corregido
-
-- El instalador empaquetado podía quedar desactualizado por publish incremental de `Ollin.Setup`.
-- El release anterior de 6.177 apuntaba a un ejecutable de 278 KB sin payload; ahora usa el single-file de 38 MB.
+- Editor de puntos de `NavigationPolygon2D`.
+- Botón "Editar polígono" en el inspector.
+- Instalador corregido a **6.178.0**.
 
 ### Verificación
 
 - **236/236 pruebas**.
-- Instalador 6.177.0 correcto instalado.
-- Versión instalada confirmada: **6.177.0**.
+- Instalador 6.178.0 instalado correctamente.
 
-## [6.175.0] — 2026-11-04
+## [6.177.0] — 2026-11-04
