@@ -1,16 +1,15 @@
-## Ollin Beta 6.162.0 — RenderServer2D
+## Ollin Beta 6.163.0 — PhysicsServer2D
 
 ### Añadido
 
-- Display list de sprites con `RenderServer2D`.
-- Recolección y ordenación separadas de la escena.
-- `DrawSprites` consume el servidor.
-- Prueba de recolección/orden.
+- `PhysicsServer2D` con detección de áreas.
+- `BodyEntered` / `BodyExited` en `Area2D`.
+- Lista de solapamientos por área.
+- Prueba de entrada/salida.
 
 ### Verificación
 
-- **233/233 pruebas**.
-- Instalador 6.162.0 instalado.
-- Escena de La Mansión renderizando tras el cambio.
+- **234/234 pruebas**.
+- Instalador 6.163.0 instalado y abierto.
 
-## [6.161.0] — 2026-11-04
+## [6.162.0] — 2026-11-04

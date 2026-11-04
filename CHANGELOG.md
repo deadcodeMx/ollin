@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.163.0] — 2026-11-04
+
+### Añadido
+
+- PhysicsServer2D con detección de áreas.
+- Señales BodyEntered/BodyExited.
+- Lista de solapamientos por Area2D.
+- Prueba de entrada/salida.
+
 ## [6.162.0] — 2026-11-04
 
 ### Añadido

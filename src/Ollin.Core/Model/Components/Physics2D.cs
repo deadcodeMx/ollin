@@ -240,6 +240,13 @@ public sealed class Area2D : Collider2D
 {
     public Vector2 Size { get; set; } = new(2f, 2f);
 
+    [System.Text.Json.Serialization.JsonIgnore] public HashSet<Guid> Overlapping { get; } = new();
+    public event Action<Entity>? BodyEntered;
+    public event Action<Entity>? BodyExited;
+
+    public void NotifyEnter(Entity entity) => BodyEntered?.Invoke(entity);
+    public void NotifyExit(Entity entity) => BodyExited?.Invoke(entity);
+
     public Area2D() => IsTrigger = true;
 
     public override Component CloneFor(Entity newOwner) => new Area2D

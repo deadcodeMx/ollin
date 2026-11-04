@@ -32,6 +32,7 @@ public sealed class SceneRuntime
     private readonly CombatSystem _combat = new();
     private readonly JointSystem _joints = new();
     private readonly NetworkSystem _network = new();
+    private readonly PhysicsServer2D _physicsServer = new();
     private readonly DialogueRunner _dialogue = new();
     private readonly HudModel _hud = new();
     private readonly GameState _gameState = new();
