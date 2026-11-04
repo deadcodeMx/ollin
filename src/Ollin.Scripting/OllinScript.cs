@@ -2,7 +2,6 @@ using System.Collections;
 using System.Numerics;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
-using Ollin.Core.Model;
 
 namespace Ollin.Scripting;
 
