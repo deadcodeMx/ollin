@@ -1,15 +1,15 @@
-## Ollin Beta 6.194.0 — recorte de plantillas 3D
+## Ollin Beta 6.195.0 — Inspector 2D genérico
 
-### Eliminado
+### Añadido
 
-- Plantillas 3D: corredor, demo técnica y tutorial 3D.
-- Scripts exclusivos de esas plantillas.
-- Pruebas de esas plantillas y de cámara/IA 3D.
+- Inspector 2D basado en reflexión.
+- Lista blanca de componentes del motor.
+- Edición de números, texto, booleanos, enums y vectores.
+- Botón "Inspector 2D" en la barra.
 
 ### Verificación
 
 - **220/220 pruebas**.
-- Build: 0 errores.
-- Plantillas 2D conservadas: vacía, plataformas y terror.
+- Instalador 6.195.0 instalado.
 
-## [6.193.0] — 2026-11-04
+## [6.194.0] — 2026-11-04

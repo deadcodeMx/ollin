@@ -1074,6 +1074,11 @@ public partial class MainWindow : Window
 
     // ---------- Ayuda ----------
 
+    private void OnComponentInspector(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected is not { } selected) return;
+        new ComponentInspectorWindow(ViewModel, selected.Entity).Show(this);
+    }
     private void OnQuickGuide(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => new QuickGuideWindow().Show(this);
     private void OnAbout(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
