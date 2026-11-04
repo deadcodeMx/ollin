@@ -348,4 +348,4 @@ them to entities and reports errors with file and line. Build with `dotnet run -
 src/Ollin.Editor`.
 
 
-Linux: [Ollin-6.186.0-linux-x64.tar.gz](https://github.com/deadcodeMx/ollin/releases/download/v6.147.0/Ollin-6.186.0-linux-x64.tar.gz)
+Linux: [Ollin-6.187.0-linux-x64.tar.gz](https://github.com/deadcodeMx/ollin/releases/download/v6.147.0/Ollin-6.187.0-linux-x64.tar.gz)
