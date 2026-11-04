@@ -314,22 +314,15 @@ public sealed class ViewportControl : OpenGlControlBase
 
             _renderer.ProjectRoot = _viewModel.ProjectRoot;
 
-            if (_viewModel.ActiveCamera3D is { } camera3D)
-            {
-                _renderer.RenderFrame3D(_viewModel.Scene, camera3D, width, height, _viewModel.IsPlaying ? null : _viewModel.Selected?.Id, Gizmo3DMode, _viewModel.IsPlaying ? null : BrushPreview);
-            }
-            else
-            {
-                _renderer.RenderFrame(
-                    _viewModel.Scene,
-                    _viewModel.CameraPosition,
-                    _viewModel.ActiveCamera,
-                    width,
-                    height,
-                    _viewModel.Selected?.Id,
-                    _viewModel.ShowGrid,
-                    selectedEntityIds: _viewModel.SelectionIds);
-            }
+            _renderer.RenderFrame(
+                _viewModel.Scene,
+                _viewModel.CameraPosition,
+                _viewModel.ActiveCamera,
+                width,
+                height,
+                _viewModel.Selected?.Id,
+                _viewModel.ShowGrid,
+                selectedEntityIds: _viewModel.SelectionIds);
 
             RenderSubViewports(width, height);
             _renderer.ResetViewport(width, height);
