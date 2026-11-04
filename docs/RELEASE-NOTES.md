@@ -1,12 +1,13 @@
-## Ollin Beta 6.126.0 — blend modes
+## Ollin Beta 6.127.0 — captura de rebinding
 
 ### Añadido
 
-- Blend modes Normal, Add y Multiply en sprites.
-- Separación automática del batch al cambiar de blend.
+- Captura de teclas en el Input Map.
+- Captura de botones de gamepad.
+- Bindings editables sin escribir el formato.
 
 ### Verificación
 
 - **216/216 pruebas**.
-- Instalador 6.126.0 instalado y abierto.
+- Instalador 6.127.0 instalado y abierto.
 - Demo técnica no publicada.

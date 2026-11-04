@@ -38,7 +38,7 @@ tilemap/animación/UI y audio/navegación**.
 | Parallax | Parallax2D/Background con repeat, scroll, follow, autoscroll | `Parallax` escalar por sprite | Capas, repetición, scroll/follow/autoscroll, editor |
 | UI | Control, anchors, containers, themes, RichText, focus, accesibilidad | HUD, pausa, inventario y menús concretos | Sistema general de UI, layouts, temas, fuentes, foco, accesibilidad |
 | Audio | Buses/efectos, 2D positional, listener, Doppler, pitch, polyphony, PulseAudio/ALSA | AudioSource, música/efectos, mixer básico; Linux silencioso | Posicional 2D, buses/efectos, pitch, polyphony, backend Linux |
-| Input | InputMap remapeable, deadzone, touch, mouse, 8 gamepads | Input Map por texto, XInput y `/dev/input/js*` | Captura de rebinding en runtime, touch, deadzone, múltiples dispositivos |
+| Input | InputMap remapeable, deadzone, touch, mouse, 8 gamepads | Input Map con captura de teclado/mando, XInput y `/dev/input/js*` | Touch, deadzone, múltiples dispositivos |
 | Navegación | NavigationRegion2D/Polygon, agentes, obstáculos, avoidance | A* sobre tilemap | Navmesh/polígono, agentes, obstáculos dinámicos, avoidance |
 | Esqueleto/IK | Skeleton2D, Bone2D, skinning, IK | Huesos y preview; IK sin resolver | Skinning, render de malla, IK real |
 | Localización | CSV/gettext, plurales, contextos, RTL, fuentes del sistema | JSON plano | Plurales, contextos, RTL, fallback de fuentes, selector de idioma |

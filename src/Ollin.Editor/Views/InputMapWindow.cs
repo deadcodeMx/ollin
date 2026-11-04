@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Ollin.Core.Input;
 using Ollin.Core.Projects;
 
@@ -13,6 +14,9 @@ public sealed class InputMapWindow : Window
     private readonly ProjectInfo _project;
     private readonly StackPanel _rows = new() { Spacing = 6 };
     private readonly TextBlock _error;
+    private TextBox? _captureBox;
+    private TextBox? _capturePadBox;
+    private DispatcherTimer? _padTimer;
 
     public InputMapWindow(ProjectInfo project)
     {
@@ -48,6 +52,7 @@ public sealed class InputMapWindow : Window
         cancel.Click += (_, _) => Close(false);
 
         foreach (var action in project.InputActions) AddRow(action);
+        KeyDown += OnCaptureKey;
 
         Content = new StackPanel
         {
@@ -103,6 +108,49 @@ public sealed class InputMapWindow : Window
         remove.Click += (_, _) => _rows.Children.Remove(panel);
         _rows.Children.Add(panel);
     }
+    private void StartPadCapture(TextBox box)
+    {
+        _capturePadBox = box;
+        _error.Text = "Pulsa un botón del mando…";
+        _error.IsVisible = true;
+        _padTimer ??= new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+        _padTimer.Tick -= OnPadTick;
+        _padTimer.Tick += OnPadTick;
+        _padTimer.Start();
+    }
+
+    private void OnPadTick(object? sender, EventArgs e)
+    {
+        if (_capturePadBox is null) { _padTimer?.Stop(); return; }
+        GamepadInput.Poll();
+        foreach (var name in new[] { "A", "B", "X", "Y", "Start", "Back", "ShoulderLeft", "ShoulderRight", "DPadUp", "DPadDown", "DPadLeft", "DPadRight" })
+        {
+            if (!GamepadInput.WasPressed(name)) continue;
+            _capturePadBox.Text = $"pad:{name}";
+            _capturePadBox = null;
+            _padTimer?.Stop();
+            _error.Text = $"Binding: pad:{name}";
+            break;
+        }
+    }
+
+    private void OnCaptureKey(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        if (_captureBox is null) return;
+        var name = e.Key switch
+        {
+            Avalonia.Input.Key.LeftCtrl => "LeftControl",
+            Avalonia.Input.Key.RightCtrl => "RightControl",
+            Avalonia.Input.Key.LeftShift => "LeftShift",
+            Avalonia.Input.Key.RightShift => "RightShift",
+            _ => e.Key.ToString(),
+        };
+        _captureBox.Text = $"key:{name}";
+        _captureBox = null;
+        _error.Text = $"Binding: key:{name}";
+        e.Handled = true;
+    }
+
     private static Control Place(Control control, int column)
     {
         Grid.SetColumn(control, column);
@@ -134,6 +182,7 @@ public sealed class InputMapWindow : Window
         _project.InputActions = result;
         ProjectService.Save(_project);
         InputMap.Set(result);
+        _padTimer?.Stop();
         Close(true);
     }
 

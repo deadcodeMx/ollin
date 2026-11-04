@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.127.0] — 2026-11-04
+
+### Añadido
+
+- Captura de teclas en el Input Map.
+- Captura de botones de gamepad.
+- Bindings editables sin escribir el formato.
+
 ## [6.126.0] — 2026-11-04
 
 ### Añadido
