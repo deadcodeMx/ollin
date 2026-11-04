@@ -346,3 +346,6 @@ Avalonia UI, an OpenGL sprite renderer, JSON scenes, transform gizmos, undo/redo
 runtime C# scripting through Roslyn. The editor compiles the scripts in memory, binds
 them to entities and reports errors with file and line. Build with `dotnet run --project
 src/Ollin.Editor`.
+
+
+Linux: [Ollin-6.147.0-linux-x64.tar.gz](https://github.com/deadcodeMx/ollin/releases/download/v6.147.0/Ollin-6.147.0-linux-x64.tar.gz)

@@ -7,7 +7,7 @@
 - Editor de tangentes.
 - Prueba de curva.
 
-### Verificación
+### Linux`n`n- Paquete `Ollin-6.147.0-linux-x64.tar.gz` generado con editor, player y assets.`n- Requiere `chmod +x install.sh` si el tar no conserva permisos.`n`n### Verificación
 
 - **227/227 pruebas**.
 - Instalador 6.147.0 instalado y abierto.
