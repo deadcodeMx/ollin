@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.161.0] — 2026-11-04
+
+### Añadido
+
+- OllinResource y TileSetResource.
+- ResourceLoader con cache, `res://`, dependencias y detección de ciclos.
+- Integración del root del proyecto.
+- Prueba de carga/cache.
+
 ## [6.160.0] — 2026-11-04
 
 ### Añadido

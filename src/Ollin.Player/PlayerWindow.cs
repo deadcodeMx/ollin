@@ -65,6 +65,7 @@ public sealed class PlayerWindow : Window
         _viewModel = new MainViewModel(initialize: false);
         Ollin.Core.Audio.Audio.Root = game.Root;
         CoreLocalization.Load(game.Root);
+        Ollin.Core.Resources.ResourceLoader.Root = game.Root;
         _viewModel.OpenProjectLocation(game.Root, logToConsole: false, remember: false);
 
         if (game.ScriptsImage is { Length: > 0 })

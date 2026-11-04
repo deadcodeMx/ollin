@@ -60,9 +60,13 @@ Implementado:
 - UI runtime con anclajes, contenedores, listas, foco, accesibilidad y rich text.
 - Audio 2D, red UDP, skinning y profiler.
 
+Implementado en recursos:
+- `OllinResource`, `TileSetResource`, cache y dependencias.
+
 Pendiente:
 
 - Servidores desacoplados (render/physics/audio/navigation).
+- Recursos empaquetados con `ResourceLoader`.
 - Recursos empaquetados con `ResourceLoader`.
 - Viewports múltiples/render-to-texture.
 - Shaders y materiales de canvas.

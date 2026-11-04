@@ -31,7 +31,11 @@ public sealed partial class MainViewModel
             OnPropertyChanged(nameof(ProjectName));
             OnPropertyChanged(nameof(ProjectPathText));
             InputMap.Set(value?.InputActions);
-            if (value is not null) Ollin.Core.Localization.Localization.Load(value.RootPath);
+            if (value is not null)
+            {
+                Ollin.Core.Localization.Localization.Load(value.RootPath);
+                Ollin.Core.Resources.ResourceLoader.Root = value.RootPath;
+            }
         }
     }
 
