@@ -1,19 +1,15 @@
-## Ollin Beta 6.188.0 — modo 2D
-
-### Cambiado
-
-- El editor oculta y no renderiza 3D/2.5D: cámaras, paredes, IA, botones, triggers, peligros y seguidores.
-- Catálogo de componentes reducido a lo esencial del motor.
-- Indicador de modo 2D.
-- Guía rápida 2D en Ayuda.
+## Ollin Beta 6.189.0 — grafo a C#
 
 ### Añadido
 
-- API de scripts: Get/Require/Add/Remove, Find, Create, Destroy y Position.
+- Generador de código C# desde el grafo visual.
+- Botón "</>" en el editor de nodos.
+- Copia del código generado.
+- Prueba de generación.
 
 ### Verificación
 
-- **236/236 pruebas**.
-- Instalador 6.188.0 instalado.
+- **237/237 pruebas**.
+- Instalador 6.189.0 instalado.
 
-## [6.187.0] — 2026-11-04
+## [6.188.0] — 2026-11-04

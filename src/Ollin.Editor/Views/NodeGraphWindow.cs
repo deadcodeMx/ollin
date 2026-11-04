@@ -232,6 +232,7 @@ public sealed class NodeGraphWindow : Window
         quick.Children.Add(ToolButton("⇅", AutoLayout, "Ordenar (Ctrl+Shift+O)"));
         quick.Children.Add(ToolButton("⏭", StepGraph, "Paso (F8)"));
         quick.Children.Add(ToolButton("↔", () => Distribute(true), "Distribuir H (Ctrl+Shift+H)"));
+        quick.Children.Add(ToolButton("</>", ShowCode, "Generar código C# del grafo"));
         quick.Children.Add(ToolButton("↕", () => Distribute(false), "Distribuir V (Ctrl+Shift+V)"));
         _quickActions = quick;
         toolbar.Children.Add(quick);
@@ -351,6 +352,39 @@ public sealed class NodeGraphWindow : Window
         return dock;
     }
 
+    private void ShowCode()
+    {
+        var code = Ollin.Core.Scripting.GraphCodeGenerator.Generate(_graph, "GraphScript");
+        var box = new TextBox
+        {
+            Text = code, AcceptsReturn = true, Height = 420,
+            FontFamily = new Avalonia.Media.FontFamily("Consolas"),
+            FontSize = 12, TextWrapping = Avalonia.Media.TextWrapping.NoWrap,
+        };
+        var copy = new Button { Content = "Copiar código", Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")), Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#1A1206")) };
+        copy.Click += async (_, _) =>
+        {
+            if (TopLevel.GetTopLevel(this)?.Clipboard is { } clipboard)
+                await clipboard.SetTextAsync(code);
+        };
+        var window = new Window
+        {
+            Title = "Código generado", Width = 780, Height = 560,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#151922")),
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E7EAF0")),
+            Content = new StackPanel
+            {
+                Margin = new Avalonia.Thickness(16), Spacing = 8,
+                Children =
+                {
+                    new TextBlock { Text = "Este código es una base editable generada desde el grafo.", FontSize = 11, Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")) },
+                    box, copy,
+                },
+            },
+        };
+        window.ShowDialog(this);
+    }
     private static Button ToolButton(string text, Action action, string? tooltip = null)
     {
         var button = new Button { Content = text, FontSize = 10.5, Padding = new Thickness(6, 3), MinWidth = 28 };
