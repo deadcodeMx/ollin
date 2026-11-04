@@ -24,6 +24,11 @@ public sealed class TileDefinition
 
     public string? Tag { get; set; }
 
+    public string Terrain { get; set; } = string.Empty;
+
+    /// <summary>16 variantes para máscara de vecinos (N, E, S, O).</summary>
+    public List<int> AutotileVariants { get; set; } = new();
+
     [JsonIgnore] public bool HasCollision => CollisionSize.X > 0f && CollisionSize.Y > 0f;
 }
 
@@ -56,6 +61,14 @@ public sealed class TileSet
         return new Vector4(column * TileWidth, row * TileHeight, TileWidth, TileHeight);
     }
 
+    public int ResolveAutotile(int tile, int mask)
+    {
+        var definition = Get(tile);
+        return definition is { AutotileVariants.Count: > 0 }
+            ? definition.AutotileVariants[System.Math.Clamp(mask, 0, definition.AutotileVariants.Count - 1)]
+            : tile;
+    }
+
     public TileSet Clone() => new()
     {
         Id = Id,
@@ -67,7 +80,8 @@ public sealed class TileSet
         Tiles = Tiles.Select(tile => new TileDefinition
         {
             Id = tile.Id, Name = tile.Name, Region = tile.Region, CollisionSize = tile.CollisionSize,
-            CollisionOffset = tile.CollisionOffset, OneWay = tile.OneWay, Tag = tile.Tag, SlopeNormal = tile.SlopeNormal,
+            CollisionOffset = tile.CollisionOffset, OneWay = tile.OneWay, Tag = tile.Tag, Terrain = tile.Terrain,
+            AutotileVariants = new List<int>(tile.AutotileVariants), SlopeNormal = tile.SlopeNormal,
         }).ToList(),
     };
 }
@@ -180,6 +194,9 @@ public class TileMapLayer : Component
         if (TileAt(x + 1, y) >= 0) mask |= 2;
         if (TileAt(x, y + 1) >= 0) mask |= 4;
         if (TileAt(x - 1, y) >= 0) mask |= 8;
+        var definition = TileSet?.Get(tile);
+        if (definition is { AutotileVariants.Count: > 0 })
+            return definition.AutotileVariants[System.Math.Clamp(mask, 0, definition.AutotileVariants.Count - 1)];
         return AutotileBase + mask;
     }
 

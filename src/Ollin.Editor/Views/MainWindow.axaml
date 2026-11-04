@@ -1689,6 +1689,8 @@
                     <TextBlock Classes="section" Text="TILEMAP" />
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Tileset" VerticalAlignment="Center" Classes="hint" />
+                    <ComboBox ItemsSource="{Binding Selected.TilemapLayerNames}" SelectedIndex="{Binding Selected.ActiveTilemapLayer, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+                    <StackPanel Orientation="Horizontal" Spacing="5"><Button Content="+ Capa" Click="OnAddTilemapLayer" /><Button Content="Quitar capa" Click="OnRemoveTilemapLayer" /></StackPanel>
                       <TextBox Grid.Column="1" Text="{Binding Selected.TilemapTexture, Mode=TwoWay}" Watermark="assets/sprites/tiles.png" />
                     </Grid>
                     <Grid ColumnDefinitions="86,*" Margin="0,1">

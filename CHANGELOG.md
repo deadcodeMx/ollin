@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.124.0] — 2026-11-04
+
+### Añadido
+
+- Selector de capa de tilemap.
+- Añadir y quitar capas.
+- Pintado en la capa activa.
+- Terreno y variantes de autotile por tile.
+- Editor de variantes en TileSet.
+
 ## [6.123.0] — 2026-11-04
 
 ### Añadido

@@ -1881,6 +1881,17 @@ public partial class MainWindow : Window
             ViewModel?.LoadGameSlot(slot);
     }
 
+    private void OnAddTilemapLayer(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        ViewModel?.Selected?.AddTilemapLayer();
+        ViewModel?.CommitEdit("Añadir capa de tilemap");
+    }
+
+    private void OnRemoveTilemapLayer(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        ViewModel?.Selected?.RemoveActiveTilemapLayer();
+        ViewModel?.CommitEdit("Quitar capa de tilemap");
+    }
     private async void OnEditTileSet(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel?.Selected?.Tilemap is not { } layer) return;

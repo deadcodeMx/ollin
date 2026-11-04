@@ -798,7 +798,65 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasTilePalette => TilePalette.Count > 0;
 
-    public TileMapLayer? Tilemap => Entity.GetComponents<TileMapLayer>().FirstOrDefault();
+    private int _activeTilemapLayer;
+
+    public TileMapLayer? Tilemap => Entity.GetComponents<TileMapLayer>().ElementAtOrDefault(System.Math.Clamp(_activeTilemapLayer, 0, System.Math.Max(0, Entity.GetComponents<TileMapLayer>().Count() - 1)));
+
+    public IReadOnlyList<string> TilemapLayerNames => Entity.GetComponents<TileMapLayer>()
+        .Select((layer, index) => $"{index + 1}. {layer.SortingOrder} ({(layer.Visible ? "visible" : "oculta")})").ToList();
+
+    public void AddTilemapLayer()
+    {
+        var current = Tilemap;
+        var layer = new TileMapLayer
+        {
+            Width = current?.Width ?? 16,
+            Height = current?.Height ?? 8,
+            TileSize = current?.TileSize ?? 1f,
+            TexturePath = current?.TexturePath,
+            TilesetColumns = current?.TilesetColumns ?? 4,
+            SortingOrder = (current?.SortingOrder ?? 0) + 1,
+        };
+        Entity.AddComponent(layer);
+        _activeTilemapLayer = Entity.GetComponents<TileMapLayer>().Count() - 1;
+        OnPropertyChanged(nameof(Tilemap));
+        OnPropertyChanged(nameof(TilemapLayerNames));
+        OnPropertyChanged(nameof(ActiveTilemapLayer));
+        OnPropertyChanged(nameof(HasTilemap));
+        _owner.MarkDirty();
+        _owner.RequestRedraw();
+    }
+
+    public void RemoveActiveTilemapLayer()
+    {
+        var layers = Entity.GetComponents<TileMapLayer>().ToList();
+        if (layers.Count <= 1) return;
+        Entity.RemoveComponent(layers[System.Math.Clamp(_activeTilemapLayer, 0, layers.Count - 1)]);
+        _activeTilemapLayer = System.Math.Max(0, _activeTilemapLayer - 1);
+        OnPropertyChanged(nameof(Tilemap));
+        OnPropertyChanged(nameof(TilemapLayerNames));
+        OnPropertyChanged(nameof(ActiveTilemapLayer));
+        OnPropertyChanged(nameof(HasTilemap));
+        _owner.MarkDirty();
+        _owner.RequestRedraw();
+    }
+
+    public int ActiveTilemapLayer
+    {
+        get => _activeTilemapLayer;
+        set
+        {
+            var max = System.Math.Max(0, Entity.GetComponents<TileMapLayer>().Count() - 1);
+            _activeTilemapLayer = System.Math.Clamp(value, 0, max);
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Tilemap));
+            OnPropertyChanged(nameof(TilemapLayerNames));
+            OnPropertyChanged(nameof(HasTilemap));
+            OnPropertyChanged(nameof(TilemapTexture));
+            OnPropertyChanged(nameof(TileSetTexture));
+            _owner.RequestRedraw();
+        }
+    }
 
     public bool HasTileSet => Tilemap is not null;
 
