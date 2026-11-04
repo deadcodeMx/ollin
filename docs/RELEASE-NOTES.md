@@ -1,13 +1,13 @@
-## Ollin Beta 6.142.0 — relleno de polígonos
+## Ollin Beta 6.143.0 — profiler
 
 ### Añadido
 
-- Relleno de Polygon2D.
-- Triangulación por ear clipping.
-- Prueba de triangulación.
+- FPS y frame time.
+- HUD en editor y reproductor.
+- Contador de entidades.
 
 ### Verificación
 
-- **222/222 pruebas**.
-- Instalador 6.142.0 instalado y abierto.
+- **223/223 pruebas**.
+- Instalador 6.143.0 instalado y abierto.
 - Demo técnica no publicada.

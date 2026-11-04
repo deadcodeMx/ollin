@@ -24,6 +24,8 @@ public sealed partial class MainViewModel
 
     public bool IsInventoryVisible => _inventoryOpen && IsPlaying;
 
+    public string ProfilerText => $"{Ollin.Core.Diagnostics.Profiler.Fps:0} FPS · {Ollin.Core.Diagnostics.Profiler.FrameMs:0.0} ms · {Scene.Entities.Count} entidades";
+
     public void ToggleInventory()
     {
         if (!IsPlaying || IsGameOverVisible) return;
@@ -129,6 +131,7 @@ public sealed partial class MainViewModel
     /// <summary>Copia el HUD del runtime a las colecciones de la interfaz.</summary>
     private void RefreshHud()
     {
+        OnPropertyChanged(nameof(ProfilerText));
         RefreshInventory();
         var hud = _runtime.Hud;
         TransitionOpacity = hud.TransitionAlpha;

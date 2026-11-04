@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.143.0] — 2026-11-04
+
+### Añadido
+
+- Profiler ligero con FPS y frame time.
+- HUD de profiler en editor y reproductor.
+- Contador de entidades.
+
 ## [6.142.0] — 2026-11-04
 
 ### Añadido

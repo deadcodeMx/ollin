@@ -470,6 +470,7 @@ public sealed class SceneRuntime
     /// <summary>Avanza la simulación. El delta se recorta para evitar saltos tras un parón.</summary>
     public void Tick(float deltaTime)
     {
+        Ollin.Core.Diagnostics.Profiler.Tick(deltaTime);
         if (!IsPlaying || IsPaused || _scene is null)
         {
             return;
