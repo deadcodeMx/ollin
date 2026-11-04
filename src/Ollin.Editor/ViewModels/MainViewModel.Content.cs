@@ -298,9 +298,6 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new SpriteRenderer());
                 break;
 
-            case "interactable":
-                if (entity.HasComponent<Interactable>()) { added = false; break; }
-                entity.AddComponent(new Interactable());
                 break;
 
             case "area":
@@ -348,14 +345,8 @@ public sealed partial class MainViewModel
                 if (!entity.HasComponent<Tilemap>()) entity.AddComponent(new Tilemap());
                 break;
 
-            case "equipment":
-                if (entity.HasComponent<Equipment>()) { added = false; break; }
-                entity.AddComponent(new Equipment());
                 break;
 
-            case "questlog":
-                if (entity.HasComponent<QuestLog>()) { added = false; break; }
-                entity.AddComponent(new QuestLog());
                 break;
 
             case "animfsm":
@@ -379,35 +370,17 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new Trail2D());
                 break;
 
-            case "health":
-                if (entity.HasComponent<Health>()) { added = false; break; }
-                entity.AddComponent(new Health());
                 break;
 
-            case "hitbox":
-                if (entity.HasComponent<Hitbox>()) { added = false; break; }
                 if (!entity.HasComponent<Collider2D>()) entity.AddComponent(new BoxCollider());
-                entity.AddComponent(new Hitbox());
                 break;
 
-            case "knockback2d":
-                if (entity.HasComponent<Knockback2D>()) { added = false; break; }
-                entity.AddComponent(new Knockback2D());
                 break;
 
-            case "hurtbox":
-                if (entity.HasComponent<Hurtbox>()) { added = false; break; }
-                entity.AddComponent(new Hurtbox());
                 break;
 
-            case "checkpoint2d":
-                if (entity.HasComponent<Checkpoint2D>()) { added = false; break; }
-                entity.AddComponent(new Checkpoint2D());
                 break;
 
-            case "weapon2d":
-                if (entity.HasComponent<Weapon2D>()) { added = false; break; }
-                entity.AddComponent(new Weapon2D());
                 break;
 
             case "collider":
@@ -465,14 +438,8 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new Light2D());
                 break;
 
-            case "inventory":
-                if (entity.HasComponent<Inventory>()) { added = false; break; }
-                entity.AddComponent(new Inventory());
                 break;
 
-            case "stats":
-                if (entity.HasComponent<Stats>()) { added = false; break; }
-                entity.AddComponent(new Stats());
                 break;
 
             case "daynight":
@@ -566,21 +533,10 @@ public sealed partial class MainViewModel
             "collider" => entity.GetComponent<Collider2D>(),
             "rigidbody" => entity.GetComponent<Rigidbody2D>(),
             "character" => entity.GetComponent<CharacterBody2D>(),
-            "hitbox" => entity.GetComponent<Hitbox>(),
-            "health" => entity.GetComponent<Health>(),
-            "hurtbox" => entity.GetComponent<Hurtbox>(),
-            "knockback2d" => entity.GetComponent<Knockback2D>(),
-            "equipment" => entity.GetComponent<Equipment>(),
             "skeleton" => entity.GetComponent<Skeleton2D>(),
-            "questlog" => entity.GetComponent<QuestLog>(),
-            "checkpoint2d" => entity.GetComponent<Checkpoint2D>(),
-            "weapon2d" => entity.GetComponent<Weapon2D>(),
             "edge" => entity.GetComponent<EdgeCollider2D>(),
             "audio" => entity.GetComponent<AudioSource>(),
             "light" => entity.GetComponent<Light2D>(),
-            "interactable" => entity.GetComponent<Interactable>(),
-            "inventory" => entity.GetComponent<Inventory>(),
-            "stats" => entity.GetComponent<Stats>(),
             "daynight" => entity.GetComponent<DayNightCycle>(),
             "ai" => entity.GetComponent<AiAgent>(),
             "script" => entity.GetComponent<ScriptComponent>(),
