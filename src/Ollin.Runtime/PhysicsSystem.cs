@@ -204,6 +204,8 @@ internal sealed class PhysicsSystem
                             }
 
                             GetBounds(scene, body.Entity, body.Collider, out bodyMin, out bodyMax);
+                            if (definition is { } slopeTile && slopeTile.SlopeNormal.LengthSquared() > 0.0001f)
+                                tileNormal = Vector2.Normalize(slopeTile.SlopeNormal);
                             body.Entity.GetComponent<CharacterBody2D>()?.RegisterContact(tileNormal, mapEntity);
                         }
                     }

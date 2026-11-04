@@ -1,16 +1,15 @@
-## Ollin Beta 6.121.0 — consultas físicas y excepciones
+## Ollin Beta 6.122.0 — materiales, joints y CCD
 
 ### Añadido
 
-- `RayCast2D`.
-- `ShapeCast2D`.
-- `Physics2D.Raycast` y `Physics2D.BoxCast`.
-- Excepciones de colisión por tags.
-- Inspector de tags ignoradas.
-- Pruebas de consultas.
+- Fricción y rebote por collider.
+- Joints de muelle y pin.
+- CCD configurable por cuerpo.
+- Normal de pendiente por tile.
+- Inspectores de materiales y CCD.
 
 ### Verificación
 
 - **214/214 pruebas**.
-- Instalador 6.121.0 instalado y abierto.
+- Instalador 6.122.0 instalado y abierto.
 - Demo técnica no publicada.

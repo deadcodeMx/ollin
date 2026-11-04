@@ -441,10 +441,20 @@ public sealed class EntityNode : ObservableObject
     public decimal DungeonHeight { get => Entity.GetComponent<DungeonGenerator2D>()?.Height ?? 20; set { if (Entity.GetComponent<DungeonGenerator2D>() is { } d) { d.Height = System.Math.Max(4, (int)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public decimal DungeonSeed { get => Entity.GetComponent<DungeonGenerator2D>()?.Seed ?? 12345; set { if (Entity.GetComponent<DungeonGenerator2D>() is { } d) { d.Seed = (int)value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public decimal ColliderBounciness { get => (decimal)(Collider?.Bounciness ?? 0f); set { if (Collider is null || MathF.Abs(Collider.Bounciness - (float)value) < 0.001f) return; Collider.Bounciness = System.Math.Clamp((float)value, 0f, 1f); OnPropertyChanged(); _owner.MarkDirty(); } }
+    public decimal ColliderFriction { get => (decimal)(Collider?.Friction ?? 0.2f); set { if (Collider is null || MathF.Abs(Collider.Friction - (float)value) < 0.001f) return; Collider.Friction = System.Math.Clamp((float)value, 0f, 1f); OnPropertyChanged(); _owner.MarkDirty(); } }
+    public bool RigidbodyContinuous { get => Entity.GetComponent<Rigidbody2D>()?.ContinuousCollision ?? true; set { if (Entity.GetComponent<Rigidbody2D>() is { } b) { b.ContinuousCollision = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
+
     public string ColliderIgnoreTags { get => string.Join(", ", Collider?.IgnoreTags ?? new List<string>()); set { if (Collider is null) return; Collider.IgnoreTags = value.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(tag => tag.Trim()).Where(tag => tag.Length > 0).ToList(); OnPropertyChanged(); _owner.MarkDirty(); } }
 
     public bool HasUiCanvas => Entity.GetComponent<UiCanvas>() is not null;
     public string UiCanvasSummary => Entity.GetComponent<UiCanvas>() is { } canvas ? $"{canvas.Elements.Count} elementos" : "-";
+
+    public bool HasSpringJoint => Entity.GetComponent<SpringJoint2D>() is not null;
+    public bool HasPinJoint => Entity.GetComponent<PinJoint2D>() is not null;
+    public string JointTargetTag { get => Entity.GetComponent<Joint2D>()?.TargetTag ?? string.Empty; set { if (Entity.GetComponent<Joint2D>() is { } j) { j.TargetTag = value ?? string.Empty; OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal JointRestLength { get => (decimal)((Entity.GetComponent<SpringJoint2D>()?.RestLength) ?? (Entity.GetComponent<PinJoint2D>()?.Distance ?? 1f)); set { if (Entity.GetComponent<SpringJoint2D>() is { } s) s.RestLength = MathF.Max(0.01f, (float)value); else if (Entity.GetComponent<PinJoint2D>() is { } p) p.Distance = MathF.Max(0.01f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } }
+    public decimal JointStiffness { get => (decimal)(Entity.GetComponent<SpringJoint2D>()?.Stiffness ?? 20f); set { if (Entity.GetComponent<SpringJoint2D>() is { } s) { s.Stiffness = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
 
     public bool HasAnimationPlayer => Entity.GetComponent<AnimationPlayer2D>() is not null;
     public string AnimationPlayerClip { get => Entity.GetComponent<AnimationPlayer2D>()?.Current ?? "-"; }
@@ -1533,8 +1543,13 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasEquipment));
         OnPropertyChanged(nameof(HasCanvasLayer));
         OnPropertyChanged(nameof(HasAnimationPlayer));
+        OnPropertyChanged(nameof(HasSpringJoint));
+        OnPropertyChanged(nameof(HasPinJoint));
         OnPropertyChanged(nameof(HasUiCanvas));
         OnPropertyChanged(nameof(ColliderIgnoreTags));
+        OnPropertyChanged(nameof(ColliderBounciness));
+        OnPropertyChanged(nameof(ColliderFriction));
+        OnPropertyChanged(nameof(RigidbodyContinuous));
         OnPropertyChanged(nameof(UiCanvasSummary));
         OnPropertyChanged(nameof(AnimationPlayerClip));
         OnPropertyChanged(nameof(AnimationPlayerPlaying));

@@ -19,6 +19,9 @@ public sealed class TileDefinition
 
     public bool OneWay { get; set; }
 
+    /// <summary>Normal de pendiente para este tile (0,0 = plano).</summary>
+    public Vector2 SlopeNormal { get; set; }
+
     public string? Tag { get; set; }
 
     [JsonIgnore] public bool HasCollision => CollisionSize.X > 0f && CollisionSize.Y > 0f;
@@ -58,7 +61,7 @@ public sealed class TileSet
         Tiles = Tiles.Select(tile => new TileDefinition
         {
             Id = tile.Id, Name = tile.Name, Region = tile.Region, CollisionSize = tile.CollisionSize,
-            CollisionOffset = tile.CollisionOffset, OneWay = tile.OneWay, Tag = tile.Tag,
+            CollisionOffset = tile.CollisionOffset, OneWay = tile.OneWay, Tag = tile.Tag, SlopeNormal = tile.SlopeNormal,
         }).ToList(),
     };
 }

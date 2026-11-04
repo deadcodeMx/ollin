@@ -565,6 +565,8 @@ public sealed partial class MainViewModel
             "animationplayer" => entity.GetComponent<AnimationPlayer2D>(),
             "uicanvas" => entity.GetComponent<UiCanvas>(),
             "raycast2d" => entity.GetComponent<RayCast2D>(),
+            "springjoint" => entity.GetComponent<SpringJoint2D>(),
+            "pinjoint" => entity.GetComponent<PinJoint2D>(),
             "shapecast2d" => entity.GetComponent<ShapeCast2D>(),
             "collider" => entity.GetComponent<Collider2D>(),
             "rigidbody" => entity.GetComponent<Rigidbody2D>(),

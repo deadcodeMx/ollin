@@ -286,12 +286,12 @@ public partial class MainWindow : Window
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
-            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D" or "PLATAFORMA MÓVIL" or "PARTÍCULAS" or "ESTELA" or "ANIMACIÓN FSM" or "TRANSICIÓN" or "EQUIPO" or "MISIONES" or "TILESET" or "TURNO" or "GESTOR DE TURNOS" or "CARTAS" or "MAZMORRA" or "ESQUELETO" or "CAPA DE CANVAS" or "ANIMATION PLAYER" or "UI CANVAS")) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D" or "PLATAFORMA MÓVIL" or "PARTÍCULAS" or "ESTELA" or "ANIMACIÓN FSM" or "TRANSICIÓN" or "EQUIPO" or "MISIONES" or "TILESET" or "TURNO" or "GESTOR DE TURNOS" or "CARTAS" or "MAZMORRA" or "ESQUELETO" or "CAPA DE CANVAS" or "ANIMATION PLAYER" or "UI CANVAS" or "MUELLE (JOINT)" or "PIN (JOINT)")) continue;
 
             var index = root.Children.IndexOf(child);
             root.Children.RemoveAt(index);
             child.Children.Remove(title);
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", "PLATAFORMA MÓVIL" => "movingplatform", "PARTÍCULAS" => "particles", "ESTELA" => "trail", "ANIMACIÓN FSM" => "animfsm", "TRANSICIÓN" => "transition", "EQUIPO" => "equipment", "MISIONES" => "questlog", "TILESET" => "tilemaplayer", "TURNO" => "turnactor", "GESTOR DE TURNOS" => "turnmanager", "CARTAS" => "carddeck", "MAZMORRA" => "dungeon", "ESQUELETO" => "skeleton", "CAPA DE CANVAS" => "canvaslayer", "ANIMATION PLAYER" => "animationplayer", "UI CANVAS" => "uicanvas", _ => null };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", "PLATAFORMA MÓVIL" => "movingplatform", "PARTÍCULAS" => "particles", "ESTELA" => "trail", "ANIMACIÓN FSM" => "animfsm", "TRANSICIÓN" => "transition", "EQUIPO" => "equipment", "MISIONES" => "questlog", "TILESET" => "tilemaplayer", "TURNO" => "turnactor", "GESTOR DE TURNOS" => "turnmanager", "CARTAS" => "carddeck", "MAZMORRA" => "dungeon", "ESQUELETO" => "skeleton", "CAPA DE CANVAS" => "canvaslayer", "ANIMATION PLAYER" => "animationplayer", "UI CANVAS" => "uicanvas", "MUELLE (JOINT)" => "springjoint", "PIN (JOINT)" => "pinjoint", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
             var expander = new Expander
             {
@@ -1587,6 +1587,8 @@ public partial class MainWindow : Window
         Add(movement, "Rotador", "rotator");
         Add(movement, "Oscilador", "oscillator");
         Add(movement, "Plataforma móvil", "movingplatform");
+        Add(movement, "Muelle (joint)", "springjoint");
+        Add(movement, "Pin (joint)", "pinjoint");
         if (movement.Items.Count > 0) flyout.Items.Add(movement);
 
         var collision = new MenuItem { Header = "Colisión" };

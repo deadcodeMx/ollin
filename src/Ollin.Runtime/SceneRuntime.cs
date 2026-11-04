@@ -30,6 +30,7 @@ public sealed class SceneRuntime
     private readonly List<CoroutineEntry> _coroutines = new();
     private readonly PhysicsSystem _physics = new();
     private readonly CombatSystem _combat = new();
+    private readonly JointSystem _joints = new();
     private readonly DialogueRunner _dialogue = new();
     private readonly HudModel _hud = new();
     private readonly GameState _gameState = new();
@@ -510,7 +511,7 @@ public sealed class SceneRuntime
         // Física en subpasos: evita que un cuerpo rápido atraviese un sólido
         // cuando el frame se alarga (pérdida de foco, recarga, etc.).
         var maxSpeed = _scene.Entities
-            .Select(entity => entity.GetComponent<Rigidbody2D>()?.Velocity.Length() ?? 0f)
+            .Select(entity => entity.GetComponent<Rigidbody2D>() is { ContinuousCollision: true } body ? body.Velocity.Length() : 0f)
             .DefaultIfEmpty(0f).Max();
         var speedSteps = (int)MathF.Ceiling(maxSpeed * dt / 0.25f);
         var physicsSteps = System.Math.Clamp(System.Math.Max((int)MathF.Ceiling(dt / 0.016f), speedSteps), 1, 16);

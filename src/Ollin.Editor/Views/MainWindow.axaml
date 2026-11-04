@@ -778,6 +778,17 @@
                       <TextBlock Classes="section" Text="UI CANVAS" />
                       <TextBlock Text="{Binding Selected.UiCanvasSummary}" Classes="hint" />
                     </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasSpringJoint}" Spacing="5">
+                      <TextBlock Classes="section" Text="MUELLE (JOINT)" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Tag objetivo" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.JointTargetTag, Mode=TwoWay}" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Longitud" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.JointRestLength, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Rigidez" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.JointStiffness, Mode=TwoWay}" Increment="1" Minimum="0" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasPinJoint}" Spacing="5">
+                      <TextBlock Classes="section" Text="PIN (JOINT)" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Tag objetivo" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.JointTargetTag, Mode=TwoWay}" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Distancia" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.JointRestLength, Mode=TwoWay}" Increment="0.1" Minimum="0.01" FormatString="0.##" /></Grid>
+                    </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasRotator}" Spacing="5">
                       <TextBlock Classes="section" Text="ROTADOR" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1">
@@ -817,6 +828,8 @@
                       </Grid>
                         <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Ignorar tags" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.ColliderIgnoreTags, Mode=TwoWay}" Watermark="projectile, trigger" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Rebote" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderBounciness, Mode=TwoWay}" Increment="0.05" Minimum="0" Maximum="1" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Fricción" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderFriction, Mode=TwoWay}" Increment="0.05" Minimum="0" Maximum="1" FormatString="0.##" /></Grid>
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderRadius, Mode=TwoWay}" Increment="0.05" Minimum="0.01" FormatString="0.###" />
                       </Grid>
                       <CheckBox Content="Es disparador (trigger)" IsChecked="{Binding Selected.IsTrigger, Mode=TwoWay}" FontSize="11.5" />

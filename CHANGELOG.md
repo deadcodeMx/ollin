@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.122.0] — 2026-11-04
+
+### Añadido
+
+- Materiales de fricción y rebote por collider.
+- Joints de muelle y pin.
+- CCD configurable por cuerpo.
+- Normal de pendiente por tile.
+- Inspectores de materiales y CCD.
+
 ## [6.121.0] — 2026-11-04
 
 ### Añadido

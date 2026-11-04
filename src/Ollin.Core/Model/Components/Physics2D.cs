@@ -22,6 +22,12 @@ public abstract class Collider2D : Component
     /// <summary>Etiquetas de entidades que este collider ignora.</summary>
     public List<string> IgnoreTags { get; set; } = new();
 
+    /// <summary>Rebote 0..1 (0 = sin rebote).</summary>
+    public float Bounciness { get; set; }
+
+    /// <summary>Fricción tangencial 0..1.</summary>
+    public float Friction { get; set; } = 0.2f;
+
     /// <summary>Plataforma de un solo sentido: solo colisiona desde arriba.</summary>
     public bool OneWay { get; set; }
 
@@ -44,6 +50,8 @@ public sealed class BoxCollider : Collider2D
         Layer = Layer,
         Mask = Mask,
         IgnoreTags = new List<string>(IgnoreTags),
+        Bounciness = Bounciness,
+        Friction = Friction,
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -87,6 +95,8 @@ public sealed class CircleCollider2D : Collider2D
         Layer = Layer,
         Mask = Mask,
         IgnoreTags = new List<string>(IgnoreTags),
+        Bounciness = Bounciness,
+        Friction = Friction,
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -120,6 +130,8 @@ public sealed class CapsuleCollider2D : Collider2D
         Layer = Layer,
         Mask = Mask,
         IgnoreTags = new List<string>(IgnoreTags),
+        Bounciness = Bounciness,
+        Friction = Friction,
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -166,6 +178,8 @@ public sealed class PolygonCollider2D : Collider2D
         Layer = Layer,
         Mask = Mask,
         IgnoreTags = new List<string>(IgnoreTags),
+        Bounciness = Bounciness,
+        Friction = Friction,
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -192,6 +206,8 @@ public sealed class EdgeCollider2D : Collider2D
         Layer = Layer,
         Mask = Mask,
         IgnoreTags = new List<string>(IgnoreTags),
+        Bounciness = Bounciness,
+        Friction = Friction,
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -236,6 +252,8 @@ public sealed class Area2D : Collider2D
         Layer = Layer,
         Mask = Mask,
         IgnoreTags = new List<string>(IgnoreTags),
+        Bounciness = Bounciness,
+        Friction = Friction,
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -313,6 +331,9 @@ public sealed class Rigidbody2D : Component, ITickable
     public float Mass { get; set; } = 1f;
 
     public bool IsKinematic { get; set; }
+
+    /// <summary>Activa subpasos adaptativos para este cuerpo.</summary>
+    public bool ContinuousCollision { get; set; } = true;
 
     public override Component CloneFor(Entity newOwner) => new Rigidbody2D
     {
