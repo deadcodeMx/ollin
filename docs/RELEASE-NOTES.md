@@ -1,14 +1,16 @@
-## Ollin Beta 6.208.0 — API de scripting
+## Ollin Beta 6.209.0 — API de scripting
 
 ### Añadido
 
-- WorldPosition, Active, Children, SetParent.
-- FindAll, PlayAnimation, PlaySound.
-- Señales globales con `ScriptSignals.Connect/Emit`.
+- Canvas, Agent, MoveTo, StopMoving, IsMoving.
+- PlayState, SetUiText, SetUiVisible, ShowMessage.
+- LookAt, DistanceTo, Teleport.
+- Autocompletado de la API.
+- Prueba de integración de scripting.
 
 ### Verificación
 
-- 133/133 pruebas.
-- Instalador 6.208.0 instalado.
+- 134/134 pruebas.
+- Instalador 6.209.0 instalado.
 
-## [6.207.0] — 2026-11-04
+## [6.208.0] — 2026-11-04

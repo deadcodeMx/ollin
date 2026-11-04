@@ -104,6 +104,66 @@ public abstract class OllinScript
 
     /// <summary>Emite una señal global.</summary>
     public void Emit(string signal, object? payload = null) => ScriptSignals.Emit(signal, payload);
+    /// <summary>Canvas de UI de esta entidad.</summary>
+    public UiCanvas? Canvas => Entity.GetComponent<UiCanvas>();
+
+    /// <summary>Agente de navegación de esta entidad.</summary>
+    public NavigationAgent2D? Agent => Entity.GetComponent<NavigationAgent2D>();
+
+    /// <summary>Mueve la entidad hacia un destino usando NavigationAgent2D.</summary>
+    public bool MoveTo(Vector2 destination, float speed = 3f)
+    {
+        var agent = Entity.GetComponent<NavigationAgent2D>() ?? Entity.AddComponent(new NavigationAgent2D());
+        agent.Speed = speed;
+        agent.SetTarget(destination);
+        return true;
+    }
+
+    /// <summary>Detiene la navegación.</summary>
+    public void StopMoving() => Agent?.SetTarget(WorldPosition);
+
+    /// <summary>¿Queda camino por recorrer?</summary>
+    public bool IsMoving => Agent is { Path.Count: > 1 };
+
+    /// <summary>Cambia el estado de AnimationStateMachine.</summary>
+    public bool PlayState(string state)
+    {
+        if (Entity.GetComponent<AnimationStateMachine>() is not { } fsm) return false;
+        fsm.Play(state);
+        return true;
+    }
+
+    /// <summary>Cambia el texto de un elemento de UI por id.</summary>
+    public bool SetUiText(string id, string text)
+    {
+        if (Entity.GetComponent<UiCanvas>()?.Find(id) is not { } element) return false;
+        element.Text = text;
+        return true;
+    }
+
+    /// <summary>Muestra u oculta un elemento de UI por id.</summary>
+    public bool SetUiVisible(string id, bool visible)
+    {
+        if (Entity.GetComponent<UiCanvas>()?.Find(id) is not { } element) return false;
+        element.Visible = visible;
+        return true;
+    }
+
+    /// <summary>Muestra un mensaje temporal en pantalla.</summary>
+    public static void ShowMessage(string text, float seconds = 2f) => Hud.Message(text, seconds);
+
+    /// <summary>Orienta la entidad hacia un punto del mundo.</summary>
+    public void LookAt(Vector2 worldPoint)
+    {
+        var delta = worldPoint - Position;
+        if (delta.LengthSquared() > 0.0001f) Entity.Transform.Rotation = MathF.Atan2(delta.Y, delta.X);
+    }
+
+    /// <summary>Distancia en mundo a otra entidad.</summary>
+    public float DistanceTo(Entity other) => Scene?.WorldDistance(Entity, other) ?? 0f;
+
+    /// <summary>Teletransporta la entidad en mundo.</summary>
+    public void Teleport(Vector2 worldPoint) => WorldPosition = worldPoint;
     /// <summary>Lanza una rutina: <c>yield return new WaitForSeconds(1f)</c>.</summary>
     public void StartCoroutine(IEnumerator routine) => CoroutineHost.Pending.Add((this, routine));
 
