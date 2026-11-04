@@ -1,19 +1,21 @@
-## Ollin Beta 6.168.0 — correcciones de materiales y Linux
-
-### Corregido
-
-- El programa por defecto del SpriteBatch no se restauraba tras un material.
-- `SubViewport2D` duplicaba `Enabled`.
+## Ollin Beta 6.170.0 — SubViewport y render-to-texture
 
 ### Añadido
 
-- Uniforms `vec4` por material.
-- Paquete Linux **6.168.0** con editor, player y assets.
+- `RenderTarget2D` con framebuffer, color y depth.
+- `SubViewport2D` con `UseTexture`.
+- Composición de la textura del subviewport en pantalla.
+- Checkbox "Render a textura".
+
+### Corregido
+
+- `SubViewport2D` no estaba registrado en el discriminador JSON, por lo que no se podía cargar desde escena.
 
 ### Verificación
 
 - **236/236 pruebas**.
-- Instalador Windows y tar.gz Linux publicados.
-- Demo técnica no publicada.
+- Instalador 6.170.0 instalado.
+- Se probó una escena con SubViewport; no se observó un error de carga.
+- La composición visual del overlay no quedó claramente diferenciada porque usaba la misma cámara/escena; falta una prueba con cámara distinta.
 
-## [6.167.0] — 2026-11-04
+## [6.169.0] — 2026-11-04

@@ -110,6 +110,25 @@ public sealed class Renderer2D : IDisposable
     }
 
     /// <summary>Dibuja un frame completo de la escena.</summary>
+    public RenderTarget2D CreateRenderTarget(int width, int height) =>
+        new(_gl, System.Math.Max(1, width), System.Math.Max(1, height));
+
+    public void DrawScreenTexture(Texture2D texture, Vector4 rect, int width, int height, Vector4 tint)
+    {
+        _gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        _gl.Disable(EnableCap.ScissorTest);
+        _gl.Viewport(0, 0, (uint)System.Math.Max(1, width), (uint)System.Math.Max(1, height));
+        var projection = Matrix4x4.CreateOrthographicOffCenter(0f, width, height, 0f, -1f, 1f);
+        _batch.Begin(projection);
+        var left = rect.X * width;
+        var top = rect.Y * height;
+        var right = (rect.X + rect.Z) * width;
+        var bottom = (rect.Y + rect.W) * height;
+        var (u0, v0, u1, v1) = texture.IsRenderTarget ? (0f, 1f, 1f, 0f) : (0f, 0f, 1f, 1f);
+        _batch.DrawQuad(texture, new Vector2(left, top), new Vector2(right, top), new Vector2(right, bottom), new Vector2(left, bottom),
+            new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1), tint);
+        _batch.End();
+    }
     public void ResetViewport(int width, int height)
     {
         _gl.Disable(EnableCap.ScissorTest);

@@ -17,6 +17,22 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.170.0] — 2026-11-04
+
+### Corregido
+
+- SubViewport2D no estaba registrado en el discriminador JSON y no se podía cargar desde escena.
+- Restaurada la escena de ejemplo tras la prueba de carga.
+
+## [6.169.0] — 2026-11-04
+
+### Añadido
+
+- RenderTarget2D con framebuffer y textura.
+- SubViewport2D con render-to-texture.
+- Composición de la textura del subviewport.
+- Checkbox "Render a textura".
+
 ## [6.168.0] — 2026-11-04
 
 ### Corregido

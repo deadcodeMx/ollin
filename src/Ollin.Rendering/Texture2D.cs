@@ -7,13 +7,14 @@ public sealed class Texture2D : IDisposable
 {
     private readonly GL _gl;
 
-    public Texture2D(GL gl, uint handle, int width, int height, string? sourcePath = null)
+    public Texture2D(GL gl, uint handle, int width, int height, string? sourcePath = null, bool isRenderTarget = false)
     {
         _gl = gl;
         Handle = handle;
         Width = width;
         Height = height;
         SourcePath = sourcePath;
+        IsRenderTarget = isRenderTarget;
     }
 
     public uint Handle { get; }
@@ -23,6 +24,8 @@ public sealed class Texture2D : IDisposable
     public int Height { get; }
 
     public string? SourcePath { get; }
+
+    public bool IsRenderTarget { get; }
 
     public float AspectRatio => Height == 0 ? 1f : Width / (float)Height;
 

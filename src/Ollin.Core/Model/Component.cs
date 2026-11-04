@@ -9,6 +9,7 @@ namespace Ollin.Core.Model;
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
 [JsonDerivedType(typeof(Components.SpriteRenderer), "sprite")]
 [JsonDerivedType(typeof(Components.Camera2D), "camera")]
+[JsonDerivedType(typeof(Components.SubViewport2D), "subviewport2d")]
 [JsonDerivedType(typeof(Components.ScriptComponent), "script")]
 [JsonDerivedType(typeof(Components.RotatorComponent), "rotator")]
 [JsonDerivedType(typeof(Components.OscillatorComponent), "oscillator")]

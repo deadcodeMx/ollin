@@ -70,11 +70,11 @@ Pendiente:
 - Servidores desacoplados (render/physics/audio/navigation).
 - `RenderServer2D` con display list de sprites.
 - `PhysicsServer2D` con áreas y señales.
-- `SubViewport2D` con segunda cámara y rectángulo.
+- `SubViewport2D` con segunda cámara, rectángulo y render-to-texture.
 - `CanvasMaterial2D` con shader GLSL, cache y uniforms vec4.
 - Recursos empaquetados con `ResourceLoader`.
 - Recursos empaquetados con `ResourceLoader`.
-- Render-to-texture y viewport como textura.
+- Viewport como textura reutilizable y múltiples cámaras simultáneas.
 - Shaders completos: uniforms, hot-reload y materiales por capa.
 - Física de áreas/consultas completas.
 - Editor visual de UI, mallas, pesos y navegación.

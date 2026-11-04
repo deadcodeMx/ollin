@@ -8,9 +8,11 @@ public sealed class SubViewport2D : Component
     public string CameraTag { get; set; } = "main";
     public Vector4 Rect { get; set; } = new(0.65f, 0.65f, 0.3f, 0.3f);
     public bool Clear { get; set; } = true;
+    /// <summary>Renderiza a un framebuffer y compone la textura.</summary>
+    public bool UseTexture { get; set; } = true;
 
     public override Component CloneFor(Entity newOwner) => new SubViewport2D
     {
-        Enabled = Enabled, CameraTag = CameraTag, Rect = Rect, Clear = Clear, Owner = newOwner,
+        Enabled = Enabled, CameraTag = CameraTag, Rect = Rect, Clear = Clear, UseTexture = UseTexture, Owner = newOwner,
     };
 }
