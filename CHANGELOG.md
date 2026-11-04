@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.140.0] — 2026-11-04
+
+### Añadido
+
+- Easing por keyframe: Linear, Smooth, EaseIn, EaseOut y Step.
+- Track de eventos de animación.
+- Editor de easing en keyframes.
+- Prueba de eventos y easing.
+
 ## [6.139.0] — 2026-11-04
 
 ### Añadido

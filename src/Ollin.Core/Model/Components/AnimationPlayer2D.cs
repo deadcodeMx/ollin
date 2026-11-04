@@ -4,6 +4,15 @@ using System.Text.Json.Serialization;
 
 namespace Ollin.Core.Model.Components;
 
+public enum AnimationEasing
+{
+    Linear,
+    Smooth,
+    EaseIn,
+    EaseOut,
+    Step,
+}
+
 public sealed class AnimationKeyframe
 {
     public float Time { get; set; }
@@ -13,6 +22,8 @@ public sealed class AnimationKeyframe
     public float Number { get; set; }
 
     public string? Text { get; set; }
+
+    public AnimationEasing Easing { get; set; } = AnimationEasing.Linear;
 }
 
 public sealed class AnimationTrack
@@ -47,6 +58,9 @@ public sealed class AnimationPlayer2D : Component, ITickable
     [JsonIgnore] public bool Looping { get; private set; }
 
     private bool _started;
+
+    /// <summary>Evento disparado por un track con Property = "event".</summary>
+    public event Action<string>? Event;
     private float _lastTime;
 
     public void OnUpdate(float deltaTime)
@@ -104,8 +118,17 @@ public sealed class AnimationPlayer2D : Component, ITickable
 
             var span = MathF.Max(0.0001f, next.Time - previous.Time);
             var t = System.Math.Clamp((Time - previous.Time) / span, 0f, 1f);
+            t = Ease(t, next.Easing);
             var value = Vector2.Lerp(previous.Value, next.Value, t);
             var number = previous.Number + (next.Number - previous.Number) * t;
+
+            if (track.Property == "event")
+            {
+                foreach (var key in keys)
+                    if (_lastTime < key.Time && Time >= key.Time && !string.IsNullOrWhiteSpace(key.Text))
+                        Event?.Invoke(key.Text!);
+                continue;
+            }
 
             switch (track.Property)
             {
@@ -125,6 +148,15 @@ public sealed class AnimationPlayer2D : Component, ITickable
         }
     }
 
+    private static float Ease(float t, AnimationEasing easing) => easing switch
+    {
+        AnimationEasing.Smooth => t * t * (3f - 2f * t),
+        AnimationEasing.EaseIn => t * t,
+        AnimationEasing.EaseOut => 1f - (1f - t) * (1f - t),
+        AnimationEasing.Step => t < 1f ? 0f : 1f,
+        _ => t,
+    };
+
     public override Component CloneFor(Entity newOwner) => new AnimationPlayer2D
     {
         Enabled = Enabled,
@@ -134,7 +166,7 @@ public sealed class AnimationPlayer2D : Component, ITickable
             Tracks = clip.Tracks.Select(track => new AnimationTrack
             {
                 Property = track.Property,
-                Keys = track.Keys.Select(key => new AnimationKeyframe { Time = key.Time, Value = key.Value, Number = key.Number, Text = key.Text }).ToList(),
+                Keys = track.Keys.Select(key => new AnimationKeyframe { Time = key.Time, Value = key.Value, Number = key.Number, Text = key.Text, Easing = key.Easing }).ToList(),
             }).ToList(),
         }).ToList(),
         PlayOnStart = PlayOnStart, Speed = Speed, Owner = newOwner,

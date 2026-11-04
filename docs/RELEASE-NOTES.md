@@ -1,14 +1,14 @@
-## Ollin Beta 6.139.0 — navegación poligonal
+## Ollin Beta 6.140.0 — easing y eventos de animación
 
 ### Añadido
 
-- Polígonos navegables.
-- Agente con destino y velocidad.
-- Pathfinding por grafo de visibilidad.
-- Inspector de navegación.
+- Easing por keyframe: Linear, Smooth, EaseIn, EaseOut y Step.
+- Track de eventos.
+- Editor de easing.
+- Prueba de eventos/easing.
 
 ### Verificación
 
-- **220/220 pruebas**.
-- Instalador 6.139.0 instalado y abierto.
+- **221/221 pruebas**.
+- Instalador 6.140.0 instalado y abierto.
 - Demo técnica no publicada.

@@ -91,4 +91,44 @@ public sealed class CanvasAnimationUiTests
         Assert.Equal(60f, flat[1].Y);
         Assert.Equal(94f, flat[2].Y);
     }
+
+    [Fact]
+    public void AnimacionDisparaEventosYAplicaEasing()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Objeto", Vector2.Zero);
+        var player = entity.AddComponent(new AnimationPlayer2D
+        {
+            Clips = new()
+            {
+                new AnimationTimeline
+                {
+                    Name = "fx", Duration = 1f, Loop = false,
+                    Tracks = new()
+                    {
+                        new AnimationTrack
+                        {
+                            Property = "position",
+                            Keys = new()
+                            {
+                                new AnimationKeyframe { Time = 0f, Value = Vector2.Zero, Easing = AnimationEasing.Linear },
+                                new AnimationKeyframe { Time = 1f, Value = new Vector2(10f, 0f), Easing = AnimationEasing.EaseOut },
+                            },
+                        },
+                        new AnimationTrack
+                        {
+                            Property = "event",
+                            Keys = new() { new AnimationKeyframe { Time = 0.5f, Text = "hit" } },
+                        },
+                    },
+                },
+            },
+        });
+        var fired = false;
+        player.Event += name => fired = name == "hit";
+        player.Play("fx");
+        player.OnUpdate(0.5f);
+        Assert.True(fired);
+        Assert.Equal(7.5f, entity.Transform.Position.X, 2);
+    }
 }

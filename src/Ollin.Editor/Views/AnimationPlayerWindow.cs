@@ -27,6 +27,7 @@ public sealed class AnimationPlayerWindow : Window
     private readonly NumericUpDown _keyY;
     private readonly NumericUpDown _keyNumber;
     private readonly TextBox _keyText;
+    private readonly ComboBox _keyEasing;
     private int _clipIndex, _trackIndex, _keyIndex = -1;
 
     public AnimationPlayerWindow(AnimationPlayer2D player)
@@ -53,6 +54,7 @@ public sealed class AnimationPlayerWindow : Window
         _keyY = new NumericUpDown { Minimum = -10000m, Maximum = 10000m, Increment = 0.1m, FormatString = "0.##" };
         _keyNumber = new NumericUpDown { Minimum = -10000m, Maximum = 10000m, Increment = 0.1m, FormatString = "0.##" };
         _keyText = new TextBox { Watermark = "ruta de audio / evento" };
+        _keyEasing = new ComboBox { ItemsSource = Enum.GetValues<AnimationEasing>(), SelectedIndex = 0 };
 
         var addClip = new Button { Content = "+ Clip" };
         addClip.Click += (_, _) => { _draft.Clips.Add(new AnimationTimeline { Name = $"clip{_draft.Clips.Count + 1}" }); RebuildClips(); _clips.SelectedIndex = _clipLabels.Count - 1; };
@@ -76,7 +78,7 @@ public sealed class AnimationPlayerWindow : Window
                 new TextBlock { Text = "Clips → tracks → keyframes. Propiedades: position, rotation, scale, frame, audio.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
                 new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { new StackPanel { Spacing = 4, Children = { _clips, addClip } }, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Nombre", _clipName), Row("Duración", _duration), _loop } } } },
                 new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { new StackPanel { Spacing = 4, Children = { _tracks, addTrack } }, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Propiedad", _trackProperty), new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { addKey, remove } } } } } },
-                new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { _keys, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Tiempo", _keyTime), Row("Valor X", _keyX), Row("Valor Y", _keyY), Row("Número", _keyNumber), Row("Texto", _keyText) } } } },
+                new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { _keys, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Tiempo", _keyTime), Row("Valor X", _keyX), Row("Valor Y", _keyY), Row("Número", _keyNumber), Row("Texto", _keyText), Row("Easing", _keyEasing) } } } },
                 new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Spacing = 8, Children = { cancel, save } },
             },
         };
@@ -149,6 +151,7 @@ public sealed class AnimationPlayerWindow : Window
         _keyY.Value = (decimal)key.Value.Y;
         _keyNumber.Value = (decimal)key.Number;
         _keyText.Text = key.Text ?? string.Empty;
+        _keyEasing.SelectedItem = key.Easing;
     }
 
     private void AddTrack()
@@ -192,6 +195,7 @@ public sealed class AnimationPlayerWindow : Window
             key.Value = new Vector2((float)(_keyX.Value ?? 0m), (float)(_keyY.Value ?? 0m));
             key.Number = (float)(_keyNumber.Value ?? 0m);
             key.Text = string.IsNullOrWhiteSpace(_keyText.Text) ? null : _keyText.Text;
+            if (_keyEasing.SelectedItem is AnimationEasing easing) key.Easing = easing;
         }
         RebuildClips();
         RebuildTracks();
