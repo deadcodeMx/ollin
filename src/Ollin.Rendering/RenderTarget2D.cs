@@ -28,6 +28,8 @@ public sealed class RenderTarget2D : IDisposable
         gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)GLEnum.ClampToEdge);
 
         _fbo = gl.GenFramebuffer();
+        var previousFramebuffer = gl.GetInteger((GetPName)0x8CA6);
+        var previousTexture = gl.GetInteger((GetPName)0x8069);
         gl.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
         gl.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
             TextureTarget.Texture2D, texture, 0);
@@ -41,8 +43,8 @@ public sealed class RenderTarget2D : IDisposable
         if (gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != GLEnum.FramebufferComplete)
             throw new InvalidOperationException("Framebuffer incompleto");
 
-        gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        gl.BindTexture(TextureTarget.Texture2D, 0);
+        gl.BindFramebuffer(FramebufferTarget.Framebuffer, (uint)previousFramebuffer);
+        gl.BindTexture(TextureTarget.Texture2D, (uint)previousTexture);
         Texture = new Texture2D(gl, texture, width, height, isRenderTarget: true);
     }
 

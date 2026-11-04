@@ -1,16 +1,22 @@
-## Ollin Beta 6.186.0 — presets de tema UI
+## Ollin Beta 6.187.0 — SubViewport validado
 
-### Añadido
+### Corregido
 
-- Presets de tema: oscuro, claro y alto contraste.
-- El editor de tema aplica los colores inmediatamente al componente.
+- `RenderTarget2D` desligaba el framebuffer de Avalonia al construirse.
+- Ahora guarda y restaura el framebuffer y la textura anteriores.
+- `SubViewport2D` render-to-texture se compone correctamente.
+
+### Validado
+
+- Dos cámaras.
+- Render target con contenido.
+- Overlay visible.
+- Borde de depuración visible.
+- Textura directa sin readback de CPU.
 
 ### Verificación
 
 - **236/236 pruebas**.
-- Instalador 6.186.0 instalado correctamente.
+- Instalador 6.187.0 instalado correctamente.
 
-## [6.185.0] — 2026-11-04
-### Límite conocido
-
-- SubViewport2D renderiza al FBO (contenido confirmado con ReadPixels), pero la composición final en el editor Avalonia no se muestra. Queda pendiente un experimento aislado fuera del control OpenGL.
+## [6.186.0] — 2026-11-04

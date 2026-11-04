@@ -215,3 +215,8 @@ sin escribir sistemas de motor:
 - Navegación con obstáculos.
 - Localización con plurales y RTL.
 - Editor de tilemap/animación usable por no programadores.
+
+## SubViewport2D
+
+Validado en 6.187.0: render-to-texture, dos cámaras, overlay y borde. El fallo era que RenderTarget2D ligaba el framebuffer 0 al construirse y perdía el FBO de Avalonia.
+
