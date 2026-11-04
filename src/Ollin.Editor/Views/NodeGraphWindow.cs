@@ -29,6 +29,7 @@ public sealed class NodeGraphWindow : Window
     private readonly GraphHistoryStore _historyStore = new();
     private readonly string _historyKey;
     private readonly List<GraphIssue> _issues = new();
+    private readonly List<(Button Button, string Label)> _paletteButtons = new();
     private readonly TextBlock _zoomText = new() { FontSize = 11, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0) };
     private readonly DispatcherTimer _debugTimer;
     private GraphSnapshot? _lastCommitted;
@@ -158,6 +159,14 @@ public sealed class NodeGraphWindow : Window
             Margin = new Thickness(0, 4, 0, 4),
         });
 
+        var search = new TextBox { Watermark = "Buscar nodo…", Margin = new Thickness(0, 0, 0, 4) };
+        search.TextChanged += (_, _) =>
+        {
+            var query = search.Text?.Trim() ?? string.Empty;
+            foreach (var (button, label) in _paletteButtons)
+                button.IsVisible = query.Length == 0 || label.Contains(query, StringComparison.OrdinalIgnoreCase);
+        };
+        panel.Children.Add(search);
         AddPalette(panel, "Evento: iniciar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnStart));
         AddPalette(panel, "Evento: cada tiempo", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnTimer));
         AddPalette(panel, "Evento: entrar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerEnter));
@@ -199,6 +208,19 @@ public sealed class NodeGraphWindow : Window
         _canvas.Width = 2400;
         _canvas.Height = 1600;
         _canvas.Background = new SolidColorBrush(Color.Parse("#10131A"));
+        var canvasMenu = new ContextMenu();
+        void AddCanvasItem(string header, Action action)
+        {
+            var item = new MenuItem { Header = header };
+            item.Click += (_, _) => action();
+            canvasMenu.Items.Add(item);
+        }
+        AddCanvasItem("Añadir evento: iniciar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnStart));
+        AddCanvasItem("Añadir acción: mensaje", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Message));
+        AddCanvasItem("Añadir condición", () => AddCondition(GraphConditionKind.HasItem));
+        AddCanvasItem("Añadir comentario", AddComment);
+        AddCanvasItem("Añadir grupo", AddGroup);
+        _canvas.ContextMenu = canvasMenu;
         _canvas.PointerPressed += (_, e) => BeginMarquee(e);
         _canvas.PointerMoved += (_, e) => UpdateMarquee(e);
         _canvas.PointerReleased += (_, e) => EndMarquee(e);

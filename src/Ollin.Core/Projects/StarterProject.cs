@@ -93,16 +93,15 @@ public static class StarterProject
     private const string ScriptSource = """
 using Ollin.Scripting;
 
+/// <summary>Script inicial del proyecto.</summary>
 public sealed class Juego : OllinScript
 {
+    public override void OnStart()
+    {
+    }
+
     public override void OnUpdate(float deltaTime)
     {
-        // Movimiento 2D simple: edita o reemplaza este script.
-        var move = new System.Numerics.Vector2(
-            (Input.Down("derecha") ? 1f : 0f) - (Input.Down("izquierda") ? 1f : 0f),
-            (Input.Down("arriba") ? 1f : 0f) - (Input.Down("abajo") ? 1f : 0f));
-        if (move.LengthSquared() > 0f)
-            Position += System.Numerics.Vector2.Normalize(move) * 4f * deltaTime;
     }
 }
 """;
