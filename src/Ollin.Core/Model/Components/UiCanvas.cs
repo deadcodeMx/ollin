@@ -17,6 +17,7 @@ public enum UiElementKind
     Button,
     Bar,
     Container,
+    List,
 }
 
 public enum UiLayout
@@ -54,6 +55,8 @@ public sealed class UiElement
     public float Max { get; set; } = 100f;
     public string ParentId { get; set; } = string.Empty;
     public bool Focusable { get; set; }
+    public List<string> Items { get; set; } = new();
+    public bool Scrollable { get; set; } = true;
     public string AccessibilityLabel { get; set; } = string.Empty;
     public UiLayout Layout { get; set; } = UiLayout.Free;
     public float Gap { get; set; } = 6f;
@@ -90,6 +93,7 @@ public sealed class UiCanvas : Component
                 Action = element.Action, Value = element.Value, Max = element.Max,
                 ParentId = element.ParentId, Layout = element.Layout, Gap = element.Gap, Padding = element.Padding,
                 Focusable = element.Focusable, AccessibilityLabel = element.AccessibilityLabel,
+                Items = new List<string>(element.Items), Scrollable = element.Scrollable,
             };
             if (!string.IsNullOrWhiteSpace(element.ParentId) && Elements.FirstOrDefault(parent => parent.Id == element.ParentId) is { } parent)
             {
@@ -119,6 +123,7 @@ public sealed class UiCanvas : Component
             Visible = element.Visible, Action = element.Action, Value = element.Value, Max = element.Max,
             ParentId = element.ParentId, Layout = element.Layout, Gap = element.Gap, Padding = element.Padding,
             Focusable = element.Focusable, AccessibilityLabel = element.AccessibilityLabel,
+            Items = new List<string>(element.Items), Scrollable = element.Scrollable,
         }).ToList(),
         Owner = newOwner,
     };

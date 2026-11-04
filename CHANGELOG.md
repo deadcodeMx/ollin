@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.137.0] — 2026-11-04
+
+### Añadido
+
+- Elemento de lista de UI.
+- Scroll vertical de listas.
+- Texto multilínea con ajuste.
+
 ## [6.136.0] — 2026-11-04
 
 ### Añadido

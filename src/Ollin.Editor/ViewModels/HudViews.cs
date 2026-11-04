@@ -90,6 +90,7 @@ public sealed class UiElementView
         Action = element.Action ?? element.Id;
         Focusable = element.Focusable || element.Kind == Ollin.Core.Model.Components.UiElementKind.Button;
         AccessibilityLabel = string.IsNullOrWhiteSpace(element.AccessibilityLabel) ? element.Text : element.AccessibilityLabel;
+        ListText = string.Join(Environment.NewLine, element.Items);
         Value = element.Max <= 0 ? 0 : System.Math.Clamp(element.Value / element.Max, 0, 1);
         Command = new UiActionCommand(() => invoke(element.Action ?? element.Id));
         Brush = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(
@@ -130,6 +131,8 @@ public sealed class UiElementView
     public string Action { get; }
     public bool Focusable { get; }
     public string AccessibilityLabel { get; }
+    public string ListText { get; }
+    public bool IsList => Kind == Ollin.Core.Model.Components.UiElementKind.List;
     public bool IsFocused { get; set; }
     public double Value { get; }
     public System.Windows.Input.ICommand Command { get; }
