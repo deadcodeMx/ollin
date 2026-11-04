@@ -1799,6 +1799,8 @@
                       <TextBlock Text="Zoom" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraZoom, Mode=TwoWay}" Increment="0.1" Minimum="0.05" FormatString="0.###" />
                     <CheckBox Content="Pixel perfect" IsChecked="{Binding Selected.CameraPixelPerfect, Mode=TwoWay}" FontSize="11.5" />
+                      <Grid ColumnDefinitions="72,*,72,*" Margin="0,1"><TextBlock Text="Viewport X" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraViewportX, Mode=TwoWay}" Increment="0.05" Minimum="0" Maximum="0.95" FormatString="0.##" /><TextBlock Grid.Column="2" Text="Y" VerticalAlignment="Center" Classes="hint" Margin="8,0,0,0" /><NumericUpDown Grid.Column="3" Value="{Binding Selected.CameraViewportY, Mode=TwoWay}" Increment="0.05" Minimum="0" Maximum="0.95" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="72,*,72,*" Margin="0,1"><TextBlock Text="Viewport W" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraViewportW, Mode=TwoWay}" Increment="0.05" Minimum="0.05" Maximum="1" FormatString="0.##" /><TextBlock Grid.Column="2" Text="H" VerticalAlignment="Center" Classes="hint" Margin="8,0,0,0" /><NumericUpDown Grid.Column="3" Value="{Binding Selected.CameraViewportH, Mode=TwoWay}" Increment="0.05" Minimum="0.05" Maximum="1" FormatString="0.##" /></Grid>
                     </Grid>
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Ambiente" VerticalAlignment="Center" Classes="hint" />

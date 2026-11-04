@@ -20,6 +20,9 @@ public sealed class Camera2D : Component
     /// <summary>Alinea la cámara a la rejilla de píxeles para evitar temblor.</summary>
     public bool PixelPerfect { get; set; }
 
+    /// <summary>Rectángulo normalizado (x,y,w,h) dentro del viewport.</summary>
+    public Vector4 Viewport { get; set; } = new(0f, 0f, 1f, 1f);
+
     /// <summary>Luz ambiente de la escena (blanco = sin oscurecer).</summary>
     public Vector4 Ambient { get; set; } = Vector4.One;
 
@@ -46,6 +49,7 @@ public sealed class Camera2D : Component
         Background = Background,
         IsMain = IsMain,
         PixelPerfect = PixelPerfect,
+        Viewport = Viewport,
         Ambient = Ambient,
         FollowTag = FollowTag,
         FollowSmoothing = FollowSmoothing,

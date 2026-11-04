@@ -1,14 +1,18 @@
-## Ollin Beta 6.156.0 — blend trees
+## Ollin Beta 6.157.0 — viewports de cámara
 
 ### Añadido
 
-- AnimationBlendTree2D.
-- Mezcla lineal de clips por peso.
-- Muestreo de transformaciones sin eventos.
-- Prueba de blend tree.
+- Viewport de cámara con rectángulo normalizado.
+- Scissor y viewport OpenGL.
+- Inspector de viewport de cámara.
+
+### Limitaciones
+
+- Un viewport por cámara, no múltiples cámaras simultáneas.
+- Sin render-to-texture.
 
 ### Verificación
 
 - **230/230 pruebas**.
-- Instalador 6.156.0 instalado y abierto.
+- Instalador 6.157.0 instalado y abierto.
 - Demo técnica no publicada.

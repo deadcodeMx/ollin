@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.157.0] — 2026-11-04
+
+### Añadido
+
+- Viewport de cámara con rectángulo normalizado.
+- Scissor y viewport OpenGL.
+- Inspector de viewport de cámara.
+
 ## [6.156.0] — 2026-11-04
 
 ### Añadido

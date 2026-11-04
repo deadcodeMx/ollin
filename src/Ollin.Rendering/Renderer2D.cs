@@ -117,6 +117,13 @@ public sealed class Renderer2D : IDisposable
         }
 
         _gl.Viewport(0, 0, (uint)width, (uint)height);
+        var viewportX = (int)(camera.Viewport.X * width);
+        var viewportY = (int)(camera.Viewport.Y * height);
+        var viewportW = System.Math.Max(1, (int)(camera.Viewport.Z * width));
+        var viewportH = System.Math.Max(1, (int)(camera.Viewport.W * height));
+        _gl.Enable(EnableCap.ScissorTest);
+        _gl.Scissor(viewportX, viewportY, (uint)viewportW, (uint)viewportH);
+        _gl.Viewport(viewportX, viewportY, (uint)viewportW, (uint)viewportH);
         _gl.ClearColor(camera.Background.X, camera.Background.Y, camera.Background.Z, 1f);
         _gl.Clear(ClearBufferMask.ColorBufferBit);
 
@@ -151,6 +158,8 @@ public sealed class Renderer2D : IDisposable
         }
         _batch.End();
         Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
+        _gl.Disable(EnableCap.ScissorTest);
+        _gl.Viewport(0, 0, (uint)width, (uint)height);
         DrawLighting(scene, camera, cameraPosition, width, height, viewProjection);
     }
 
@@ -680,6 +689,8 @@ public sealed class Renderer2D : IDisposable
         Draw3DBackground(camera, width, height);
         _batch.End();
         Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
+        _gl.Disable(EnableCap.ScissorTest);
+        _gl.Viewport(0, 0, (uint)width, (uint)height);
 
         // La geometría 3D usa un búfer de profundidad real.
         _gl.Clear(ClearBufferMask.DepthBufferBit);
@@ -716,6 +727,8 @@ public sealed class Renderer2D : IDisposable
 
         _batch.End();
         Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
+        _gl.Disable(EnableCap.ScissorTest);
+        _gl.Viewport(0, 0, (uint)width, (uint)height);
     }
 
     private void DrawBrushPreview3D(Camera3D camera, BrushPreview3D preview, int width, int height)
@@ -1386,6 +1399,8 @@ public sealed class Renderer2D : IDisposable
             DrawViewQuad(cameraPosition, extents, new Vector4(ambient.X, ambient.Y, ambient.Z, 1f), null, false);
             _batch.End();
         Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
+
+
         }
 
         if (lights.Count > 0)
@@ -1399,6 +1414,8 @@ public sealed class Renderer2D : IDisposable
 
             _batch.End();
         Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
+
+
 
             DrawShadows(scene, lights, viewProjection);
         }
@@ -1462,6 +1479,8 @@ public sealed class Renderer2D : IDisposable
 
         _batch.End();
         Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
+
+
     }
 
     private void DrawLightQuad(Scene scene, Entity entity, Light2D light)

@@ -1515,6 +1515,10 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public decimal CameraViewportX { get => (decimal)(Camera?.Viewport.X ?? 0f); set { if (Camera is null) return; Camera.Viewport = new Vector4((float)value, Camera.Viewport.Y, Camera.Viewport.Z, Camera.Viewport.W); OnPropertyChanged(); _owner.MarkDirty(); } }
+    public decimal CameraViewportY { get => (decimal)(Camera?.Viewport.Y ?? 0f); set { if (Camera is null) return; Camera.Viewport = new Vector4(Camera.Viewport.X, (float)value, Camera.Viewport.Z, Camera.Viewport.W); OnPropertyChanged(); _owner.MarkDirty(); } }
+    public decimal CameraViewportW { get => (decimal)(Camera?.Viewport.Z ?? 1f); set { if (Camera is null) return; Camera.Viewport = new Vector4(Camera.Viewport.X, Camera.Viewport.Y, Math.Clamp((float)value, 0.05f, 1f), Camera.Viewport.W); OnPropertyChanged(); _owner.MarkDirty(); } }
+    public decimal CameraViewportH { get => (decimal)(Camera?.Viewport.W ?? 1f); set { if (Camera is null) return; Camera.Viewport = new Vector4(Camera.Viewport.X, Camera.Viewport.Y, Camera.Viewport.Z, Math.Clamp((float)value, 0.05f, 1f)); OnPropertyChanged(); _owner.MarkDirty(); } }
     public bool CameraPixelPerfect { get => Camera?.PixelPerfect ?? false; set { if (Camera is null || Camera.PixelPerfect == value) return; Camera.PixelPerfect = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } }
     public decimal CameraZoom
     {
@@ -1579,6 +1583,10 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(OrthographicSize));
         OnPropertyChanged(nameof(CameraZoom));
         OnPropertyChanged(nameof(CameraPixelPerfect));
+        OnPropertyChanged(nameof(CameraViewportX));
+        OnPropertyChanged(nameof(CameraViewportY));
+        OnPropertyChanged(nameof(CameraViewportW));
+        OnPropertyChanged(nameof(CameraViewportH));
         OnPropertyChanged(nameof(CameraDeadzoneX));
         OnPropertyChanged(nameof(CameraDeadzoneY));
         OnPropertyChanged(nameof(CameraUseBounds));
