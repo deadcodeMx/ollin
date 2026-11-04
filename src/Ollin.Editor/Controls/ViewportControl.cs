@@ -360,6 +360,8 @@ public sealed class ViewportControl : OpenGlControlBase
                 ?? _viewModel.Scene.Entities.FirstOrDefault(candidate => candidate.Active && candidate.GetComponent<Camera2D>() is { Enabled: true });
             if (cameraEntity?.GetComponent<Camera2D>() is not { } source) continue;
             var camera = (Camera2D)source.CloneFor(cameraEntity);
+            var rect = viewport.Rect;
+            if (rect.Z <= 0.001f || rect.W <= 0.001f) rect = new System.Numerics.Vector4(0.6f, 0.6f, 0.35f, 0.35f);
             if (viewport.UseTexture)
             {
                 camera.Viewport = new System.Numerics.Vector4(0f, 0f, 1f, 1f);
@@ -367,8 +369,8 @@ public sealed class ViewportControl : OpenGlControlBase
                 target.Bind();
                 _renderer.RenderFrame(_viewModel.Scene, _viewModel.Scene.GetWorldPosition(cameraEntity), camera, width, height, null, false, false);
                 target.Unbind();
-                _renderer.DrawScreenTexture(target.Texture, viewport.Rect, width, height, System.Numerics.Vector4.One);
-                if (viewport.DebugBorder) _renderer.DrawScreenBorder(viewport.Rect, width, height, viewport.BorderColor);
+                _renderer.DrawScreenTexture(target.Texture, rect, width, height, System.Numerics.Vector4.One);
+                if (viewport.DebugBorder) _renderer.DrawScreenBorder(rect, width, height, viewport.BorderColor);
             }
             else
             {
