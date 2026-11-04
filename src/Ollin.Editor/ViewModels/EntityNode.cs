@@ -486,6 +486,7 @@ public sealed class EntityNode : ObservableObject
     public decimal TransitionDuration { get => (decimal)(Entity.GetComponent<ScreenTransition2D>()?.Duration ?? 0.6f); set { if (Entity.GetComponent<ScreenTransition2D>() is { } t) { t.Duration = MathF.Max(0.05f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public decimal TransitionDelay { get => (decimal)(Entity.GetComponent<ScreenTransition2D>()?.Delay ?? 0f); set { if (Entity.GetComponent<ScreenTransition2D>() is { } t) { t.Delay = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public bool TilemapAutotile { get => Tilemap?.Autotile ?? false; set { if (Tilemap is null || Tilemap.Autotile == value) return; Tilemap.Autotile = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } }
+    public bool TilemapYSort { get => Tilemap?.YSort ?? false; set { if (Tilemap is null || Tilemap.YSort == value) return; Tilemap.YSort = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } }
     public decimal TilemapAutotileBase { get => Tilemap?.AutotileBase ?? 0; set { if (Tilemap is null || Tilemap.AutotileBase == (int)value) return; Tilemap.AutotileBase = (int)value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } }
 
     public bool HasMovingPlatform => Entity.GetComponent<MovingPlatform2D>() is not null;
@@ -1634,6 +1635,7 @@ _scriptFields = null;
         OnPropertyChanged(nameof(AnimationCurrentState));
         OnPropertyChanged(nameof(HasTransition2D));
         OnPropertyChanged(nameof(TilemapAutotile));
+        OnPropertyChanged(nameof(TilemapYSort));
         OnPropertyChanged(nameof(HasTileSet));
         OnPropertyChanged(nameof(TileSetSummary));
         OnPropertyChanged(nameof(HasParticles));

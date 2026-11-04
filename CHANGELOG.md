@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.129.0] — 2026-11-04
+
+### Añadido
+
+- Y-sort real entre sprites y celdas de tilemap.
+- Checkbox de Y-sort por capa.
+- Render combinado por Y y orden de capa.
+
 ## [6.128.0] — 2026-11-04
 
 ### Añadido

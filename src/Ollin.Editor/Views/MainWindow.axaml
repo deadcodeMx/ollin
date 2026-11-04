@@ -1711,6 +1711,7 @@
                     </Grid>
                     <CheckBox Content="Pintar en el viewport" IsChecked="{Binding IsPaintingTiles, Mode=TwoWay}" FontSize="11.5" />
                       <CheckBox Content="Autotile" IsChecked="{Binding Selected.TilemapAutotile, Mode=TwoWay}" FontSize="11.5" />
+                      <CheckBox Content="Y-sort de capa" IsChecked="{Binding Selected.TilemapYSort, Mode=TwoWay}" FontSize="11.5" />
                     <StackPanel Orientation="Horizontal" Spacing="5">
                       <Button Classes="tool" Content="Borrador" Click="OnTileEraser" />
                       <ToggleButton Classes="tool" Content="Relleno" IsChecked="{Binding TileFillMode, Mode=TwoWay}" />

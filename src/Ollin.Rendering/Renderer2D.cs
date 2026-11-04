@@ -129,7 +129,8 @@ public sealed class Renderer2D : IDisposable
         }
 
         DrawTilemaps(scene);
-        DrawSprites(scene, cameraPosition);
+        var hasYSort = scene.Entities.Any(entity => entity.Active && entity.GetComponents<TileMapLayer>().Any(map => map.YSort && map.Visible));
+        if (hasYSort) DrawYSorted(scene, cameraPosition); else DrawSprites(scene, cameraPosition);
         DrawDebugDraw(camera, height);
 
         if (showHelpers)
@@ -192,6 +193,93 @@ public sealed class Renderer2D : IDisposable
                 _batch.DrawLine(null, point.Position, next.Position, System.Math.Max(0.01f, trail.Width), color);
             }
         }
+    }
+    private void DrawYSorted(Scene scene, Vector2 cameraPosition)
+    {
+        var entries = new List<(int Layer, float Y, int Sort, Action Draw)>();
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active) continue;
+            var canvas = entity.GetComponent<CanvasLayer>();
+            if (canvas is { Visible: false }) continue;
+            var layer = canvas?.Order ?? 0;
+            if (entity.GetComponent<SpriteRenderer>() is { Enabled: true, Visible: true } sprite)
+                entries.Add((layer, entity.Transform.Position.Y, sprite.SortingOrder, () => DrawYSprite(scene, entity, sprite, cameraPosition)));
+
+            foreach (var map in entity.GetComponents<TileMapLayer>())
+            {
+                if (!map.Enabled || !map.Visible || !map.YSort || string.IsNullOrWhiteSpace(map.EffectiveTexture)) continue;
+                var texture = ResolveTexture(map.EffectiveTexture);
+                if (texture is null || texture.Width == 0 || texture.Height == 0) continue;
+                var columns = System.Math.Max(1, map.EffectiveColumns);
+                var cellWidth = map.TileSet is { TileWidth: > 0 } set ? set.TileWidth : texture.Width / (float)columns;
+                var cellHeight = map.TileSet is { TileHeight: > 0 } set2 ? set2.TileHeight : cellWidth;
+                var size = MathF.Max(0.0001f, map.TileSize);
+                for (var y = 0; y < map.Height; y++)
+                for (var x = 0; x < map.Width; x++)
+                {
+                    if (map.DisplayTileAt(x, y) < 0) continue;
+                    var worldY = -((y + 0.5f) * size) + map.Offset.Y;
+                    entries.Add((layer, worldY, map.SortingOrder, () => DrawYTile(scene, entity, map, x, y, texture, columns, cellWidth, cellHeight, size)));
+                }
+            }
+        }
+
+        entries.Sort((a, b) =>
+        {
+            var layer = a.Layer.CompareTo(b.Layer);
+            if (layer != 0) return layer;
+            var y = b.Y.CompareTo(a.Y);
+            return y != 0 ? y : a.Sort.CompareTo(b.Sort);
+        });
+        foreach (var entry in entries) entry.Draw();
+    }
+
+    private void DrawYSprite(Scene scene, Entity entity, SpriteRenderer sprite, Vector2 cameraPosition)
+    {
+        var world = scene.GetWorldMatrix(entity);
+        var parallax = ParallaxOffset(cameraPosition, sprite.Parallax);
+        world.M41 += parallax.X;
+        world.M42 += parallax.Y;
+        var texture = ResolveTexture(sprite.TexturePath);
+        var corners = GetWorldCorners(world, sprite.Size, sprite.Origin);
+        var frame = sprite.FrameRect;
+        if (frame.Z <= 0f && entity.GetComponent<SpriteAnimator>() is { Enabled: true } animator)
+        {
+            var columns = Math.Max(1, animator.Columns);
+            var start = Math.Clamp(animator.StartFrame, 0, Math.Max(0, animator.FrameCount - 1));
+            frame = new Vector4(start % columns * animator.FrameWidth, start / columns * animator.FrameHeight, animator.FrameWidth, animator.FrameHeight);
+        }
+        var (u0, v0, u1, v1) = (0f, 0f, 1f, 1f);
+        if (frame.Z > 0f && texture is not null && texture.Width > 0 && texture.Height > 0)
+        {
+            u0 = frame.X / texture.Width; v0 = frame.Y / texture.Height;
+            u1 = (frame.X + frame.Z) / texture.Width; v1 = (frame.Y + frame.W) / texture.Height;
+        }
+        if (sprite.FlipX) (u0, u1) = (u1, u0);
+        if (sprite.FlipY) (v0, v1) = (v1, v0);
+        _batch.SetBlendMode(sprite.BlendMode);
+        _batch.DrawQuad(texture, corners[0], corners[1], corners[2], corners[3],
+            new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1), sprite.Tint);
+    }
+
+    private void DrawYTile(Scene scene, Entity entity, TileMapLayer map, int x, int y,
+        Texture2D texture, int columns, float cellWidth, float cellHeight, float size)
+    {
+        var tile = map.DisplayTileAt(x, y);
+        var left = x * size + map.Offset.X;
+        var right = (x + 1) * size + map.Offset.X;
+        var top = -y * size + map.Offset.Y;
+        var bottom = -(y + 1) * size + map.Offset.Y;
+        var world = scene.GetWorldMatrix(entity);
+        var tl = Vector2.Transform(new Vector2(left, top), world);
+        var tr = Vector2.Transform(new Vector2(right, top), world);
+        var br = Vector2.Transform(new Vector2(right, bottom), world);
+        var bl = Vector2.Transform(new Vector2(left, bottom), world);
+        var region = map.TileSet is { } set ? set.RegionFor(tile) : new Vector4((tile % columns) * cellWidth, (tile / columns) * cellHeight, cellWidth, cellHeight);
+        var u0 = region.X / texture.Width; var v0 = region.Y / texture.Height;
+        var u1 = (region.X + region.Z) / texture.Width; var v1 = (region.Y + region.W) / texture.Height;
+        _batch.DrawQuad(texture, tl, tr, br, bl, new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1), Vector4.One);
     }
     private void DrawSprites(Scene scene, Vector2 cameraPosition)
     {
@@ -281,7 +369,7 @@ public sealed class Renderer2D : IDisposable
 
             foreach (var map in entity.GetComponents<TileMapLayer>())
             {
-                if (!map.Enabled || !map.Visible || string.IsNullOrWhiteSpace(map.EffectiveTexture)) continue;
+                if (!map.Enabled || !map.Visible || map.YSort || string.IsNullOrWhiteSpace(map.EffectiveTexture)) continue;
 
                 var texture = ResolveTexture(map.EffectiveTexture);
                 if (texture is null || texture.Width == 0 || texture.Height == 0) continue;

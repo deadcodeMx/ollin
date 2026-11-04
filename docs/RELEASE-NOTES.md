@@ -1,14 +1,13 @@
-## Ollin Beta 6.128.0 — IK de dos huesos
+## Ollin Beta 6.129.0 — Y-sort de tilemaps
 
 ### Añadido
 
-- IK de dos huesos con objetivo.
-- Dirección de codo.
-- Inspector de IK del esqueleto.
-- Prueba de IK.
+- Y-sort real entre sprites y celdas de tilemap.
+- Checkbox de Y-sort por capa.
+- Render combinado por Y y orden de capa.
 
 ### Verificación
 
 - **217/217 pruebas**.
-- Instalador 6.128.0 instalado y abierto.
+- Instalador 6.129.0 instalado y abierto.
 - Demo técnica no publicada.
