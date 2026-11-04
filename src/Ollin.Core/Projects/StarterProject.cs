@@ -1,4 +1,3 @@
-using Ollin.Core.Model;
 using System.Numerics;
 using Ollin.Core.Model.Components;
 using Ollin.Core.Scenes;
@@ -16,463 +15,95 @@ public enum ProjectTemplate
     TechnicalDemo,
 }
 
-/// <summary>Contenido inicial de un proyecto nuevo, según su plantilla.</summary>
+/// <summary>Contenido inicial de un proyecto nuevo, sin sistemas de gameplay.</summary>
 public static class StarterProject
 {
     /// <summary>Escena inicial mínima según el género elegido.</summary>
-    public static Scene CreateGenre(ProjectGenre genre)
+    public static Scene CreateGenre(ProjectGenre genre) => genre switch
     {
-        var scene = new Scene { Name = "Inicio" };
-        var camera = scene.Create("Cámara principal", Vector2.Zero);
-        camera.AddComponent(new Camera2D { OrthographicSize = 7f, FollowTag = "player", FollowSmoothing = 6f });
-
-        var player = scene.Create("Jugador", new Vector2(0f, -1f));
-        player.Tags.Add("player");
-        player.AddComponent(new SpriteRenderer { Size = new Vector2(0.8f, 1f), Tint = new Vector4(0.95f, 0.75f, 0.35f, 1f) });
-
-        if (genre is ProjectGenre.Platformer or ProjectGenre.Shooter)
-        {
-            player.AddComponent(new CharacterBody2D());
-            player.AddComponent(new Rigidbody2D { AffectedByGravity = false });
-            player.AddComponent(new BoxCollider { Size = new Vector2(0.8f, 1f) });
-        }
-        else
-        {
-            player.AddComponent(new CircleCollider2D { Radius = 0.45f });
-            player.AddComponent(new Rigidbody2D());
-        }
-
-        switch (genre)
-        {
-            case ProjectGenre.Platformer:
-                player.AddComponent(new Health());
-                player.AddComponent(new Checkpoint2D());
-                break;
-            case ProjectGenre.TopDown:
-                player.AddComponent(new Inventory());
-                player.AddComponent(new Equipment());
-                player.AddComponent(new QuestLog());
-                break;
-            case ProjectGenre.Horror:
-                player.AddComponent(new Inventory());
-                player.AddComponent(new Health());
-                camera.AddComponent(new Light2D { Radius = 6f, Intensity = 0.8f });
-                break;
-            case ProjectGenre.Shooter:
-                player.AddComponent(new Health());
-                player.AddComponent(new Weapon2D());
-                break;
-            case ProjectGenre.Puzzle:
-                player.AddComponent(new Inventory());
-                player.AddComponent(new Equipment());
-                break;
-        }
-
-        return scene;
-    }
-    public static Scene CreateScene(ProjectTemplate template = ProjectTemplate.Empty) => template switch
-    {
-        ProjectTemplate.Platformer => CreatePlatformer(),
-        ProjectTemplate.Horror => CreateHorror(),
+        ProjectGenre.Platformer or ProjectGenre.Shooter => CreatePlatformer(),
         _ => CreateEmpty(),
     };
 
-    public static (string FileName, string Source) ScriptFor(ProjectTemplate template) => template switch
+    public static Scene CreateScene(ProjectTemplate template = ProjectTemplate.Empty) => template switch
     {
-        ProjectTemplate.Platformer => ("Plataformas.cs", PlatformerScriptSource),
-        ProjectTemplate.Horror => ("Terror.cs", HorrorScriptSource),
-        _ => ("Juego.cs", ScriptSource),
+        ProjectTemplate.Platformer => CreatePlatformer(),
+        _ => CreateEmpty(),
     };
+
+    public static (string FileName, string Source) ScriptFor(ProjectTemplate template) =>
+        ("Juego.cs", ScriptSource);
 
     private static Scene CreateEmpty()
     {
         var scene = new Scene { Name = "Inicio" };
+        var camera = scene.Create("Cámara principal", Vector2.Zero);
+        camera.AddComponent(new Camera2D { OrthographicSize = 6f, Zoom = 1f });
 
-        var camera = scene.Create("Cámara principal", new Vector2(0f, 0f));
-        camera.AddComponent(new Camera2D
-        {
-            OrthographicSize = 6f,
-            Zoom = 1f,
-        });
-
-        return scene;
-    }
-    private static Scene CreatePlatformer()
-    {
-        var scene = new Scene { Name = "Nivel 1" };
-
-        var camera = scene.Create("Cámara principal", new Vector2(0f, 0f));
-        camera.AddComponent(new Camera2D
-        {
-            OrthographicSize = 7f,
-            Zoom = 1f,
-            Ambient = new Vector4(0.5f, 0.52f, 0.6f, 1f),
-            FollowTag = "player",
-            FollowSmoothing = 5f,
-        });
-        camera.AddComponent(new DayNightCycle { DayLengthSeconds = 150f, TimeOfDay = 0.4f });
-
-        var ground = scene.Create("Suelo", new Vector2(-12f, -4f));
-        var tilemap = ground.AddComponent(new Tilemap
-        {
-            Width = 24,
-            Height = 3,
-            TileSize = 1f,
-            TexturePath = "assets/sprites/tiles.png",
-            TilesetColumns = 4,
-            SortingOrder = -10,
-            Collides = true,
-        });
-
-        for (var x = 0; x < tilemap.Width; x++)
-        {
-            tilemap.SetTile(x, 0, 1);
-            tilemap.SetTile(x, 1, 2);
-            tilemap.SetTile(x, 2, 0);
-        }
-
-        var player = scene.Create("Jugador", new Vector2(-10f, -2.2f));
+        var player = scene.Create("Jugador", new Vector2(0f, -1f));
         player.Tags.Add("player");
-        AddSystems(player);
         player.AddComponent(new SpriteRenderer
         {
-            Size = new Vector2(0.9f, 1f),
-            TexturePath = "assets/sprites/hero-walk.png",
-            SortingOrder = 10,
-        });
-        player.AddComponent(new SpriteAnimator
-        {
-            TexturePath = "assets/sprites/hero-walk.png",
-            FrameWidth = 32,
-            FrameHeight = 32,
-            FrameCount = 4,
-            Fps = 10f,
+            Size = new Vector2(0.8f, 1f),
+            Tint = new Vector4(0.95f, 0.75f, 0.35f, 1f),
         });
         player.AddComponent(new BoxCollider { Size = new Vector2(0.8f, 1f) });
-        player.AddComponent(new Rigidbody2D { AffectedByGravity = true });
-        player.AddComponent(new ScriptComponent { ScriptPath = "scripts/Plataformas.cs", ClassName = "Plataformas" });
-        player.AddComponent(new AudioSource { Clip = "assets/audio/jump.wav", PlayOnStart = false });
-
-        var coinPositions = new[] { -5f, 0f, 5f };
-        for (var i = 0; i < coinPositions.Length; i++)
-        {
-            var coin = scene.Create($"Moneda {i + 1}", new Vector2(coinPositions[i], -1.4f));
-            coin.AddComponent(new SpriteRenderer
-            {
-                Size = new Vector2(0.6f, 0.6f),
-                TexturePath = "assets/sprites/coin.png",
-                SortingOrder = 8,
-            });
-            coin.AddComponent(new BoxCollider { Size = new Vector2(0.6f, 0.6f), IsTrigger = true });
-            coin.AddComponent(new RotatorComponent { DegreesPerSecond = 90f });
-            coin.AddComponent(new AudioSource { Clip = "assets/audio/coin.wav", PlayOnStart = false });
-        }
-
-        AddNote(scene, new Vector2(-3.2f, -1.4f));
+        player.AddComponent(new Rigidbody2D { AffectedByGravity = false });
+        player.AddComponent(new ScriptComponent { ScriptPath = "scripts/Juego.cs", ClassName = "Juego" });
         return scene;
     }
 
-    private static Scene CreateHorror()
+    private static Scene CreatePlatformer()
     {
-        var scene = new Scene { Name = "Pasillo" };
+        var scene = new Scene { Name = "Inicio" };
+        var camera = scene.Create("Cámara principal", new Vector2(0f, 1f));
+        camera.AddComponent(new Camera2D { OrthographicSize = 7f, FollowTag = "player", FollowSmoothing = 6f });
 
-        var camera = scene.Create("Cámara principal", new Vector2(-6f, -1f));
-        camera.AddComponent(new Camera2D
+        var ground = scene.Create("Suelo", new Vector2(-10f, -3f));
+        var tilemap = new Tilemap
         {
-            OrthographicSize = 5.5f,
-            Zoom = 1f,
-            Ambient = new Vector4(0.35f, 0.36f, 0.42f, 1f),
-            FollowTag = "player",
-            FollowSmoothing = 4f,
-        });
-
-        var floor = scene.Create("Suelo", new Vector2(-8f, -2.5f));
-        var tiles = floor.AddComponent(new Tilemap
-        {
-            Width = 16,
+            Width = 24,
             Height = 2,
             TileSize = 1f,
             TexturePath = "assets/sprites/tiles.png",
             TilesetColumns = 4,
             SortingOrder = -10,
             Collides = true,
-        });
+        };
+        for (var y = 0; y < tilemap.Height; y++)
+            for (var x = 0; x < tilemap.Width; x++)
+                tilemap.SetTile(x, y, 0);
+        ground.AddComponent(tilemap);
 
-        for (var x = 0; x < tiles.Width; x++)
-        {
-            tiles.SetTile(x, 0, 1);
-            tiles.SetTile(x, 1, 2);
-        }
-
-        var leftWall = scene.Create("Pared izquierda", new Vector2(-8.2f, -0.5f));
-        leftWall.AddComponent(new SpriteRenderer
-        {
-            Size = new Vector2(0.4f, 4f),
-            Tint = new Vector4(0.16f, 0.17f, 0.22f, 1f),
-            SortingOrder = -2,
-        });
-        leftWall.AddComponent(new BoxCollider { Size = new Vector2(0.4f, 4f) });
-        leftWall.AddComponent(new Rigidbody2D { IsStatic = true });
-
-        var rightWall = scene.Create("Pared derecha", new Vector2(0.2f, -0.5f));
-        rightWall.AddComponent(new SpriteRenderer
-        {
-            Size = new Vector2(0.4f, 4f),
-            Tint = new Vector4(0.16f, 0.17f, 0.22f, 1f),
-            SortingOrder = -2,
-        });
-        rightWall.AddComponent(new BoxCollider { Size = new Vector2(0.4f, 4f) });
-        rightWall.AddComponent(new Rigidbody2D { IsStatic = true });
-
-        var player = scene.Create("Jugador", new Vector2(-7f, -1.6f));
+        var player = scene.Create("Jugador", new Vector2(0f, -1f));
         player.Tags.Add("player");
-        AddSystems(player);
         player.AddComponent(new SpriteRenderer
         {
             Size = new Vector2(0.8f, 1f),
-            Tint = new Vector4(0.85f, 0.85f, 0.9f, 1f),
+            Tint = new Vector4(0.95f, 0.75f, 0.35f, 1f),
             SortingOrder = 10,
         });
+        player.AddComponent(new CharacterBody2D());
+        player.AddComponent(new Rigidbody2D { AffectedByGravity = false });
         player.AddComponent(new BoxCollider { Size = new Vector2(0.8f, 1f) });
-        player.AddComponent(new Rigidbody2D());
-        player.AddComponent(new ScriptComponent { ScriptPath = "scripts/Terror.cs", ClassName = "Terror" });
-
-        var note = scene.Create("Nota", new Vector2(-3f, -1.4f));
-        note.AddComponent(new SpriteRenderer
-        {
-            Size = new Vector2(0.5f, 0.6f),
-            Tint = new Vector4(0.92f, 0.88f, 0.7f, 1f),
-            SortingOrder = 5,
-        });
-        note.AddComponent(new BoxCollider { Size = new Vector2(1.4f, 1.6f), IsTrigger = true });
-
-        var ambience = scene.Create("Ambiente", new Vector2(0f, 0f));
-        ambience.AddComponent(new AudioSource
-        {
-            Clip = "assets/audio/ambient.wav",
-            Volume = 0.35f,
-            Loop = true,
-            Music = true,
-            PlayOnStart = true,
-        });
-
-        AddNote(scene, new Vector2(-2.2f, -1.2f));
+        player.AddComponent(new ScriptComponent { ScriptPath = "scripts/Juego.cs", ClassName = "Juego" });
         return scene;
     }
 
-    private static void AddSystems(Entity player)
+    private const string ScriptSource = """
+using Ollin.Scripting;
+
+public sealed class Juego : OllinScript
+{
+    public override void OnUpdate(float deltaTime)
     {
-        player.AddComponent(new Stats
-        {
-            Entries =
-            {
-                new StatEntry { Name = "Vida", Value = 100f, Max = 100f },
-            },
-        });
-
-        player.AddComponent(new Inventory
-        {
-            Capacity = 8,
-            Slots =
-            {
-                new InventorySlot { ItemId = "pocion", Quantity = 2 },
-            },
-        });
+        // Movimiento 2D simple: edita o reemplaza este script.
+        var move = new System.Numerics.Vector2(
+            (Input.Down("derecha") ? 1f : 0f) - (Input.Down("izquierda") ? 1f : 0f),
+            (Input.Down("arriba") ? 1f : 0f) - (Input.Down("abajo") ? 1f : 0f));
+        if (move.LengthSquared() > 0f)
+            Position += System.Numerics.Vector2.Normalize(move) * 4f * deltaTime;
     }
-
-    private static void AddLight(Entity entity, bool cone = false)
-    {
-        entity.AddComponent(new Light2D
-        {
-            Kind = cone ? LightKind.Cone : LightKind.Point,
-            Radius = cone ? 8f : 5f,
-            Intensity = cone ? 0.9f : 0.75f,
-            ConeAngle = 55f,
-            FlickerAmplitude = cone ? 0.12f : 0f,
-            Color = new Vector4(1f, 0.93f, 0.8f, 1f),
-        });
-    }
-
-    private static void AddNote(Scene scene, Vector2 position)
-    {
-        var note = scene.Create("Nota", position);
-        note.AddComponent(new SpriteRenderer
-        {
-            Size = new Vector2(0.45f, 0.55f),
-            Tint = new Vector4(0.93f, 0.89f, 0.72f, 1f),
-            SortingOrder = 22,
-        });
-        note.AddComponent(new Interactable
-        {
-            Prompt = "E: leer la nota",
-            DialogueId = "bienvenida",
-            Radius = 2.2f,
-        });
-    }
-
-    public const string PotionItem = """
-        { "id": "pocion", "name": "Poción", "description": "Recupera 25 de vida.", "maxStack": 5 }
-        """;
-
-    public const string CoinItem = """
-        { "id": "moneda", "name": "Moneda", "description": "Moneda de cambio.", "maxStack": 99 }
-        """;
-
-    public const string WelcomeDialogue = """
-        {
-          "id": "bienvenida",
-          "speaker": "Nota",
-          "lines": [
-            { "text": "Bienvenido a tu nuevo proyecto de Ollin." },
-            { "text": "A/D para moverte, espacio para saltar y E para interactuar." }
-          ]
-        }
-        """;
-
-    public const string ScriptSource = """
-        using System.Numerics;
-        using Ollin.Core.Input;
-        using Ollin.Scripting;
-
-        /// <summary>Script inicial: mueve la entidad con A/D y la hace saltar con espacio.</summary>
-        public sealed class Juego : OllinScript
-        {
-            private float _verticalSpeed;
-
-            public override void OnStart()
-            {
-                Debug("Juego listo: A/D para moverte, espacio para saltar");
-                Hud.SetBar("Vida", 100f, 100f);
-                Hud.Message("A/D para moverte, espacio para saltar", 3f);
-            }
-
-            public override void OnUpdate(float deltaTime)
-            {
-                var direction = 0f;
-                if (Input.GetKey(KeyCode.A)) direction -= 1f;
-                if (Input.GetKey(KeyCode.D)) direction += 1f;
-
-                Entity.Transform.Position += new Vector2(direction * 4f * Time.DeltaTime, 0f);
-
-                if (Input.GetKeyDown(KeyCode.Space) && _verticalSpeed == 0f)
-                {
-                    _verticalSpeed = 7f;
-                    Audio.Play("assets/audio/jump.wav", 0.7f);
-                }
-
-                if (_verticalSpeed != 0f)
-                {
-                    _verticalSpeed -= 18f * deltaTime;
-                    Entity.Transform.Position += new Vector2(0f, _verticalSpeed * deltaTime);
-
-                    if (Entity.Transform.Position.Y <= -1.6f)
-                    {
-                        Entity.Transform.Position = new Vector2(Entity.Transform.Position.X, -1.6f);
-                        _verticalSpeed = 0f;
-                    }
-                }
-            }
-        }
-        """;
-
-    public const string PlatformerScriptSource = """
-        using System.Numerics;
-        using Ollin.Core.Input;
-        using Ollin.Core.Model.Components;
-        using Ollin.Scripting;
-
-        /// <summary>Jugador de plataformas: A/D para correr y espacio para saltar.</summary>
-        public sealed class Plataformas : OllinScript
-        {
-            private float _verticalSpeed;
-            private bool _grounded;
-
-            public override void OnStart()
-            {
-                Debug("Plataformas: A/D para correr, espacio para saltar");
-                Hud.SetBar("Vida", 100f, 100f);
-                Hud.SetLabel("Monedas", "0");
-                Hud.Message("Recoge las monedas", 3f);
-            }
-
-            public override void OnUpdate(float deltaTime)
-            {
-                var body = Entity.GetComponent<Rigidbody2D>();
-                var direction = 0f;
-                if (Input.GetKey(KeyCode.A)) direction -= 1f;
-                if (Input.GetKey(KeyCode.D)) direction += 1f;
-
-                if (body is not null)
-                {
-                    body.Velocity = new Vector2(direction * 6f, body.Velocity.Y);
-                }
-                else
-                {
-                    Entity.Transform.Position += new Vector2(direction * 6f * deltaTime, 0f);
-                }
-
-                _grounded = Entity.Transform.Position.Y <= -2.2f;
-
-                if (Input.GetKeyDown(KeyCode.Space) && _grounded)
-                {
-                    _verticalSpeed = 8f;
-                    Audio.Play("assets/audio/jump.wav", 0.6f);
-                }
-
-                if (_verticalSpeed != 0f)
-                {
-                    _verticalSpeed -= 22f * deltaTime;
-                    Entity.Transform.Position += new Vector2(0f, _verticalSpeed * deltaTime);
-
-                    if (Entity.Transform.Position.Y <= -2.2f)
-                    {
-                        Entity.Transform.Position = new Vector2(Entity.Transform.Position.X, -2.2f);
-                        _verticalSpeed = 0f;
-                    }
-                }
-            }
-        }
-        """;
-
-    public const string HorrorScriptSource = """
-        using System.Numerics;
-        using Ollin.Core.Input;
-        using Ollin.Core.Model;
-        using Ollin.Scripting;
-
-        /// <summary>Pasillo: avanza despacio y descubre la nota al tocarla.</summary>
-        public sealed class Terror : OllinScript
-        {
-            private bool _found;
-
-            public override void OnStart()
-            {
-                Debug("Pasillo: muévete con A/D y busca la nota");
-                Audio.Music("assets/audio/ambient.wav", 0.3f);
-                Hud.SetBar("Cordura", 100f, 100f, new System.Numerics.Vector4(0.6f, 0.4f, 0.9f, 1f));
-                Hud.Message("Encuentra la nota", 3f);
-            }
-
-            public override void OnUpdate(float deltaTime)
-            {
-                var direction = 0f;
-                if (Input.GetKey(KeyCode.A)) direction -= 1f;
-                if (Input.GetKey(KeyCode.D)) direction += 1f;
-
-                Entity.Transform.Position += new Vector2(direction * 2.2f * Time.DeltaTime, 0f);
-            }
-
-            public override void OnTriggerEnter(Entity other)
-            {
-                if (_found || other.Name != "Nota")
-                {
-                    return;
-                }
-
-                _found = true;
-                Debug("La nota dice: «no mires atrás»");
-                Audio.Play("assets/audio/hit.wav", 0.5f);
-            }
-        }
-        """;
+}
+""";
 }

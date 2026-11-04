@@ -163,7 +163,7 @@ public sealed class VisualScript : Component, ITickable
                     break;
 
                 case ScriptEvent.OnPlayerDeath:
-                    fire = player?.GetComponent<Health>() is { IsDead: true };
+                    fire = GameplayReflection.IsDead(player);
                     break;
             }
 
@@ -190,8 +190,8 @@ public sealed class VisualScript : Component, ITickable
 
         return rule.Condition switch
         {
-            ScriptCondition.HasItem => player.GetComponent<Inventory>()?.Has(rule.ConditionItem, 1) == true,
-            ScriptCondition.HealthBelow => player.GetComponent<Health>() is { } health && health.Current <= rule.Threshold,
+            ScriptCondition.HasItem => GameplayReflection.HasItem(player, rule.ConditionItem),
+            ScriptCondition.HealthBelow => GameplayReflection.HealthBelow(player, rule.Threshold),
             _ => true,
         };
     }

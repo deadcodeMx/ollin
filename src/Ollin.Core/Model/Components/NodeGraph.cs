@@ -245,7 +245,7 @@ public sealed class NodeGraph : Component, ITickable
                     break;
 
                 case GraphEventKind.OnPlayerDeath:
-                    fire = player?.GetComponent<Health>() is { IsDead: true };
+                    fire = GameplayReflection.IsDead(player);
                     break;
             }
 
@@ -371,8 +371,8 @@ public sealed class NodeGraph : Component, ITickable
 
         return node.Condition switch
         {
-            GraphConditionKind.HasItem => player.GetComponent<Inventory>()?.Has(node.ItemId, 1) == true,
-            GraphConditionKind.HealthBelow => player.GetComponent<Health>() is { } health && health.Current <= node.Threshold,
+            GraphConditionKind.HasItem => GameplayReflection.HasItem(player, node.ItemId),
+            GraphConditionKind.HealthBelow => GameplayReflection.HealthBelow(player, node.Threshold),
             GraphConditionKind.Expression => ExpressionEvaluator.EvaluateBool(node.Expression, new ExpressionContext
             {
                 State = GameStateHost.Current,

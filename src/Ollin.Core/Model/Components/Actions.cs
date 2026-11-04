@@ -20,6 +20,30 @@ public enum ActionKind
     Heal,
 }
 
+/// <summary>Puente por reflexión para que el grafo y las expresiones no dependan de sistemas RPG.</summary>
+public static class GameplayReflection
+{
+    public static bool IsDead(Entity? entity) => Bool(entity, "Health", "IsDead");
+    public static float Health(Entity? entity) => Number(entity, "Health", "Current");
+    public static float HealthMax(Entity? entity) => Number(entity, "Health", "Max");
+    public static float Lives(Entity? entity) => Number(entity, "Respawn", "LivesRemaining");
+    public static bool HealthBelow(Entity? entity, float threshold) => Health(entity) <= threshold;
+
+    public static bool HasItem(Entity? entity, string itemId, int quantity = 1) =>
+        Invoke(entity, "Inventory", "Has", itemId, quantity) is true;
+
+    private static object? Component(Entity? entity, string name) =>
+        entity?.Components.FirstOrDefault(c => c.GetType().Name == name);
+
+    private static float Number(Entity? entity, string component, string property) =>
+        Component(entity, component)?.GetType().GetProperty(property)?.GetValue(Component(entity, component)) is float value ? value : 0f;
+
+    private static bool Bool(Entity? entity, string component, string property) =>
+        Component(entity, component)?.GetType().GetProperty(property)?.GetValue(Component(entity, component)) is true;
+
+    private static object? Invoke(Entity? entity, string component, string method, params object[] args) =>
+        Component(entity, component)?.GetType().GetMethod(method)?.Invoke(Component(entity, component), args);
+}
 /// <summary>Ejecutor genérico: no depende de componentes 3D ni de gameplay.</summary>
 public static class ActionExecutor
 {

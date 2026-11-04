@@ -1,12 +1,12 @@
+using Ollin.Core.Dialogue;
+using Ollin.Core.Interaction;
 using System.Collections;
 using System.Numerics;
 using Ollin.Core;
 using Ollin.Core.Diagnostics;
 using Ollin.Core.Input;
 using Ollin.Core.Audio;
-using Ollin.Core.Dialogue;
 using Ollin.Core.Hud;
-using Ollin.Core.Interaction;
 using Ollin.Core.Saves;
 using GameAudio = Ollin.Core.Audio.Audio;
 using Ollin.Core.Model;
@@ -29,7 +29,6 @@ public sealed class SceneRuntime
     private readonly List<OllinScript> _scripts = new();
     private readonly List<CoroutineEntry> _coroutines = new();
     private readonly PhysicsSystem _physics = new();
-    private readonly CombatSystem _combat = new();
     private readonly JointSystem _joints = new();
     private readonly NetworkSystem _network = new();
     private readonly PhysicsServer2D _physicsServer = new();
@@ -68,21 +67,6 @@ public sealed class SceneRuntime
             return (player ?? _scene.Entities.FirstOrDefault(entity => entity.Active &&
                 entity.GetComponent<Ollin.Core.Model.Components.UiCanvas>() is not null))
                 ?.GetComponent<Ollin.Core.Model.Components.UiCanvas>();
-        }
-    }
-    /// <summary>Inventario del jugador (etiqueta "player") o del primer inventario activo.</summary>
-    public Ollin.Core.Model.Components.Inventory? PlayerInventory
-    {
-        get
-        {
-            if (_scene is null) return null;
-            var player = _scene.Entities.FirstOrDefault(entity => entity.Active &&
-                entity.Tags.Any(tag => tag.Equals("player", StringComparison.OrdinalIgnoreCase)) &&
-                entity.GetComponent<Ollin.Core.Model.Components.Inventory>() is not null);
-            if (player is not null) return player.GetComponent<Ollin.Core.Model.Components.Inventory>();
-            return _scene.Entities.FirstOrDefault(entity => entity.Active &&
-                entity.GetComponent<Ollin.Core.Model.Components.Inventory>() is not null)
-                ?.GetComponent<Ollin.Core.Model.Components.Inventory>();
         }
     }
 

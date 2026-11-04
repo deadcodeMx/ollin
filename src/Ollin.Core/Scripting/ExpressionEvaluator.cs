@@ -448,17 +448,17 @@ public static class ExpressionEvaluator
 
             if (lower is "vida" or "health")
             {
-                return _context.Player?.GetComponent<Health>()?.Current ?? 0f;
+                return GameplayReflection.Health(_context.Player);
             }
 
             if (lower is "vidamax" or "healthmax")
             {
-                return _context.Player?.GetComponent<Health>()?.Max ?? 0f;
+                return GameplayReflection.HealthMax(_context.Player);
             }
 
             if (lower is "vidas" or "lives")
             {
-                return _context.Player?.GetComponent<Respawn>()?.LivesRemaining ?? 0f;
+                return GameplayReflection.Lives(_context.Player);
             }
 
             var raw = _context.State?.Get(name);
@@ -481,7 +481,7 @@ public static class ExpressionEvaluator
             if (name is "has" or "tiene")
             {
                 var item = args.Count > 0 ? args[0]?.ToString() ?? string.Empty : string.Empty;
-                return _context.Player?.GetComponent<Inventory>()?.Has(item, 1) == true;
+                return GameplayReflection.HasItem(_context.Player, item);
             }
 
             if (name is "min" && args.Count == 2) return MathF.Min(ToNumber(args[0]), ToNumber(args[1]));

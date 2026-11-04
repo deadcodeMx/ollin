@@ -3,7 +3,7 @@ using Ollin.Core.Model.Components;
 
 namespace Ollin.Core.Scenes;
 
-/// <summary>Escena de ejemplo que se muestra al abrir el editor por primera vez.</summary>
+/// <summary>Escena 2D de ejemplo que se muestra al abrir el editor por primera vez.</summary>
 public static class DefaultScene
 {
     public static Scene Create()
@@ -20,14 +20,6 @@ public static class DefaultScene
             FollowSmoothing = 5f,
         });
 
-        camera.AddComponent(new DayNightCycle
-        {
-            DayLengthSeconds = 180f,
-            TimeOfDay = 0.45f,
-            DayAmbient = new Vector4(1f, 0.97f, 0.9f, 1f),
-            NightAmbient = new Vector4(0.12f, 0.14f, 0.22f, 1f),
-        });
-
         var ground = scene.Create("Terreno", new Vector2(-10f, -2.5f));
         var tilemap = new Tilemap
         {
@@ -39,37 +31,13 @@ public static class DefaultScene
             SortingOrder = -10,
             Collides = true,
         };
-
         for (var y = 0; y < tilemap.Height; y++)
-        {
             for (var x = 0; x < tilemap.Width; x++)
-            {
                 tilemap.SetTile(x, y, y == 0 ? 0 : 2);
-            }
-        }
-
         ground.AddComponent(tilemap);
 
         var player = scene.Create("Jugador", new Vector2(0f, -1.6f));
         player.Tags.Add("player");
-        player.AddComponent(new Stats
-        {
-            Entries =
-            {
-                new StatEntry { Name = "Vida", Value = 100f, Max = 100f },
-                new StatEntry { Name = "Hambre", Value = 100f, Max = 100f, DecayPerSecond = 0.4f },
-            },
-        });
-        player.AddComponent(new Inventory
-        {
-            Capacity = 8,
-            Slots =
-            {
-                new InventorySlot { ItemId = "pocion", Quantity = 2 },
-                new InventorySlot { ItemId = "moneda", Quantity = 1 },
-            },
-        });
-
         player.AddComponent(new SpriteRenderer
         {
             TexturePath = "assets/sprites/hero-walk.png",
@@ -91,6 +59,8 @@ public static class DefaultScene
             ScriptPath = "scripts/PlayerBob.cs",
             ClassName = "PlayerBob",
         });
+        player.AddComponent(new BoxCollider { Size = new Vector2(0.8f, 1f) });
+        player.AddComponent(new Rigidbody2D { AffectedByGravity = false });
 
         var crate = scene.Create("Caja", new Vector2(2.6f, -1.9f));
         crate.AddComponent(new SpriteRenderer
@@ -116,7 +86,6 @@ public static class DefaultScene
         });
         coin.AddComponent(new RotatorComponent { DegreesPerSecond = 120f });
 
-
         var tilted = scene.Create("Caja girada", new Vector2(-2.8f, -1.8f));
         tilted.Transform.Rotation = 0.35f;
         tilted.AddComponent(new BoxCollider { Size = new Vector2(1f, 0.6f) });
@@ -126,36 +95,6 @@ public static class DefaultScene
             Size = new Vector2(1f, 0.6f),
             Tint = new Vector4(1f, 0.82f, 0.78f, 1f),
             SortingOrder = 6,
-        });
-
-        var note = scene.Create("Nota", new Vector2(-1.4f, -1.25f));
-        note.AddComponent(new SpriteRenderer
-        {
-            Size = new Vector2(0.45f, 0.55f),
-            Tint = new Vector4(0.93f, 0.89f, 0.72f, 1f),
-            SortingOrder = 22,
-        });
-        note.AddComponent(new Interactable
-        {
-            Prompt = "E: leer la nota",
-            DialogueId = "bienvenida",
-            Radius = 2.2f,
-        });
-
-        var stalker = scene.Create("Merodeador", new Vector2(-4.5f, -1.6f));
-        stalker.AddComponent(new SpriteRenderer
-        {
-            TexturePath = "assets/sprites/crate.png",
-            Size = new Vector2(0.9f, 0.9f),
-            Tint = new Vector4(0.45f, 0.4f, 0.55f, 1f),
-            SortingOrder = 8,
-        });
-        stalker.AddComponent(new AiAgent
-        {
-            TargetTag = "player",
-            Speed = 1.8f,
-            VisionRadius = 5f,
-            PatrolRadius = 2f,
         });
 
         var music = scene.Create("Música", new Vector2(0f, 0f));
