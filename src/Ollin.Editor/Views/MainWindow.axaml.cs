@@ -1920,6 +1920,18 @@ public partial class MainWindow : Window
             ViewModel.RequestRedraw();
         }
     }
+    private async void OnEditMesh(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected?.Entity.GetComponent<Ollin.Core.Model.Components.Mesh2D>() is not { } mesh) return;
+        var window = new MeshEditorWindow(mesh);
+        if (!await window.ShowDialog<bool>(this) || window.Result is null) return;
+        var entity = ViewModel.Selected.Entity;
+        entity.RemoveComponent(mesh);
+        entity.AddComponent(window.Result);
+        ViewModel.Selected.RefreshAll();
+        ViewModel.CommitEdit("Editar malla");
+        ViewModel.RequestRedraw();
+    }
     private async void OnEditUiCanvas(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel?.Selected?.Entity.GetComponent<Ollin.Core.Model.Components.UiCanvas>() is not { } canvas) return;

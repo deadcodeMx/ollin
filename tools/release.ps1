@@ -34,6 +34,7 @@ try {
     Copy-Item -Force README.md, LICENSE, CHANGELOG.md 'dist/app'
     Compress-Archive -Path 'dist/app/*' -DestinationPath 'tools/payload.zip' -Force
 
+    Remove-Item -Recurse -Force 'tools/Ollin.Setup/bin','tools/Ollin.Setup/obj' -ErrorAction SilentlyContinue
     dotnet publish 'tools/Ollin.Setup/Ollin.Setup.csproj' -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o 'dist/installer' -v q --nologo
     if ($LASTEXITCODE -ne 0) { throw 'Fallo la publicacion del instalador' }
 
