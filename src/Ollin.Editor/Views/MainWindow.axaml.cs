@@ -1881,6 +1881,19 @@ public partial class MainWindow : Window
             ViewModel?.LoadGameSlot(slot);
     }
 
+    private async void OnEditTileSet(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected?.Tilemap is not { } layer) return;
+        var set = layer.TileSet ?? new Ollin.Core.Model.Components.TileSet();
+        var window = new TileSetWindow(set);
+        if (await window.ShowDialog<bool>(this) && window.Result is not null)
+        {
+            layer.TileSet = window.Result;
+            ViewModel.Selected.RefreshAll();
+            ViewModel.CommitEdit("Editar TileSet");
+            ViewModel.RequestRedraw();
+        }
+    }
     private void OnSaveGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveGame();
 
     private void OnThemeDark(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTheme(Ollin.Editor.Styles.EditorThemeMode.Dark);

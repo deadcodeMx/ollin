@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.123.0] — 2026-11-04
+
+### Añadido
+
+- TileSet como asset JSON reutilizable.
+- Editor visual de TileSet.
+- Edición de colisión, offset, one-way y pendiente por tile.
+- Carga y guardado de TileSet.
+- Prueba de serialización de TileSet.
+
 ## [6.122.0] — 2026-11-04
 
 ### Añadido

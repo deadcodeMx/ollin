@@ -1,15 +1,15 @@
-## Ollin Beta 6.122.0 — materiales, joints y CCD
+## Ollin Beta 6.123.0 — TileSet asset y editor
 
 ### Añadido
 
-- Fricción y rebote por collider.
-- Joints de muelle y pin.
-- CCD configurable por cuerpo.
-- Normal de pendiente por tile.
-- Inspectores de materiales y CCD.
+- TileSet como asset JSON reutilizable.
+- Editor visual de TileSet.
+- Edición de colisión, offset, one-way y pendiente por tile.
+- Carga y guardado de TileSet.
+- Prueba de serialización.
 
 ### Verificación
 
-- **214/214 pruebas**.
-- Instalador 6.122.0 instalado y abierto.
+- **215/215 pruebas**.
+- Instalador 6.123.0 instalado y abierto.
 - Demo técnica no publicada.

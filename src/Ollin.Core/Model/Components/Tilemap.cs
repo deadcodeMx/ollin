@@ -30,6 +30,10 @@ public sealed class TileDefinition
 /// <summary>Conjunto de tiles con textura, tamaño y colisión por tile.</summary>
 public sealed class TileSet
 {
+    public string Id { get; set; } = "tileset";
+
+    public string Name { get; set; } = "TileSet";
+
     public string? TexturePath { get; set; }
 
     public int TileWidth { get; set; } = 32;
@@ -54,6 +58,8 @@ public sealed class TileSet
 
     public TileSet Clone() => new()
     {
+        Id = Id,
+        Name = Name,
         TexturePath = TexturePath,
         TileWidth = TileWidth,
         TileHeight = TileHeight,
