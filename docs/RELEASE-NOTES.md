@@ -1,14 +1,13 @@
-## Ollin Beta 6.140.0 — easing y eventos de animación
+## Ollin Beta 6.141.0 — primitivas 2D
 
 ### Añadido
 
-- Easing por keyframe: Linear, Smooth, EaseIn, EaseOut y Step.
-- Track de eventos.
-- Editor de easing.
-- Prueba de eventos/easing.
+- Line2D y Polygon2D.
+- Render de contornos 2D.
+- Componentes en el menú Visual.
 
 ### Verificación
 
 - **221/221 pruebas**.
-- Instalador 6.140.0 instalado y abierto.
+- Instalador 6.141.0 instalado y abierto.
 - Demo técnica no publicada.

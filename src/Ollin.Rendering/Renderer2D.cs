@@ -199,6 +199,30 @@ public sealed class Renderer2D : IDisposable
             }
         }
     }
+    private void DrawShapes(Scene scene)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active) continue;
+            var world = scene.GetWorldMatrix(entity);
+            if (entity.GetComponent<Line2D>() is { Enabled: true, Visible: true, Points.Count: > 1 } line)
+            {
+                for (var i = 0; i < line.Points.Count - 1; i++)
+                    _batch.DrawLine(null, Vector2.Transform(line.Points[i], world), Vector2.Transform(line.Points[i + 1], world), line.Width, line.Color);
+                if (line.Loop && line.Points.Count > 2)
+                    _batch.DrawLine(null, Vector2.Transform(line.Points[^1], world), Vector2.Transform(line.Points[0], world), line.Width, line.Color);
+            }
+            if (entity.GetComponent<Polygon2D>() is { Enabled: true, Visible: true, Points.Count: > 2 } polygon)
+            {
+                for (var i = 0; i < polygon.Points.Count; i++)
+                {
+                    var a = Vector2.Transform(polygon.Points[i], world);
+                    var b = Vector2.Transform(polygon.Points[(i + 1) % polygon.Points.Count], world);
+                    _batch.DrawLine(null, a, b, polygon.Width, polygon.Color);
+                }
+            }
+        }
+    }
     private void DrawYSorted(Scene scene, Vector2 cameraPosition)
     {
         var entries = new List<(int Layer, float Y, int Sort, Action Draw)>();

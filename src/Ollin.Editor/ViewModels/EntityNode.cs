@@ -451,6 +451,9 @@ public sealed class EntityNode : ObservableObject
 
     public string ColliderIgnoreTags { get => string.Join(", ", Collider?.IgnoreTags ?? new List<string>()); set { if (Collider is null) return; Collider.IgnoreTags = value.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(tag => tag.Trim()).Where(tag => tag.Length > 0).ToList(); OnPropertyChanged(); _owner.MarkDirty(); } }
 
+    public bool HasLine2D => Entity.GetComponent<Line2D>() is not null;
+    public bool HasPolygon2D => Entity.GetComponent<Polygon2D>() is not null;
+
     public bool HasNavigationPolygon => Entity.GetComponent<NavigationPolygon2D>() is not null;
     public bool HasNavigationAgent => Entity.GetComponent<NavigationAgent2D>() is not null;
     public decimal NavigationSpeed { get => (decimal)(Entity.GetComponent<NavigationAgent2D>()?.Speed ?? 3f); set { if (Entity.GetComponent<NavigationAgent2D>() is { } a) { a.Speed = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
@@ -1625,6 +1628,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasUiCanvas));
         OnPropertyChanged(nameof(HasAudioSource));
         OnPropertyChanged(nameof(HasNavigationPolygon));
+        OnPropertyChanged(nameof(HasLine2D));
+        OnPropertyChanged(nameof(HasPolygon2D));
         OnPropertyChanged(nameof(HasNavigationAgent));
         OnPropertyChanged(nameof(HasAudioListener));
         OnPropertyChanged(nameof(ColliderIgnoreTags));
