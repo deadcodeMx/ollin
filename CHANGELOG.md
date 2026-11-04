@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.135.0] — 2026-11-04
+
+### Añadido
+
+- AudioSource2D con atenuación por distancia.
+- AudioListener2D.
+- Inspector de audio 2D.
+- Selección automática del jugador como listener.
+
 ## [6.134.0] — 2026-11-04
 
 ### Añadido

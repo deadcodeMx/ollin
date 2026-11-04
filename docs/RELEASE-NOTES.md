@@ -1,13 +1,14 @@
-## Ollin Beta 6.134.0 — contenedores y tema de UI
+## Ollin Beta 6.135.0 — audio 2D
 
 ### Añadido
 
-- Contenedores con layout vertical/horizontal.
-- Aplanado de jerarquía con padding y gap.
-- Tema global de panel, texto, botón y acento.
+- AudioSource2D con atenuación por distancia.
+- AudioListener2D.
+- Inspector de audio 2D.
+- El jugador se usa como listener por defecto.
 
 ### Verificación
 
 - **219/219 pruebas**.
-- Instalador 6.134.0 instalado y abierto.
+- Instalador 6.135.0 instalado y abierto.
 - Demo técnica no publicada.

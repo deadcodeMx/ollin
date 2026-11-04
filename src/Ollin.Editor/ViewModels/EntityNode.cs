@@ -451,6 +451,12 @@ public sealed class EntityNode : ObservableObject
 
     public string ColliderIgnoreTags { get => string.Join(", ", Collider?.IgnoreTags ?? new List<string>()); set { if (Collider is null) return; Collider.IgnoreTags = value.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(tag => tag.Trim()).Where(tag => tag.Length > 0).ToList(); OnPropertyChanged(); _owner.MarkDirty(); } }
 
+    public bool HasAudioSource => Entity.GetComponent<AudioSource2D>() is not null;
+    public bool HasAudioListener => Entity.GetComponent<AudioListener2D>() is not null;
+    public string SpatialAudioClip { get => Entity.GetComponent<AudioSource2D>()?.Clip ?? string.Empty; set { if (Entity.GetComponent<AudioSource2D>() is { } a) { a.Clip = value ?? string.Empty; OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal SpatialAudioVolume { get => (decimal)(Entity.GetComponent<AudioSource2D>()?.Volume ?? 1f); set { if (Entity.GetComponent<AudioSource2D>() is { } a) { a.Volume = System.Math.Clamp((float)value, 0f, 1f); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal SpatialAudioMaxDistance { get => (decimal)(Entity.GetComponent<AudioSource2D>()?.MaxDistance ?? 12f); set { if (Entity.GetComponent<AudioSource2D>() is { } a) { a.MaxDistance = MathF.Max(0.1f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+
     public bool HasUiCanvas => Entity.GetComponent<UiCanvas>() is not null;
     public string UiCanvasSummary => Entity.GetComponent<UiCanvas>() is { } canvas ? $"{canvas.Elements.Count} elementos" : "-";
 
@@ -1611,6 +1617,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasSpringJoint));
         OnPropertyChanged(nameof(HasPinJoint));
         OnPropertyChanged(nameof(HasUiCanvas));
+        OnPropertyChanged(nameof(HasAudioSource));
+        OnPropertyChanged(nameof(HasAudioListener));
         OnPropertyChanged(nameof(ColliderIgnoreTags));
         OnPropertyChanged(nameof(ColliderBounciness));
         OnPropertyChanged(nameof(ColliderFriction));
