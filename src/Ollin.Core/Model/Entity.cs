@@ -58,6 +58,9 @@ public sealed class Entity
 
     public bool HasComponent<T>() where T : Component => GetComponent<T>() is not null;
 
+    /// <summary>Devuelve todos los componentes del tipo pedido (capas, scripts, etc.).</summary>
+    public IEnumerable<T> GetComponents<T>() where T : Component => Components.OfType<T>();
+
     public T AddComponent<T>(T component) where T : Component
     {
         component.Owner = this;

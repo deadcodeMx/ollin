@@ -765,7 +765,7 @@ public sealed class EntityNode : ObservableObject
 
     // ---------- Tilemap ----------
 
-    public bool HasTilemap => Entity.GetComponent<Tilemap>() is not null;
+    public bool HasTilemap => Entity.GetComponents<TileMapLayer>().Any();
 
     private IReadOnlyList<TilePaletteItem>? _tilePalette;
 
@@ -773,7 +773,59 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasTilePalette => TilePalette.Count > 0;
 
-    public Tilemap? Tilemap => Entity.GetComponent<Tilemap>();
+    public TileMapLayer? Tilemap => Entity.GetComponents<TileMapLayer>().FirstOrDefault();
+
+    public bool HasTileSet => Tilemap is not null;
+
+    public string TileSetTexture
+    {
+        get => Tilemap?.TileSet?.TexturePath ?? string.Empty;
+        set
+        {
+            if (Tilemap is null) return;
+            Tilemap.TileSet ??= new TileSet();
+            Tilemap.TileSet.TexturePath = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public decimal TileSetColumns
+    {
+        get => Tilemap?.TileSet?.Columns ?? 4;
+        set
+        {
+            if (Tilemap is null) return;
+            Tilemap.TileSet ??= new TileSet();
+            Tilemap.TileSet.Columns = System.Math.Clamp((int)value, 1, 64);
+            OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public decimal TileSetTileWidth
+    {
+        get => Tilemap?.TileSet?.TileWidth ?? 32;
+        set
+        {
+            if (Tilemap is null) return;
+            Tilemap.TileSet ??= new TileSet();
+            Tilemap.TileSet.TileWidth = System.Math.Max(1, (int)value);
+            OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public decimal TileSetTileHeight
+    {
+        get => Tilemap?.TileSet?.TileHeight ?? 32;
+        set
+        {
+            if (Tilemap is null) return;
+            Tilemap.TileSet ??= new TileSet();
+            Tilemap.TileSet.TileHeight = System.Math.Max(1, (int)value);
+            OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
+
+    public string TileSetSummary => Tilemap?.TileSet is { } set ? $"{set.Tiles.Count} tiles definidos" : "Sin TileSet";
 
     public string TilemapTexture
     {
@@ -1477,6 +1529,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(AnimationCurrentState));
         OnPropertyChanged(nameof(HasTransition2D));
         OnPropertyChanged(nameof(TilemapAutotile));
+        OnPropertyChanged(nameof(HasTileSet));
+        OnPropertyChanged(nameof(TileSetSummary));
         OnPropertyChanged(nameof(HasParticles));
         OnPropertyChanged(nameof(HasTrail));
         OnPropertyChanged(nameof(ColliderOneWay));

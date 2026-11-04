@@ -203,14 +203,16 @@ public sealed class CharacterBody2D : Component, ITickable
             if (!entity.Active || entity.Id == Owner.Id) continue;
             if (entity.GetComponent<Collider2D>() is { Enabled: true, IsTrigger: false } collider)
                 Consider(collider.GetWorldCorners(scene.GetWorldMatrix(entity)));
-            if (entity.GetComponent<Tilemap>() is { Enabled: true, Collides: true } map)
+            foreach (var map in entity.GetComponents<TileMapLayer>())
             {
+                if (!map.Enabled || !(map.Collides || map.TileSet is { Tiles.Count: > 0 })) continue;
                 for (var y = 0; y < map.Height; y++)
                     for (var x = 0; x < map.Width; x++)
                     {
-                        if (map.TileAt(x, y) < 0) continue;
-                        var origin = map.CellOrigin(x, y);
-                        var size = new Vector2(map.TileSize);
+                        if (!map.IsSolidAt(x, y)) continue;
+                        var definition = map.DefinitionAt(x, y);
+                        var origin = map.CellOrigin(x, y) + (definition?.CollisionOffset ?? Vector2.Zero);
+                        var size = definition?.CollisionSize ?? new Vector2(map.TileSize);
                         var corners = new[]
                         {
                             Vector2.Transform(origin, scene.GetWorldMatrix(entity)),

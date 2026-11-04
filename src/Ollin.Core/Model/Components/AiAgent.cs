@@ -169,7 +169,7 @@ public sealed class AiAgent : Component, ITickable
         var fromCell = new GridPoint(fromX, fromY);
         var toCell = new GridPoint(toX, toY);
 
-        bool Walkable(int x, int y) => map.TileAt(x, y) < 0;
+        bool Walkable(int x, int y) => !map.IsSolidAt(x, y);
 
         var path = GridPathfinder.FindPath(map.Width, map.Height, fromCell, toCell, Walkable);
 
@@ -179,16 +179,17 @@ public sealed class AiAgent : Component, ITickable
         }
     }
 
-    private (Entity? Entity, Tilemap? Map) FindSolidTilemap(Scene scene)
+    private (Entity? Entity, TileMapLayer? Map) FindSolidTilemap(Scene scene)
     {
         foreach (var entity in scene.Entities)
         {
-            if (entity.Active && entity.GetComponent<Tilemap>() is { Enabled: true, Collides: true } map)
+            if (!entity.Active) continue;
+            foreach (var map in entity.GetComponents<TileMapLayer>())
             {
-                return (entity, map);
+                if (map.Enabled && (map.Collides || map.TileSet is { Tiles.Count: > 0 }))
+                    return (entity, map);
             }
         }
-
         return (null, null);
     }
 

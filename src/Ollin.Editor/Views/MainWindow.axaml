@@ -734,6 +734,14 @@
                       <TextBlock Classes="section" Text="ESQUELETO" />
                       <TextBlock Text="{Binding Selected.SkeletonInfo}" Classes="hint" />
                     </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasTileSet}" Spacing="5">
+                      <TextBlock Classes="section" Text="TILESET" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Textura" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.TileSetTexture, Mode=TwoWay}" Watermark="assets/sprites/tiles.png" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Columnas" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TileSetColumns, Mode=TwoWay}" Increment="1" Minimum="1" FormatString="0" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Ancho tile" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TileSetTileWidth, Mode=TwoWay}" Increment="1" Minimum="1" FormatString="0" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Alto tile" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TileSetTileHeight, Mode=TwoWay}" Increment="1" Minimum="1" FormatString="0" /></Grid>
+                      <TextBlock Text="{Binding Selected.TileSetSummary}" Classes="hint" />
+                    </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasRotator}" Spacing="5">
                       <TextBlock Classes="section" Text="ROTADOR" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1">

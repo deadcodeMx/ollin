@@ -1,6 +1,6 @@
 # Comparativa Godot 2D vs Ollin 2D
 
-Referencia: documentación oficial de Godot 4 (stable) y estado de Ollin **6.116.0**.
+Referencia: documentación oficial de Godot 4 (stable) y estado de Ollin **6.118.0**.
 
 - [Godot 2D](https://docs.godotengine.org/en/stable/tutorials/2d/index.html)
 - [Lista de características](https://docs.godotengine.org/en/stable/about/list_of_features.html)
@@ -27,9 +27,9 @@ tilemap/animación/UI y audio/navegación**.
 
 | Área | Godot 2D | Ollin 2D | Falta |
 |---|---|---|---|
-| Física | CharacterBody2D con pendientes, floor snap, plataformas móviles, CCD, joints, raycast/shapecast, consultas | CharacterBody2D básico, SAT/AABB, one-way, plataforma móvil simple | Pendientes, arrastre de pasajero, CCD, joints, raycast/shapecast, consultas, materiales, interpolación |
+| Física | CharacterBody2D con pendientes, floor snap, plataformas móviles, CCD, joints, raycast/shapecast, consultas | Contactos suelo/pared/techo, pendientes por normal, floor snap, arrastre de plataforma, subpasos adaptativos | Raycast/shapecast, joints, consultas, materiales, excepciones, CCD swept real |
 | Formas | Box, circle, capsule, convex/concave polygon, segment, world boundary | Box, circle, capsule aproximada, polygon, edge | Segmento, world boundary, convex/concave real, separation ray |
-| Tilemap | TileMapLayer, TileSet, terrenos/autotile, colisiones/navegación/oclusión por tile, capas, Y-sort | Tilemap único, autotile de 16 variantes, colisión por celda | TileSet real, capas, terrenos, variantes, colisión/navegación/oclusión por tile, Y-sort, editor |
+| Tilemap | TileMapLayer, TileSet, terrenos/autotile, colisiones/navegación/oclusión por tile, capas, Y-sort | TileMapLayer, TileSet inline, colisión por tile, autotile básico | Terrenos, navegación/oclusión por tile, Y-sort, editor de TileSet |
 | Render 2D | CanvasLayer, shaders de canvas, blend modes, meshes, MultiMesh, Line2D/Polygon2D, Y-sort, viewports, pixel snap/AA | SpriteBatch propio, sprites, líneas, partículas, luces | Shaders, blend modes, meshes, CanvasLayer, Y-sort, viewports, antialiasing, pixel perfect |
 | Cámara | Zoom, rotación, drag margins, límites, smoothing, viewport, pixel perfect | Follow, deadzone, bounds, zoom | Rotación, drag margins, pixel perfect, shake, transiciones entre cámaras |
 | Animación | AnimationPlayer, AnimationTree, blend trees, method/audio tracks, SpriteFrames | SpriteAnimator + FSM simple | Timeline, tracks, blend tree, eventos, recurso de animación, editor visual |
@@ -44,6 +44,29 @@ tilemap/animación/UI y audio/navegación**.
 | Localización | CSV/gettext, plurales, contextos, RTL, fuentes del sistema | JSON plano | Plurales, contextos, RTL, fallback de fuentes, selector de idioma |
 | Multijugador | MultiplayerSpawner/Synchronizer, RPC, ENet/WebSocket | No implementado | Todo |
 | Herramientas | Editor de TileSet, animación, shaders, perfiles, inspector remoto | Editor de escenas, inspector, scripts, prefabs | Editores de TileSet/animación/shader, profiler, inspector remoto |
+
+## Limitaciones actuales de la física de personaje (6.118.0)
+
+Ya están implementados:
+
+- Contactos de suelo, pared y techo.
+- Pendiente máxima y normal de suelo.
+- Floor snap.
+- Arrastre por plataformas móviles.
+- Subpasos adaptativos a alta velocidad.
+- Coyote time, jump buffer y salto variable.
+
+Todavía falta:
+
+- Las pendientes solo funcionan si el collider aporta una normal; **el tilemap no tiene pendientes dedicadas**.
+- El CCD son **subpasos adaptativos**, no un swept collision continuo.
+- No hay `RayCast2D` ni `ShapeCast2D` para el personaje.
+- No hay joints ni materiales de fricción/rebote.
+- No hay excepciones de colisión por cuerpo.
+- El floor snap es heurístico y puede engancharse a colliders dinámicos cercanos.
+- `MovingPlatform2D` solo oscila en línea; no tiene waypoints, curva ni editor de recorrido.
+- No hay pared-deslizamiento, escaleras ni plataformas atravesables desde abajo con lógica avanzada.
+- El one-way por tile es básico.
 
 ## Lista priorizada para "2D completo"
 

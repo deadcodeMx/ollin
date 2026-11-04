@@ -1,17 +1,16 @@
-## Ollin Beta 6.118.0 — física de personaje completa
+## Ollin Beta 6.119.0 — TileSet y TileMapLayer
 
 ### Añadido
 
-- Contactos de suelo, pared y techo.
-- Detección de pendientes y ángulo máximo.
-- Snap al suelo.
-- Arrastre por plataformas móviles.
-- Velocidad de plataforma.
-- Subpasos adaptativos para alta velocidad.
-- Pruebas de contactos y plataforma móvil.
+- **TileSet** con textura, tamaño y definición por tile.
+- **Colisión por tile** y one-way por tile.
+- **TileMapLayer** con múltiples capas por entidad.
+- Render de capas y regiones de TileSet.
+- Inspector básico de TileSet.
+- IA y floor snap usan la colisión por tile.
 
 ### Verificación
 
-- **207/207 pruebas**.
-- Instalador 6.118.0 instalado y abierto.
+- **209/209 pruebas**.
+- Instalador 6.119.0 instalado y abierto.
 - Demo técnica no publicada.

@@ -1,85 +1,167 @@
 using System.Numerics;
+using System.Text.Json.Serialization;
 
 namespace Ollin.Core.Model.Components;
 
+/// <summary>Definición de un tile dentro de un TileSet.</summary>
+public sealed class TileDefinition
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>Región de textura (x, y, ancho, alto). Si es cero se calcula por columnas.</summary>
+    public Vector4 Region { get; set; }
+
+    public Vector2 CollisionSize { get; set; } = Vector2.One;
+
+    public Vector2 CollisionOffset { get; set; }
+
+    public bool OneWay { get; set; }
+
+    public string? Tag { get; set; }
+
+    [JsonIgnore] public bool HasCollision => CollisionSize.X > 0f && CollisionSize.Y > 0f;
+}
+
+/// <summary>Conjunto de tiles con textura, tamaño y colisión por tile.</summary>
+public sealed class TileSet
+{
+    public string? TexturePath { get; set; }
+
+    public int TileWidth { get; set; } = 32;
+
+    public int TileHeight { get; set; } = 32;
+
+    public int Columns { get; set; } = 4;
+
+    public List<TileDefinition> Tiles { get; set; } = new();
+
+    public TileDefinition? Get(int id) => Tiles.FirstOrDefault(tile => tile.Id == id);
+
+    public Vector4 RegionFor(int id)
+    {
+        var tile = Get(id);
+        if (tile is not null && tile.Region.Z > 0f && tile.Region.W > 0f) return tile.Region;
+        var columns = System.Math.Max(1, Columns);
+        var column = id % columns;
+        var row = id / columns;
+        return new Vector4(column * TileWidth, row * TileHeight, TileWidth, TileHeight);
+    }
+
+    public TileSet Clone() => new()
+    {
+        TexturePath = TexturePath,
+        TileWidth = TileWidth,
+        TileHeight = TileHeight,
+        Columns = Columns,
+        Tiles = Tiles.Select(tile => new TileDefinition
+        {
+            Id = tile.Id, Name = tile.Name, Region = tile.Region, CollisionSize = tile.CollisionSize,
+            CollisionOffset = tile.CollisionOffset, OneWay = tile.OneWay, Tag = tile.Tag,
+        }).ToList(),
+    };
+}
+
 /// <summary>
-/// Mapa de mosaicos en rejilla. Cada celda guarda un índice del tileset
-/// (-1 = vacía). El renderer dibuja solo las celdas visibles.
+/// Capa de mosaicos en una rejilla. Varias capas pueden convivir en una entidad;
+/// el TileSet define colisión y región por tile.
 /// </summary>
-public sealed class Tilemap : Component
+public class TileMapLayer : Component
 {
     public int Width { get; set; } = 16;
 
     public int Height { get; set; } = 8;
 
-    /// <summary>Tamaño de cada celda en unidades de mundo.</summary>
     public float TileSize { get; set; } = 1f;
 
-    /// <summary>Textura con la rejilla de mosaicos.</summary>
+    public Vector2 Offset { get; set; }
+
     public string? TexturePath { get; set; }
 
-    /// <summary>Columnas del tileset (el alto se deduce del número de mosaicos).</summary>
     public int TilesetColumns { get; set; } = 4;
 
     public int SortingOrder { get; set; } = -5;
 
-    /// <summary>Si está activo, sus celdas bloquean a los cuerpos dinámicos.</summary>
+    public bool Visible { get; set; } = true;
+
     public bool Collides { get; set; }
 
-    /// <summary>Elige la variante de autotile según vecinos (16 variantes).</summary>
+    public TileSet? TileSet { get; set; }
+
     public bool Autotile { get; set; }
 
-    /// <summary>Primer índice de las 16 variantes de autotile.</summary>
     public int AutotileBase { get; set; }
 
-    /// <summary>Índices por fila: <c>Tiles[y * Width + x]</c> (-1 = celda vacía).</summary>
     public int[] Tiles { get; set; } = CreateEmpty(16, 8);
 
-    private static int[] CreateEmpty(int width, int height)
+    public string? EffectiveTexture => TileSet?.TexturePath ?? TexturePath;
+
+    public int EffectiveColumns => TileSet?.Columns ?? TilesetColumns;
+
+    protected static int[] CreateEmpty(int width, int height)
     {
         var tiles = new int[System.Math.Max(1, width) * System.Math.Max(1, height)];
         Array.Fill(tiles, -1);
         return tiles;
     }
 
-    public override Component CloneFor(Entity newOwner) => new Tilemap
+    protected T CopyBase<T>(T copy, Entity newOwner) where T : TileMapLayer
     {
-        Enabled = Enabled,
-        Width = Width,
-        Height = Height,
-        TileSize = TileSize,
-        TexturePath = TexturePath,
-        TilesetColumns = TilesetColumns,
-        SortingOrder = SortingOrder,
-        Collides = Collides,
-        Autotile = Autotile,
-        AutotileBase = AutotileBase,
-        Tiles = (int[])Tiles.Clone(),
-        Owner = newOwner,
-    };
+        copy.Enabled = Enabled;
+        copy.Width = Width;
+        copy.Height = Height;
+        copy.TileSize = TileSize;
+        copy.Offset = Offset;
+        copy.TexturePath = TexturePath;
+        copy.TilesetColumns = TilesetColumns;
+        copy.SortingOrder = SortingOrder;
+        copy.Visible = Visible;
+        copy.Collides = Collides;
+        copy.TileSet = TileSet?.Clone();
+        copy.Autotile = Autotile;
+        copy.AutotileBase = AutotileBase;
+        copy.Tiles = (int[])Tiles.Clone();
+        copy.Owner = newOwner;
+        return copy;
+    }
 
-    /// <summary>Ajusta el arreglo al tamaño actual conservando lo que quepa.</summary>
+    public override Component CloneFor(Entity newOwner) => CopyBase(new TileMapLayer(), newOwner);
+
     public void Resize(int width, int height)
     {
         width = System.Math.Max(1, width);
         height = System.Math.Max(1, height);
         var resized = new int[width * height];
         Array.Fill(resized, -1);
-
         for (var y = 0; y < System.Math.Min(height, Height); y++)
-        {
             for (var x = 0; x < System.Math.Min(width, Width); x++)
-            {
                 resized[y * width + x] = TileAt(x, y);
-            }
-        }
-
         Width = width;
         Height = height;
         Tiles = resized;
     }
 
-    /// <summary>Índice que debe dibujarse, aplicando autotile si está activo.</summary>
+    public int TileAt(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= Width || y >= Height) return -1;
+        var index = y * Width + x;
+        return index < Tiles.Length ? Tiles[index] : -1;
+    }
+
+    public void SetTile(int x, int y, int tile)
+    {
+        if (x < 0 || y < 0 || x >= Width || y >= Height) return;
+        var index = y * Width + x;
+        if (index >= Tiles.Length)
+        {
+            var resized = new int[Width * Height];
+            Array.Copy(Tiles, resized, Tiles.Length);
+            Tiles = resized;
+        }
+        Tiles[index] = tile;
+    }
+
     public int DisplayTileAt(int x, int y)
     {
         var tile = TileAt(x, y);
@@ -92,43 +174,29 @@ public sealed class Tilemap : Component
         return AutotileBase + mask;
     }
 
-    public int TileAt(int x, int y)
-    {
-        if (x < 0 || y < 0 || x >= Width || y >= Height)
-        {
-            return -1;
-        }
+    public TileDefinition? DefinitionAt(int x, int y) => TileSet?.Get(TileAt(x, y));
 
-        var index = y * Width + x;
-        return index < Tiles.Length ? Tiles[index] : -1;
+    public bool IsSolidAt(int x, int y)
+    {
+        var tile = TileAt(x, y);
+        if (tile < 0) return false;
+        var definition = TileSet?.Get(tile);
+        return definition is not null ? definition.HasCollision : Collides;
     }
 
-    public void SetTile(int x, int y, int tile)
-    {
-        if (x < 0 || y < 0 || x >= Width || y >= Height)
-        {
-            return;
-        }
-
-        var index = y * Width + x;
-        if (index >= Tiles.Length)
-        {
-            var resized = new int[Width * Height];
-            Array.Copy(Tiles, resized, Tiles.Length);
-            Tiles = resized;
-        }
-
-        Tiles[index] = tile;
-    }
-
-    /// <summary>Convierte un punto de mundo (local a la entidad) a celda.</summary>
     public (int X, int Y) WorldToCell(Vector2 localPoint)
     {
-        var cellX = (int)MathF.Floor(localPoint.X / MathF.Max(0.0001f, TileSize));
-        var cellY = (int)MathF.Floor(-localPoint.Y / MathF.Max(0.0001f, TileSize));
-        return (cellX, cellY);
+        var local = localPoint - Offset;
+        return ((int)MathF.Floor(local.X / MathF.Max(0.0001f, TileSize)),
+                (int)MathF.Floor(-local.Y / MathF.Max(0.0001f, TileSize)));
     }
 
-    /// <summary>Esquina superior izquierda de una celda en coordenadas locales.</summary>
-    public Vector2 CellOrigin(int x, int y) => new(x * TileSize, -(y + 1) * TileSize);
+    public Vector2 CellOrigin(int x, int y) =>
+        new(x * TileSize + Offset.X, -(y + 1) * TileSize + Offset.Y);
+}
+
+/// <summary>Compatibilidad: Tilemap es una capa única con el comportamiento clásico.</summary>
+public sealed class Tilemap : TileMapLayer
+{
+    public override Component CloneFor(Entity newOwner) => CopyBase(new Tilemap(), newOwner);
 }

@@ -268,64 +268,54 @@ public sealed class Renderer2D : IDisposable
     {
         foreach (var entity in scene.Entities)
         {
-            if (!entity.Active)
-            {
-                continue;
-            }
+            if (!entity.Active) continue;
 
-            var map = entity.GetComponent<Tilemap>();
-            if (map is not { Enabled: true } || string.IsNullOrWhiteSpace(map.TexturePath))
+            foreach (var map in entity.GetComponents<TileMapLayer>())
             {
-                continue;
-            }
+                if (!map.Enabled || !map.Visible || string.IsNullOrWhiteSpace(map.EffectiveTexture)) continue;
 
-            var texture = ResolveTexture(map.TexturePath);
-            if (texture is null || texture.Width == 0 || texture.Height == 0)
-            {
-                continue;
-            }
+                var texture = ResolveTexture(map.EffectiveTexture);
+                if (texture is null || texture.Width == 0 || texture.Height == 0) continue;
 
-            var columns = Math.Max(1, map.TilesetColumns);
-            var cellWidth = texture.Width / (float)columns;
-            var cellHeight = cellWidth;
-            var world = scene.GetWorldMatrix(entity);
-            var size = MathF.Max(0.0001f, map.TileSize);
+                var columns = System.Math.Max(1, map.EffectiveColumns);
+                var cellWidth = map.TileSet is { TileWidth: > 0 } set ? set.TileWidth : texture.Width / (float)columns;
+                var cellHeight = map.TileSet is { TileHeight: > 0 } set2 ? set2.TileHeight : cellWidth;
+                var world = scene.GetWorldMatrix(entity);
+                var size = MathF.Max(0.0001f, map.TileSize);
 
-            for (var y = 0; y < map.Height; y++)
-            {
-                for (var x = 0; x < map.Width; x++)
+                for (var y = 0; y < map.Height; y++)
                 {
-                    var tile = map.DisplayTileAt(x, y);
-                    if (tile < 0)
+                    for (var x = 0; x < map.Width; x++)
                     {
-                        continue;
+                        var tile = map.DisplayTileAt(x, y);
+                        if (tile < 0) continue;
+
+                        var left = x * size + map.Offset.X;
+                        var right = (x + 1) * size + map.Offset.X;
+                        var top = -y * size + map.Offset.Y;
+                        var bottom = -(y + 1) * size + map.Offset.Y;
+
+                        var tl = Vector2.Transform(new Vector2(left, top), world);
+                        var tr = Vector2.Transform(new Vector2(right, top), world);
+                        var br = Vector2.Transform(new Vector2(right, bottom), world);
+                        var bl = Vector2.Transform(new Vector2(left, bottom), world);
+
+                        var region = map.TileSet is { } tileSet
+                            ? tileSet.RegionFor(tile)
+                            : new Vector4((tile % columns) * cellWidth, (tile / columns) * cellHeight, cellWidth, cellHeight);
+                        var u0 = region.X / texture.Width;
+                        var v0 = region.Y / texture.Height;
+                        var u1 = (region.X + region.Z) / texture.Width;
+                        var v1 = (region.Y + region.W) / texture.Height;
+
+                        _batch.DrawQuad(texture, tl, tr, br, bl,
+                            new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1),
+                            Vector4.One);
                     }
-
-                    var left = x * size;
-                    var right = (x + 1) * size;
-                    var top = -y * size;
-                    var bottom = -(y + 1) * size;
-
-                    var tl = Vector2.Transform(new Vector2(left, top), world);
-                    var tr = Vector2.Transform(new Vector2(right, top), world);
-                    var br = Vector2.Transform(new Vector2(right, bottom), world);
-                    var bl = Vector2.Transform(new Vector2(left, bottom), world);
-
-                    var column = tile % columns;
-                    var row = tile / columns;
-                    var u0 = column * cellWidth / texture.Width;
-                    var v0 = row * cellHeight / texture.Height;
-                    var u1 = (column + 1) * cellWidth / texture.Width;
-                    var v1 = (row + 1) * cellHeight / texture.Height;
-
-                    _batch.DrawQuad(texture, tl, tr, br, bl,
-                        new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1),
-                        Vector4.One);
                 }
             }
         }
     }
-
     private void DrawDebugDraw(Camera2D camera, int viewportHeight)
     {
         var commands = DebugDraw.Snapshot();

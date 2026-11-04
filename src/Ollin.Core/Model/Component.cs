@@ -14,6 +14,7 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.OscillatorComponent), "oscillator")]
 [JsonDerivedType(typeof(Components.SpriteAnimator), "animator")]
 [JsonDerivedType(typeof(Components.Tilemap), "tilemap")]
+[JsonDerivedType(typeof(Components.TileMapLayer), "tilemaplayer")]
 [JsonDerivedType(typeof(Components.BoxCollider), "collider")]
 [JsonDerivedType(typeof(Components.CircleCollider2D), "circlecollider")]
 [JsonDerivedType(typeof(Components.CapsuleCollider2D), "capsulecollider")]

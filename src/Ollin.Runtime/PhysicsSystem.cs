@@ -124,14 +124,15 @@ internal sealed class PhysicsSystem
             }
         }
 
-        // Colisión contra celdas sólidas de los tilemaps (marcadas con Collides).
-        var tilemaps = new List<(Entity Entity, Tilemap Map)>();
+        // Colisión contra celdas sólidas de todas las capas de tilemap.
+        var tilemaps = new List<(Entity Entity, TileMapLayer Map)>();
         foreach (var entity in scene.Entities)
         {
-            var map = entity.GetComponent<Tilemap>();
-            if (entity.Active && map is { Enabled: true, Collides: true })
+            if (!entity.Active) continue;
+            foreach (var map in entity.GetComponents<TileMapLayer>())
             {
-                tilemaps.Add((entity, map));
+                if (map.Enabled && (map.Collides || map.TileSet is { Tiles.Count: > 0 }))
+                    tilemaps.Add((entity, map));
             }
         }
 
@@ -139,37 +140,30 @@ internal sealed class PhysicsSystem
         {
             foreach (var body in bodies)
             {
-                if (body.Body is not { IsStatic: false })
-                {
-                    continue;
-                }
-
+                if (body.Body is not { IsStatic: false }) continue;
                 GetBounds(scene, body.Entity, body.Collider, out var bodyMin, out var bodyMax);
 
                 foreach (var (mapEntity, map) in tilemaps)
                 {
                     var world = scene.GetWorldMatrix(mapEntity);
                     var hit = false;
-
                     for (var y = 0; y < map.Height; y++)
                     {
                         for (var x = 0; x < map.Width; x++)
                         {
-                            if (map.TileAt(x, y) < 0)
-                            {
-                                continue;
-                            }
+                            if (!map.IsSolidAt(x, y)) continue;
+                            var definition = map.DefinitionAt(x, y);
+                            var origin = map.CellOrigin(x, y) + (definition?.CollisionOffset ?? Vector2.Zero);
+                            var size = definition?.CollisionSize ?? new Vector2(map.TileSize);
+                            if (size.X <= 0f || size.Y <= 0f) continue;
 
-                            var origin = map.CellOrigin(x, y);
-                            var size = new Vector2(map.TileSize, map.TileSize);
                             var cellMin = new Vector2(float.MaxValue);
                             var cellMax = new Vector2(float.MinValue);
-
                             foreach (var corner in new[]
                             {
                                 origin,
                                 origin + new Vector2(size.X, 0f),
-                                origin + size,
+                                origin + new Vector2(size.X, size.Y),
                                 origin + new Vector2(0f, size.Y),
                             })
                             {
@@ -178,16 +172,15 @@ internal sealed class PhysicsSystem
                                 cellMax = Vector2.Max(cellMax, worldCorner);
                             }
 
-                            if (bodyMax.X <= cellMin.X || bodyMin.X >= cellMax.X || bodyMax.Y <= cellMin.Y || bodyMin.Y >= cellMax.Y)
-                            {
-                                continue;
-                            }
+                            if (bodyMax.X <= cellMin.X || bodyMin.X >= cellMax.X ||
+                                bodyMax.Y <= cellMin.Y || bodyMin.Y >= cellMax.Y) continue;
+
+                            // One-way por tile: solo bloquea si el cuerpo viene desde arriba.
+                            if (definition is { OneWay: true } && bodyMin.Y < cellMax.Y - 0.01f) continue;
 
                             hit = true;
-
                             var overlapX = MathF.Min(bodyMax.X - cellMin.X, cellMax.X - bodyMin.X);
                             var overlapY = MathF.Min(bodyMax.Y - cellMin.Y, cellMax.Y - bodyMin.Y);
-
                             Vector2 tileNormal;
                             if (overlapX < overlapY)
                             {
@@ -213,16 +206,11 @@ internal sealed class PhysicsSystem
                     {
                         var key = Ordered(body.Entity.Id, mapEntity.Id);
                         current.Add(key);
-
-                        if (_overlapping.Add(key))
-                        {
-                            Notify(scripts, body.Entity, mapEntity, entered: true);
-                        }
+                        if (_overlapping.Add(key)) Notify(scripts, body.Entity, mapEntity, entered: true);
                     }
                 }
             }
         }
-
         // Pares que dejaron de solaparse: se avisa solo a los disparadores.
         foreach (var pair in _overlapping)
         {

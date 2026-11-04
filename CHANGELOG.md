@@ -17,6 +17,17 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.119.0] — 2026-11-04
+
+### Añadido
+
+- TileSet con colisión y región por tile.
+- TileMapLayer con múltiples capas por entidad.
+- Colisión one-way por tile.
+- Render de capas con TileSet.
+- Inspector básico de TileSet.
+- IA y floor snap respetan colisión por tile.
+
 ## [6.118.0] — 2026-11-04
 
 ### Añadido

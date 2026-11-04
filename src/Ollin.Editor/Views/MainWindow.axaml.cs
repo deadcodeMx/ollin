@@ -286,12 +286,12 @@ public partial class MainWindow : Window
         foreach (var child in root.Children.OfType<StackPanel>().ToList())
         {
             if (child.Children.Count == 0 || child.Children[0] is not TextBlock title) continue;
-            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D" or "PLATAFORMA MÓVIL" or "PARTÍCULAS" or "ESTELA" or "ANIMACIÓN FSM" or "TRANSICIÓN" or "EQUIPO" or "MISIONES" or "TURNO" or "GESTOR DE TURNOS" or "CARTAS" or "MAZMORRA" or "ESQUELETO")) continue;
+            if (title.Text is not ("COLISIÓN" or "CUERPO" or "SCRIPT" or "ROTADOR" or "OSCILADOR" or "PERSONAJE" or "HITBOX" or "HURTBOX" or "KNOCKBACK" or "CHECKPOINT" or "ARMA 2D" or "PLATAFORMA MÓVIL" or "PARTÍCULAS" or "ESTELA" or "ANIMACIÓN FSM" or "TRANSICIÓN" or "EQUIPO" or "MISIONES" or "TILESET" or "TURNO" or "GESTOR DE TURNOS" or "CARTAS" or "MAZMORRA" or "ESQUELETO")) continue;
 
             var index = root.Children.IndexOf(child);
             root.Children.RemoveAt(index);
             child.Children.Remove(title);
-            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", "PLATAFORMA MÓVIL" => "movingplatform", "PARTÍCULAS" => "particles", "ESTELA" => "trail", "ANIMACIÓN FSM" => "animfsm", "TRANSICIÓN" => "transition", "EQUIPO" => "equipment", "MISIONES" => "questlog", "TURNO" => "turnactor", "GESTOR DE TURNOS" => "turnmanager", "CARTAS" => "carddeck", "MAZMORRA" => "dungeon", "ESQUELETO" => "skeleton", _ => null };
+            var kind = title.Text switch { "COLISIÓN" => "collider", "CUERPO" => "rigidbody", "SCRIPT" => "script", "ROTADOR" => "rotator", "OSCILADOR" => "oscillator", "PERSONAJE" => "character", "HITBOX" => "hitbox", "HURTBOX" => "hurtbox", "KNOCKBACK" => "knockback2d", "CHECKPOINT" => "checkpoint2d", "ARMA 2D" => "weapon2d", "PLATAFORMA MÓVIL" => "movingplatform", "PARTÍCULAS" => "particles", "ESTELA" => "trail", "ANIMACIÓN FSM" => "animfsm", "TRANSICIÓN" => "transition", "EQUIPO" => "equipment", "MISIONES" => "questlog", "TILESET" => "tilemaplayer", "TURNO" => "turnactor", "GESTOR DE TURNOS" => "turnmanager", "CARTAS" => "carddeck", "MAZMORRA" => "dungeon", "ESQUELETO" => "skeleton", _ => null };
             var header = BuildSectionHeader(title.Text, kind);
             var expander = new Expander
             {
@@ -1637,6 +1637,7 @@ public partial class MainWindow : Window
         var gameplay = new MenuItem { Header = "Mundo y gameplay" };
         Add(gameplay, "Interactuable", "interactable");
         Add(gameplay, "Tilemap", "tilemap");
+        Add(gameplay, "Capa de tilemap", "tilemaplayer");
         Add(gameplay, "Audio", "audio");
         Add(gameplay, "IA", "ai");
         if (gameplay.Items.Count > 0) flyout.Items.Add(gameplay);
