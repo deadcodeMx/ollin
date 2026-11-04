@@ -12,7 +12,7 @@
 - El render del editor es exclusivamente 2D.
 - ~1.300 líneas menos en main.
 
-### Verificación
+### Linux`n`n- Paquete `Ollin-6.200.0-linux-x64.tar.gz` actualizado.`n`n### Verificación
 
 - **220/220 pruebas**.
 - Instalador 6.200.0 instalado.
