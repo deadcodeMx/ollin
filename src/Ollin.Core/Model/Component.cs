@@ -73,7 +73,6 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.Camera3D), "camera3d")]
 [JsonDerivedType(typeof(Components.Wall3D), "wall3d")]
 [JsonDerivedType(typeof(Components.FirstPersonController), "fps")]
-[JsonDerivedType(typeof(Components.AiAgent3D), "ai3d")]
 [JsonDerivedType(typeof(Components.Health), "health")]
 [JsonDerivedType(typeof(Components.Weapon), "weapon")]
 [JsonDerivedType(typeof(Components.Pickup), "pickup")]
