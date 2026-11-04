@@ -333,8 +333,6 @@ public sealed class ViewportControl : OpenGlControlBase
 
             RenderSubViewports(width, height);
             _renderer.ResetViewport(width, height);
-            if (Environment.GetEnvironmentVariable("OLLIN_DEBUG_SCREEN_PASS") == "1")
-                _renderer.DrawScreenBorder(new System.Numerics.Vector4(0.01f, 0.01f, 0.98f, 0.98f), width, height, new System.Numerics.Vector4(1f, 0f, 0f, 1f));
             if (_hasError)
             {
                 SetError(null);
