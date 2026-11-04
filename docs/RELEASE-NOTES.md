@@ -1,13 +1,13 @@
-## Ollin Beta 6.129.0 — Y-sort de tilemaps
+## Ollin Beta 6.130.0 — anclajes de UI
 
 ### Añadido
 
-- Y-sort real entre sprites y celdas de tilemap.
-- Checkbox de Y-sort por capa.
-- Render combinado por Y y orden de capa.
+- Anclajes de UI: esquinas, bordes y centro.
+- Layout por alineación y margen.
+- Overlay de UI con Grid en editor y reproductor.
 
 ### Verificación
 
 - **217/217 pruebas**.
-- Instalador 6.129.0 instalado y abierto.
+- Instalador 6.130.0 instalado y abierto.
 - Demo técnica no publicada.

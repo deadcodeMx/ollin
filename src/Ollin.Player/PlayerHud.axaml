@@ -73,10 +73,10 @@
                     <TextBlock Text="{Binding QuantityText}" FontSize="10" Foreground="#E7EAF0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
     <Border IsHitTestVisible="False" Opacity="{Binding TransitionOpacity}" Background="{Binding TransitionBrush}" />
     <ItemsControl IsVisible="{Binding IsUiVisible}" ItemsSource="{Binding UiElements}">
-      <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+      <ItemsControl.ItemsPanel><ItemsPanelTemplate><Grid /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
       <ItemsControl.ItemTemplate>
         <DataTemplate>
-          <Border Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" Width="{Binding Width}" Height="{Binding Height}"
+          <Border HorizontalAlignment="{Binding HorizontalAlignment}" VerticalAlignment="{Binding VerticalAlignment}" Margin="{Binding Margin}" Width="{Binding Width}" Height="{Binding Height}"
                   Background="#CC151922" BorderBrush="#40E9A23B" BorderThickness="1" CornerRadius="6"
                   IsVisible="{Binding Visible}" Padding="6">
             <Grid>

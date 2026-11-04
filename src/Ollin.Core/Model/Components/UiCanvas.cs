@@ -3,6 +3,13 @@ using System.Text.Json.Serialization;
 
 namespace Ollin.Core.Model.Components;
 
+public enum UiAnchor
+{
+    TopLeft, TopCenter, TopRight,
+    MiddleLeft, Center, MiddleRight,
+    BottomLeft, BottomCenter, BottomRight,
+}
+
 public enum UiElementKind
 {
     Panel,
@@ -16,6 +23,8 @@ public sealed class UiElement
     public string Id { get; set; } = "element";
     public UiElementKind Kind { get; set; } = UiElementKind.Label;
     public string Text { get; set; } = string.Empty;
+
+    public UiAnchor Anchor { get; set; } = UiAnchor.TopLeft;
     public float X { get; set; }
     public float Y { get; set; }
     public float Width { get; set; } = 220f;
@@ -49,7 +58,7 @@ public sealed class UiCanvas : Component
         Visible = Visible,
         Elements = Elements.Select(element => new UiElement
         {
-            Id = element.Id, Kind = element.Kind, Text = element.Text, X = element.X, Y = element.Y,
+            Id = element.Id, Kind = element.Kind, Text = element.Text, Anchor = element.Anchor, X = element.X, Y = element.Y,
             Width = element.Width, Height = element.Height, FontSize = element.FontSize, Color = element.Color,
             Visible = element.Visible, Action = element.Action, Value = element.Value, Max = element.Max,
         }).ToList(),

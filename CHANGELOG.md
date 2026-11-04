@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.130.0] — 2026-11-04
+
+### Añadido
+
+- Anclajes de UI: esquinas, bordes y centro.
+- Layout por alineación y margen.
+- Overlay de UI con Grid en editor y reproductor.
+
 ## [6.129.0] — 2026-11-04
 
 ### Añadido

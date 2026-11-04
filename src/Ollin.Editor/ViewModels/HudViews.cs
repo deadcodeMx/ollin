@@ -81,6 +81,7 @@ public sealed class UiElementView
         Width = element.Width;
         Height = element.Height;
         FontSize = element.FontSize;
+        Anchor = element.Anchor;
         Visible = element.Visible;
         Value = element.Max <= 0 ? 0 : System.Math.Clamp(element.Value / element.Max, 0, 1);
         Command = new UiActionCommand(() => invoke(element.Action ?? element.Id));
@@ -99,6 +100,20 @@ public sealed class UiElementView
     public float Width { get; }
     public float Height { get; }
     public float FontSize { get; }
+    public Ollin.Core.Model.Components.UiAnchor Anchor { get; }
+    public Avalonia.Layout.HorizontalAlignment HorizontalAlignment => Anchor switch
+    {
+        Ollin.Core.Model.Components.UiAnchor.TopCenter or Ollin.Core.Model.Components.UiAnchor.Center or Ollin.Core.Model.Components.UiAnchor.BottomCenter => Avalonia.Layout.HorizontalAlignment.Center,
+        Ollin.Core.Model.Components.UiAnchor.TopRight or Ollin.Core.Model.Components.UiAnchor.MiddleRight or Ollin.Core.Model.Components.UiAnchor.BottomRight => Avalonia.Layout.HorizontalAlignment.Right,
+        _ => Avalonia.Layout.HorizontalAlignment.Left,
+    };
+    public Avalonia.Layout.VerticalAlignment VerticalAlignment => Anchor switch
+    {
+        Ollin.Core.Model.Components.UiAnchor.MiddleLeft or Ollin.Core.Model.Components.UiAnchor.Center or Ollin.Core.Model.Components.UiAnchor.MiddleRight => Avalonia.Layout.VerticalAlignment.Center,
+        Ollin.Core.Model.Components.UiAnchor.BottomLeft or Ollin.Core.Model.Components.UiAnchor.BottomCenter or Ollin.Core.Model.Components.UiAnchor.BottomRight => Avalonia.Layout.VerticalAlignment.Bottom,
+        _ => Avalonia.Layout.VerticalAlignment.Top,
+    };
+    public Avalonia.Thickness Margin => new Avalonia.Thickness(X, Y, 0, 0);
     public bool Visible { get; }
     public double Value { get; }
     public System.Windows.Input.ICommand Command { get; }
