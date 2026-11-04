@@ -17,6 +17,24 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.159.0] — 2026-11-04
+
+### Corregido
+
+- El campo de interpolación de red ya no se muestra en entidades sin NetworkTransform.
+- Scissor del viewport se desactiva antes del render 3D.
+
+### Añadido
+
+- UI de ejemplo al añadir un UiCanvas para que sea visible en el juego.
+
+## [6.158.0] — 2026-11-04
+
+### Corregido
+
+- Campo de interpolación de red ya no aparece en entidades sin NetworkTransform.
+- Scissor del viewport de cámara se desactiva antes del render 3D.
+
 ## [6.157.0] — 2026-11-04
 
 ### Añadido

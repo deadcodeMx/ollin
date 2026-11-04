@@ -680,6 +680,7 @@ public sealed class Renderer2D : IDisposable
         }
 
         _gl.Viewport(0, 0, (uint)width, (uint)height);
+        _gl.Disable(EnableCap.ScissorTest);
         _gl.Disable(EnableCap.DepthTest);
         _gl.ClearColor(camera.Background.X, camera.Background.Y, camera.Background.Z, 1f);
         _gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);

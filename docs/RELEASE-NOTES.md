@@ -1,18 +1,18 @@
-## Ollin Beta 6.157.0 — viewports de cámara
+## Ollin Beta 6.159.0 — auditoría visual y correcciones
+
+### Corregido
+
+- El campo de interpolación de red aparecía en entidades sin `NetworkTransform`.
+- El scissor del viewport podía recortar el render 3D.
 
 ### Añadido
 
-- Viewport de cámara con rectángulo normalizado.
-- Scissor y viewport OpenGL.
-- Inspector de viewport de cámara.
-
-### Limitaciones
-
-- Un viewport por cámara, no múltiples cámaras simultáneas.
-- Sin render-to-texture.
+- Al añadir `UiCanvas` se crean una etiqueta y un botón de ejemplo para que la UI sea visible en el juego.
 
 ### Verificación
 
 - **230/230 pruebas**.
-- Instalador 6.157.0 instalado y abierto.
-- Demo técnica no publicada.
+- Instalador 6.159.0 instalado y abierto.
+- Revisión visual del editor y del viewport.
+
+## [6.158.0] — 2026-11-04
