@@ -1,20 +1,13 @@
-## Ollin Beta 6.200.0 — renderer 3D fuera de main
+## Ollin Beta 6.201.0 — entrada 3D fuera
 
 ### Eliminado
 
-- Renderer 3D y SpriteBatch3D.
-- Propiedades 3D de `EntityNode`.
-- Dependencias de compilación del grafo con Door/Health/Weapon.
+- Brush 3D, selección 3D y arrastre 3D del viewport.
+- Rama `_gizmo3DDragging` en `ViewportSurface`.
 
-### Cambiado
-
-- `ActionExecutor` usa reflexión para acciones de gameplay.
-- El render del editor es exclusivamente 2D.
-- ~1.300 líneas menos en main.
-
-### Linux`n`n- Paquete `Ollin-6.200.0-linux-x64.tar.gz` actualizado.`n`n### Verificación
+### Verificación
 
 - **220/220 pruebas**.
-- Instalador 6.200.0 instalado.
+- Instalador 6.201.0 instalado.
 
-## [6.199.0] — 2026-11-04
+## [6.200.0] — 2026-11-04

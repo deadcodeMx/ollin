@@ -16,7 +16,6 @@ public sealed class ViewportSurface : Border
     private bool _panning;
     private bool _painting;
     private bool _gizmoDragging;
-    private bool _gizmo3DDragging;
     private Point _lastPointer;
     private IPointer? _capturedPointer;
     private readonly Canvas _overlay = new() { IsHitTestVisible = false };
@@ -73,36 +72,6 @@ public sealed class ViewportSurface : Border
             }
 
             e.Handled = true;
-            return;
-        }
-
-        if (Viewport.ViewModel?.ActiveCamera3D is not null)
-        {
-            if (point.Properties.IsLeftButtonPressed)
-            {
-                if (Viewport.Brush3DMode != Brush3DMode.None)
-                {
-                    Viewport.PlaceBrush3D(position);
-                    e.Handled = true;
-                    return;
-                }
-
-                // Primero intenta arrastrar el gizmo de la selección actual; si no,
-                // selecciona la entidad bajo el puntero.
-                if (Viewport.Begin3DDrag(position))
-                {
-                    _gizmo3DDragging = true;
-                    _capturedPointer = e.Pointer;
-                    e.Pointer.Capture(this);
-                }
-                else
-                {
-                    Viewport.Select3DAt(position, e.KeyModifiers.HasFlag(KeyModifiers.Control));
-                }
-
-                e.Handled = true;
-            }
-
             return;
         }
 
@@ -219,13 +188,6 @@ public sealed class ViewportSurface : Border
         if (_marqueeSelecting)
         {
             UpdateMarquee(e.GetPosition(this));
-            e.Handled = true;
-            return;
-        }
-
-        if (_gizmo3DDragging)
-        {
-            Viewport.Update3DDrag(e.GetPosition(this), e.KeyModifiers.HasFlag(KeyModifiers.Control));
             e.Handled = true;
             return;
         }
