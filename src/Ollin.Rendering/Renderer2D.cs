@@ -248,10 +248,16 @@ public sealed class Renderer2D : IDisposable
         var vertex = mesh.Vertices[vertexIndex];
         var boneA = vertexIndex < mesh.BoneA.Count ? mesh.BoneA[vertexIndex] : 0;
         var boneB = vertexIndex < mesh.BoneB.Count ? mesh.BoneB[vertexIndex] : boneA;
-        var weight = vertexIndex < mesh.Weight.Count ? System.Math.Clamp(mesh.Weight[vertexIndex], 0f, 1f) : 1f;
-        var first = SkinBone(skeleton, boneA, vertex);
-        var second = SkinBone(skeleton, boneB, vertex);
-        return Vector2.Lerp(first, second, weight);
+        var boneC = vertexIndex < mesh.BoneC.Count ? mesh.BoneC[vertexIndex] : boneA;
+        var boneD = vertexIndex < mesh.BoneD.Count ? mesh.BoneD[vertexIndex] : boneA;
+        var weightB = vertexIndex < mesh.Weight.Count ? System.Math.Clamp(mesh.Weight[vertexIndex], 0f, 1f) : 1f;
+        var weightC = vertexIndex < mesh.WeightC.Count ? System.Math.Clamp(mesh.WeightC[vertexIndex], 0f, 1f) : 0f;
+        var weightD = vertexIndex < mesh.WeightD.Count ? System.Math.Clamp(mesh.WeightD[vertexIndex], 0f, 1f) : 0f;
+        var remaining = System.Math.Max(0f, 1f - weightB - weightC - weightD);
+        return SkinBone(skeleton, boneA, vertex) * remaining +
+               SkinBone(skeleton, boneB, vertex) * weightB +
+               SkinBone(skeleton, boneC, vertex) * weightC +
+               SkinBone(skeleton, boneD, vertex) * weightD;
     }
 
     private static Vector2 SkinBone(Skeleton2D skeleton, int bone, Vector2 vertex)

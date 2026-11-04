@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.154.0] — 2026-11-04
+
+### Añadido
+
+- Cuatro huesos por vértice en skinning.
+- Pesos C/D y mezcla normalizada.
+- Prueba de pesos.
+
 ## [6.153.0] — 2026-11-04
 
 ### Añadido

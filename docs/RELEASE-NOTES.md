@@ -1,18 +1,13 @@
-## Ollin Beta 6.153.0 — interpolación de red
+## Ollin Beta 6.154.0 — skinning suave
 
 ### Añadido
 
-- Interpolación de transforms remotos.
-- Velocidad de interpolación configurable.
-- Inspector de red ampliado.
-
-### Limitaciones
-
-- Sin predicción ni autoridad.
-- Snapshots a 20 Hz.
+- Cuatro huesos por vértice.
+- Pesos C/D y normalización.
+- Prueba de pesos.
 
 ### Verificación
 
-- **228/228 pruebas**.
-- Instalador 6.153.0 instalado y abierto.
+- **229/229 pruebas**.
+- Instalador 6.154.0 instalado y abierto.
 - Demo técnica no publicada.

@@ -197,4 +197,13 @@ public sealed class CanvasAnimationUiTests
         Assert.Equal(3, copy.Mesh.Vertices.Count);
         Assert.Equal(3, copy.Mesh.Triangles.Count);
     }
+
+    [Fact]
+    public void SkinnedMeshConservaCuatroPesos()
+    {
+        var mesh = new SkinnedMesh2D { Vertices = new() { Vector2.Zero }, BoneA = new() { 0 }, BoneB = new() { 1 }, BoneC = new() { 2 }, BoneD = new() { 0 }, Weight = new() { 0.25f }, WeightC = new() { 0.25f }, WeightD = new() { 0.1f } };
+        var copy = (SkinnedMesh2D)mesh.CloneFor(new Entity());
+        Assert.Equal(4, copy.BoneA.Count + copy.BoneB.Count + copy.BoneC.Count + copy.BoneD.Count);
+        Assert.Equal(0.25f, copy.WeightC[0]);
+    }
 }
