@@ -783,6 +783,8 @@
                     </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasNetworkIdentity}" Spacing="5"><TextBlock Classes="section" Text="IDENTIDAD DE RED" /><CheckBox Content="Entidad local" IsChecked="{Binding Selected.NetworkIsLocal, Mode=TwoWay}" FontSize="11.5" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasNetworkTransform}" Spacing="5"><TextBlock Classes="section" Text="TRANSFORM DE RED" /><TextBlock Text="Sincroniza posición, rotación y escala." Classes="hint" /></StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasMesh2D}" Spacing="5"><TextBlock Classes="section" Text="MALLA 2D" /><TextBlock Text="Vértices y triángulos editables en JSON." Classes="hint" /></StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasMultiMesh2D}" Spacing="5"><TextBlock Classes="section" Text="MULTIMESH 2D" /><TextBlock Text="Offsets y escala editables en JSON." Classes="hint" /></StackPanel>
 <StackPanel IsVisible="{Binding Selected.HasSkinnedMesh}" Spacing="5"><TextBlock Classes="section" Text="MALLA CON SKIN" /><TextBlock Text="Vértices, triángulos y pesos editables en JSON." Classes="hint" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasLine2D}" Spacing="5"><TextBlock Classes="section" Text="LÍNEA 2D" /><TextBlock Text="Puntos editables en JSON." Classes="hint" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasPolygon2D}" Spacing="5"><TextBlock Classes="section" Text="POLÍGONO 2D" /><TextBlock Text="Contorno editable en JSON." Classes="hint" /></StackPanel>

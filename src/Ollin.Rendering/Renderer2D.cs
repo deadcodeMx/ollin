@@ -200,6 +200,30 @@ public sealed class Renderer2D : IDisposable
             }
         }
     }
+    private void DrawMeshes(Scene scene)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active) continue;
+            var world = scene.GetWorldMatrix(entity);
+            if (entity.GetComponent<Mesh2D>() is { Enabled: true, Visible: true } mesh)
+                DrawMesh(mesh.Mesh, world, Vector2.Zero, 1f);
+            if (entity.GetComponent<MultiMesh2D>() is { Enabled: true, Visible: true } multi)
+                foreach (var offset in multi.Offsets)
+                    DrawMesh(multi.Mesh, world, offset, multi.Scale);
+        }
+    }
+
+    private void DrawMesh(Mesh2DData mesh, Matrix4x4 world, Vector2 offset, float scale)
+    {
+        for (var i = 0; i + 2 < mesh.Triangles.Count; i += 3)
+        {
+            var a = Vector2.Transform(mesh.Vertices[mesh.Triangles[i]] * scale + offset, world);
+            var b = Vector2.Transform(mesh.Vertices[mesh.Triangles[i + 1]] * scale + offset, world);
+            var c = Vector2.Transform(mesh.Vertices[mesh.Triangles[i + 2]] * scale + offset, world);
+            _batch.DrawTriangle(null, a, b, c, mesh.Color);
+        }
+    }
     private void DrawSkinnedMeshes(Scene scene)
     {
         foreach (var entity in scene.Entities)

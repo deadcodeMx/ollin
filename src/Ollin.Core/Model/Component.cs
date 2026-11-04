@@ -20,6 +20,8 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.UiCanvas), "uicanvas")]
 [JsonDerivedType(typeof(Components.NetworkIdentity), "networkidentity")]
 [JsonDerivedType(typeof(Components.NetworkTransform), "networktransform")]
+[JsonDerivedType(typeof(Components.Mesh2D), "mesh2d")]
+[JsonDerivedType(typeof(Components.MultiMesh2D), "multimesh2d")]
 [JsonDerivedType(typeof(Components.SkinnedMesh2D), "skinnedmesh2d")]
 [JsonDerivedType(typeof(Components.Line2D), "line2d")]
 [JsonDerivedType(typeof(Components.Polygon2D), "polygon2d")]

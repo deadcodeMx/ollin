@@ -188,4 +188,13 @@ public sealed class CanvasAnimationUiTests
         player.OnUpdate(0.5f);
         Assert.InRange(entity.Transform.Position.X, 6.2f, 6.3f);
     }
+
+    [Fact]
+    public void Mesh2DClonaSuGeometria()
+    {
+        var mesh = new Mesh2D { Mesh = new Mesh2DData { Vertices = new() { Vector2.Zero, Vector2.UnitX, Vector2.UnitY }, Triangles = new() { 0, 1, 2 } } };
+        var copy = (Mesh2D)mesh.CloneFor(new Entity());
+        Assert.Equal(3, copy.Mesh.Vertices.Count);
+        Assert.Equal(3, copy.Mesh.Triangles.Count);
+    }
 }

@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.151.0] — 2026-11-04
+
+### Añadido
+
+- Mesh2D con vértices y triángulos.
+- MultiMesh2D con offsets y escala.
+- Render de mallas no deformadas.
+
 ## [6.150.0] — 2026-11-04
 
 ### Añadido

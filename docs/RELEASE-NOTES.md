@@ -1,13 +1,14 @@
-## Ollin Beta 6.150.0 — contexto y draw calls
+## Ollin Beta 6.151.0 — meshes 2D
 
 ### Añadido
 
-- Localización por contexto (`contexto.clave`).
-- Draw calls en el profiler.
-- HUD con FPS, frame time, draws y entidades.
+- Mesh2D con vértices y triángulos.
+- MultiMesh2D con offsets y escala.
+- Render de mallas no deformadas.
+- Prueba de clonado de malla.
 
 ### Verificación
 
-- **227/227 pruebas**.
-- Instalador 6.150.0 instalado y abierto.
+- **228/228 pruebas**.
+- Instalador 6.151.0 instalado y abierto.
 - Demo técnica no publicada.

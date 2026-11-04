@@ -569,6 +569,8 @@ public sealed partial class MainViewModel
             "line2d" => entity.GetComponent<Line2D>(),
             "skinnedmesh" => entity.GetComponent<SkinnedMesh2D>(),
             "networkidentity" => entity.GetComponent<NetworkIdentity>(),
+            "mesh2d" => entity.GetComponent<Mesh2D>(),
+            "multimesh2d" => entity.GetComponent<MultiMesh2D>(),
             "networktransform" => entity.GetComponent<NetworkTransform>(),
             "polygon2d" => entity.GetComponent<Polygon2D>(),
             "navigationpolygon" => entity.GetComponent<NavigationPolygon2D>(),

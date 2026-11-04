@@ -455,6 +455,9 @@ public sealed class EntityNode : ObservableObject
     public bool HasNetworkTransform => Entity.GetComponent<NetworkTransform>() is not null;
     public bool NetworkIsLocal { get => Entity.GetComponent<NetworkIdentity>()?.IsLocal ?? true; set { if (Entity.GetComponent<NetworkIdentity>() is { } n) { n.IsLocal = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public bool HasMesh2D => Entity.GetComponent<Mesh2D>() is not null;
+    public bool HasMultiMesh2D => Entity.GetComponent<MultiMesh2D>() is not null;
+
     public bool HasSkinnedMesh => Entity.GetComponent<SkinnedMesh2D>() is not null;
     public bool HasLine2D => Entity.GetComponent<Line2D>() is not null;
     public bool HasPolygon2D => Entity.GetComponent<Polygon2D>() is not null;
@@ -1637,6 +1640,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasNavigationPolygon));
         OnPropertyChanged(nameof(HasLine2D));
         OnPropertyChanged(nameof(HasSkinnedMesh));
+        OnPropertyChanged(nameof(HasMesh2D));
+        OnPropertyChanged(nameof(HasMultiMesh2D));
         OnPropertyChanged(nameof(HasNetworkIdentity));
         OnPropertyChanged(nameof(HasNetworkTransform));
         OnPropertyChanged(nameof(HasPolygon2D));
