@@ -812,7 +812,8 @@
                     <StackPanel IsVisible="{Binding Selected.HasMesh2D}" Spacing="5"><TextBlock Classes="section" Text="MALLA 2D" /><TextBlock Text="Vértices y triángulos editables en JSON." Classes="hint" />
                       <Button Content="Editar malla…" Click="OnEditMesh" HorizontalAlignment="Stretch" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasMultiMesh2D}" Spacing="5"><TextBlock Classes="section" Text="MULTIMESH 2D" /><TextBlock Text="Offsets y escala editables en JSON." Classes="hint" /></StackPanel>
-<StackPanel IsVisible="{Binding Selected.HasSkinnedMesh}" Spacing="5"><TextBlock Classes="section" Text="MALLA CON SKIN" /><TextBlock Text="Vértices, triángulos y pesos editables en JSON." Classes="hint" /></StackPanel>
+<StackPanel IsVisible="{Binding Selected.HasSkinnedMesh}" Spacing="5"><TextBlock Classes="section" Text="MALLA CON SKIN" /><TextBlock Text="Vértices, triángulos y pesos editables en JSON." Classes="hint" />
+                      <Button Content="Editar skinning…" Click="OnEditSkin" HorizontalAlignment="Stretch" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasLine2D}" Spacing="5"><TextBlock Classes="section" Text="LÍNEA 2D" /><TextBlock Text="Puntos editables en JSON." Classes="hint" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasPolygon2D}" Spacing="5"><TextBlock Classes="section" Text="POLÍGONO 2D" /><TextBlock Text="Contorno editable en JSON." Classes="hint" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasNavigationAgent}" Spacing="5">

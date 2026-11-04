@@ -1,22 +1,16 @@
-## Ollin Beta 6.180.0 — diagnóstico RTT y limpieza
+## Ollin Beta 6.181.0 — editor de skinning
 
 ### Añadido
 
-- Editor de puntos de `NavigationPolygon2D`.
-- Launcher/instalador corregido y verificado.
-
-### Diagnóstico RTT
-
-- `previousFramebuffer=0`.
-- `fbo=2`.
-- `restored=0`.
-
-Avalonia usa el framebuffer 0; por tanto no era un problema de restauración de FBO. La composición del SubViewport sigue sin aparecer; el fallo está en la textura/quad/orden.
+- Editor visual de `SkinnedMesh2D`.
+- Edición de vértices y triángulos.
+- Edición de huesos A/B/C/D.
+- Edición de pesos B/C/D.
+- Botón "Editar skinning" en el inspector.
 
 ### Verificación
 
 - **236/236 pruebas**.
-- Instalador **6.180.0** instalado correctamente.
-- Escena de ejemplo restaurada.
+- Instalador 6.181.0 instalado correctamente.
 
-## [6.178.0] — 2026-11-04
+## [6.180.0] — 2026-11-04

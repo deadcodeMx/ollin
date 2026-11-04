@@ -1920,6 +1920,18 @@ public partial class MainWindow : Window
             ViewModel.RequestRedraw();
         }
     }
+    private async void OnEditSkin(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected?.Entity.GetComponent<Ollin.Core.Model.Components.SkinnedMesh2D>() is not { } mesh) return;
+        var window = new SkinEditorWindow(mesh);
+        if (!await window.ShowDialog<bool>(this) || window.Result is null) return;
+        var entity = ViewModel.Selected.Entity;
+        entity.RemoveComponent(mesh);
+        entity.AddComponent(window.Result);
+        ViewModel.Selected.RefreshAll();
+        ViewModel.CommitEdit("Editar skinning");
+        ViewModel.RequestRedraw();
+    }
     private async void OnEditNavigationPolygon(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel?.Selected?.Entity.GetComponent<Ollin.Core.Model.Components.NavigationPolygon2D>() is not { } polygon) return;
