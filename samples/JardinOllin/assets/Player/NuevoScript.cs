@@ -4,14 +4,14 @@ using Ollin.Core.Input;
 using Ollin.Scripting;
 
 /// <summary>Script de Entidad.</summary>
-public sealed class Prueba : OllinScript
+public sealed class NuevoScript : OllinScript
 {
     private Vector2 _origin;
 
     public override void OnStart()
     {
         _origin = Entity.Transform.Position;
-        Debug("Prueba iniciado en " + Entity.Name);
+        Debug("NuevoScript iniciado en " + Entity.Name);
     }
 
     public override void OnUpdate(float deltaTime)
