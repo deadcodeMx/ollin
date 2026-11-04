@@ -1077,7 +1077,15 @@ public partial class MainWindow : Window
     private void OnComponentInspector(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel?.Selected is not { } selected) return;
-        new ComponentInspectorWindow(ViewModel, selected.Entity).Show(this);
+        try
+        {
+            new ComponentInspectorWindow(ViewModel, selected.Entity).Show(this);
+        }
+        catch (Exception ex)
+        {
+            Ollin.Core.Diagnostics.Log.Error($"Inspector 2D: {ex}", "Editor");
+            ViewModel.StatusMessage = $"Inspector 2D: {ex.Message}";
+        }
     }
     private void OnQuickGuide(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => new QuickGuideWindow().Show(this);
     private void OnAbout(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
