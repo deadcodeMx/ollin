@@ -6,7 +6,7 @@
 - Always, HasItem y HealthBelow.
 - Expression sigue como TODO editable.
 
-### Verificación
+### Linux`n`n- Paquete `Ollin-6.192.0-linux-x64.tar.gz` actualizado.`n`n### Verificación
 
 - **237/237 pruebas**.
 - Instalador 6.192.0 instalado.
