@@ -1,15 +1,14 @@
-## Ollin Beta 6.207.0 — inspector integrado
+## Ollin Beta 6.208.0 — API de scripting
 
-### Cambiado
+### Añadido
 
-- Inspector 2D embebido en el panel derecho.
-- Ya no se abre una ventana aparte.
-- Se refresca al cambiar de entidad.
+- WorldPosition, Active, Children, SetParent.
+- FindAll, PlayAnimation, PlaySound.
+- Señales globales con `ScriptSignals.Connect/Emit`.
 
 ### Verificación
 
-- Build 0 errores.
 - 133/133 pruebas.
-- Instalador 6.207.0 instalado.
+- Instalador 6.208.0 instalado.
 
-## [6.206.0] — 2026-11-04
+## [6.207.0] — 2026-11-04

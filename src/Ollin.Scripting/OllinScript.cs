@@ -58,6 +58,52 @@ public abstract class OllinScript
         get => Entity.Transform.Position;
         set => Entity.Transform.Position = value;
     }
+    /// <summary>Posición en mundo (incluye jerarquía).</summary>
+    public Vector2 WorldPosition
+    {
+        get => Scene?.GetWorldPosition(Entity) ?? Position;
+        set { if (Scene is not null) Scene.SetWorldPosition(Entity, value); }
+    }
+
+    /// <summary>Entidad activa en la escena.</summary>
+    public bool Active
+    {
+        get => Entity.Active;
+        set => Entity.Active = value;
+    }
+
+    /// <summary>Hijos directos de la entidad.</summary>
+    public IEnumerable<Entity> Children => Scene?.ChildrenOf(Entity.Id) ?? Enumerable.Empty<Entity>();
+
+    /// <summary>Cambia el padre conservando la transformación local.</summary>
+    public void SetParent(Entity? parent)
+    {
+        Entity.ParentId = parent?.Id;
+        Scene?.Rebind();
+    }
+
+    /// <summary>Busca todas las entidades cuyo nombre contiene el texto.</summary>
+    public IEnumerable<Entity> FindAll(string namePart) =>
+        Scene?.Entities.Where(entity => entity.Name.Contains(namePart, StringComparison.OrdinalIgnoreCase))
+        ?? Enumerable.Empty<Entity>();
+
+    /// <summary>Reproduce un clip de AnimationPlayer2D.</summary>
+    public bool PlayAnimation(string clip, float fadeSeconds = 0f)
+    {
+        if (Entity.GetComponent<AnimationPlayer2D>() is not { } player) return false;
+        player.Play(clip, fadeSeconds);
+        return true;
+    }
+
+    /// <summary>Reproduce un efecto de audio.</summary>
+    public static void PlaySound(string clip, float volume = 1f, bool loop = false) =>
+        Audio.Play(clip, volume, loop);
+
+    /// <summary>Conecta una señal global.</summary>
+    public void Connect(string signal, Action<object?> handler) => ScriptSignals.Connect(signal, handler);
+
+    /// <summary>Emite una señal global.</summary>
+    public void Emit(string signal, object? payload = null) => ScriptSignals.Emit(signal, payload);
     /// <summary>Lanza una rutina: <c>yield return new WaitForSeconds(1f)</c>.</summary>
     public void StartCoroutine(IEnumerator routine) => CoroutineHost.Pending.Add((this, routine));
 
