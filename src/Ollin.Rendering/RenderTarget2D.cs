@@ -54,6 +54,16 @@ public sealed class RenderTarget2D : IDisposable
         _gl.ReadPixels(_width / 2, _height / 2, 1, 1, PixelFormat.Rgba, PixelType.UnsignedByte, pixel);
         return new Vector4(pixel[0] / 255f, pixel[1] / 255f, pixel[2] / 255f, pixel[3] / 255f);
     }
+    public Texture2D ReadTexture()
+    {
+        var pixels = new byte[_width * _height * 4];
+        unsafe
+        {
+            fixed (byte* data = pixels)
+                _gl.ReadPixels(0, 0, (uint)_width, (uint)_height, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+        }
+        return Texture2D.FromPixels(_gl, pixels, _width, _height, isRenderTarget: true);
+    }
     public void Bind()
     {
         _previousFramebuffer = _gl.GetInteger((GetPName)0x8CA6);

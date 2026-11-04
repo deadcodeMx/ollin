@@ -39,7 +39,7 @@ public sealed class Texture2D : IDisposable
         return FromPixels(gl, image.Data, image.Width, image.Height, path);
     }
 
-    public static Texture2D FromPixels(GL gl, byte[] rgba, int width, int height, string? sourcePath = null)
+    public static Texture2D FromPixels(GL gl, byte[] rgba, int width, int height, string? sourcePath = null, bool isRenderTarget = false)
     {
         var handle = gl.GenTexture();
         gl.BindTexture(TextureTarget.Texture2D, handle);
@@ -67,7 +67,7 @@ public sealed class Texture2D : IDisposable
         gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)GLEnum.Repeat);
         gl.BindTexture(TextureTarget.Texture2D, 0);
 
-        return new Texture2D(gl, handle, width, height, sourcePath);
+        return new Texture2D(gl, handle, width, height, sourcePath, isRenderTarget);
     }
 
     /// <summary>Genera una textura de tablero de ajedrez (marcador de "falta textura").</summary>
