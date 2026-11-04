@@ -1,16 +1,20 @@
-## Ollin Beta 6.211.0 — rediseño de interfaz
+## Ollin Beta 6.212.0 — ejemplo Jardín de Ollin
 
-### Cambiado
+### Añadido
 
-- Paleta global azul profunda, ámbar y turquesa.
-- Estilos unificados para ventanas, paneles, botones, pestañas, inputs, listas, tooltips y separadores.
-- Todas las ventanas heredan el tema.
-- Inspector 2D integrado en el panel derecho.
+- Proyecto de ejemplo `samples/JardinOllin`.
+- Cámara, tilemap, luces, partículas, UI y script C#.
+- Movimiento WASD y recogida de tres luces.
+- README del ejemplo.
+
+### Corregido
+
+- Script inicial de plantillas usa `Input.GetKey` en vez de una API inexistente.
 
 ### Verificación
 
 - Build 0 errores.
 - 134/134 pruebas.
-- Instalador 6.211.0 instalado.
+- Instalador 6.212.0 instalado.
 
-## [6.210.0] — 2026-11-04
+## [6.211.0] — 2026-11-04
