@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.144.0] — 2026-11-04
+
+### Añadido
+
+- Crossfade de animación entre clips.
+- Mezcla de posición, rotación y escala.
+- Prueba de crossfade.
+
 ## [6.143.0] — 2026-11-04
 
 ### Añadido

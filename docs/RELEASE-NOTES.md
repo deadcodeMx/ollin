@@ -1,13 +1,13 @@
-## Ollin Beta 6.143.0 — profiler
+## Ollin Beta 6.144.0 — crossfade de animación
 
 ### Añadido
 
-- FPS y frame time.
-- HUD en editor y reproductor.
-- Contador de entidades.
+- Crossfade entre clips.
+- Mezcla de posición, rotación y escala.
+- Prueba de crossfade.
 
 ### Verificación
 
-- **223/223 pruebas**.
-- Instalador 6.143.0 instalado y abierto.
+- **224/224 pruebas**.
+- Instalador 6.144.0 instalado y abierto.
 - Demo técnica no publicada.

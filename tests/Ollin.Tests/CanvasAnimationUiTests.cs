@@ -140,4 +140,24 @@ public sealed class CanvasAnimationUiTests
         var triangles = PolygonTriangulator.Triangulate(points);
         Assert.Equal(2, triangles.Count);
     }
+
+    [Fact]
+    public void CrossFadeMezclaPosiciones()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Objeto", Vector2.Zero);
+        var player = entity.AddComponent(new AnimationPlayer2D
+        {
+            Clips = new()
+            {
+                new AnimationTimeline { Name = "a", Duration = 1f, Loop = false, Tracks = new() { new AnimationTrack { Property = "position", Keys = new() { new AnimationKeyframe { Time = 0f, Value = Vector2.Zero }, new AnimationKeyframe { Time = 1f, Value = new Vector2(10f, 0f) } } } } },
+                new AnimationTimeline { Name = "b", Duration = 1f, Loop = false, Tracks = new() { new AnimationTrack { Property = "position", Keys = new() { new AnimationKeyframe { Time = 0f, Value = new Vector2(20f, 0f) }, new AnimationKeyframe { Time = 1f, Value = new Vector2(20f, 0f) } } } } },
+            },
+        });
+        player.Play("a");
+        player.OnUpdate(0.5f);
+        player.CrossFade("b", 0.5f);
+        player.OnUpdate(0.25f);
+        Assert.InRange(entity.Transform.Position.X, 12.4f, 12.6f);
+    }
 }

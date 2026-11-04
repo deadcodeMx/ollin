@@ -58,6 +58,11 @@ public sealed class AnimationPlayer2D : Component, ITickable
     [JsonIgnore] public bool Looping { get; private set; }
 
     private bool _started;
+    private float _fadeRemaining;
+    private float _fadeDuration;
+    private Vector2 _fadePosition;
+    private float _fadeRotation;
+    private Vector2 _fadeScale;
 
     /// <summary>Evento disparado por un track con Property = "event".</summary>
     public event Action<string>? Event;
@@ -78,6 +83,14 @@ public sealed class AnimationPlayer2D : Component, ITickable
         if (clip is null) { Playing = false; return; }
 
         Evaluate(clip);
+        if (_fadeRemaining > 0f && Owner is not null)
+        {
+            _fadeRemaining = MathF.Max(0f, _fadeRemaining - deltaTime);
+            var t = 1f - System.Math.Clamp(_fadeRemaining / MathF.Max(0.001f, _fadeDuration), 0f, 1f);
+            Owner.Transform.Position = Vector2.Lerp(_fadePosition, Owner.Transform.Position, t);
+            Owner.Transform.Rotation = _fadeRotation + (Owner.Transform.Rotation - _fadeRotation) * t;
+            Owner.Transform.Scale = Vector2.Lerp(_fadeScale, Owner.Transform.Scale, t);
+        }
         if (Time >= clip.Duration)
         {
             if (clip.Loop) { Time %= MathF.Max(0.001f, clip.Duration); _lastTime = 0f; }
@@ -85,15 +98,25 @@ public sealed class AnimationPlayer2D : Component, ITickable
         }
     }
 
-    public void Play(string name)
+    public void Play(string name, float fadeSeconds = 0f)
     {
         if (Clips.All(clip => clip.Name != name)) return;
+        if (fadeSeconds > 0f && Owner is not null)
+        {
+            _fadePosition = Owner.Transform.Position;
+            _fadeRotation = Owner.Transform.Rotation;
+            _fadeScale = Owner.Transform.Scale;
+            _fadeDuration = fadeSeconds;
+            _fadeRemaining = fadeSeconds;
+        }
         Current = name;
         Time = 0f;
         _lastTime = 0f;
         Playing = true;
         Looping = Clips.First(clip => clip.Name == name).Loop;
     }
+
+    public void CrossFade(string name, float seconds) => Play(name, seconds);
 
     public void Stop() { Playing = false; }
     public void Resume() { Playing = true; }
