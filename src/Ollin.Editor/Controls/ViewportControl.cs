@@ -46,19 +46,6 @@ public sealed class ViewportControl : OpenGlControlBase
     private float _gizmoStartRotation;
     private float _gizmoStartAngle;
     private float _gizmoStartDistance = 1f;
-    private bool _gizmo3DDragging;
-    private Vector3 _gizmo3DStartPlane;
-    private Vector2 _gizmo3DStartPosition;
-    private Vector2 _gizmo3DStartWorld;
-    private int _gizmo3DAxis;
-    private float _gizmo3DStartYaw;
-    private float _gizmo3DStartRotation;
-    private float _gizmo3DStartAngle;
-    private Vector2 _gizmo3DStartScreen;
-    private float _gizmo3DStartDistance;
-    private float _gizmo3DStartHeight;
-    private Vector3 _gizmo3DStartWallSize;
-    private Vector2 _gizmo3DStartSpriteSize;
 
 
     /// <summary>Actualiza la caja fantasma que sigue al puntero con el pincel activo.</summary>
@@ -339,7 +326,6 @@ public sealed class ViewportControl : OpenGlControlBase
         return ((int)Math.Max(1, Bounds.Width * scaling), (int)Math.Max(1, Bounds.Height * scaling), scaling);
     }
 
-    public bool IsGizmo3DDragging => _gizmo3DDragging;
 
     /// <summary>Selecciona una entidad del modo 2.5D lanzando un rayo desde la cámara.</summary>
     public void SelectAt(Point position, bool additive = false)
