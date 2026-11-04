@@ -1,3 +1,4 @@
+using System.Numerics;
 using Silk.NET.OpenGLES;
 using Ollin.Core.Diagnostics;
 
@@ -47,6 +48,12 @@ public sealed class RenderTarget2D : IDisposable
 
     public Texture2D Texture { get; }
 
+    public unsafe Vector4 ReadCenterPixel()
+    {
+        var pixel = stackalloc byte[4];
+        _gl.ReadPixels(_width / 2, _height / 2, 1, 1, PixelFormat.Rgba, PixelType.UnsignedByte, pixel);
+        return new Vector4(pixel[0] / 255f, pixel[1] / 255f, pixel[2] / 255f, pixel[3] / 255f);
+    }
     public void Bind()
     {
         _previousFramebuffer = _gl.GetInteger((GetPName)0x8CA6);
