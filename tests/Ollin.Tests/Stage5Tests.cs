@@ -205,37 +205,6 @@ public class InteractableSerializationTests
     }
 }
 
-public class TutorialTemplateTests
-{
-    [Fact]
-    public void LaPlantillaTutorialEsJugableYCompila()
-    {
-        var parent = Path.Combine(AppContext.BaseDirectory, "template-tests", Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(parent);
-
-        try
-        {
-            var project = ProjectService.Create(parent, "TutorialTest", template: ProjectTemplate.Tutorial);
-            var scene = Ollin.Core.Serialization.SceneSerializer.Load(project.StartSceneFullPath);
-
-            Assert.NotNull(scene.Find("Jugador"));
-            Assert.NotNull(scene.Find("Nota"));
-            Assert.NotNull(scene.Find("Merodeador"));
-            Assert.Contains("player", scene.Find("Jugador")!.Tags);
-
-            using var workspace = new Ollin.Scripting.ScriptWorkspace(project.RootPath);
-            var result = workspace.Reload();
-
-            Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
-            Assert.Contains(result.Types, type => type.Name == "Tutorial");
-        }
-        finally
-        {
-            Directory.Delete(parent, recursive: true);
-        }
-    }
-}
-
 public class Stage5TemplateTests
 {
     [Fact]

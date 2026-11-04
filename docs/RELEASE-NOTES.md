@@ -1,13 +1,15 @@
-## Ollin Beta 6.193.0 — expresión del grafo
+## Ollin Beta 6.194.0 — recorte de plantillas 3D
 
-### Añadido
+### Eliminado
 
-- La condición `Expression` genera una llamada a `ExpressionEvaluator.EvaluateBool`.
-- El código generado sigue siendo editable.
+- Plantillas 3D: corredor, demo técnica y tutorial 3D.
+- Scripts exclusivos de esas plantillas.
+- Pruebas de esas plantillas y de cámara/IA 3D.
 
-### Linux`n`n- Paquete `Ollin-6.193.0-linux-x64.tar.gz` actualizado.`n`n### Verificación
+### Verificación
 
-- **237/237 pruebas**.
-- Instalador 6.193.0 instalado.
+- **220/220 pruebas**.
+- Build: 0 errores.
+- Plantillas 2D conservadas: vacía, plataformas y terror.
 
-## [6.192.0] — 2026-11-04
+## [6.193.0] — 2026-11-04
