@@ -64,6 +64,8 @@ Implementado en recursos:
 - `OllinResource`, `TileSetResource`, cache y dependencias.
 
 Pendiente:
+- Editor visual de UI completo (drag/drop, contenedores).
+
 
 - Servidores desacoplados (render/physics/audio/navigation).
 - `RenderServer2D` con display list de sprites.

@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.164.0] — 2026-11-04
+
+### Añadido
+
+- Editor visual de UiCanvas.
+- Alta, baja y edición de elementos de UI.
+- Edición de texto, tipo, anclaje, tamaño, fuente y acción.
+
 ## [6.163.0] — 2026-11-04
 
 ### Añadido
