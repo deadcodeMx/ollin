@@ -36,10 +36,14 @@ public sealed class AudioSource2D : Component, ITickable
         if (Handle < 0 || Owner?.Scene is not { } scene) return;
         var listener = FindListener(scene);
         if (listener is null) return;
-        var distance = Vector2.Distance(scene.GetWorldPosition(Owner), scene.GetWorldPosition(listener));
+        var sourcePosition = scene.GetWorldPosition(Owner);
+        var listenerPosition = scene.GetWorldPosition(listener);
+        var distance = Vector2.Distance(sourcePosition, listenerPosition);
         var range = MathF.Max(0.01f, MaxDistance - MinDistance);
         var attenuation = 1f - System.Math.Clamp((distance - MinDistance) / range, 0f, 1f);
         Audio.Audio.SetVolume(Handle, Volume * attenuation * Audio.Audio.MasterVolume * Audio.Audio.BusVolume(Channel));
+        var pan = MaxDistance <= 0.01f ? 0f : System.Math.Clamp((sourcePosition.X - listenerPosition.X) / MaxDistance, -1f, 1f);
+        Audio.Audio.SetPan(Handle, pan);
     }
 
     public int Play()

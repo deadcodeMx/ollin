@@ -132,5 +132,7 @@ public sealed class LinuxAudioBackend : IAudioBackend
 
     public void SetVolume(int handle, float volume) { }
 
+    public void SetPan(int handle, float pan) { }
+
     public void Fade(int handle, float targetVolume, float seconds) { }
 }

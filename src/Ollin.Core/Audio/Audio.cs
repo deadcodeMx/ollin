@@ -20,6 +20,8 @@ public interface IAudioBackend
 
     void SetVolume(int handle, float volume);
 
+    void SetPan(int handle, float pan);
+
     void Fade(int handle, float targetVolume, float seconds);
 }
 
@@ -153,6 +155,8 @@ public static class Audio
     public static void StopAll() => _backend?.StopAll();
 
     public static void SetVolume(int handle, float volume) => _backend?.SetVolume(handle, System.Math.Clamp(volume, 0f, 1f));
+
+    public static void SetPan(int handle, float pan) => _backend?.SetPan(handle, System.Math.Clamp(pan, -1f, 1f));
 
     public static void Fade(int handle, float targetVolume, float seconds) =>
         _backend?.Fade(handle, System.Math.Clamp(targetVolume, 0f, 1f), System.Math.Max(0.01f, seconds));

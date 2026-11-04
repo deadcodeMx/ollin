@@ -88,6 +88,10 @@ public class AudioTests
         {
         }
 
+        public void SetPan(int handle, float pan)
+        {
+        }
+
         public void Fade(int handle, float targetVolume, float seconds)
         {
         }

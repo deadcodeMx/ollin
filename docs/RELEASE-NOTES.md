@@ -1,14 +1,18 @@
-## Ollin Beta 6.147.0 — curvas de animación
+## Ollin Beta 6.148.0 — paneo de audio 2D
 
 ### Añadido
 
-- Tangentes de entrada/salida por keyframe.
-- Interpolación Hermite/Bézier.
-- Editor de tangentes.
-- Prueba de curva.
+- Paneo estéreo por fuente.
+- PanningSampleProvider en NAudio.
+- Paneo relativo al listener.
 
-### Linux`n`n- Paquete `Ollin-6.147.0-linux-x64.tar.gz` generado con editor, player y assets.`n- Requiere `chmod +x install.sh` si el tar no conserva permisos.`n`n### Verificación
+### Limitaciones
+
+- Linux sigue sin paneo ni volumen por handle.
+- Sin oclusión/efectos por bus.
+
+### Verificación
 
 - **227/227 pruebas**.
-- Instalador 6.147.0 instalado y abierto.
+- Instalador 6.148.0 instalado y abierto.
 - Demo técnica no publicada.

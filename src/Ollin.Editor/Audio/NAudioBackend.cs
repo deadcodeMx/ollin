@@ -1,4 +1,5 @@
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using Ollin.Core.Audio;
 using CoreAudio = Ollin.Core.Audio.Audio;
 using Ollin.Core.Diagnostics;
@@ -11,6 +12,8 @@ public sealed class NAudioBackend : IAudioBackend, IDisposable
     private sealed class Playback : IDisposable
     {
         public required AudioFileReader Reader { get; init; }
+
+        public required PanningSampleProvider Panning { get; init; }
 
         public required WaveOutEvent Output { get; init; }
 
@@ -59,10 +62,11 @@ public sealed class NAudioBackend : IAudioBackend, IDisposable
             reader.Volume = volume * CoreAudio.MasterVolume;
 
             var output = new WaveOutEvent { DesiredLatency = 120 };
+            var panning = new PanningSampleProvider(reader.ToSampleProvider()) { Pan = 0f };
             var handle = _nextHandle++;
-            var playback = new Playback { Reader = reader, Output = output, Handle = handle, Loop = loop };
+            var playback = new Playback { Reader = reader, Output = output, Panning = panning, Handle = handle, Loop = loop };
 
-            output.Init(reader);
+            output.Init(panning);
             output.PlaybackStopped += (_, _) =>
             {
                 if (loop)
@@ -140,6 +144,14 @@ public sealed class NAudioBackend : IAudioBackend, IDisposable
             {
                 playback.Reader.Volume = volume * CoreAudio.MasterVolume;
             }
+        }
+    }
+
+    public void SetPan(int handle, float pan)
+    {
+        lock (_gate)
+        {
+            if (_playbacks.TryGetValue(handle, out var playback)) playback.Panning.Pan = System.Math.Clamp(pan, -1f, 1f);
         }
     }
 

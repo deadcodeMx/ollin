@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.148.0] — 2026-11-04
+
+### Añadido
+
+- Paneo estéreo por fuente 2D.
+- PanningSampleProvider en NAudio.
+- Paneo relativo al listener.
+
 ## [6.147.0] — 2026-11-04
 
 ### Añadido
