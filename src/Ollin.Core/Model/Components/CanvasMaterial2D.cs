@@ -19,8 +19,11 @@ public sealed class CanvasMaterial2D : Component
     public Vector4 Tint { get; set; } = Vector4.One;
     public float TimeScale { get; set; } = 1f;
 
+    /// <summary>Uniformes vec4 por nombre.</summary>
+    public Dictionary<string, Vector4> Parameters { get; set; } = new();
+
     public override Component CloneFor(Entity newOwner) => new CanvasMaterial2D
     {
-        Enabled = Enabled, FragmentSource = FragmentSource, Tint = Tint, TimeScale = TimeScale, Owner = newOwner,
+        Enabled = Enabled, FragmentSource = FragmentSource, Tint = Tint, TimeScale = TimeScale, Parameters = new Dictionary<string, Vector4>(Parameters), Owner = newOwner,
     };
 }

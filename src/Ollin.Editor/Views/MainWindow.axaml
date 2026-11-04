@@ -778,6 +778,8 @@
                       <TextBlock Classes="section" Text="MATERIAL DE CANVAS" />
                       <TextBlock Text="GLSL ES 3.0. Debe declarar uTexture, vTexCoord y vColor; uTint es opcional." Classes="hint" TextWrapping="Wrap" />
                       <TextBox Text="{Binding Selected.CanvasMaterialShader, Mode=TwoWay}" AcceptsReturn="True" Height="150" FontFamily="Consolas" TextWrapping="NoWrap" />
+                      <TextBlock Text="Uniformes (nombre=x,y,z,w; ...)" Classes="hint" TextWrapping="Wrap" />
+                      <TextBox Text="{Binding Selected.CanvasMaterialParams, Mode=TwoWay}" Watermark="uTime=0,0,0,0; uStrength=1,0,0,0" />
                     </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasCanvasItem2D}" Spacing="5">
                       <TextBlock Classes="section" Text="CANVASITEM 2D" />

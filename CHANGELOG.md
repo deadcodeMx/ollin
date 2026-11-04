@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.167.0] — 2026-11-04
+
+### Añadido
+
+- Parámetros uniformes vec4 por material.
+- Editor de `nombre=x,y,z,w`.
+- Aplicación de uniforms en el render.
+
 ## [6.166.0] — 2026-11-04
 
 ### Añadido

@@ -243,9 +243,10 @@ public sealed class CanvasAnimationUiTests
     [Fact]
     public void CanvasMaterialConservaShader()
     {
-        var material = new CanvasMaterial2D { FragmentSource = "void main(){}", Tint = new Vector4(1f, 0.5f, 1f, 1f) };
+        var material = new CanvasMaterial2D { FragmentSource = "void main(){}", Tint = new Vector4(1f, 0.5f, 1f, 1f), Parameters = new() { ["uTime"] = new Vector4(0.25f, 0f, 0f, 0f) } };
         var copy = (CanvasMaterial2D)material.CloneFor(new Entity());
         Assert.Equal("void main(){}", copy.FragmentSource);
         Assert.Equal(0.5f, copy.Tint.Y);
+        Assert.Equal(0.25f, copy.Parameters["uTime"].X);
     }
 }

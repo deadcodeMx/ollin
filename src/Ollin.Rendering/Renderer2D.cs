@@ -484,6 +484,7 @@ public sealed class Renderer2D : IDisposable
                 var program = GetMaterialProgram(material.FragmentSource);
                 if (program != 0) _batch.SetProgram(program, _uniformMvp, _uniformTexture);
                 _batch.SetUniform4("uTint", material.Tint);
+                foreach (var parameter in material.Parameters) _batch.SetUniform4(parameter.Key, parameter.Value);
             }
             _batch.DrawQuad(texture,
                 corners[0], corners[1], corners[2], corners[3],

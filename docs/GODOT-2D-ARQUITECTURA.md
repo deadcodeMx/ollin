@@ -71,7 +71,7 @@ Pendiente:
 - `RenderServer2D` con display list de sprites.
 - `PhysicsServer2D` con áreas y señales.
 - `SubViewport2D` con segunda cámara y rectángulo.
-- `CanvasMaterial2D` con shader GLSL y cache.
+- `CanvasMaterial2D` con shader GLSL, cache y uniforms vec4.
 - Recursos empaquetados con `ResourceLoader`.
 - Recursos empaquetados con `ResourceLoader`.
 - Render-to-texture y viewport como textura.
