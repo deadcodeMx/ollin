@@ -1905,6 +1905,18 @@ public partial class MainWindow : Window
             ViewModel.RequestRedraw();
         }
     }
+    private async void OnEditAnimationPlayer(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel?.Selected?.Entity.GetComponent<Ollin.Core.Model.Components.AnimationPlayer2D>() is not { } player) return;
+        var window = new AnimationPlayerWindow(player);
+        if (!await window.ShowDialog<bool>(this) || window.Result is null) return;
+        var entity = ViewModel.Selected.Entity;
+        entity.RemoveComponent(player);
+        entity.AddComponent(window.Result);
+        ViewModel.Selected.RefreshAll();
+        ViewModel.CommitEdit("Editar animación");
+        ViewModel.RequestRedraw();
+    }
     private void OnSaveGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveGame();
 
     private void OnThemeDark(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTheme(Ollin.Editor.Styles.EditorThemeMode.Dark);

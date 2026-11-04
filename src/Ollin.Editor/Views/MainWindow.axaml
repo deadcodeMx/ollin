@@ -776,6 +776,7 @@
                       <TextBlock Classes="section" Text="ANIMATION PLAYER" />
                       <TextBlock Text="{Binding Selected.AnimationPlayerClip, StringFormat=Clip: {0}}" Classes="hint" />
                       <TextBlock Text="{Binding Selected.AnimationPlayerPlaying, StringFormat=Reproduciendo: {0}}" Classes="hint" />
+                      <Button Content="Editar timeline…" Click="OnEditAnimationPlayer" HorizontalAlignment="Stretch" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.AnimationPlayerSpeed, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" /></Grid>
                     </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasUiCanvas}" Spacing="5">

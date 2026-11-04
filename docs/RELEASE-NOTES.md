@@ -1,13 +1,13 @@
-## Ollin Beta 6.130.0 — anclajes de UI
+## Ollin Beta 6.131.0 — editor de animación
 
 ### Añadido
 
-- Anclajes de UI: esquinas, bordes y centro.
-- Layout por alineación y margen.
-- Overlay de UI con Grid en editor y reproductor.
+- Editor visual de clips, tracks y keyframes.
+- Edición de tiempo, posición, número y audio/evento.
+- Botón "Editar timeline" en AnimationPlayer.
 
 ### Verificación
 
 - **217/217 pruebas**.
-- Instalador 6.130.0 instalado y abierto.
+- Instalador 6.131.0 instalado y abierto.
 - Demo técnica no publicada.

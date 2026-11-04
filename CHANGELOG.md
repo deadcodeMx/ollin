@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.131.0] — 2026-11-04
+
+### Añadido
+
+- Editor visual de animación.
+- Clips, tracks y keyframes editables.
+- Edición de tiempo, posición, número y audio/evento.
+
 ## [6.130.0] — 2026-11-04
 
 ### Añadido
