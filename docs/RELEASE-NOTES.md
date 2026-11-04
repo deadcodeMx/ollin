@@ -6,7 +6,7 @@
 - Botón "Editar polígono" en el inspector.
 - Instalador corregido a **6.178.0**.
 
-### Verificación
+### Linux`n`n- Paquete `Ollin-6.178.0-linux-x64.tar.gz` actualizado.`n`n### Verificación
 
 - **236/236 pruebas**.
 - Instalador 6.178.0 instalado correctamente.
