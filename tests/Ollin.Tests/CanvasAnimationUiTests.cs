@@ -160,4 +160,15 @@ public sealed class CanvasAnimationUiTests
         player.OnUpdate(0.25f);
         Assert.InRange(entity.Transform.Position.X, 12.4f, 12.6f);
     }
+
+    [Fact]
+    public void EsqueletoGeneraPoseDeReposo()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Rig", Vector2.Zero);
+        var skeleton = entity.AddComponent(new Skeleton2D());
+        skeleton.Solve();
+        Assert.Equal(3, skeleton.BindPoints.Count);
+        Assert.Equal(3, skeleton.WorldPoints.Count);
+    }
 }

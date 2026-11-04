@@ -28,6 +28,7 @@ public sealed class Skeleton2D : Component, ITickable
     public int BendDirection { get; set; } = 1;
 
     [JsonIgnore] public List<Vector2> WorldPoints { get; } = new();
+    [JsonIgnore] public List<Vector2> BindPoints { get; } = new();
 
     public void OnUpdate(float deltaTime) => Solve();
 
@@ -37,6 +38,7 @@ public sealed class Skeleton2D : Component, ITickable
         WorldPoints.Clear();
         var root = scene.GetWorldPosition(Owner);
         var angles = new float[Bones.Count];
+        var bindAngles = new float[Bones.Count];
         for (var i = 0; i < Bones.Count; i++)
         {
             var bone = Bones[i];
@@ -45,8 +47,13 @@ public sealed class Skeleton2D : Component, ITickable
             var start = bone.Parent >= 0 && bone.Parent < WorldPoints.Count ? WorldPoints[bone.Parent] : root;
             if (i == 0) start = root;
             WorldPoints.Add(start + new Vector2(MathF.Cos(angles[i]), MathF.Sin(angles[i])) * bone.Length);
-        }
-        if (UseIK && Bones.Count >= 3) SolveTwoBone(root);
+
+            var bindParent = bone.Parent >= 0 && bone.Parent < i ? bindAngles[bone.Parent] : 0f;
+            bindAngles[i] = bindParent + bone.Angle * MathF.PI / 180f;
+            var bindStart = bone.Parent >= 0 && bone.Parent < BindPoints.Count ? BindPoints[bone.Parent] : root;
+            if (i == 0) bindStart = root;
+            BindPoints.Add(bindStart + new Vector2(MathF.Cos(bindAngles[i]), MathF.Sin(bindAngles[i])) * bone.Length);
+        }        if (UseIK && Bones.Count >= 3) SolveTwoBone(root);
     }
 
     private void SolveTwoBone(Vector2 root)

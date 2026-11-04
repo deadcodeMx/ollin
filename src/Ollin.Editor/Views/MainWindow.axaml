@@ -781,6 +781,7 @@
                       <Button Content="Editar timeline…" Click="OnEditAnimationPlayer" HorizontalAlignment="Stretch" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.AnimationPlayerSpeed, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" /></Grid>
                     </StackPanel>
+<StackPanel IsVisible="{Binding Selected.HasSkinnedMesh}" Spacing="5"><TextBlock Classes="section" Text="MALLA CON SKIN" /><TextBlock Text="Vértices, triángulos y pesos editables en JSON." Classes="hint" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasLine2D}" Spacing="5"><TextBlock Classes="section" Text="LÍNEA 2D" /><TextBlock Text="Puntos editables en JSON." Classes="hint" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasPolygon2D}" Spacing="5"><TextBlock Classes="section" Text="POLÍGONO 2D" /><TextBlock Text="Contorno editable en JSON." Classes="hint" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasNavigationAgent}" Spacing="5">

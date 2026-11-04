@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.145.0] — 2026-11-04
+
+### Añadido
+
+- SkinnedMesh2D con pesos por hueso.
+- Pose de reposo en Skeleton2D.
+- Render de malla deformada.
+- Prueba de pose de reposo.
+
 ## [6.144.0] — 2026-11-04
 
 ### Añadido

@@ -1,13 +1,14 @@
-## Ollin Beta 6.144.0 — crossfade de animación
+## Ollin Beta 6.145.0 — skinning
 
 ### Añadido
 
-- Crossfade entre clips.
-- Mezcla de posición, rotación y escala.
-- Prueba de crossfade.
+- SkinnedMesh2D con pesos por hueso.
+- Pose de reposo.
+- Render de malla deformada.
+- Prueba de pose de reposo.
 
 ### Verificación
 
-- **224/224 pruebas**.
-- Instalador 6.144.0 instalado y abierto.
+- **225/225 pruebas**.
+- Instalador 6.145.0 instalado y abierto.
 - Demo técnica no publicada.

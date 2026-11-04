@@ -199,6 +199,55 @@ public sealed class Renderer2D : IDisposable
             }
         }
     }
+    private void DrawSkinnedMeshes(Scene scene)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (!entity.Active) continue;
+            if (entity.GetComponent<SkinnedMesh2D>() is not { Enabled: true, Visible: true } mesh) continue;
+            if (entity.GetComponent<Skeleton2D>() is not { } skeleton) continue;
+            if (skeleton.BindPoints.Count < 2 || skeleton.WorldPoints.Count < 2) continue;
+            for (var i = 0; i + 2 < mesh.Triangles.Count; i += 3)
+            {
+                var a = SkinVertex(entity, mesh, skeleton, mesh.Triangles[i]);
+                var b = SkinVertex(entity, mesh, skeleton, mesh.Triangles[i + 1]);
+                var c = SkinVertex(entity, mesh, skeleton, mesh.Triangles[i + 2]);
+                _batch.DrawTriangle(null, a, b, c, mesh.Color);
+            }
+        }
+    }
+
+    private static Vector2 SkinVertex(Entity entity, SkinnedMesh2D mesh, Skeleton2D skeleton, int vertexIndex)
+    {
+        if (vertexIndex < 0 || vertexIndex >= mesh.Vertices.Count) return Vector2.Zero;
+        var vertex = mesh.Vertices[vertexIndex];
+        var boneA = vertexIndex < mesh.BoneA.Count ? mesh.BoneA[vertexIndex] : 0;
+        var boneB = vertexIndex < mesh.BoneB.Count ? mesh.BoneB[vertexIndex] : boneA;
+        var weight = vertexIndex < mesh.Weight.Count ? System.Math.Clamp(mesh.Weight[vertexIndex], 0f, 1f) : 1f;
+        var first = SkinBone(skeleton, boneA, vertex);
+        var second = SkinBone(skeleton, boneB, vertex);
+        return Vector2.Lerp(first, second, weight);
+    }
+
+    private static Vector2 SkinBone(Skeleton2D skeleton, int bone, Vector2 vertex)
+    {
+        if (skeleton.BindPoints.Count < 2) return vertex;
+        var index = System.Math.Clamp(bone, 0, System.Math.Min(skeleton.BindPoints.Count, skeleton.WorldPoints.Count) - 1);
+        var bindStart = skeleton.BindPoints[System.Math.Max(0, index - 1)];
+        var bindEnd = skeleton.BindPoints[index];
+        var currentStart = skeleton.WorldPoints[System.Math.Max(0, index - 1)];
+        var currentEnd = skeleton.WorldPoints[index];
+        var bindDelta = bindEnd - bindStart;
+        var currentDelta = currentEnd - currentStart;
+        if (bindDelta.LengthSquared() < 0.000001f) return currentStart + (vertex - bindStart);
+        var angle = MathF.Atan2(currentDelta.Y, currentDelta.X) - MathF.Atan2(bindDelta.Y, bindDelta.X);
+        var scale = currentDelta.Length() / bindDelta.Length();
+        var local = vertex - bindStart;
+        var cos = MathF.Cos(angle);
+        var sin = MathF.Sin(angle);
+        var rotated = new Vector2(local.X * cos - local.Y * sin, local.X * sin + local.Y * cos) * scale;
+        return currentStart + rotated;
+    }
     private void DrawShapes(Scene scene)
     {
         foreach (var entity in scene.Entities)
