@@ -45,8 +45,8 @@ public sealed class TileSetWindow : Window
         MinWidth = 620;
         MinHeight = 480;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _name = new TextBox { Text = _draft.Name };
         _texture = new TextBox { Text = _draft.TexturePath ?? string.Empty, Watermark = "assets/sprites/tiles.png" };
@@ -82,7 +82,7 @@ public sealed class TileSetWindow : Window
         var save = new Button
         {
             Content = "Guardar TileSet",
-            Background = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Background = new SolidColorBrush(Color.Parse("#F2A93B")),
             Foreground = new SolidColorBrush(Color.Parse("#1A1206")),
         };
         save.Click += (_, _) => { ApplyFields(); Close(true); };
@@ -112,7 +112,7 @@ public sealed class TileSetWindow : Window
             Spacing = 10,
             Children =
             {
-                new TextBlock { Text = "Editor de TileSet", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) },
+                new TextBlock { Text = "Editor de TileSet", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) },
                 Row("Nombre", _name),
                 Row("Textura", _texture),
                 new Grid

@@ -27,8 +27,8 @@ public sealed class InputMapWindow : Window
         Height = 560;
         CanResize = true;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _deadzone = new NumericUpDown { Minimum = 0.05m, Maximum = 0.95m, Increment = 0.05m, Value = (decimal)InputMap.Deadzone, FormatString = "0.##", Width = 120 };
 
@@ -47,7 +47,7 @@ public sealed class InputMapWindow : Window
         var save = new Button
         {
             Content = "Guardar",
-            Background = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Background = new SolidColorBrush(Color.Parse("#F2A93B")),
             Foreground = new SolidColorBrush(Color.Parse("#1A1206")),
         };
         save.Click += (_, _) => Save();
@@ -68,14 +68,14 @@ public sealed class InputMapWindow : Window
                     Text = "Mapa de entrada",
                     FontSize = 20,
                     FontWeight = FontWeight.Bold,
-                    Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+                    Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
                 },
                 new TextBlock
                 {
                     Text = "Bindings: key:A, key:Left, pad:DPadLeft, axis:LeftStickX-",
                     FontSize = 11,
                     TextWrapping = TextWrapping.Wrap,
-                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                 },
                 new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { new TextBlock { Text = "Zona muerta", VerticalAlignment = VerticalAlignment.Center, Classes = { "hint" } }, _deadzone } },
                 new ScrollViewer { Content = _rows, Height = 350 },

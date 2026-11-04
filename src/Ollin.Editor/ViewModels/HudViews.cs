@@ -139,7 +139,7 @@ public sealed class UiElementView
     public double Value { get; }
     public System.Windows.Input.ICommand Command { get; }
     public Avalonia.Media.IBrush Brush { get; }
-    public Avalonia.Media.IBrush FocusBrush => new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B"));
+    public Avalonia.Media.IBrush FocusBrush => new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#F2A93B"));
     public Avalonia.Media.IBrush FocusBorder => IsFocused ? FocusBrush : new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Transparent);
     public Avalonia.Media.IBrush TextBrush { get; }
     public bool IsPanel => Kind is Ollin.Core.Model.Components.UiElementKind.Panel or Ollin.Core.Model.Components.UiElementKind.Container;

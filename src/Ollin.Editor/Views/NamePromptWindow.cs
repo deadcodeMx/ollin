@@ -20,8 +20,8 @@ public sealed class NamePromptWindow : Window
         Height = 220;
         CanResize = false;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _value = new TextBox { Text = suggested };
         _error = new TextBlock
@@ -34,7 +34,7 @@ public sealed class NamePromptWindow : Window
         var accept = new Button
         {
             Content = "Crear",
-            Background = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Background = new SolidColorBrush(Color.Parse("#F2A93B")),
             Foreground = new SolidColorBrush(Color.Parse("#1A1206")),
         };
         accept.Click += (_, _) => Accept();
@@ -53,9 +53,9 @@ public sealed class NamePromptWindow : Window
                     Text = title,
                     FontSize = 20,
                     FontWeight = FontWeight.Bold,
-                    Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+                    Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
                 },
-                new TextBlock { Text = label, FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = label, FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _value,
                 _error,
                 new StackPanel

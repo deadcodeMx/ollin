@@ -37,8 +37,8 @@ public sealed class AnimationPlayerWindow : Window
         Title = "Editor de animación";
         Width = 760; Height = 620; MinWidth = 620; MinHeight = 480;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _clips = new ListBox { ItemsSource = _clipLabels, Height = 120 };
         _clips.SelectionChanged += (_, _) => SelectClip(_clips.SelectedIndex);
@@ -66,7 +66,7 @@ public sealed class AnimationPlayerWindow : Window
         addKey.Click += (_, _) => AddKey();
         var remove = new Button { Content = "Quitar" };
         remove.Click += (_, _) => RemoveSelected();
-        var save = new Button { Content = "Guardar animación", Background = new SolidColorBrush(Color.Parse("#E9A23B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
+        var save = new Button { Content = "Guardar animación", Background = new SolidColorBrush(Color.Parse("#F2A93B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
         save.Click += (_, _) => { ApplyFields(); Close(true); };
         var cancel = new Button { Content = "Cancelar" };
         cancel.Click += (_, _) => Close(false);
@@ -76,8 +76,8 @@ public sealed class AnimationPlayerWindow : Window
             Margin = new Thickness(20), Spacing = 8,
             Children =
             {
-                new TextBlock { Text = "Editor de animación", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) },
-                new TextBlock { Text = "Clips → tracks → keyframes. Propiedades: position, rotation, scale, frame, audio.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Editor de animación", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) },
+                new TextBlock { Text = "Clips → tracks → keyframes. Propiedades: position, rotation, scale, frame, audio.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { new StackPanel { Spacing = 4, Children = { _clips, addClip } }, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Nombre", _clipName), Row("Duración", _duration), _loop } } } },
                 new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { new StackPanel { Spacing = 4, Children = { _tracks, addTrack } }, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Propiedad", _trackProperty), new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { addKey, remove } } } } } },
                 new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { _keys, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Tiempo", _keyTime), Row("Valor X", _keyX), Row("Valor Y", _keyY), Row("Número", _keyNumber), Row("Texto", _keyText), Row("Easing", _keyEasing), Row("Salida X", _outX), Row("Salida Y", _outY), Row("Entrada X", _inX), Row("Entrada Y", _inY) } } } },

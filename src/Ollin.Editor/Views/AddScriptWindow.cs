@@ -28,8 +28,8 @@ public sealed class AddScriptWindow : Window
         Height = 560;
         CanResize = false;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _scripts = new ListBox
         {
@@ -49,7 +49,7 @@ public sealed class AddScriptWindow : Window
         var addExisting = new Button
         {
             Content = "Añadir script seleccionado",
-            Background = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Background = new SolidColorBrush(Color.Parse("#F2A93B")),
             Foreground = new SolidColorBrush(Color.Parse("#1A1206")),
             HorizontalAlignment = HorizontalAlignment.Stretch,
         };
@@ -93,13 +93,13 @@ public sealed class AddScriptWindow : Window
                     Text = "Añadir script",
                     FontSize = 20,
                     FontWeight = FontWeight.Bold,
-                    Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+                    Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
                 },
                 new TextBlock
                 {
                     Text = "Scripts existentes en la carpeta scripts/",
                     FontSize = 11,
-                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                 },
                 _scripts,
                 addExisting,
@@ -114,11 +114,11 @@ public sealed class AddScriptWindow : Window
                     Text = "Crear script nuevo",
                     FontSize = 13,
                     FontWeight = FontWeight.Bold,
-                    Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+                    Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
                 },
-                new TextBlock { Text = "Nombre", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Nombre", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _name,
-                new TextBlock { Text = "Carpeta de guardado (relativa al proyecto)", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Carpeta de guardado (relativa al proyecto)", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _folder,
                 _error,
                 create,

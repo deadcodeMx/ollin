@@ -39,8 +39,8 @@ public sealed class ShortcutsWindow : Window
         MinHeight = 400;
         CanResize = true;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _error = new TextBlock
         {
@@ -86,7 +86,7 @@ public sealed class ShortcutsWindow : Window
         var save = new Button
         {
             Content = "Guardar atajos",
-            Background = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Background = new SolidColorBrush(Color.Parse("#F2A93B")),
             Foreground = new SolidColorBrush(Color.Parse("#1A1206")),
         };
         save.Click += (_, _) => Accept();
@@ -113,14 +113,14 @@ public sealed class ShortcutsWindow : Window
                     Text = "Atajos del teclado",
                     FontSize = 20,
                     FontWeight = FontWeight.Bold,
-                    Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+                    Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
                 },
                 new TextBlock
                 {
                     Text = "Ejemplos: Ctrl+S, F5, Ctrl+Shift+N. Los cambios se guardan para las próximas sesiones.",
                     FontSize = 11,
                     TextWrapping = TextWrapping.Wrap,
-                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                 },
                 new ScrollViewer { Content = rows, MaxHeight = 390 },
                 _error,

@@ -23,8 +23,8 @@ public sealed class NavigationPolygonWindow : Window
         _draft = (NavigationPolygon2D)polygon.CloneFor(new Entity());
         Title = "Editor de navegación"; Width = 520; Height = 520; MinWidth = 460; MinHeight = 400;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _list = new ListBox { ItemsSource = _labels, Height = 260 };
         _list.SelectionChanged += (_, _) => Select(_list.SelectedIndex);
@@ -33,7 +33,7 @@ public sealed class NavigationPolygonWindow : Window
         add.Click += (_, _) => Add();
         var remove = new Button { Content = "Quitar" };
         remove.Click += (_, _) => Remove();
-        var save = new Button { Content = "Guardar polígono", Background = new SolidColorBrush(Color.Parse("#E9A23B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
+        var save = new Button { Content = "Guardar polígono", Background = new SolidColorBrush(Color.Parse("#F2A93B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
         save.Click += (_, _) => { Apply(); Result = _draft; Close(true); };
         var cancel = new Button { Content = "Cancelar" };
         cancel.Click += (_, _) => Close(false);
@@ -43,8 +43,8 @@ public sealed class NavigationPolygonWindow : Window
             Margin = new Thickness(20), Spacing = 8,
             Children =
             {
-                new TextBlock { Text = "Polígono navegable", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) },
-                new TextBlock { Text = "Puntos en espacio local de la entidad.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Polígono navegable", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) },
+                new TextBlock { Text = "Puntos en espacio local de la entidad.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _list,
                 new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { add, remove } },
                 Row("X", _x), Row("Y", _y),

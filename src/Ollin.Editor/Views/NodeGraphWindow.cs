@@ -153,7 +153,7 @@ public sealed class NodeGraphWindow : Window
             Text = "PALETA",
             FontSize = 10,
             FontWeight = FontWeight.Bold,
-            Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
             Margin = new Thickness(0, 4, 0, 4),
         });
 
@@ -361,7 +361,7 @@ public sealed class NodeGraphWindow : Window
             FontFamily = new Avalonia.Media.FontFamily("Consolas"),
             FontSize = 12, TextWrapping = Avalonia.Media.TextWrapping.NoWrap,
         };
-        var copy = new Button { Content = "Copiar código", Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")), Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#1A1206")) };
+        var copy = new Button { Content = "Copiar código", Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#F2A93B")), Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#1A1206")) };
         copy.Click += async (_, _) =>
         {
             if (TopLevel.GetTopLevel(this)?.Clipboard is { } clipboard)
@@ -371,14 +371,14 @@ public sealed class NodeGraphWindow : Window
         {
             Title = "Código generado", Width = 780, Height = 560,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#151922")),
-            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E7EAF0")),
+            Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#121722")),
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E6ECF7")),
             Content = new StackPanel
             {
                 Margin = new Avalonia.Thickness(16), Spacing = 8,
                 Children =
                 {
-                    new TextBlock { Text = "Este código es una base editable generada desde el grafo.", FontSize = 11, Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")) },
+                    new TextBlock { Text = "Este código es una base editable generada desde el grafo.", FontSize = 11, Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#93A4BC")) },
                     box, copy,
                 },
             },
@@ -733,7 +733,7 @@ public sealed class NodeGraphWindow : Window
     {
         return new Border
         {
-            Background = new SolidColorBrush(Color.Parse("#151922")),
+            Background = new SolidColorBrush(Color.Parse("#121722")),
             BorderBrush = new SolidColorBrush(Color.Parse("#252B36")),
             BorderThickness = new Thickness(1, 0, 0, 0),
             Child = new ScrollViewer { Content = _inspector },
@@ -954,7 +954,7 @@ public sealed class NodeGraphWindow : Window
             Text = "VALIDACIÓN",
             FontSize = 10,
             FontWeight = FontWeight.Bold,
-            Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
             Margin = new Thickness(0, 12, 0, 0),
         });
 
@@ -1009,7 +1009,7 @@ public sealed class NodeGraphWindow : Window
                 {
                     Text = "Últimos nodos",
                     FontSize = 10,
-                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                     Margin = new Thickness(0, 6, 0, 0),
                 });
 
@@ -1043,7 +1043,7 @@ public sealed class NodeGraphWindow : Window
                         Text = $"Traza {_traceIndex + 1}/{_graph.DebugFrames.Count} · {KindLabel(frameNode)} · {NodeSummary(frameNode)}",
                         FontSize = 9.5,
                         FontWeight = FontWeight.Bold,
-                        Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+                        Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
                         TextWrapping = TextWrapping.Wrap,
                         Margin = new Thickness(0, 6, 0, 0),
                     });
@@ -1061,7 +1061,7 @@ public sealed class NodeGraphWindow : Window
                         {
                             Text = "Sin cambios de variables",
                             FontSize = 9.5,
-                            Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                            Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                         });
                     }
                     else
@@ -1266,7 +1266,7 @@ public sealed class NodeGraphWindow : Window
         {
             "true" => Color.Parse("#47B8A8"),
             "false" => Color.Parse("#E05B5B"),
-            _ => Color.Parse("#E9A23B"),
+            _ => Color.Parse("#F2A93B"),
         };
 
         var line = new Line
@@ -1309,7 +1309,7 @@ public sealed class NodeGraphWindow : Window
                 Width = node.GroupWidth,
                 Height = node.Collapsed ? 40 : node.GroupHeight,
                 Background = new SolidColorBrush(Color.Parse("#30151B24")),
-                BorderBrush = new SolidColorBrush(Color.Parse(_selectedIds.Contains(node.Id) ? "#FFFFFF" : "#8B94A7")),
+                BorderBrush = new SolidColorBrush(Color.Parse(_selectedIds.Contains(node.Id) ? "#FFFFFF" : "#93A4BC")),
                 BorderThickness = new Thickness(_selectedIds.Contains(node.Id) ? 2 : 1),
                 CornerRadius = new CornerRadius(8),
             };
@@ -1333,9 +1333,9 @@ public sealed class NodeGraphWindow : Window
 
         var kindColor = node.Kind switch
         {
-            GraphNodeKind.Event => "#E9A23B",
+            GraphNodeKind.Event => "#F2A93B",
             GraphNodeKind.Condition => "#5B9CE0",
-            GraphNodeKind.Comment => "#8B94A7",
+            GraphNodeKind.Comment => "#93A4BC",
             _ => "#47B8A8",
         };
 
@@ -1345,7 +1345,7 @@ public sealed class NodeGraphWindow : Window
         var breakpoint = _graph.Breakpoints.Contains(node.Id);
         var match = !string.IsNullOrWhiteSpace(_searchText) &&
                     $"{KindLabel(node)} {NodeSummary(node)}".Contains(_searchText, StringComparison.OrdinalIgnoreCase);
-        var borderColor = active ? "#53D6FF" : breakpoint ? "#E05BE0" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : match ? "#E9A23B" : selected ? "#FFFFFF" : kindColor;
+        var borderColor = active ? "#53D6FF" : breakpoint ? "#E05BE0" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : match ? "#F2A93B" : selected ? "#FFFFFF" : kindColor;
         var card = new Border
         {
             Width = 200,
@@ -1560,7 +1560,7 @@ public sealed class NodeGraphWindow : Window
                         {
                             StartPoint = new Point(anchor, 0),
                             EndPoint = new Point(anchor, _canvas.Height),
-                            Stroke = new SolidColorBrush(Color.Parse("#E9A23B")),
+                            Stroke = new SolidColorBrush(Color.Parse("#F2A93B")),
                             StrokeThickness = 1,
                         });
                         break;
@@ -1575,7 +1575,7 @@ public sealed class NodeGraphWindow : Window
                         {
                             StartPoint = new Point(0, anchor),
                             EndPoint = new Point(_canvas.Width, anchor),
-                            Stroke = new SolidColorBrush(Color.Parse("#E9A23B")),
+                            Stroke = new SolidColorBrush(Color.Parse("#F2A93B")),
                             StrokeThickness = 1,
                         });
                         break;
@@ -1821,7 +1821,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
             Text = "NODO",
             FontSize = 10,
             FontWeight = FontWeight.Bold,
-            Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
         });
 
         if (_selectedIds.Count > 1)
@@ -1841,7 +1841,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
             {
                 Text = "Selecciona un nodo del lienzo.",
                 FontSize = 11,
-                Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                 TextWrapping = TextWrapping.Wrap,
             });
             AddValidationPanel();
@@ -1932,7 +1932,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
                     Text = "Ej: contador >= 3 && tiene(\"llave\")",
                     FontSize = 10,
                     TextWrapping = TextWrapping.Wrap,
-                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                 });
                 AddExpressionError(node.Expression);
             }
@@ -1966,7 +1966,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
                     Text = "contador + 1, true, 3.5…",
                     FontSize = 10,
                     TextWrapping = TextWrapping.Wrap,
-                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                 });
             }
         }
@@ -2020,7 +2020,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
     {
         Text = text,
         FontSize = 10.5,
-        Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+        Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
         Margin = new Thickness(0, 4, 0, 0),
     };
 

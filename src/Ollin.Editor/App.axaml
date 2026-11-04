@@ -4,22 +4,25 @@
              RequestedThemeVariant="Dark">
   <Application.Resources>
     <ResourceDictionary>
-      <SolidColorBrush x:Key="Ollin.Bg" Color="#0E1015" />
-      <SolidColorBrush x:Key="Ollin.Panel" Color="#151922" />
-      <SolidColorBrush x:Key="Ollin.PanelAlt" Color="#1B202B" />
-      <SolidColorBrush x:Key="Ollin.Border" Color="#252B39" />
-      <SolidColorBrush x:Key="Ollin.Text" Color="#E7EAF0" />
-      <SolidColorBrush x:Key="Ollin.TextDim" Color="#8B94A7" />
-      <SolidColorBrush x:Key="Ollin.Accent" Color="#E9A23B" />
+      <SolidColorBrush x:Key="Ollin.Bg" Color="#0B0E14" />
+      <SolidColorBrush x:Key="Ollin.Panel" Color="#121722" />
+      <SolidColorBrush x:Key="Ollin.PanelAlt" Color="#19212E" />
+      <SolidColorBrush x:Key="Ollin.Border" Color="#2B3749" />
+      <SolidColorBrush x:Key="Ollin.Text" Color="#E6ECF7" />
+      <SolidColorBrush x:Key="Ollin.TextDim" Color="#93A4BC" />
+      <SolidColorBrush x:Key="Ollin.Accent" Color="#F2A93B" />
       <SolidColorBrush x:Key="Ollin.AccentDim" Color="#8A6428" />
-      <SolidColorBrush x:Key="Ollin.Jade" Color="#47B8A8" />
+      <SolidColorBrush x:Key="Ollin.Jade" Color="#4FD1C5" />
       <SolidColorBrush x:Key="Ollin.Danger" Color="#E05B5B" />
       <SolidColorBrush x:Key="Ollin.ViewportBg" Color="#0B0D12" />
-      <SolidColorBrush x:Key="Ollin.AccentHover" Color="#F2B457" />
+      <SolidColorBrush x:Key="Ollin.AccentHover" Color="#FFC15E" />
       <SolidColorBrush x:Key="Ollin.AccentText" Color="#1A1206" />
-      <SolidColorBrush x:Key="Ollin.Hover" Color="#232936" />
-      <SolidColorBrush x:Key="Ollin.Pressed" Color="#2B3242" />
+      <SolidColorBrush x:Key="Ollin.Hover" Color="#222C3B" />
+      <SolidColorBrush x:Key="Ollin.Pressed" Color="#2A3648" />
       <SolidColorBrush x:Key="Ollin.Neutral" Color="#C7D0DE" />
+          <SolidColorBrush x:Key="Ollin.Violet" Color="#9B8CFF" />
+      <SolidColorBrush x:Key="Ollin.Surface" Color="#101621" />
+      <SolidColorBrush x:Key="Ollin.BorderStrong" Color="#3A4A61" />
     </ResourceDictionary>
   </Application.Resources>
 

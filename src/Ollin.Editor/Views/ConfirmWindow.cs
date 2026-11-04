@@ -15,12 +15,12 @@ public sealed class ConfirmWindow : Window
         Height = 210;
         CanResize = false;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
 
         var confirm = new Button
         {
             Content = confirmText,
-            Background = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Background = new SolidColorBrush(Color.Parse("#F2A93B")),
             Foreground = new SolidColorBrush(Color.Parse("#1A1206")),
         };
         confirm.Click += (_, _) => Close(true);
@@ -59,7 +59,7 @@ public sealed class ConfirmWindow : Window
                 Text = detail,
                 FontSize = 11.5,
                 TextWrapping = TextWrapping.Wrap,
-                Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
             });
         }
 

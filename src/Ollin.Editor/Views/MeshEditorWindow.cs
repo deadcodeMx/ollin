@@ -26,8 +26,8 @@ public sealed class MeshEditorWindow : Window
         _draft = (Mesh2D)mesh.CloneFor(new Entity());
         Title = "Editor de malla"; Width = 700; Height = 600; MinWidth = 560; MinHeight = 460;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _vertices = new ListBox { ItemsSource = _vertexLabels, Height = 280 };
         _vertices.SelectionChanged += (_, _) => SelectVertex(_vertices.SelectedIndex);
@@ -44,7 +44,7 @@ public sealed class MeshEditorWindow : Window
         addTriangle.Click += (_, _) => AddTriangle();
         var removeTriangle = new Button { Content = "Quitar" };
         removeTriangle.Click += (_, _) => RemoveTriangle();
-        var save = new Button { Content = "Guardar malla", Background = new SolidColorBrush(Color.Parse("#E9A23B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
+        var save = new Button { Content = "Guardar malla", Background = new SolidColorBrush(Color.Parse("#F2A93B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
         save.Click += (_, _) => { Apply(); Result = _draft; Close(true); };
         var cancel = new Button { Content = "Cancelar" };
         cancel.Click += (_, _) => Close(false);
@@ -54,8 +54,8 @@ public sealed class MeshEditorWindow : Window
             Margin = new Thickness(20), Spacing = 8,
             Children =
             {
-                new TextBlock { Text = "Editor de malla 2D", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) },
-                new TextBlock { Text = "Vértices en espacio local y triángulos por índices.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Editor de malla 2D", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) },
+                new TextBlock { Text = "Vértices en espacio local y triángulos por índices.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 new Grid
                 {
                     ColumnDefinitions = new ColumnDefinitions("*,*"),

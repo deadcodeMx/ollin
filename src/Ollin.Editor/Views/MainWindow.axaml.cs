@@ -251,7 +251,7 @@ public partial class MainWindow : Window
             Text = title,
             FontSize = 10,
             FontWeight = Avalonia.Media.FontWeight.Bold,
-            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#F2A93B")),
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
         });
         if (kind is not null)
@@ -263,7 +263,7 @@ public partial class MainWindow : Window
                 Height = 20,
                 Padding = new Thickness(0),
                 Background = Avalonia.Media.Brushes.Transparent,
-                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")),
+                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#93A4BC")),
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
             };
             remove.Click += (_, _) => ViewModel?.RemoveComponent(kind);
@@ -320,7 +320,7 @@ public partial class MainWindow : Window
             Text = label,
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
             FontSize = 11,
-            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")),
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#93A4BC")),
         });
         Grid.SetColumn(field, 1);
         row.Children.Add(field);
@@ -382,7 +382,7 @@ public partial class MainWindow : Window
                 Text = $"SCRIPT · {editor.Title}",
                 FontSize = 10,
                 FontWeight = Avalonia.Media.FontWeight.Bold,
-                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+                Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#F2A93B")),
             };
             _scriptHost.Children.Add(new Expander
             {
@@ -974,7 +974,7 @@ public partial class MainWindow : Window
             Text = "TAGS DE LA ENTIDAD",
             FontSize = 10,
             FontWeight = Avalonia.Media.FontWeight.Bold,
-            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#F2A93B")),
         });
 
         var tagsBox = new TextBox { Watermark = "player, enemy" };
@@ -984,7 +984,7 @@ public partial class MainWindow : Window
         {
             Text = "Separa las etiquetas con comas.",
             FontSize = 10,
-            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")),
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#93A4BC")),
         });
 
         panel.Children.Add(new Border
@@ -998,7 +998,7 @@ public partial class MainWindow : Window
             Text = "CREAR TAG",
             FontSize = 10,
             FontWeight = Avalonia.Media.FontWeight.Bold,
-            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#E9A23B")),
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#F2A93B")),
         });
 
         var newTag = new TextBox { Watermark = "nuevo_tag" };
@@ -1019,7 +1019,7 @@ public partial class MainWindow : Window
         {
             Text = "El tag se crea al asignarlo a una entidad.",
             FontSize = 10,
-            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#8B94A7")),
+            Foreground = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#93A4BC")),
             TextWrapping = Avalonia.Media.TextWrapping.Wrap,
         });
 
@@ -1082,7 +1082,7 @@ public partial class MainWindow : Window
             Height = 400,
             CanResize = false,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            Background = new SolidColorBrush(Color.Parse("#151922")),
+            Background = new SolidColorBrush(Color.Parse("#121722")),
         };
 
         var version = typeof(MainWindow).Assembly
@@ -1110,13 +1110,13 @@ public partial class MainWindow : Window
                     Text = "Ollin",
                     FontSize = 26,
                     FontWeight = FontWeight.Bold,
-                    Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+                    Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
                 },
                 new TextBlock
                 {
                     Text = $"Motor de juego 2D · versión {version} beta",
                     FontSize = 12,
-                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                 },
                 new TextBlock
                 {
@@ -1124,7 +1124,7 @@ public partial class MainWindow : Window
                            "Animación, tilemaps, física y scripts en C# con recarga en caliente.",
                     FontSize = 12,
                     TextWrapping = TextWrapping.Wrap,
-                    Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")),
+                    Foreground = new SolidColorBrush(Color.Parse("#E6ECF7")),
                 },
                 new TextBlock
                 {

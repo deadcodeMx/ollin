@@ -12,12 +12,12 @@ public sealed class QuickGuideWindow : Window
     {
         Title = "Guía rápida 2D"; Width = 560; Height = 560; MinWidth = 480; MinHeight = 420;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         var content = new StackPanel { Margin = new Thickness(24), Spacing = 10 };
-        content.Children.Add(new TextBlock { Text = "Empieza en 2D", FontSize = 22, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) });
-        content.Children.Add(new TextBlock { Text = "Ollin trabaja en modo 2D. 3D y 2.5D están ocultos.", FontSize = 12, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) });
+        content.Children.Add(new TextBlock { Text = "Empieza en 2D", FontSize = 22, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) });
+        content.Children.Add(new TextBlock { Text = "Ollin trabaja en modo 2D. 3D y 2.5D están ocultos.", FontSize = 12, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) });
         Add(content, "1. Escena", "Crea o abre una escena. La jerarquía muestra entidades y sus componentes.");
         Add(content, "2. Sprite", "Añade una entidad, asígnale textura y colócala en el viewport. Usa la rueda para zoom y Alt+arrastrar para mover la cámara.");
         Add(content, "3. Cámara", "Añade Camera2D a una entidad. Marca IsMain para controlar la vista del juego.");
@@ -25,7 +25,7 @@ public sealed class QuickGuideWindow : Window
         Add(content, "5. UI", "Añade UiCanvas y edita botones, etiquetas y anclas con el editor visual.");
         Add(content, "6. Código", "Añade un ScriptComponent y escribe C#. Todo el motor es accesible desde código.");
         Add(content, "7. Grafo", "El grafo de nodos es el puente visual: edita la lógica y úsalo para aprender cómo se traduce a código.");
-        var close = new Button { Content = "Entendido", HorizontalAlignment = HorizontalAlignment.Right, Background = new SolidColorBrush(Color.Parse("#E9A23B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
+        var close = new Button { Content = "Entendido", HorizontalAlignment = HorizontalAlignment.Right, Background = new SolidColorBrush(Color.Parse("#F2A93B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
         close.Click += (_, _) => Close();
         content.Children.Add(close);
         Content = new ScrollViewer { Content = content };

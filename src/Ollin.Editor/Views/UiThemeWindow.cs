@@ -24,8 +24,8 @@ public sealed class UiThemeWindow : Window
         _draft = (UiCanvas)canvas.CloneFor(new Entity());
         Title = "Tema de UI"; Width = 580; Height = 520; MinWidth = 500; MinHeight = 420;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         var theme = _draft.Theme;
         _panelR = Number(theme.PanelColor.X); _panelG = Number(theme.PanelColor.Y); _panelB = Number(theme.PanelColor.Z); _panelA = Number(theme.PanelColor.W);
@@ -42,7 +42,7 @@ public sealed class UiThemeWindow : Window
         var contrast = new Button { Content = "Alto contraste" };
         contrast.Click += (_, _) => Preset(new Vector4(0f, 0f, 0f, 0.98f), new Vector4(1f, 1f, 0f, 1f), new Vector4(0.1f, 0.1f, 0.1f, 1f), new Vector4(0f, 1f, 1f, 1f));
         var presets = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Children = { new TextBlock { Text = "Presets", Classes = { "hint" }, VerticalAlignment = VerticalAlignment.Center }, dark, light, contrast } };
-        var save = new Button { Content = "Guardar tema", Background = new SolidColorBrush(Color.Parse("#E9A23B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
+        var save = new Button { Content = "Guardar tema", Background = new SolidColorBrush(Color.Parse("#F2A93B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
         save.Click += (_, _) => { Apply(); Result = _draft; Close(true); };
         var cancel = new Button { Content = "Cancelar" }; cancel.Click += (_, _) => Close(false);
 
@@ -51,8 +51,8 @@ public sealed class UiThemeWindow : Window
             Margin = new Thickness(20), Spacing = 8,
             Children =
             {
-                new TextBlock { Text = "Tema de UI", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) },
-                new TextBlock { Text = "Colores RGBA 0..1 y fuente del tema.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Tema de UI", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) },
+                new TextBlock { Text = "Colores RGBA 0..1 y fuente del tema.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 ColorRow("Panel", _panelR, _panelG, _panelB, _panelA),
                 ColorRow("Texto", _textR, _textG, _textB, _textA),
                 ColorRow("Botón", _buttonR, _buttonG, _buttonB, _buttonA),

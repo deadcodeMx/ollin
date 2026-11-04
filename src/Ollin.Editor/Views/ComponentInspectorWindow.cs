@@ -49,8 +49,8 @@ public sealed class ComponentInspectorView : UserControl
             _root.Children.Add(new TextBlock { Text = "Selecciona una entidad", Classes = { "hint" } });
             return;
         }
-        _root.Children.Add(new TextBlock { Text = _entity.Name, FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) });
-        _root.Children.Add(new TextBlock { Text = "Solo componentes 2D del motor. Edita valores y guarda al cerrar.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) });
+        _root.Children.Add(new TextBlock { Text = _entity.Name, FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) });
+        _root.Children.Add(new TextBlock { Text = "Solo componentes 2D del motor. Edita valores y guarda al cerrar.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) });
 
         foreach (var component in _entity.Components.ToList())
         {

@@ -26,8 +26,8 @@ public sealed class SkinEditorWindow : Window
         _draft = (SkinnedMesh2D)mesh.CloneFor(new Entity());
         Title = "Editor de skinning"; Width = 820; Height = 640; MinWidth = 680; MinHeight = 500;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _vertices = new ListBox { ItemsSource = _vertexLabels, Height = 230 };
         _vertices.SelectionChanged += (_, _) => SelectVertex(_vertices.SelectedIndex);
@@ -41,7 +41,7 @@ public sealed class SkinEditorWindow : Window
         var removeVertex = new Button { Content = "Quitar" }; removeVertex.Click += (_, _) => RemoveVertex();
         var addTriangle = new Button { Content = "+ Triángulo" }; addTriangle.Click += (_, _) => AddTriangle();
         var removeTriangle = new Button { Content = "Quitar" }; removeTriangle.Click += (_, _) => RemoveTriangle();
-        var save = new Button { Content = "Guardar skin", Background = new SolidColorBrush(Color.Parse("#E9A23B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
+        var save = new Button { Content = "Guardar skin", Background = new SolidColorBrush(Color.Parse("#F2A93B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
         save.Click += (_, _) => { Apply(); Result = _draft; Close(true); };
         var cancel = new Button { Content = "Cancelar" }; cancel.Click += (_, _) => Close(false);
 
@@ -50,8 +50,8 @@ public sealed class SkinEditorWindow : Window
             Margin = new Thickness(20), Spacing = 8,
             Children =
             {
-                new TextBlock { Text = "Editor de skinning", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) },
-                new TextBlock { Text = "Hasta 4 huesos por vértice. WeightB/C/D; el resto va al hueso A.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Editor de skinning", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) },
+                new TextBlock { Text = "Hasta 4 huesos por vértice. WeightB/C/D; el resto va al hueso A.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 new Grid
                 {
                     ColumnDefinitions = new ColumnDefinitions("*,*"),

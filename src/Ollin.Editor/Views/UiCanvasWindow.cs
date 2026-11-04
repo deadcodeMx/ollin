@@ -28,8 +28,8 @@ public sealed class UiCanvasWindow : Window
         _draft = (UiCanvas)canvas.CloneFor(new Entity());
         Title = "Editor de UI"; Width = 720; Height = 600; MinWidth = 600; MinHeight = 460;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _list = new ListBox { ItemsSource = _labels, Height = 360 };
         _list.SelectionChanged += (_, _) => Select(_list.SelectedIndex);
@@ -45,7 +45,7 @@ public sealed class UiCanvasWindow : Window
         add.Click += (_, _) => Add();
         var remove = new Button { Content = "Quitar" };
         remove.Click += (_, _) => Remove();
-        var save = new Button { Content = "Guardar UI", Background = new SolidColorBrush(Color.Parse("#E9A23B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
+        var save = new Button { Content = "Guardar UI", Background = new SolidColorBrush(Color.Parse("#F2A93B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
         save.Click += (_, _) => { Apply(); Result = _draft; Close(true); };
         var cancel = new Button { Content = "Cancelar" };
         cancel.Click += (_, _) => Close(false);
@@ -55,8 +55,8 @@ public sealed class UiCanvasWindow : Window
             Margin = new Thickness(20), Spacing = 8,
             Children =
             {
-                new TextBlock { Text = "Editor de UI", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#E9A23B")) },
-                new TextBlock { Text = "Elementos del UiCanvas. Se guardan en la escena.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Editor de UI", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) },
+                new TextBlock { Text = "Elementos del UiCanvas. Se guardan en la escena.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 new Grid
                 {
                     ColumnDefinitions = new ColumnDefinitions("220,*"),

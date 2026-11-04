@@ -149,4 +149,127 @@
   <Style Selector="GridSplitter">
     <Setter Property="Background" Value="Transparent" />
   </Style>
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Bg}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="FontFamily" Value="Inter, Segoe UI" />
+    <Setter Property="FontSize" Value="12.5" />
+  </Style>
+
+  <Style Selector="TextBlock.title">
+    <Setter Property="FontSize" Value="19" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="LetterSpacing" Value="0.2" />
+  </Style>
+
+  <Style Selector="TextBlock.subtitle">
+    <Setter Property="FontSize" Value="11.5" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.TextDim}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <Style Selector="Border.panel">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+  </Style>
+
+  <Style Selector="Border.sidebar">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="BorderThickness" Value="0,0,1,0" />
+  </Style>
+
+  <Style Selector="Border.header">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Panel}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Padding" Value="12,8" />
+  </Style>
+
+  <Style Selector="Button.ghost">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.TextDim}" />
+  </Style>
+
+  <Style Selector="Button.ghost:pointerover">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Hover}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+  </Style>
+
+  <Style Selector="Button.danger">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Danger}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Danger}" />
+  </Style>
+
+  <Style Selector="Button:focus-visible">
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Accent}" />
+  </Style>
+
+  <Style Selector="TextBox:focus, NumericUpDown:focus">
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Accent}" />
+  </Style>
+
+  <Style Selector="ComboBox">
+    <Setter Property="Background" Value="{DynamicResource Ollin.PanelAlt}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="CornerRadius" Value="5" />
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <Style Selector="CheckBox, RadioButton">
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <Style Selector="ListBoxItem">
+    <Setter Property="Padding" Value="8,5" />
+    <Setter Property="CornerRadius" Value="5" />
+    <Setter Property="Margin" Value="0,1" />
+  </Style>
+
+  <Style Selector="ListBoxItem:selected">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Hover}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+  </Style>
+
+  <Style Selector="TreeViewItem:selected">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Hover}" />
+  </Style>
+
+  <Style Selector="TabItem:pointerover">
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+  </Style>
+
+  <Style Selector="TabItem:selected">
+    <Setter Property="Background" Value="{DynamicResource Ollin.PanelAlt}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Accent}" />
+    <Setter Property="BorderThickness" Value="0,0,0,2" />
+  </Style>
+
+  <Style Selector="Expander">
+    <Setter Property="Background" Value="{DynamicResource Ollin.PanelAlt}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="6" />
+  </Style>
+
+  <Style Selector="Separator">
+    <Setter Property="Background" Value="{DynamicResource Ollin.Border}" />
+  </Style>
+
+  <Style Selector="ToolTip">
+    <Setter Property="Background" Value="{DynamicResource Ollin.PanelAlt}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ollin.Text}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Ollin.BorderStrong}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Padding" Value="8,4" />
+  </Style>
 </Styles>

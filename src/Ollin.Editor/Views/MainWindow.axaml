@@ -194,7 +194,7 @@
                               <MenuItem Header="Ninguno" Tag="" Click="OnSetEntitySymbol" />
                             </MenuItem>
                             <MenuItem Header="Color">
-                              <MenuItem Header="Ámbar" Tag="#E9A23B" Click="OnSetEntityColor" />
+                              <MenuItem Header="Ámbar" Tag="#F2A93B" Click="OnSetEntityColor" />
                               <MenuItem Header="Jade" Tag="#47B8A8" Click="OnSetEntityColor" />
                               <MenuItem Header="Azul" Tag="#5B9CE0" Click="OnSetEntityColor" />
                               <MenuItem Header="Rojo" Tag="#E05B5B" Click="OnSetEntityColor" />
@@ -386,7 +386,7 @@
                     <ItemsControl.ItemTemplate>
                       <DataTemplate>
                         <StackPanel Spacing="2" Margin="0,0,0,4">
-                          <TextBlock Text="{Binding Name}" FontSize="10.5" Foreground="#E7EAF0" />
+                          <TextBlock Text="{Binding Name}" FontSize="10.5" Foreground="#E6ECF7" />
                           <ProgressBar Minimum="0" Maximum="1" Value="{Binding Fraction}" Height="9"
                                        Foreground="{Binding Brush}" Background="#5510131A" />
                           <TextBlock Text="{Binding ValueText}" FontSize="9.5" Foreground="#AAB4C4"
@@ -398,7 +398,7 @@
                   <ItemsControl ItemsSource="{Binding HudLabels}">
                     <ItemsControl.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Display}" FontSize="12" Foreground="#E7EAF0" TextWrapping="Wrap" MaxWidth="300" />
+                        <TextBlock Text="{Binding Display}" FontSize="12" Foreground="#E6ECF7" TextWrapping="Wrap" MaxWidth="300" />
                       </DataTemplate>
                     </ItemsControl.ItemTemplate>
                   </ItemsControl>
@@ -455,14 +455,14 @@
                   <DataTemplate>
                     <Border Width="72" Height="72" Margin="3" CornerRadius="6" Background="#182030" BorderBrush="#2B3342" BorderThickness="1">
                       <Grid>
-                        <TextBlock Text="{Binding Initial}" FontSize="26" FontWeight="Bold" Foreground="#E9A23B" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding QuantityText}" FontSize="10" Foreground="#E7EAF0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
+                        <TextBlock Text="{Binding Initial}" FontSize="26" FontWeight="Bold" Foreground="#F2A93B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding QuantityText}" FontSize="10" Foreground="#E6ECF7" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
                       </Grid>
                     </Border>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
-              <TextBlock Text="I para cerrar" FontSize="10" Foreground="#8B94A7" HorizontalAlignment="Right" />
+              <TextBlock Text="I para cerrar" FontSize="10" Foreground="#93A4BC" HorizontalAlignment="Right" />
             </StackPanel>
           </Border>
         </Border>
@@ -535,7 +535,7 @@
                 <ae:TextEditor Grid.Row="1" x:Name="ScriptEditor"
                                FontFamily="Consolas, Cascadia Mono, Courier New, monospace"
                                FontSize="13" Padding="10,8"
-                               Background="#0F1218" Foreground="#E7EAF0"
+                               Background="#0F1218" Foreground="#E6ECF7"
                                ShowLineNumbers="True" WordWrap="False" />
               </Grid>
             </Grid>

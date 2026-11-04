@@ -35,8 +35,8 @@ public sealed class NewProjectWindow : Window
         MinHeight = 420;
         CanResize = true;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        Background = new SolidColorBrush(Color.Parse("#151922"));
-        Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+        Background = new SolidColorBrush(Color.Parse("#121722"));
+        Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
         _name = new TextBox { Text = "MiJuego", Watermark = "Nombre del proyecto" };
         _folder = new TextBox { Text = suggested };
@@ -84,7 +84,7 @@ public sealed class NewProjectWindow : Window
         var create = new Button
         {
             Content = "Crear proyecto",
-            Background = new SolidColorBrush(Color.Parse("#E9A23B")),
+            Background = new SolidColorBrush(Color.Parse("#F2A93B")),
             Foreground = new SolidColorBrush(Color.Parse("#1A1206")),
         };
         create.Click += (_, _) => Accept();
@@ -103,22 +103,22 @@ public sealed class NewProjectWindow : Window
                     Text = "Nuevo proyecto",
                     FontSize = 22,
                     FontWeight = FontWeight.Bold,
-                    Foreground = new SolidColorBrush(Color.Parse("#E9A23B")),
+                    Foreground = new SolidColorBrush(Color.Parse("#F2A93B")),
                 },
                 new TextBlock
                 {
                     Text = "Elige cuánta ayuda quieres: componentes mínimos para programar o un conjunto guiado por género.",
                     FontSize = 11.5,
                     TextWrapping = TextWrapping.Wrap,
-                    Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
+                    Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                 },
-                new TextBlock { Text = "Modo", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Modo", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _mode,
-                new TextBlock { Text = "Género (solo modo por género)", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Género (solo modo por género)", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _genre,
-                new TextBlock { Text = "Nombre", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Nombre", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _name,
-                new TextBlock { Text = "Carpeta", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#8B94A7")) },
+                new TextBlock { Text = "Carpeta", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 new Grid
                 {
                     ColumnDefinitions = new ColumnDefinitions("*,Auto"),

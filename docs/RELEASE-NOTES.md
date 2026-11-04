@@ -1,15 +1,16 @@
-## Ollin Beta 6.210.0 — API scripting fase 2
+## Ollin Beta 6.211.0 — rediseño de interfaz
 
-### Añadido
+### Cambiado
 
-- `Instantiate` de prefabs desde script.
-- `TweenPosition`.
-- `ShakeCamera`.
-- Acciones UI `signal:nombre` que emiten `ScriptSignals`.
+- Paleta global azul profunda, ámbar y turquesa.
+- Estilos unificados para ventanas, paneles, botones, pestañas, inputs, listas, tooltips y separadores.
+- Todas las ventanas heredan el tema.
+- Inspector 2D integrado en el panel derecho.
 
 ### Verificación
 
+- Build 0 errores.
 - 134/134 pruebas.
-- Instalador 6.210.0 instalado.
+- Instalador 6.211.0 instalado.
 
-## [6.209.0] — 2026-11-04
+## [6.210.0] — 2026-11-04
