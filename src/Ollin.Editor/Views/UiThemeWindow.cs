@@ -35,6 +35,13 @@ public sealed class UiThemeWindow : Window
         _fontSize = Number(theme.FontSize); _fontSize.Minimum = 6; _fontSize.Maximum = 96;
         _fontFamily = new TextBox { Text = theme.FontFamily };
 
+        var dark = new Button { Content = "Oscuro" };
+        dark.Click += (_, _) => Preset(new Vector4(0.08f, 0.09f, 0.12f, 0.96f), new Vector4(0.93f, 0.94f, 0.96f, 1f), new Vector4(0.16f, 0.18f, 0.23f, 1f), new Vector4(0.91f, 0.64f, 0.23f, 1f));
+        var light = new Button { Content = "Claro" };
+        light.Click += (_, _) => Preset(new Vector4(0.93f, 0.94f, 0.97f, 0.98f), new Vector4(0.08f, 0.09f, 0.12f, 1f), new Vector4(0.80f, 0.83f, 0.89f, 1f), new Vector4(0.75f, 0.39f, 0.10f, 1f));
+        var contrast = new Button { Content = "Alto contraste" };
+        contrast.Click += (_, _) => Preset(new Vector4(0f, 0f, 0f, 0.98f), new Vector4(1f, 1f, 0f, 1f), new Vector4(0.1f, 0.1f, 0.1f, 1f), new Vector4(0f, 1f, 1f, 1f));
+        var presets = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Children = { new TextBlock { Text = "Presets", Classes = { "hint" }, VerticalAlignment = VerticalAlignment.Center }, dark, light, contrast } };
         var save = new Button { Content = "Guardar tema", Background = new SolidColorBrush(Color.Parse("#E9A23B")), Foreground = new SolidColorBrush(Color.Parse("#1A1206")) };
         save.Click += (_, _) => { Apply(); Result = _draft; Close(true); };
         var cancel = new Button { Content = "Cancelar" }; cancel.Click += (_, _) => Close(false);
@@ -52,6 +59,7 @@ public sealed class UiThemeWindow : Window
                 ColorRow("Acento", _accentR, _accentG, _accentB, _accentA),
                 Row("Fuente", _fontFamily),
                 Row("Tamaño", _fontSize),
+                presets,
                 new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Spacing = 8, Children = { cancel, save } },
             },
         };
@@ -76,6 +84,13 @@ public sealed class UiThemeWindow : Window
         return grid;
     }
 
+    private void Preset(Vector4 panel, Vector4 text, Vector4 button, Vector4 accent)
+    {
+        _panelR.Value = (decimal)panel.X; _panelG.Value = (decimal)panel.Y; _panelB.Value = (decimal)panel.Z; _panelA.Value = (decimal)panel.W;
+        _textR.Value = (decimal)text.X; _textG.Value = (decimal)text.Y; _textB.Value = (decimal)text.Z; _textA.Value = (decimal)text.W;
+        _buttonR.Value = (decimal)button.X; _buttonG.Value = (decimal)button.Y; _buttonB.Value = (decimal)button.Z; _buttonA.Value = (decimal)button.W;
+        _accentR.Value = (decimal)accent.X; _accentG.Value = (decimal)accent.Y; _accentB.Value = (decimal)accent.Z; _accentA.Value = (decimal)accent.W;
+    }
     private void Apply()
     {
         _draft.Theme.PanelColor = new Vector4((float)(_panelR.Value ?? 0m), (float)(_panelG.Value ?? 0m), (float)(_panelB.Value ?? 0m), (float)(_panelA.Value ?? 1m));

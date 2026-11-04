@@ -1,15 +1,13 @@
-## Ollin Beta 6.185.0 — editor de tema de UI
+## Ollin Beta 6.186.0 — presets de tema UI
 
 ### Añadido
 
-- Editor visual del tema de `UiCanvas`.
-- Colores RGBA de panel, texto, botón y acento.
-- Fuente y tamaño.
-- Botón "Editar tema" en el inspector.
+- Presets de tema: oscuro, claro y alto contraste.
+- El editor de tema aplica los colores inmediatamente al componente.
 
 ### Verificación
 
 - **236/236 pruebas**.
-- Instalador 6.185.0 instalado correctamente.
+- Instalador 6.186.0 instalado correctamente.
 
-## [6.184.0] — 2026-11-04
+## [6.185.0] — 2026-11-04
