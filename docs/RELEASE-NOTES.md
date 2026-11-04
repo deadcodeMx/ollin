@@ -1,19 +1,14 @@
-## Ollin Beta 6.173.0 — framebuffer de Avalonia
+## Ollin Beta 6.174.0 — limpieza de diagnóstico
 
 ### Corregido
 
-- `RenderTarget2D` restaura el framebuffer anterior de Avalonia en lugar de asumir el framebuffer 0.
-- Esto explica por qué la composición del SubViewport no aparecía.
+- Eliminada la instrumentación temporal.
+- Escena de ejemplo restaurada.
 
-### Añadido
+### Estado
 
-- `RenderTarget2D` con color/depth.
-- SubViewport con render-to-texture y borde.
-
-### Verificación
-
+- RTT implementado, pero la composición visual sigue sin confirmarse.
 - **236/236 pruebas**.
-- Instalador 6.173.0 instalado.
-- **La composición visual del SubViewport sigue sin verificarse en pantalla**; el fallo de framebuffer está corregido, pero no tuve una captura concluyente.
+- Instalador 6.174.0 instalado.
 
-## [6.172.0] — 2026-11-04
+## [6.173.0] — 2026-11-04

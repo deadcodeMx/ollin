@@ -349,7 +349,6 @@ public sealed class ViewportControl : OpenGlControlBase
 
     private void RenderSubViewports(int width, int height)
     {
-        var rendered = 0;
         if (_viewModel is null || _viewModel.ActiveCamera3D is not null) return;
         foreach (var entity in _viewModel.Scene.Entities)
         {
@@ -360,7 +359,6 @@ public sealed class ViewportControl : OpenGlControlBase
                  candidate.Name.Equals(viewport.CameraTag, StringComparison.OrdinalIgnoreCase)))
                 ?? _viewModel.Scene.Entities.FirstOrDefault(candidate => candidate.Active && candidate.GetComponent<Camera2D>() is { Enabled: true });
             if (cameraEntity?.GetComponent<Camera2D>() is not { } source) continue;
-            Log.Info($"SubViewport {entity.Name}: use={viewport.UseTexture} rect={viewport.Rect} border={viewport.DebugBorder}", "Render");
             var camera = (Camera2D)source.CloneFor(cameraEntity);
             if (viewport.UseTexture)
             {
@@ -382,7 +380,6 @@ public sealed class ViewportControl : OpenGlControlBase
                 _renderer!.RenderFrame(_viewModel.Scene, _viewModel.Scene.GetWorldPosition(cameraEntity), camera, width, height, null, false, false);
             }
         }
-        if (rendered > 0) Log.Info($"SubViewports renderizados: {rendered}", "Render");
     }
     private void UpdateStats(int width, int height)
     {
