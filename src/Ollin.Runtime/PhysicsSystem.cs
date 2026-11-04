@@ -22,6 +22,11 @@ internal sealed class PhysicsSystem
     {
         var bodies = new List<(Entity Entity, Collider2D Collider, Rigidbody2D? Body)>();
 
+        foreach (var characterEntity in scene.Entities)
+        {
+            if (characterEntity.Active) characterEntity.GetComponent<CharacterBody2D>()?.BeginPhysicsStep();
+        }
+
         foreach (var entity in scene.Entities.ToArray())
         {
             if (!entity.Active)
@@ -111,6 +116,11 @@ internal sealed class PhysicsSystem
                 }
 
                 Push(a, b, normal * penetration);
+
+                var platformDeltaA = b.Entity.GetComponent<MovingPlatform2D>()?.DeltaThisFrame ?? Vector2.Zero;
+                var platformDeltaB = a.Entity.GetComponent<MovingPlatform2D>()?.DeltaThisFrame ?? Vector2.Zero;
+                a.Entity.GetComponent<CharacterBody2D>()?.RegisterContact(normal, b.Entity);
+                b.Entity.GetComponent<CharacterBody2D>()?.RegisterContact(-normal, a.Entity);
             }
         }
 
@@ -178,20 +188,24 @@ internal sealed class PhysicsSystem
                             var overlapX = MathF.Min(bodyMax.X - cellMin.X, cellMax.X - bodyMin.X);
                             var overlapY = MathF.Min(bodyMax.Y - cellMin.Y, cellMax.Y - bodyMin.Y);
 
+                            Vector2 tileNormal;
                             if (overlapX < overlapY)
                             {
                                 var direction = body.Entity.Transform.Position.X < (cellMin.X + cellMax.X) * 0.5f ? -1f : 1f;
                                 body.Entity.Transform.Position += new Vector2(overlapX * direction, 0f);
                                 CancelVelocity(body, new Vector2(direction, 0f));
+                                tileNormal = new Vector2(direction, 0f);
                             }
                             else
                             {
                                 var direction = body.Entity.Transform.Position.Y < (cellMin.Y + cellMax.Y) * 0.5f ? -1f : 1f;
                                 body.Entity.Transform.Position += new Vector2(0f, overlapY * direction);
                                 CancelVelocity(body, new Vector2(0f, direction));
+                                tileNormal = new Vector2(0f, direction);
                             }
 
                             GetBounds(scene, body.Entity, body.Collider, out bodyMin, out bodyMax);
+                            body.Entity.GetComponent<CharacterBody2D>()?.RegisterContact(tileNormal, mapEntity);
                         }
                     }
 

@@ -643,6 +643,14 @@
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.CharacterAcceleration, Mode=TwoWay}" Increment="1" Minimum="0.01" FormatString="0.##" />
                       </Grid>
                       <TextBlock Classes="hint" TextWrapping="Wrap" Text="A/D o flechas para mover. Espacio/W/Arriba para saltar." />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1">
+                        <TextBlock Text="Pendiente máx." VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.CharacterMaxSlopeAngle, Mode=TwoWay}" Increment="1" Minimum="0" Maximum="89" FormatString="0.##" />
+                      </Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1">
+                        <TextBlock Text="Snap al suelo" VerticalAlignment="Center" Classes="hint" />
+                        <NumericUpDown Grid.Column="1" Value="{Binding Selected.CharacterFloorSnapLength, Mode=TwoWay}" Increment="0.02" Minimum="0" FormatString="0.##" />
+                      </Grid>
                     </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasHitbox}" Spacing="5">
                       <TextBlock Classes="section" Text="HITBOX" />

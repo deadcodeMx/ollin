@@ -17,6 +17,25 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.118.0] — 2026-11-04
+
+### Añadido
+
+- Snap al suelo y contactos persistentes del personaje.
+- Arrastre por plataformas móviles sin doble desplazamiento.
+- Subpasos adaptativos para evitar tunneling a alta velocidad.
+- Pruebas de contactos y plataforma móvil.
+
+## [6.117.0] — 2026-11-04
+
+### Añadido
+
+- Contactos de suelo, pared y techo en CharacterBody2D.
+- Normal de pendiente y pendiente máxima caminable.
+- Arrastre por plataformas móviles y velocidad de plataforma.
+- Persistencia de suelo y API de estado del personaje.
+- Inspectores de pendiente máxima y snap al suelo.
+
 ## [6.116.0] — 2026-11-03
 
 ### Añadido

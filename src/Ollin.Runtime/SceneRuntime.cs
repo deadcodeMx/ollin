@@ -495,7 +495,11 @@ public sealed class SceneRuntime
         DrainCoroutines();
         // Física en subpasos: evita que un cuerpo rápido atraviese un sólido
         // cuando el frame se alarga (pérdida de foco, recarga, etc.).
-        var physicsSteps = System.Math.Clamp((int)MathF.Ceiling(dt / 0.016f), 1, 8);
+        var maxSpeed = _scene.Entities
+            .Select(entity => entity.GetComponent<Rigidbody2D>()?.Velocity.Length() ?? 0f)
+            .DefaultIfEmpty(0f).Max();
+        var speedSteps = (int)MathF.Ceiling(maxSpeed * dt / 0.25f);
+        var physicsSteps = System.Math.Clamp(System.Math.Max((int)MathF.Ceiling(dt / 0.016f), speedSteps), 1, 16);
         var physicsDelta = dt / physicsSteps;
 
         for (var step = 0; step < physicsSteps; step++)

@@ -265,15 +265,20 @@ public sealed class MovingPlatform2D : Component, ITickable
     public float Phase { get; set; }
 
     [JsonIgnore] public Vector2 Origin { get; private set; }
+    [JsonIgnore] public Vector2 DeltaThisFrame { get; private set; }
+    [JsonIgnore] public Vector2 Velocity { get; private set; }
     private bool _initialized;
 
     public void OnUpdate(float deltaTime)
     {
         if (Owner is null) return;
         if (!_initialized) { Origin = Owner.Transform.Position; _initialized = true; }
+        var previous = Owner.Transform.Position;
         Phase += deltaTime * MathF.Max(0.01f, Speed);
         var t = (MathF.Sin(Phase) + 1f) * 0.5f;
         Owner.Transform.Position = Origin + Travel * t;
+        DeltaThisFrame = Owner.Transform.Position - previous;
+        Velocity = deltaTime > 0f ? DeltaThisFrame / deltaTime : Vector2.Zero;
     }
 
     public override Component CloneFor(Entity newOwner) => new MovingPlatform2D

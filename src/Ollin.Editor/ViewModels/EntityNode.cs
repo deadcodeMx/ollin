@@ -385,6 +385,18 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public decimal CharacterMaxSlopeAngle
+    {
+        get => (decimal)(CharacterBody?.MaxSlopeAngle ?? 50f);
+        set { if (CharacterBody is null || MathF.Abs(CharacterBody.MaxSlopeAngle - (float)value) < 0.001f) return; CharacterBody.MaxSlopeAngle = System.Math.Clamp((float)value, 0f, 89f); OnPropertyChanged(); _owner.MarkDirty(); }
+    }
+
+    public decimal CharacterFloorSnapLength
+    {
+        get => (decimal)(CharacterBody?.FloorSnapLength ?? 0.18f);
+        set { if (CharacterBody is null || MathF.Abs(CharacterBody.FloorSnapLength - (float)value) < 0.001f) return; CharacterBody.FloorSnapLength = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); }
+    }
+
     public decimal CharacterAcceleration
     {
         get => (decimal)(CharacterBody?.Acceleration ?? 60f);
@@ -1475,6 +1487,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(CharacterJumpSpeed));
         OnPropertyChanged(nameof(CharacterGravity));
         OnPropertyChanged(nameof(CharacterAcceleration));
+        OnPropertyChanged(nameof(CharacterMaxSlopeAngle));
+        OnPropertyChanged(nameof(CharacterFloorSnapLength));
         OnPropertyChanged(nameof(HasAudio));
         OnPropertyChanged(nameof(HasLight));
         OnPropertyChanged(nameof(HasCamera));
