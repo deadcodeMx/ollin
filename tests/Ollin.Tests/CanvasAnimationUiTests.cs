@@ -66,4 +66,15 @@ public sealed class CanvasAnimationUiTests
         Assert.True(copy.YSort);
         Assert.False(copy.Visible);
     }
+
+    [Fact]
+    public void SkeletonIKLlegaAlObjetivo()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Rig", Vector2.Zero);
+        var skeleton = entity.AddComponent(new Skeleton2D { UseIK = true, IKTarget = new Vector2(1f, 0f) });
+        skeleton.Solve();
+        Assert.Equal(3, skeleton.WorldPoints.Count);
+        Assert.InRange(Vector2.Distance(skeleton.WorldPoints[2], new Vector2(1f, 0f)), 0f, 0.05f);
+    }
 }

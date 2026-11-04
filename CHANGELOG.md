@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.128.0] — 2026-11-04
+
+### Añadido
+
+- IK de dos huesos con objetivo y dirección de codo.
+- Inspector de IK del esqueleto.
+- Prueba de IK.
+
 ## [6.127.0] — 2026-11-04
 
 ### Añadido

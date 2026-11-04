@@ -24,6 +24,9 @@ public sealed class Skeleton2D : Component, ITickable
     public Vector2 IKTarget { get; set; } = new(0.7f, 0.4f);
     public bool UseIK { get; set; }
 
+    /// <summary>1 o -1 para elegir el lado del codo.</summary>
+    public int BendDirection { get; set; } = 1;
+
     [JsonIgnore] public List<Vector2> WorldPoints { get; } = new();
 
     public void OnUpdate(float deltaTime) => Solve();
@@ -43,13 +46,39 @@ public sealed class Skeleton2D : Component, ITickable
             if (i == 0) start = root;
             WorldPoints.Add(start + new Vector2(MathF.Cos(angles[i]), MathF.Sin(angles[i])) * bone.Length);
         }
-        _ = IKTarget;
+        if (UseIK && Bones.Count >= 3) SolveTwoBone(root);
+    }
+
+    private void SolveTwoBone(Vector2 root)
+    {
+        var upper = Bones[1];
+        var lower = Bones[2];
+        var rootEnd = WorldPoints.Count > 0 ? WorldPoints[0] : root;
+        var target = root + IKTarget;
+        var a = MathF.Max(0.01f, upper.Length);
+        var b = MathF.Max(0.01f, lower.Length);
+        var offset = target - rootEnd;
+        var distance = System.Math.Clamp(offset.Length(), MathF.Abs(a - b) + 0.01f, a + b - 0.01f);
+        var baseAngle = MathF.Atan2(offset.Y, offset.X);
+        var cosine = System.Math.Clamp((a * a + distance * distance - b * b) / (2f * a * distance), -1f, 1f);
+        var shoulder = MathF.Acos(cosine);
+        var upperAngle = baseAngle + MathF.Sign(BendDirection) * shoulder;
+        var upperEnd = rootEnd + new Vector2(MathF.Cos(upperAngle), MathF.Sin(upperAngle)) * a;
+        WorldPoints[1] = upperEnd;
+        WorldPoints[2] = upperEnd + Vector2.Normalize(target - upperEnd) * b;
+
+        for (var i = 3; i < WorldPoints.Count; i++)
+        {
+            var direction = WorldPoints[i] - WorldPoints[i - 1];
+            var offsetFromParent = direction.LengthSquared() > 0.0001f ? Vector2.Normalize(direction) * Bones[i].Length : Vector2.Zero;
+            WorldPoints[i] = WorldPoints[i - 1] + offsetFromParent;
+        }
     }
 
     public override Component CloneFor(Entity newOwner) => new Skeleton2D
     {
         Enabled = Enabled,
         Bones = Bones.Select(bone => new SkeletonBone2D { Name = bone.Name, Parent = bone.Parent, Length = bone.Length, Angle = bone.Angle }).ToList(),
-        IKTarget = IKTarget, UseIK = UseIK, Owner = newOwner,
+        IKTarget = IKTarget, UseIK = UseIK, BendDirection = BendDirection, Owner = newOwner,
     };
 }

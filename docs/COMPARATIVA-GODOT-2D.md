@@ -40,7 +40,7 @@ tilemap/animación/UI y audio/navegación**.
 | Audio | Buses/efectos, 2D positional, listener, Doppler, pitch, polyphony, PulseAudio/ALSA | AudioSource, música/efectos, mixer básico; Linux silencioso | Posicional 2D, buses/efectos, pitch, polyphony, backend Linux |
 | Input | InputMap remapeable, deadzone, touch, mouse, 8 gamepads | Input Map con captura de teclado/mando, XInput y `/dev/input/js*` | Touch, deadzone, múltiples dispositivos |
 | Navegación | NavigationRegion2D/Polygon, agentes, obstáculos, avoidance | A* sobre tilemap | Navmesh/polígono, agentes, obstáculos dinámicos, avoidance |
-| Esqueleto/IK | Skeleton2D, Bone2D, skinning, IK | Huesos y preview; IK sin resolver | Skinning, render de malla, IK real |
+| Esqueleto/IK | Skeleton2D, Bone2D, skinning, IK | Huesos, preview e IK de dos huesos | Skinning, render de malla, IK de más huesos |
 | Localización | CSV/gettext, plurales, contextos, RTL, fuentes del sistema | JSON plano | Plurales, contextos, RTL, fallback de fuentes, selector de idioma |
 | Multijugador | MultiplayerSpawner/Synchronizer, RPC, ENet/WebSocket | No implementado | Todo |
 | Herramientas | Editor de TileSet, animación, shaders, perfiles, inspector remoto | Editor de escenas, inspector, scripts, prefabs | Editores de TileSet/animación/shader, profiler, inspector remoto |

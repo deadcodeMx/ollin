@@ -426,6 +426,10 @@ public sealed class EntityNode : ObservableObject
     public int Weapon2DAmmo { get => Entity.GetComponent<Weapon2D>()?.Ammo ?? -1; set { if (Entity.GetComponent<Weapon2D>() is { } w) { w.Ammo = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
     public bool HasSkeleton => Entity.GetComponent<Skeleton2D>() is not null;
+    public bool SkeletonUseIK { get => Entity.GetComponent<Skeleton2D>()?.UseIK ?? false; set { if (Entity.GetComponent<Skeleton2D>() is { } s) { s.UseIK = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+    public decimal SkeletonIKX { get => (decimal)(Entity.GetComponent<Skeleton2D>()?.IKTarget.X ?? 0f); set { if (Entity.GetComponent<Skeleton2D>() is { } s) { s.IKTarget = new Vector2((float)value, s.IKTarget.Y); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal SkeletonIKY { get => (decimal)(Entity.GetComponent<Skeleton2D>()?.IKTarget.Y ?? 0f); set { if (Entity.GetComponent<Skeleton2D>() is { } s) { s.IKTarget = new Vector2(s.IKTarget.X, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal SkeletonBend { get => Entity.GetComponent<Skeleton2D>()?.BendDirection ?? 1; set { if (Entity.GetComponent<Skeleton2D>() is { } s) { s.BendDirection = value < 0 ? -1 : 1; OnPropertyChanged(); _owner.MarkDirty(); } } }
     public string SkeletonInfo => Entity.GetComponent<Skeleton2D>() is { } s ? $"{s.Bones.Count} huesos" : "-";
 
     public bool HasTurnActor => Entity.GetComponent<TurnActor>() is not null;
@@ -1616,6 +1620,9 @@ _scriptFields = null;
         OnPropertyChanged(nameof(CanvasVisible));
         OnPropertyChanged(nameof(HasTurnActor));
         OnPropertyChanged(nameof(HasSkeleton));
+        OnPropertyChanged(nameof(SkeletonUseIK));
+        OnPropertyChanged(nameof(SkeletonIKX));
+        OnPropertyChanged(nameof(SkeletonIKY));
         OnPropertyChanged(nameof(HasTurnManager));
         OnPropertyChanged(nameof(TurnStatus));
         OnPropertyChanged(nameof(HasCardDeck));

@@ -1,13 +1,14 @@
-## Ollin Beta 6.127.0 — captura de rebinding
+## Ollin Beta 6.128.0 — IK de dos huesos
 
 ### Añadido
 
-- Captura de teclas en el Input Map.
-- Captura de botones de gamepad.
-- Bindings editables sin escribir el formato.
+- IK de dos huesos con objetivo.
+- Dirección de codo.
+- Inspector de IK del esqueleto.
+- Prueba de IK.
 
 ### Verificación
 
-- **216/216 pruebas**.
-- Instalador 6.127.0 instalado y abierto.
+- **217/217 pruebas**.
+- Instalador 6.128.0 instalado y abierto.
 - Demo técnica no publicada.
