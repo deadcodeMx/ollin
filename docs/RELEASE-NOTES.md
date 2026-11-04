@@ -1,14 +1,13 @@
-## Ollin Beta 6.202.0 — manejadores 3D fuera
+## Ollin Beta 6.203.0 — viewport 2D limpio
 
 ### Eliminado
 
-- Manejadores de gizmos 3D en la ventana principal.
-- Brush 3D y snap 3D.
-- Atajos 1/2/3 de gizmo 3D.
+- Código 3D muerto de ViewportControl: brush, gizmos, selección, raycast y helpers.
+- ~600 líneas menos.
 
 ### Verificación
 
 - **220/220 pruebas**.
-- Instalador 6.202.0 instalado.
+- Instalador 6.203.0 instalado.
 
-## [6.201.0] — 2026-11-04
+## [6.202.0] — 2026-11-04
