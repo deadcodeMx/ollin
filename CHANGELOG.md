@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.120.0] — 2026-11-04
+
+### Añadido
+
+- CanvasLayer con orden, visibilidad y Y-sort.
+- AnimationPlayer2D con timelines y tracks.
+- UiCanvas runtime con paneles, etiquetas, botones y barras.
+- Overlay de UI en editor y reproductor.
+- Pruebas de UI, animación y capas.
+
 ## [6.119.0] — 2026-11-04
 
 ### Añadido

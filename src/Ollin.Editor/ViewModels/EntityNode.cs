@@ -441,6 +441,19 @@ public sealed class EntityNode : ObservableObject
     public decimal DungeonHeight { get => Entity.GetComponent<DungeonGenerator2D>()?.Height ?? 20; set { if (Entity.GetComponent<DungeonGenerator2D>() is { } d) { d.Height = System.Math.Max(4, (int)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public decimal DungeonSeed { get => Entity.GetComponent<DungeonGenerator2D>()?.Seed ?? 12345; set { if (Entity.GetComponent<DungeonGenerator2D>() is { } d) { d.Seed = (int)value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public bool HasUiCanvas => Entity.GetComponent<UiCanvas>() is not null;
+    public string UiCanvasSummary => Entity.GetComponent<UiCanvas>() is { } canvas ? $"{canvas.Elements.Count} elementos" : "-";
+
+    public bool HasAnimationPlayer => Entity.GetComponent<AnimationPlayer2D>() is not null;
+    public string AnimationPlayerClip { get => Entity.GetComponent<AnimationPlayer2D>()?.Current ?? "-"; }
+    public bool AnimationPlayerPlaying { get => Entity.GetComponent<AnimationPlayer2D>()?.Playing ?? false; }
+    public decimal AnimationPlayerSpeed { get => (decimal)(Entity.GetComponent<AnimationPlayer2D>()?.Speed ?? 1f); set { if (Entity.GetComponent<AnimationPlayer2D>() is { } a) { a.Speed = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+
+    public bool HasCanvasLayer => Entity.GetComponent<CanvasLayer>() is not null;
+    public decimal CanvasOrder { get => Entity.GetComponent<CanvasLayer>()?.Order ?? 0; set { if (Entity.GetComponent<CanvasLayer>() is { } l) { l.Order = (int)value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+    public bool CanvasYSort { get => Entity.GetComponent<CanvasLayer>()?.YSort ?? false; set { if (Entity.GetComponent<CanvasLayer>() is { } l) { l.YSort = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+    public bool CanvasVisible { get => Entity.GetComponent<CanvasLayer>()?.Visible ?? true; set { if (Entity.GetComponent<CanvasLayer>() is { } l) { l.Visible = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } } }
+
     public bool HasEquipment => Entity.GetComponent<Equipment>() is not null;
     public string EquipmentSlotsText => Entity.GetComponent<Equipment>() is { } equipment
         ? string.Join(", ", equipment.Slots.Select(pair => $"{pair.Key}: {pair.Value}"))
@@ -1516,6 +1529,15 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasMovingPlatform));
         OnPropertyChanged(nameof(HasAnimationFSM));
         OnPropertyChanged(nameof(HasEquipment));
+        OnPropertyChanged(nameof(HasCanvasLayer));
+        OnPropertyChanged(nameof(HasAnimationPlayer));
+        OnPropertyChanged(nameof(HasUiCanvas));
+        OnPropertyChanged(nameof(UiCanvasSummary));
+        OnPropertyChanged(nameof(AnimationPlayerClip));
+        OnPropertyChanged(nameof(AnimationPlayerPlaying));
+        OnPropertyChanged(nameof(CanvasOrder));
+        OnPropertyChanged(nameof(CanvasYSort));
+        OnPropertyChanged(nameof(CanvasVisible));
         OnPropertyChanged(nameof(HasTurnActor));
         OnPropertyChanged(nameof(HasSkeleton));
         OnPropertyChanged(nameof(HasTurnManager));

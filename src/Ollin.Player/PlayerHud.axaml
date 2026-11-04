@@ -72,6 +72,22 @@
                     <TextBlock Text="{Binding Initial}" FontSize="26" FontWeight="Bold" Foreground="#E9A23B" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding QuantityText}" FontSize="10" Foreground="#E7EAF0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
     <Border IsHitTestVisible="False" Opacity="{Binding TransitionOpacity}" Background="{Binding TransitionBrush}" />
+    <ItemsControl IsVisible="{Binding IsUiVisible}" ItemsSource="{Binding UiElements}">
+      <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Border Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" Width="{Binding Width}" Height="{Binding Height}"
+                  Background="#CC151922" BorderBrush="#40E9A23B" BorderThickness="1" CornerRadius="6"
+                  IsVisible="{Binding Visible}" Padding="6">
+            <Grid>
+              <TextBlock Text="{Binding Text}" FontSize="{Binding FontSize}" Foreground="#F2F5FA" TextWrapping="Wrap" IsVisible="{Binding IsLabel}" VerticalAlignment="Center" />
+              <ProgressBar Minimum="0" Maximum="1" Value="{Binding Value}" Height="12" IsVisible="{Binding IsBar}" />
+              <Button Content="{Binding Text}" Command="{Binding Command}" IsVisible="{Binding IsButton}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
                   </Grid>
                 </Border>
               </DataTemplate>

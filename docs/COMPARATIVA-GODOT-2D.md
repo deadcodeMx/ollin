@@ -68,6 +68,67 @@ Todavía falta:
 - No hay pared-deslizamiento, escaleras ni plataformas atravesables desde abajo con lógica avanzada.
 - El one-way por tile es básico.
 
+## Limitaciones actuales de TileSet/TileMapLayer (6.119.0)
+
+Ya están implementados:
+
+- `TileSet` inline con textura, tamaño y columnas.
+- `TileDefinition` con región, colisión, offset, one-way y tag.
+- Varias capas `TileMapLayer` por entidad.
+- Colisión y render por capa.
+- Autotile básico de 16 vecinos.
+
+Todavía falta:
+
+- No hay editor visual de definiciones de `TileSet`; las colisiones por tile se editan en JSON.
+- `TileSet` no es un asset independiente reutilizable; vive dentro de la capa.
+- No hay terrenos ni reglas de autotile; solo la variante por vecinos.
+- No hay navegación, oclusión ni datos personalizados por tile.
+- No hay Y-sort entre capas.
+- El inspector solo edita la primera capa de una entidad.
+- No hay pintado por capa en el viewport.
+- No hay TileSet de varios atlas ni tiles alternativos.
+
+## Limitaciones actuales de Render, Animación y UI (6.120.0)
+
+### Canvas
+Implementado:
+- `CanvasLayer` con orden, visibilidad y Y-sort de sprites.
+- Orden de dibujo por capa.
+
+Falta:
+- Shaders de canvas (vertex/fragment/light).
+- Blend modes por item.
+- 2D meshes, `Line2D`, `Polygon2D` y MultiMesh.
+- Viewports/CanvasLayer con cámara propia.
+- Pixel perfect, antialiasing y snap.
+- Y-sort para tilemaps, partículas y huesos.
+
+### Animación
+Implementado:
+- `AnimationPlayer2D` con timelines, tracks de posición, rotación, escala, frame y audio.
+- Reproducción, loop y velocidad.
+
+Falta:
+- Editor visual de timeline.
+- Blend trees y transiciones.
+- Tracks de método/eventos y curvas Bézier.
+- Animación de propiedades arbitrarias del inspector.
+- Previsualización en el editor.
+
+### UI runtime
+Implementado:
+- `UiCanvas` con panel, etiqueta, botón y barra.
+- Overlay en editor y juego exportado.
+- Botones que escriben acciones en `GameState`.
+
+Falta:
+- Anchors, layouts y contenedores.
+- Temas, fuentes y estilos.
+- Listas, texto enriquecido, scroll y foco.
+- Navegación con mando y accesibilidad.
+- Editor visual de UI.
+
 ## Lista priorizada para "2D completo"
 
 ### P0 — Sin esto no se puede llamar motor 2D completo

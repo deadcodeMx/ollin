@@ -195,7 +195,7 @@ public sealed class Renderer2D : IDisposable
     }
     private void DrawSprites(Scene scene, Vector2 cameraPosition)
     {
-        var drawables = new List<(Entity Entity, SpriteRenderer Sprite)>();
+        var drawables = new List<(Entity Entity, SpriteRenderer Sprite, CanvasLayer? Layer)>();
         foreach (var entity in scene.Entities)
         {
             if (!entity.Active)
@@ -204,19 +204,28 @@ public sealed class Renderer2D : IDisposable
             }
 
             var sprite = entity.GetComponent<SpriteRenderer>();
+            var layer = entity.GetComponent<CanvasLayer>();
+            if (layer is { Visible: false }) continue;
             if (sprite is { Enabled: true, Visible: true })
             {
-                drawables.Add((entity, sprite));
+                drawables.Add((entity, sprite, layer));
             }
-        }
 
+        }
         drawables.Sort((a, b) =>
         {
+            var layerOrder = (a.Layer?.Order ?? 0).CompareTo(b.Layer?.Order ?? 0);
+            if (layerOrder != 0) return layerOrder;
+            if (a.Layer?.YSort == true || b.Layer?.YSort == true)
+            {
+                var yOrder = b.Entity.Transform.Position.Y.CompareTo(a.Entity.Transform.Position.Y);
+                if (yOrder != 0) return yOrder;
+            }
             var order = a.Sprite.SortingOrder.CompareTo(b.Sprite.SortingOrder);
             return order != 0 ? order : string.CompareOrdinal(a.Entity.Name, b.Entity.Name);
         });
 
-        foreach (var (entity, sprite) in drawables)
+        foreach (var (entity, sprite, _) in drawables)
         {
             var world = scene.GetWorldMatrix(entity);
             var parallax = ParallaxOffset(cameraPosition, sprite.Parallax);

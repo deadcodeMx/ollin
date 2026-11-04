@@ -416,6 +416,26 @@
                 </ItemsControl>
 
                 <!-- Menú de pausa -->
+        <ItemsControl IsVisible="{Binding IsUiVisible}" ItemsSource="{Binding UiElements}" ZIndex="7">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><Canvas /></ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" Width="{Binding Width}" Height="{Binding Height}"
+                      Background="#CC151922" BorderBrush="#40E9A23B" BorderThickness="1" CornerRadius="6"
+                      IsVisible="{Binding Visible}" Padding="6">
+                <Grid>
+                  <TextBlock Text="{Binding Text}" FontSize="{Binding FontSize}" Foreground="#F2F5FA"
+                             TextWrapping="Wrap" IsVisible="{Binding IsLabel}" VerticalAlignment="Center" />
+                  <ProgressBar Minimum="0" Maximum="1" Value="{Binding Value}" Height="12" IsVisible="{Binding IsBar}" />
+                  <Button Content="{Binding Text}" Command="{Binding Command}" IsVisible="{Binding IsButton}"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
         <Border IsVisible="{Binding IsInventoryVisible}" Background="#B305070B" ZIndex="8">
           <Border Background="{DynamicResource Ollin.Panel}" BorderBrush="{DynamicResource Ollin.Border}"
                   BorderThickness="1" CornerRadius="10" Padding="20" Width="430"
@@ -741,6 +761,22 @@
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Ancho tile" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TileSetTileWidth, Mode=TwoWay}" Increment="1" Minimum="1" FormatString="0" /></Grid>
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Alto tile" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.TileSetTileHeight, Mode=TwoWay}" Increment="1" Minimum="1" FormatString="0" /></Grid>
                       <TextBlock Text="{Binding Selected.TileSetSummary}" Classes="hint" />
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasCanvasLayer}" Spacing="5">
+                      <TextBlock Classes="section" Text="CAPA DE CANVAS" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Orden" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.CanvasOrder, Mode=TwoWay}" Increment="1" FormatString="0" /></Grid>
+                      <CheckBox Content="Y-sort" IsChecked="{Binding Selected.CanvasYSort, Mode=TwoWay}" FontSize="11.5" />
+                      <CheckBox Content="Visible" IsChecked="{Binding Selected.CanvasVisible, Mode=TwoWay}" FontSize="11.5" />
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasAnimationPlayer}" Spacing="5">
+                      <TextBlock Classes="section" Text="ANIMATION PLAYER" />
+                      <TextBlock Text="{Binding Selected.AnimationPlayerClip, StringFormat=Clip: {0}}" Classes="hint" />
+                      <TextBlock Text="{Binding Selected.AnimationPlayerPlaying, StringFormat=Reproduciendo: {0}}" Classes="hint" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.AnimationPlayerSpeed, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasUiCanvas}" Spacing="5">
+                      <TextBlock Classes="section" Text="UI CANVAS" />
+                      <TextBlock Text="{Binding Selected.UiCanvasSummary}" Classes="hint" />
                     </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasRotator}" Spacing="5">
                       <TextBlock Classes="section" Text="ROTADOR" />

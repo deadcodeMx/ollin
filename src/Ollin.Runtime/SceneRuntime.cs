@@ -53,6 +53,20 @@ public sealed class SceneRuntime
     /// <summary>HUD de la partida (barras, etiquetas, mensajes y fin de partida).</summary>
     public HudModel Hud => _hud;
 
+    /// <summary>Canvas de UI del jugador o del primer canvas activo.</summary>
+    public Ollin.Core.Model.Components.UiCanvas? PlayerUi
+    {
+        get
+        {
+            if (_scene is null) return null;
+            var player = _scene.Entities.FirstOrDefault(entity => entity.Active &&
+                entity.Tags.Any(tag => tag.Equals("player", StringComparison.OrdinalIgnoreCase)) &&
+                entity.GetComponent<Ollin.Core.Model.Components.UiCanvas>() is not null);
+            return (player ?? _scene.Entities.FirstOrDefault(entity => entity.Active &&
+                entity.GetComponent<Ollin.Core.Model.Components.UiCanvas>() is not null))
+                ?.GetComponent<Ollin.Core.Model.Components.UiCanvas>();
+        }
+    }
     /// <summary>Inventario del jugador (etiqueta "player") o del primer inventario activo.</summary>
     public Ollin.Core.Model.Components.Inventory? PlayerInventory
     {

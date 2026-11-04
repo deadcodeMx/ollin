@@ -17,6 +17,9 @@ public sealed partial class MainViewModel
 
     public ObservableCollection<InventorySlotView> InventoryItems { get; } = new();
     public ObservableCollection<EquipmentSlotView> EquipmentItems { get; } = new();
+    public ObservableCollection<UiElementView> UiElements { get; } = new();
+    private string _uiSignature = string.Empty;
+    public bool IsUiVisible { get; private set; }
 
     public bool IsInventoryVisible => _inventoryOpen && IsPlaying;
 
@@ -174,6 +177,27 @@ public sealed partial class MainViewModel
 
             NotifyPlayState();
         }
+    }
+
+    public void InvokeUiAction(string action)
+    {
+        _runtime.GameState.SetFlag($"ui.{action}", true);
+        StatusMessage = $"UI: {action}";
+    }
+
+    private void RefreshUi()
+    {
+        var canvas = _runtime.PlayerUi;
+        var signature = canvas is null ? "none" : string.Join("|", canvas.Elements.Select(element =>
+            $"{element.Id}:{element.Kind}:{element.Text}:{element.X}:{element.Y}:{element.Visible}:{element.Value}:{element.Max}"));
+        IsUiVisible = canvas is { Visible: true } && IsPlaying;
+        if (signature == _uiSignature) return;
+        _uiSignature = signature;
+        UiElements.Clear();
+        if (canvas is not null)
+            foreach (var element in canvas.Elements)
+                UiElements.Add(new UiElementView(element, InvokeUiAction));
+        OnPropertyChanged(nameof(IsUiVisible));
     }
 
     private void RefreshInventory()

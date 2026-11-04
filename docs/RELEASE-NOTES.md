@@ -1,16 +1,21 @@
-## Ollin Beta 6.119.0 — TileSet y TileMapLayer
+## Ollin Beta 6.120.0 — Canvas, timeline y UI runtime
 
 ### Añadido
 
-- **TileSet** con textura, tamaño y definición por tile.
-- **Colisión por tile** y one-way por tile.
-- **TileMapLayer** con múltiples capas por entidad.
-- Render de capas y regiones de TileSet.
-- Inspector básico de TileSet.
-- IA y floor snap usan la colisión por tile.
+- `CanvasLayer` con orden, visibilidad y Y-sort.
+- `AnimationPlayer2D` con timelines y tracks de transformación, frame y audio.
+- `UiCanvas` runtime con panel, etiqueta, botón y barra.
+- Overlay de UI en editor y reproductor.
+- Inspector de AnimationPlayer y UI Canvas.
+
+### Limitaciones
+
+- Sin shaders de canvas, blend modes, meshes ni viewports.
+- Timeline sin editor visual ni blend trees.
+- UI sin anchors, layouts, temas, listas ni foco.
 
 ### Verificación
 
-- **209/209 pruebas**.
-- Instalador 6.119.0 instalado y abierto.
+- **212/212 pruebas**.
+- Instalador 6.120.0 instalado y abierto.
 - Demo técnica no publicada.
