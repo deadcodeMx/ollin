@@ -11,3 +11,6 @@
 - Instalador 6.186.0 instalado correctamente.
 
 ## [6.185.0] — 2026-11-04
+### Límite conocido
+
+- SubViewport2D renderiza al FBO (contenido confirmado con ReadPixels), pero la composición final en el editor Avalonia no se muestra. Queda pendiente un experimento aislado fuera del control OpenGL.
