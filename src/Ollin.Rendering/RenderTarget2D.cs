@@ -10,6 +10,7 @@ public sealed class RenderTarget2D : IDisposable
     private readonly uint _depth;
     private readonly int _width;
     private readonly int _height;
+    private int _previousFramebuffer;
 
     public unsafe RenderTarget2D(GL gl, int width, int height)
     {
@@ -47,6 +48,7 @@ public sealed class RenderTarget2D : IDisposable
 
     public void Bind()
     {
+        _previousFramebuffer = _gl.GetInteger((GetPName)0x8CA6);
         _gl.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
         _gl.Viewport(0, 0, (uint)_width, (uint)_height);
         _gl.Disable(EnableCap.ScissorTest);
@@ -54,7 +56,7 @@ public sealed class RenderTarget2D : IDisposable
 
     public void Unbind()
     {
-        _gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        _gl.BindFramebuffer(FramebufferTarget.Framebuffer, (uint)_previousFramebuffer);
     }
 
     public void Dispose()

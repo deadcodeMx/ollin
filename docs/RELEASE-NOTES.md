@@ -1,22 +1,19 @@
-## Ollin Beta 6.172.0 — SubViewport/RTT
-
-### Añadido
-
-- `RenderTarget2D` con framebuffer, color y depth.
-- `SubViewport2D` con `UseTexture`.
-- Composición de la textura del subviewport.
-- Borde de depuración.
+## Ollin Beta 6.173.0 — framebuffer de Avalonia
 
 ### Corregido
 
-- `SubViewport2D` no estaba registrado en el discriminador JSON.
-- `RenderSubViewports` no se invocaba desde el viewport.
+- `RenderTarget2D` restaura el framebuffer anterior de Avalonia en lugar de asumir el framebuffer 0.
+- Esto explica por qué la composición del SubViewport no aparecía.
+
+### Añadido
+
+- `RenderTarget2D` con color/depth.
+- SubViewport con render-to-texture y borde.
 
 ### Verificación
 
 - **236/236 pruebas**.
-- Instalador 6.172.0 instalado.
-- Se cargó una escena con SubViewport sin errores.
-- **No se observó claramente el overlay** en la captura; falta validar la composición con una cámara más distinta y revisar el orden de dibujo.
+- Instalador 6.173.0 instalado.
+- **La composición visual del SubViewport sigue sin verificarse en pantalla**; el fallo de framebuffer está corregido, pero no tuve una captura concluyente.
 
-## [6.171.0] — 2026-11-04
+## [6.172.0] — 2026-11-04

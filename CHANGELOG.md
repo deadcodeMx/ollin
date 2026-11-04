@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.173.0] — 2026-11-04
+
+### Corregido
+
+- El render target restaura el framebuffer de Avalonia en lugar de asumir el framebuffer 0.
+- Eliminada instrumentación temporal de subviewports.
+
 ## [6.172.0] — 2026-11-04
 
 ### Corregido
