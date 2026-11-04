@@ -901,6 +901,32 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     /// <summary>Crea (o reutiliza) un script para la entidad seleccionada y lo enlaza.</summary>
+    /// <summary>Crea un script suelto en el proyecto, sin asociarlo a una entidad.</summary>
+    public void CreateScriptFile(string? requestedName = null, string? requestedFolder = null)
+    {
+        if (IsPlaying) return;
+
+        var suggested = string.IsNullOrWhiteSpace(requestedName) ? "NuevoScript" : requestedName!;
+        var className = SanitizeIdentifier(suggested);
+        var folder = string.IsNullOrWhiteSpace(requestedFolder)
+            ? _scripts.ScriptsFolder
+            : Path.Combine(ProjectRoot, requestedFolder);
+        Directory.CreateDirectory(folder);
+        var fullPath = Path.Combine(folder, className + ".cs");
+        if (File.Exists(fullPath))
+        {
+            StatusMessage = $"Ya existe {className}.cs en esa carpeta";
+            return;
+        }
+
+        File.WriteAllText(fullPath, ScriptTemplate(className, "Entidad"));
+        ReloadScripts();
+        RefreshProjectFiles();
+        var relative = Path.GetRelativePath(ProjectRoot, fullPath).Replace('\\', '/');
+        StatusMessage = $"Script creado: {relative}";
+        Log.Info($"Script creado: {relative}", "Scripts");
+    }
+
     public void CreateScriptForSelected(string? requestedName = null, string? requestedFolder = null)
     {
         if (IsPlaying || Selected is null)

@@ -528,6 +528,7 @@
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
                       <TextBlock Text="Ctrl+S guarda y recarga" FontSize="10.5" VerticalAlignment="Center"
                                  Foreground="{DynamicResource Ollin.TextDim}" />
+                      <Button Classes="tool" Content="Grafo" Click="OnOpenGraph" ToolTip.Tip="Editar el grafo de esta entidad" />
                       <Button Classes="tool accent" Content="Guardar" Click="OnSaveScript" />
                     </StackPanel>
                   </Grid>
@@ -1909,6 +1910,7 @@
                 <TextBlock Classes="section" Text="{Binding ProjectPathText}" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
                   <Button Classes="tool" Content="+ Carpeta" Click="OnCreateFolder" ToolTip.Tip="Crear carpeta" />
+                  <Button Classes="tool" Content="+ Script" Click="OnCreateScriptFile" ToolTip.Tip="Crear script" />
                   <Button Classes="tool" Content="⟳" Click="OnRefreshFiles" ToolTip.Tip="Actualizar archivos" />
                 </StackPanel>
               </Grid>

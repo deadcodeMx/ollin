@@ -26,12 +26,12 @@ public sealed class ComponentInspectorView : UserControl
 
     private readonly MainViewModel _viewModel;
     private Entity? _entity;
-    private readonly StackPanel _root = new() { Spacing = 8, Margin = new Thickness(16) };
+    private readonly StackPanel _root = new() { Spacing = 8, Margin = new Thickness(12) };
 
     public ComponentInspectorView(MainViewModel viewModel)
     {
         _viewModel = viewModel;
-        Content = new ScrollViewer { Content = _root };
+        Content = new ScrollViewer { Content = _root, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
         Rebuild();
     }
 
@@ -52,6 +52,33 @@ public sealed class ComponentInspectorView : UserControl
         _root.Children.Add(new TextBlock { Text = _entity.Name, FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) });
         _root.Children.Add(new TextBlock { Text = "Solo componentes 2D del motor. Edita valores y guarda al cerrar.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) });
 
+        var topActions = new WrapPanel { Margin = new Thickness(0, 4, 0, 2) };
+        var addScript = new Button
+        {
+            Content = _entity.GetComponent<ScriptComponent>() is null ? "Añadir scripting" : "Añadir otro script",
+            Margin = new Thickness(0, 0, 6, 4),
+        };
+        addScript.Click += (_, _) => { _entity.AddComponent(new ScriptComponent()); _viewModel.MarkDirty("componente"); Rebuild(); };
+        topActions.Children.Add(addScript);
+        var addGraph = new Button
+        {
+            Content = _entity.GetComponent<NodeGraph>() is null ? "Añadir grafo" : "Editar grafo",
+            Margin = new Thickness(0, 0, 6, 4),
+        };
+        addGraph.Click += (_, _) =>
+        {
+            if (_entity.GetComponent<NodeGraph>() is null)
+            {
+                _entity.AddComponent(new NodeGraph());
+                _viewModel.MarkDirty("componente");
+                Rebuild();
+                return;
+            }
+            var window = new NodeGraphWindow(_viewModel, _entity);
+            if (TopLevel.GetTopLevel(this) is Window owner) window.Show(owner); else window.Show();
+        };
+        topActions.Children.Add(addGraph);
+        _root.Children.Add(topActions);
         foreach (var component in _entity.Components.ToList())
         {
             var panel = new StackPanel { Spacing = 4 };
@@ -70,9 +97,34 @@ public sealed class ComponentInspectorView : UserControl
         }
 
         var available = Catalog.Where(type => _entity.Components.All(c => c.GetType() != type)).ToList();
+
+        var quick = new WrapPanel { Margin = new Thickness(0, 6, 0, 0) };
+        if (_entity.GetComponent<ScriptComponent>() is null)
+        {
+            var scriptButton = new Button { Content = "Añadir scripting", Margin = new Thickness(0, 0, 6, 4) };
+            scriptButton.Click += (_, _) => { _entity.AddComponent(new ScriptComponent()); _viewModel.MarkDirty("componente"); Rebuild(); };
+            quick.Children.Add(scriptButton);
+        }
+        if (_entity.GetComponent<NodeGraph>() is null)
+        {
+            var graphButton = new Button { Content = "Añadir grafo", Margin = new Thickness(0, 0, 6, 4) };
+            graphButton.Click += (_, _) => { _entity.AddComponent(new NodeGraph()); _viewModel.MarkDirty("componente"); Rebuild(); };
+            quick.Children.Add(graphButton);
+        }
+        else
+        {
+            var editButton = new Button { Content = "Editar grafo", Margin = new Thickness(0, 0, 6, 4) };
+            editButton.Click += (_, _) =>
+            {
+                var window = new NodeGraphWindow(_viewModel, _entity);
+                if (TopLevel.GetTopLevel(this) is Window owner) window.Show(owner); else window.Show();
+            };
+            quick.Children.Add(editButton);
+        }
+        if (quick.Children.Count > 0) _root.Children.Add(quick);
         if (available.Count > 0)
         {
-            var combo = new ComboBox { ItemsSource = available.Select(t => t.Name).ToList(), SelectedIndex = 0, Width = 260 };
+            var combo = new ComboBox { ItemsSource = available.Select(DisplayName).ToList(), SelectedIndex = 0, HorizontalAlignment = HorizontalAlignment.Stretch };
             var add = new Button { Content = "Añadir componente" };
             add.Click += (_, _) =>
             {
@@ -82,9 +134,13 @@ public sealed class ComponentInspectorView : UserControl
                     _entity.AddComponent(created); _viewModel.MarkDirty("componente"); Rebuild();
                 }
             };
-            _root.Children.Add(new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Margin = new Thickness(0, 8, 0, 0), Children = { combo, add } });
+            _root.Children.Add(new StackPanel { Spacing = 6, Margin = new Thickness(0, 8, 0, 0), Children = { combo, add } });
         }
     }
+
+    private static string DisplayName(Type type) =>
+        type == typeof(ScriptComponent) ? "Script (ScriptComponent)" :
+        type == typeof(NodeGraph) ? "Grafo de nodos" : type.Name;
 
     private static IEnumerable<PropertyInfo> Editable(Type type) =>
         type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -96,8 +152,8 @@ public sealed class ComponentInspectorView : UserControl
     private Control Editor(Component component, PropertyInfo property)
     {
         var value = property.GetValue(component);
-        var row = new Grid { ColumnDefinitions = new ColumnDefinitions("150,*") };
-        row.Children.Add(new TextBlock { Text = property.Name, FontSize = 11, VerticalAlignment = VerticalAlignment.Center, Foreground = new SolidColorBrush(Color.Parse("#B8C0D0")) });
+        var row = new Grid { ColumnDefinitions = new ColumnDefinitions("104,*") };
+        row.Children.Add(new TextBlock { Text = property.Name, FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap, Foreground = new SolidColorBrush(Color.Parse("#B8C0D0")) });
 
         Control field;
         if (property.PropertyType == typeof(bool))
@@ -114,7 +170,10 @@ public sealed class ComponentInspectorView : UserControl
         }
         else if (property.PropertyType == typeof(Vector2) || property.PropertyType == typeof(Vector3) || property.PropertyType == typeof(Vector4))
         {
-            field = VectorEditor(component, property, value);
+            var stack = new StackPanel { Spacing = 3 };
+            stack.Children.Add(new TextBlock { Text = property.Name, FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#B8C0D0")) });
+            stack.Children.Add(VectorEditor(component, property, value));
+            return stack;
         }
         else
         {
@@ -122,6 +181,7 @@ public sealed class ComponentInspectorView : UserControl
             box.LostFocus += (_, _) => Set(component, property, Parse(box.Text, property.PropertyType, value));
             field = box;
         }
+        field.HorizontalAlignment = HorizontalAlignment.Stretch;
         Grid.SetColumn(field, 1); row.Children.Add(field);
         return row;
     }
@@ -132,11 +192,11 @@ public sealed class ComponentInspectorView : UserControl
         var system = value ?? Activator.CreateInstance(property.PropertyType)!;
         var values = new float[count];
         for (var i = 0; i < count; i++) values[i] = (float)(property.PropertyType.GetField("X") is null ? 0 : ((dynamic)system).GetType().GetField(i switch { 0 => "X", 1 => "Y", 2 => "Z", _ => "W" })!.GetValue(system) ?? 0f);
-        var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
+        var panel = new WrapPanel { Orientation = Orientation.Horizontal };
         var boxes = new NumericUpDown[count];
         for (var i = 0; i < count; i++)
         {
-            var box = new NumericUpDown { Value = (decimal)values[i], Increment = 0.1m, FormatString = "0.##", Width = 82 };
+            var box = new NumericUpDown { Value = (decimal)values[i], Increment = 0.1m, FormatString = "0.##", Width = 118, MinWidth = 106, Margin = new Thickness(0, 0, 4, 4) };
             box.ValueChanged += (_, _) =>
             {
                 var v = new float[count];

@@ -1,16 +1,17 @@
-## Ollin Beta 6.213.0 — inspector directo
+## Ollin Beta 6.214.0 — inspector y archivos
 
-### Cambiado
+### Corregido
 
-- El Inspector 2D se abre al seleccionar una entidad.
-- Eliminados botón y menú redundantes.
-- Barra superior simplificada.
-- Panel derecho permanente y limpio.
+- Inspector: campos vectoriales caben en el panel; scroll horizontal desactivado.
+- Botones directos **Añadir scripting** y **Añadir/Editar grafo**.
+- Archivos: crear carpetas y scripts desde botones y menú contextual; script suelto sin entidad.
+- Grafo: arrastre de nodos corregido.
+- Editor de scripts: botón **Grafo**.
 
 ### Verificación
 
 - Build 0 errores.
 - 134/134 pruebas.
-- Instalador 6.213.0 instalado.
+- Instalador 6.214.0 instalado.
 
-## [6.212.0] — 2026-11-04
+## [6.213.0] — 2026-11-04

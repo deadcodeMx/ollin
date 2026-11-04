@@ -660,6 +660,29 @@ public partial class MainWindow : Window
         ViewModel.AttachScript(selected.Entity, node.FullPath);
     }
 
+    private async void OnCreateScriptFile(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null) return;
+        var node = FileTree.SelectedItem as ViewModels.FileNode;
+        var folder = node is { IsFolder: true }
+            ? Path.GetRelativePath(ViewModel.ProjectRoot, node.FullPath).Replace('\\', '/')
+            : node is not null ? Path.GetRelativePath(ViewModel.ProjectRoot, Path.GetDirectoryName(node.FullPath)!).Replace('\\', '/') : "scripts";
+        var window = new CreateScriptWindow("NuevoScript", folder);
+        if (await window.ShowDialog<bool>(this))
+            ViewModel.CreateScriptFile(window.ScriptName, window.ScriptFolder);
+    }
+
+    private async void OnCreateScriptFileHere(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is null) return;
+        var node = (sender as MenuItem)?.DataContext as ViewModels.FileNode;
+        var folder = node is { IsFolder: true }
+            ? Path.GetRelativePath(ViewModel.ProjectRoot, node.FullPath).Replace('\\', '/')
+            : node is not null ? Path.GetRelativePath(ViewModel.ProjectRoot, Path.GetDirectoryName(node.FullPath)!).Replace('\\', '/') : "scripts";
+        var window = new CreateScriptWindow("NuevoScript", folder);
+        if (await window.ShowDialog<bool>(this))
+            ViewModel.CreateScriptFile(window.ScriptName, window.ScriptFolder);
+    }
     private async void OnCreateScriptHere(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel is null) return;
