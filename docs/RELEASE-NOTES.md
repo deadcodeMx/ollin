@@ -1,20 +1,14 @@
-## Ollin Beta 6.146.0 — multijugador básico
+## Ollin Beta 6.147.0 — curvas de animación
 
 ### Añadido
 
-- Transporte UDP de snapshots.
-- NetworkIdentity y NetworkTransform.
-- Sincronización de posición, rotación y escala.
-- API Network para scripts.
-- Prueba de serialización.
-
-### Limitaciones
-
-- Sin predicción, interpolación, autoridad ni salas.
-- Sincronización por snapshots a 20 Hz.
+- Tangentes de entrada/salida por keyframe.
+- Interpolación Hermite/Bézier.
+- Editor de tangentes.
+- Prueba de curva.
 
 ### Verificación
 
-- **226/226 pruebas**.
-- Instalador 6.146.0 instalado y abierto.
+- **227/227 pruebas**.
+- Instalador 6.147.0 instalado y abierto.
 - Demo técnica no publicada.

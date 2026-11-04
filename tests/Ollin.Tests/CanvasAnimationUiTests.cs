@@ -171,4 +171,21 @@ public sealed class CanvasAnimationUiTests
         Assert.Equal(3, skeleton.BindPoints.Count);
         Assert.Equal(3, skeleton.WorldPoints.Count);
     }
+
+    [Fact]
+    public void TangentesCurvanLaInterpolacion()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Objeto", Vector2.Zero);
+        var player = entity.AddComponent(new AnimationPlayer2D
+        {
+            Clips = new()
+            {
+                new AnimationTimeline { Name = "curve", Duration = 1f, Loop = false, Tracks = new() { new AnimationTrack { Property = "position", Keys = new() { new AnimationKeyframe { Time = 0f, Value = Vector2.Zero, OutTangent = new Vector2(10f, 0f) }, new AnimationKeyframe { Time = 1f, Value = new Vector2(10f, 0f) } } } } },
+            },
+        });
+        player.Play("curve");
+        player.OnUpdate(0.5f);
+        Assert.InRange(entity.Transform.Position.X, 6.2f, 6.3f);
+    }
 }

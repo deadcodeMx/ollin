@@ -24,6 +24,12 @@ public sealed class AnimationKeyframe
     public string? Text { get; set; }
 
     public AnimationEasing Easing { get; set; } = AnimationEasing.Linear;
+
+    /// <summary>Tangente de salida para interpolación Bézier/Hermite.</summary>
+    public Vector2 OutTangent { get; set; }
+
+    /// <summary>Tangente de entrada para interpolación Bézier/Hermite.</summary>
+    public Vector2 InTangent { get; set; }
 }
 
 public sealed class AnimationTrack
@@ -142,7 +148,9 @@ public sealed class AnimationPlayer2D : Component, ITickable
             var span = MathF.Max(0.0001f, next.Time - previous.Time);
             var t = System.Math.Clamp((Time - previous.Time) / span, 0f, 1f);
             t = Ease(t, next.Easing);
-            var value = Vector2.Lerp(previous.Value, next.Value, t);
+            var value = (previous.OutTangent.LengthSquared() > 0.0001f || next.InTangent.LengthSquared() > 0.0001f)
+                ? Hermite(previous.Value, previous.OutTangent, next.Value, next.InTangent, t)
+                : Vector2.Lerp(previous.Value, next.Value, t);
             var number = previous.Number + (next.Number - previous.Number) * t;
 
             if (track.Property == "event")
@@ -171,6 +179,17 @@ public sealed class AnimationPlayer2D : Component, ITickable
         }
     }
 
+    private static Vector2 Hermite(Vector2 a, Vector2 outTangent, Vector2 b, Vector2 inTangent, float t)
+    {
+        var t2 = t * t;
+        var t3 = t2 * t;
+        var h00 = 2f * t3 - 3f * t2 + 1f;
+        var h10 = t3 - 2f * t2 + t;
+        var h01 = -2f * t3 + 3f * t2;
+        var h11 = t3 - t2;
+        return h00 * a + h10 * outTangent + h01 * b + h11 * inTangent;
+    }
+
     private static float Ease(float t, AnimationEasing easing) => easing switch
     {
         AnimationEasing.Smooth => t * t * (3f - 2f * t),
@@ -189,7 +208,7 @@ public sealed class AnimationPlayer2D : Component, ITickable
             Tracks = clip.Tracks.Select(track => new AnimationTrack
             {
                 Property = track.Property,
-                Keys = track.Keys.Select(key => new AnimationKeyframe { Time = key.Time, Value = key.Value, Number = key.Number, Text = key.Text, Easing = key.Easing }).ToList(),
+                Keys = track.Keys.Select(key => new AnimationKeyframe { Time = key.Time, Value = key.Value, Number = key.Number, Text = key.Text, Easing = key.Easing, OutTangent = key.OutTangent, InTangent = key.InTangent }).ToList(),
             }).ToList(),
         }).ToList(),
         PlayOnStart = PlayOnStart, Speed = Speed, Owner = newOwner,

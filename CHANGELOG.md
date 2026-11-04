@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.147.0] — 2026-11-04
+
+### Añadido
+
+- Tangentes de entrada/salida por keyframe.
+- Interpolación Hermite/Bézier.
+- Editor de tangentes.
+- Prueba de curva.
+
 ## [6.146.0] — 2026-11-04
 
 ### Añadido
