@@ -1,15 +1,13 @@
-## Ollin Beta 6.189.0 — grafo a C#
+## Ollin Beta 6.190.0 — grafo y acciones rápidas
 
 ### Añadido
 
-- Generador de código C# desde el grafo visual.
-- Botón "</>" en el editor de nodos.
-- Copia del código generado.
-- Prueba de generación.
+- Acciones avanzadas del grafo generan llamadas reales a `ActionExecutor`.
+- Acciones rápidas en el inspector vacío: entidad, sprite y guía 2D.
 
-### Linux`n`n- Paquete `Ollin-6.189.0-linux-x64.tar.gz` actualizado.`n`n### Verificación
+### Verificación
 
 - **237/237 pruebas**.
-- Instalador 6.189.0 instalado.
+- Instalador 6.190.0 instalado.
 
-## [6.188.0] — 2026-11-04
+## [6.189.0] — 2026-11-04

@@ -115,8 +115,7 @@ public static class GraphCodeGenerator
                 sb.AppendLine($"        if ({target} is {{ }} point) Position = Scene!.GetWorldPosition(point);");
                 break;
             default:
-                sb.AppendLine($"        // Acción del grafo: {node.Action} sobre '{node.TargetName}'.");
-                sb.AppendLine("        // TODO: implementar con la API de Ollin.");
+                sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", {node.Amount:0.###}f);");
                 break;
         }
     }
