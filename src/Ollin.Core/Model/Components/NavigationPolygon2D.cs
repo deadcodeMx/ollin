@@ -39,6 +39,8 @@ public sealed class NavigationAgent2D : Component, ITickable
     public Vector2 Target { get; set; }
     public float Speed { get; set; } = 3f;
     public float StopDistance { get; set; } = 0.1f;
+    public float AvoidanceRadius { get; set; } = 1f;
+    public float Separation { get; set; } = 1.2f;
     [System.Text.Json.Serialization.JsonIgnore] public List<Vector2> Path { get; private set; } = new();
     private int _index;
 
@@ -65,14 +67,25 @@ public sealed class NavigationAgent2D : Component, ITickable
             _index++;
             return;
         }
-        var step = Vector2.Normalize(delta) * Speed * deltaTime;
+        var direction = Vector2.Normalize(delta);
+        var separation = Vector2.Zero;
+        foreach (var other in scene.Entities)
+        {
+            if (other.Id == Owner.Id || !other.Active) continue;
+            if (other.GetComponent<NavigationAgent2D>() is not { Enabled: true }) continue;
+            var away = position - scene.GetWorldPosition(other);
+            var distance = away.Length();
+            if (distance > 0.0001f && distance < AvoidanceRadius) separation += Vector2.Normalize(away) * (1f - distance / AvoidanceRadius);
+        }
+        if (separation.LengthSquared() > 0.0001f) direction = Vector2.Normalize(direction + separation * Separation);
+        var step = direction * Speed * deltaTime;
         if (step.Length() > delta.Length()) step = delta;
         Owner.Transform.Position += step;
     }
 
     public override Component CloneFor(Entity newOwner) => new NavigationAgent2D
     {
-        Enabled = Enabled, Target = Target, Speed = Speed, StopDistance = StopDistance, Owner = newOwner,
+        Enabled = Enabled, Target = Target, Speed = Speed, StopDistance = StopDistance, AvoidanceRadius = AvoidanceRadius, Separation = Separation, Owner = newOwner,
     };
 }
 

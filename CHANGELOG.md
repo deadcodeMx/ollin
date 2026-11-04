@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.149.0] — 2026-11-04
+
+### Añadido
+
+- Avoidance local entre agentes.
+- Radio de evitación y separación configurables.
+- Inspector de avoidance.
+
 ## [6.148.0] — 2026-11-04
 
 ### Añadido

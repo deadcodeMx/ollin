@@ -462,6 +462,8 @@ public sealed class EntityNode : ObservableObject
     public bool HasNavigationPolygon => Entity.GetComponent<NavigationPolygon2D>() is not null;
     public bool HasNavigationAgent => Entity.GetComponent<NavigationAgent2D>() is not null;
     public decimal NavigationSpeed { get => (decimal)(Entity.GetComponent<NavigationAgent2D>()?.Speed ?? 3f); set { if (Entity.GetComponent<NavigationAgent2D>() is { } a) { a.Speed = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal NavigationAvoidance { get => (decimal)(Entity.GetComponent<NavigationAgent2D>()?.AvoidanceRadius ?? 1f); set { if (Entity.GetComponent<NavigationAgent2D>() is { } a) { a.AvoidanceRadius = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal NavigationSeparation { get => (decimal)(Entity.GetComponent<NavigationAgent2D>()?.Separation ?? 1.2f); set { if (Entity.GetComponent<NavigationAgent2D>() is { } a) { a.Separation = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public decimal NavigationTargetX { get => (decimal)(Entity.GetComponent<NavigationAgent2D>()?.Target.X ?? 0f); set { if (Entity.GetComponent<NavigationAgent2D>() is { } a) a.Target = new Vector2((float)value, a.Target.Y); OnPropertyChanged(); _owner.MarkDirty(); } }
     public decimal NavigationTargetY { get => (decimal)(Entity.GetComponent<NavigationAgent2D>()?.Target.Y ?? 0f); set { if (Entity.GetComponent<NavigationAgent2D>() is { } a) a.Target = new Vector2(a.Target.X, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } }
 
