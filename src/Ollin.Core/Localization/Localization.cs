@@ -51,6 +51,12 @@ public sealed class LocalizationDatabase
         return string.IsNullOrEmpty(plural) ? Get(key, fallback) : plural;
     }
 
+    public string GetContext(string context, string key, string? fallback = null)
+    {
+        var contextual = Get($"{context}.{key}", string.Empty);
+        return string.IsNullOrEmpty(contextual) ? Get(key, fallback) : contextual;
+    }
+
     public string Get(string key, string? fallback = null)
     {
         if (_languages.TryGetValue(Language, out var table) && table.TryGetValue(key, out var text)) return text;
@@ -76,6 +82,8 @@ public static class Localization
     public static void SetLanguage(string language) => _database?.SetLanguage(language);
 
     public static string Get(string key, string? fallback = null) => _database?.Get(key, fallback) ?? fallback ?? key;
+
+    public static string GetContext(string context, string key, string? fallback = null) => _database?.GetContext(context, key, fallback) ?? fallback ?? key;
 
     public static string GetPlural(string key, int count, string? fallback = null) => _database?.GetPlural(key, count, fallback) ?? fallback ?? key;
 

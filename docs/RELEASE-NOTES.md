@@ -1,13 +1,13 @@
-## Ollin Beta 6.149.0 — avoidance de navegación
+## Ollin Beta 6.150.0 — contexto y draw calls
 
 ### Añadido
 
-- Avoidance local entre agentes.
-- Radio de evitación y separación configurables.
-- Inspector de avoidance.
+- Localización por contexto (`contexto.clave`).
+- Draw calls en el profiler.
+- HUD con FPS, frame time, draws y entidades.
 
 ### Verificación
 
 - **227/227 pruebas**.
-- Instalador 6.149.0 instalado y abierto.
+- Instalador 6.150.0 instalado y abierto.
 - Demo técnica no publicada.

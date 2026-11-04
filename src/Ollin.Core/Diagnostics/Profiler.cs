@@ -11,6 +11,7 @@ public static class Profiler
     public static float Fps => _fps;
     public static float FrameMs => _frameMs;
     public static int FrameCount { get; private set; }
+    public static int DrawCalls { get; set; }
 
     public static void Tick(float deltaSeconds)
     {
@@ -31,5 +32,6 @@ public static class Profiler
         _fps = 0f;
         _frameMs = 0f;
         FrameCount = 0;
+        DrawCalls = 0;
     }
 }

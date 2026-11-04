@@ -150,6 +150,7 @@ public sealed class Renderer2D : IDisposable
             }
         }
         _batch.End();
+        Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
         DrawLighting(scene, camera, cameraPosition, width, height, viewProjection);
     }
 
@@ -648,6 +649,7 @@ public sealed class Renderer2D : IDisposable
         _batch.Begin(screenProjection);
         Draw3DBackground(camera, width, height);
         _batch.End();
+        Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
 
         // La geometría 3D usa un búfer de profundidad real.
         _gl.Clear(ClearBufferMask.DepthBufferBit);
@@ -683,6 +685,7 @@ public sealed class Renderer2D : IDisposable
         }
 
         _batch.End();
+        Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
     }
 
     private void DrawBrushPreview3D(Camera3D camera, BrushPreview3D preview, int width, int height)
@@ -1352,6 +1355,7 @@ public sealed class Renderer2D : IDisposable
             _batch.Begin(viewProjection);
             DrawViewQuad(cameraPosition, extents, new Vector4(ambient.X, ambient.Y, ambient.Z, 1f), null, false);
             _batch.End();
+        Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
         }
 
         if (lights.Count > 0)
@@ -1364,6 +1368,7 @@ public sealed class Renderer2D : IDisposable
             }
 
             _batch.End();
+        Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
 
             DrawShadows(scene, lights, viewProjection);
         }
@@ -1426,6 +1431,7 @@ public sealed class Renderer2D : IDisposable
         }
 
         _batch.End();
+        Ollin.Core.Diagnostics.Profiler.DrawCalls = _batch.LastDrawCalls;
     }
 
     private void DrawLightQuad(Scene scene, Entity entity, Light2D light)

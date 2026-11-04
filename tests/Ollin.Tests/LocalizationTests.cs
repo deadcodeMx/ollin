@@ -18,6 +18,7 @@ public sealed class LocalizationTests
                 ["item"] = "objeto",
                 ["item.one"] = "objeto",
                 ["item.other"] = "objetos",
+                ["menu.item"] = "objeto de menú",
             }));
             File.WriteAllText(Path.Combine(root, "localization", "ar.json"), JsonSerializer.Serialize(new Dictionary<string, string>
             {
@@ -27,6 +28,7 @@ public sealed class LocalizationTests
             var database = new LocalizationDatabase(root);
             database.SetLanguage("es");
             Assert.Equal("objetos", database.GetPlural("item", 3));
+            Assert.Equal("objeto de menú", database.GetContext("menu", "item"));
             database.SetLanguage("ar");
             Assert.True(database.IsRightToLeft);
         }

@@ -24,7 +24,7 @@ public sealed partial class MainViewModel
 
     public bool IsInventoryVisible => _inventoryOpen && IsPlaying;
 
-    public string ProfilerText => $"{Ollin.Core.Diagnostics.Profiler.Fps:0} FPS · {Ollin.Core.Diagnostics.Profiler.FrameMs:0.0} ms · {Scene.Entities.Count} entidades";
+    public string ProfilerText => $"{Ollin.Core.Diagnostics.Profiler.Fps:0} FPS · {Ollin.Core.Diagnostics.Profiler.FrameMs:0.0} ms · {Ollin.Core.Diagnostics.Profiler.DrawCalls} draws · {Scene.Entities.Count} entidades";
 
     public void ToggleInventory()
     {

@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.150.0] — 2026-11-04
+
+### Añadido
+
+- Localización por contexto.
+- Draw calls en el profiler.
+- HUD de profiling ampliado.
+
 ## [6.149.0] — 2026-11-04
 
 ### Añadido
