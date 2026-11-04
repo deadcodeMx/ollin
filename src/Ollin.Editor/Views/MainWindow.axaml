@@ -780,6 +780,13 @@
                       <Button Content="Editar timeline…" Click="OnEditAnimationPlayer" HorizontalAlignment="Stretch" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.AnimationPlayerSpeed, Mode=TwoWay}" Increment="0.1" Minimum="0" FormatString="0.##" /></Grid>
                     </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasNavigationAgent}" Spacing="5">
+                      <TextBlock Classes="section" Text="AGENTE DE NAVEGACIÓN" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.NavigationSpeed, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Destino X" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.NavigationTargetX, Mode=TwoWay}" Increment="0.5" FormatString="0.##" /></Grid>
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Destino Y" VerticalAlignment="Center" Classes="hint" /><NumericUpDown Grid.Column="1" Value="{Binding Selected.NavigationTargetY, Mode=TwoWay}" Increment="0.5" FormatString="0.##" /></Grid>
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding Selected.HasNavigationPolygon}" Spacing="5"><TextBlock Classes="section" Text="POLÍGONO NAVEGABLE" /><TextBlock Text="Editado en JSON: Points" Classes="hint" /></StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasAudioSource}" Spacing="5">
                       <TextBlock Classes="section" Text="AUDIO 2D" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Clip" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.SpatialAudioClip, Mode=TwoWay}" Watermark="assets/audio/sfx.wav" /></Grid>

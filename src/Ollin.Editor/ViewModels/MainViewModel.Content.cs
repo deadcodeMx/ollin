@@ -566,6 +566,8 @@ public sealed partial class MainViewModel
             "uicanvas" => entity.GetComponent<UiCanvas>(),
             "raycast2d" => entity.GetComponent<RayCast2D>(),
             "audiosource2d" => entity.GetComponent<AudioSource2D>(),
+            "navigationpolygon" => entity.GetComponent<NavigationPolygon2D>(),
+            "navigationagent" => entity.GetComponent<NavigationAgent2D>(),
             "audiolistener2d" => entity.GetComponent<AudioListener2D>(),
             "springjoint" => entity.GetComponent<SpringJoint2D>(),
             "pinjoint" => entity.GetComponent<PinJoint2D>(),

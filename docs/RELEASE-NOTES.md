@@ -1,19 +1,14 @@
-## Ollin Beta 6.138.0 — audio Linux
+## Ollin Beta 6.139.0 — navegación poligonal
 
 ### Añadido
 
-- Backend Linux basado en `paplay`/`aplay`/`ffplay`.
-- Fallback silencioso si no hay reproductor.
-- Loop básico reiniciando el proceso.
-
-### Limitaciones
-
-- Sin control de volumen por handle en Linux.
-- Sin paneo estéreo.
-- Depende de un reproductor del sistema.
+- Polígonos navegables.
+- Agente con destino y velocidad.
+- Pathfinding por grafo de visibilidad.
+- Inspector de navegación.
 
 ### Verificación
 
-- **219/219 pruebas**.
-- Instalador 6.138.0 instalado y abierto.
+- **220/220 pruebas**.
+- Instalador 6.139.0 instalado y abierto.
 - Demo técnica no publicada.

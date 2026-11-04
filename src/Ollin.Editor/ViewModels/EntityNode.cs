@@ -451,6 +451,12 @@ public sealed class EntityNode : ObservableObject
 
     public string ColliderIgnoreTags { get => string.Join(", ", Collider?.IgnoreTags ?? new List<string>()); set { if (Collider is null) return; Collider.IgnoreTags = value.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(tag => tag.Trim()).Where(tag => tag.Length > 0).ToList(); OnPropertyChanged(); _owner.MarkDirty(); } }
 
+    public bool HasNavigationPolygon => Entity.GetComponent<NavigationPolygon2D>() is not null;
+    public bool HasNavigationAgent => Entity.GetComponent<NavigationAgent2D>() is not null;
+    public decimal NavigationSpeed { get => (decimal)(Entity.GetComponent<NavigationAgent2D>()?.Speed ?? 3f); set { if (Entity.GetComponent<NavigationAgent2D>() is { } a) { a.Speed = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
+    public decimal NavigationTargetX { get => (decimal)(Entity.GetComponent<NavigationAgent2D>()?.Target.X ?? 0f); set { if (Entity.GetComponent<NavigationAgent2D>() is { } a) a.Target = new Vector2((float)value, a.Target.Y); OnPropertyChanged(); _owner.MarkDirty(); } }
+    public decimal NavigationTargetY { get => (decimal)(Entity.GetComponent<NavigationAgent2D>()?.Target.Y ?? 0f); set { if (Entity.GetComponent<NavigationAgent2D>() is { } a) a.Target = new Vector2(a.Target.X, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } }
+
     public bool HasAudioSource => Entity.GetComponent<AudioSource2D>() is not null;
     public bool HasAudioListener => Entity.GetComponent<AudioListener2D>() is not null;
     public string SpatialAudioClip { get => Entity.GetComponent<AudioSource2D>()?.Clip ?? string.Empty; set { if (Entity.GetComponent<AudioSource2D>() is { } a) { a.Clip = value ?? string.Empty; OnPropertyChanged(); _owner.MarkDirty(); } } }
@@ -1618,6 +1624,8 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasPinJoint));
         OnPropertyChanged(nameof(HasUiCanvas));
         OnPropertyChanged(nameof(HasAudioSource));
+        OnPropertyChanged(nameof(HasNavigationPolygon));
+        OnPropertyChanged(nameof(HasNavigationAgent));
         OnPropertyChanged(nameof(HasAudioListener));
         OnPropertyChanged(nameof(ColliderIgnoreTags));
         OnPropertyChanged(nameof(ColliderBounciness));
