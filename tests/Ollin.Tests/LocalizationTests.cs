@@ -31,6 +31,8 @@ public sealed class LocalizationTests
             Assert.Equal("objeto de menú", database.GetContext("menu", "item"));
             database.SetLanguage("ar");
             Assert.True(database.IsRightToLeft);
+            database.Pseudo = true;
+            Assert.StartsWith("[", database.Get("item"));
         }
         finally
         {

@@ -44,6 +44,8 @@ public sealed class LocalizationDatabase
 
     public bool IsRightToLeft => Language is "ar" or "he" or "fa" or "ur";
 
+    public bool Pseudo { get; set; }
+
     public string GetPlural(string key, int count, string? fallback = null)
     {
         var suffix = count == 0 ? ".zero" : count == 1 ? ".one" : ".other";
@@ -59,8 +61,8 @@ public sealed class LocalizationDatabase
 
     public string Get(string key, string? fallback = null)
     {
-        if (_languages.TryGetValue(Language, out var table) && table.TryGetValue(key, out var text)) return text;
-        if (_languages.TryGetValue("es", out var spanish) && spanish.TryGetValue(key, out var spanishText)) return spanishText;
+        if (_languages.TryGetValue(Language, out var table) && table.TryGetValue(key, out var text)) return Pseudo ? $"[{text}]" : text;
+        if (_languages.TryGetValue("es", out var spanish) && spanish.TryGetValue(key, out var spanishText)) return Pseudo ? $"[{spanishText}]" : spanishText;
         return fallback ?? key;
     }
 }
@@ -80,6 +82,7 @@ public static class Localization
     }
 
     public static void SetLanguage(string language) => _database?.SetLanguage(language);
+    public static bool Pseudo { get => _database?.Pseudo ?? false; set { if (_database is not null) _database.Pseudo = value; } }
 
     public static string Get(string key, string? fallback = null) => _database?.Get(key, fallback) ?? fallback ?? key;
 

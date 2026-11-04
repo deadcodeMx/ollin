@@ -81,6 +81,7 @@ public sealed class UiElementView
         Width = element.Width;
         Height = element.Height;
         FontSize = element.FontSize;
+        FontFamily = new Avalonia.Media.FontFamily(string.IsNullOrWhiteSpace(element.FontFamily) ? (theme?.FontFamily ?? "Segoe UI") : element.FontFamily);
         var textColor = element.Color.W <= 0f ? (theme?.TextColor ?? element.Color) : element.Color;
         var panelColor = element.Kind == Ollin.Core.Model.Components.UiElementKind.Button
             ? (theme?.ButtonColor ?? element.Color)
@@ -113,6 +114,7 @@ public sealed class UiElementView
     public float Width { get; }
     public float Height { get; }
     public float FontSize { get; }
+    public Avalonia.Media.FontFamily FontFamily { get; }
     public Ollin.Core.Model.Components.UiAnchor Anchor { get; }
     public Avalonia.Layout.HorizontalAlignment HorizontalAlignment => Anchor switch
     {

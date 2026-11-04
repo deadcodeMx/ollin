@@ -82,9 +82,9 @@
                   Background="#CC151922" BorderBrush="{Binding FocusBorder}" BorderThickness="1" CornerRadius="6"
                   IsVisible="{Binding Visible}" Padding="6" AutomationProperties.Name="{Binding AccessibilityLabel}">
             <Grid>
-              <controls:RichTextBlock Markup="{Binding Text}" FontSize="{Binding FontSize}" Foreground="{Binding TextBrush}" TextWrapping="Wrap" IsVisible="{Binding IsLabel}" VerticalAlignment="Center" />
+              <controls:RichTextBlock Markup="{Binding Text}" FontSize="{Binding FontSize}" FontFamily="{Binding FontFamily}" Foreground="{Binding TextBrush}" TextWrapping="Wrap" IsVisible="{Binding IsLabel}" VerticalAlignment="Center" />
               <ProgressBar Minimum="0" Maximum="1" Value="{Binding Value}" Height="12" IsVisible="{Binding IsBar}" />
-                  <ScrollViewer IsVisible="{Binding IsList}" VerticalScrollBarVisibility="Auto"><TextBlock Text="{Binding ListText}" FontSize="{Binding FontSize}" Foreground="{Binding TextBrush}" TextWrapping="Wrap" /></ScrollViewer>
+                  <ScrollViewer IsVisible="{Binding IsList}" VerticalScrollBarVisibility="Auto"><TextBlock Text="{Binding ListText}" FontSize="{Binding FontSize}" FontFamily="{Binding FontFamily}" Foreground="{Binding TextBrush}" TextWrapping="Wrap" /></ScrollViewer>
               <Button Content="{Binding Text}" Command="{Binding Command}" IsVisible="{Binding IsButton}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </Grid>
           </Border>

@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.155.0] — 2026-11-04
+
+### Añadido
+
+- Pseudo-localización.
+- Fuente configurable por elemento y tema.
+- Prueba de pseudo-localización.
+
 ## [6.154.0] — 2026-11-04
 
 ### Añadido

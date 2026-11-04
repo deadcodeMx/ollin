@@ -34,6 +34,7 @@ public sealed class UiTheme
     public Vector4 ButtonColor { get; set; } = new(0.15f, 0.18f, 0.24f, 1f);
     public Vector4 AccentColor { get; set; } = new(0.91f, 0.64f, 0.23f, 1f);
     public float FontSize { get; set; } = 14f;
+    public string FontFamily { get; set; } = "Segoe UI";
 }
 
 public sealed class UiElement
@@ -48,6 +49,7 @@ public sealed class UiElement
     public float Width { get; set; } = 220f;
     public float Height { get; set; } = 36f;
     public float FontSize { get; set; } = 14f;
+    public string FontFamily { get; set; } = "Segoe UI";
     public Vector4 Color { get; set; } = new(0.95f, 0.95f, 1f, 1f);
     public bool Visible { get; set; } = true;
     public string? Action { get; set; }
@@ -89,7 +91,7 @@ public sealed class UiCanvas : Component
             {
                 Id = element.Id, Kind = element.Kind, Text = element.Text, Anchor = element.Anchor,
                 X = element.X, Y = element.Y, Width = element.Width, Height = element.Height,
-                FontSize = element.FontSize, Color = element.Color, Visible = element.Visible,
+                FontSize = element.FontSize, FontFamily = element.FontFamily, Color = element.Color, Visible = element.Visible,
                 Action = element.Action, Value = element.Value, Max = element.Max,
                 ParentId = element.ParentId, Layout = element.Layout, Gap = element.Gap, Padding = element.Padding,
                 Focusable = element.Focusable, AccessibilityLabel = element.AccessibilityLabel,
@@ -119,7 +121,7 @@ public sealed class UiCanvas : Component
         Elements = Elements.Select(element => new UiElement
         {
             Id = element.Id, Kind = element.Kind, Text = element.Text, Anchor = element.Anchor, X = element.X, Y = element.Y,
-            Width = element.Width, Height = element.Height, FontSize = element.FontSize, Color = element.Color,
+            Width = element.Width, Height = element.Height, FontSize = element.FontSize, FontFamily = element.FontFamily, Color = element.Color,
             Visible = element.Visible, Action = element.Action, Value = element.Value, Max = element.Max,
             ParentId = element.ParentId, Layout = element.Layout, Gap = element.Gap, Padding = element.Padding,
             Focusable = element.Focusable, AccessibilityLabel = element.AccessibilityLabel,
