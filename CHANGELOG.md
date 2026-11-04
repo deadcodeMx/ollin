@@ -17,6 +17,13 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.153.0] — 2026-11-04
+
+### Añadido
+
+- Interpolación de transforms remotos.
+- Inspector de interpolación de red.
+
 ## [6.152.0] — 2026-11-04
 
 ### Añadido

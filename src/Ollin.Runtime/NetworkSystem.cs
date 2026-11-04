@@ -11,6 +11,7 @@ internal sealed class NetworkSystem
 {
     private readonly ConcurrentQueue<NetworkSnapshot> _incoming = new();
     private float _timer;
+    private readonly Dictionary<Guid, (Vector2 Position, float Rotation, Vector2 Scale)> _targets = new();
     private Scene? _scene;
 
     public NetworkSystem()
@@ -23,6 +24,7 @@ internal sealed class NetworkSystem
         if (!NetworkManager.IsRunning) return;
         _scene = scene;
         while (_incoming.TryDequeue(out var snapshot)) Apply(scene, snapshot);
+        Interpolate(scene, deltaTime);
         _timer += deltaTime;
         if (_timer < 0.05f) return;
         _timer = 0f;
@@ -50,7 +52,22 @@ internal sealed class NetworkSystem
         if (snapshot.Transforms.Count > 0) NetworkManager.Send(snapshot);
     }
 
-    private static void Apply(Scene scene, NetworkSnapshot snapshot)
+    private void Interpolate(Scene scene, float deltaTime)
+    {
+        foreach (var entity in scene.Entities)
+        {
+            if (entity.GetComponent<NetworkIdentity>() is not { IsLocal: false } identity) continue;
+            if (!_targets.TryGetValue(identity.NetworkId, out var target)) continue;
+            var sync = entity.GetComponent<NetworkTransform>();
+            if (sync is not { Enabled: true } || sync.Interpolation <= 0f) continue;
+            var t = 1f - MathF.Exp(-sync.Interpolation * deltaTime);
+            if (sync.SyncPosition) entity.Transform.Position = Vector2.Lerp(entity.Transform.Position, target.Position, t);
+            if (sync.SyncRotation) entity.Transform.Rotation += (target.Rotation - entity.Transform.Rotation) * t;
+            if (sync.SyncScale) entity.Transform.Scale = Vector2.Lerp(entity.Transform.Scale, target.Scale, t);
+        }
+    }
+
+    private void Apply(Scene scene, NetworkSnapshot snapshot)
     {
         if (snapshot.PeerId == NetworkManager.PeerId) return;
         foreach (var state in snapshot.Transforms)
@@ -61,9 +78,13 @@ internal sealed class NetworkSystem
             if (identity.IsLocal) continue;
             var sync = entity.GetComponent<NetworkTransform>();
             if (sync is not { Enabled: true }) continue;
-            if (sync.SyncPosition) entity.Transform.Position = state.Position;
-            if (sync.SyncRotation) entity.Transform.Rotation = state.Rotation;
-            if (sync.SyncScale) entity.Transform.Scale = state.Scale;
+            _targets[state.Id] = (state.Position, state.Rotation, state.Scale);
+            if (sync.Interpolation <= 0f)
+            {
+                if (sync.SyncPosition) entity.Transform.Position = state.Position;
+                if (sync.SyncRotation) entity.Transform.Rotation = state.Rotation;
+                if (sync.SyncScale) entity.Transform.Scale = state.Scale;
+            }
         }
     }
 }

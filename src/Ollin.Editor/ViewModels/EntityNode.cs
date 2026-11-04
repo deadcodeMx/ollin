@@ -453,6 +453,7 @@ public sealed class EntityNode : ObservableObject
 
     public bool HasNetworkIdentity => Entity.GetComponent<NetworkIdentity>() is not null;
     public bool HasNetworkTransform => Entity.GetComponent<NetworkTransform>() is not null;
+    public decimal NetworkInterpolation { get => (decimal)(Entity.GetComponent<NetworkTransform>()?.Interpolation ?? 12f); set { if (Entity.GetComponent<NetworkTransform>() is { } n) { n.Interpolation = MathF.Max(0f, (float)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public bool NetworkIsLocal { get => Entity.GetComponent<NetworkIdentity>()?.IsLocal ?? true; set { if (Entity.GetComponent<NetworkIdentity>() is { } n) { n.IsLocal = value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
     public bool HasMesh2D => Entity.GetComponent<Mesh2D>() is not null;

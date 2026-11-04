@@ -22,8 +22,11 @@ public sealed class NetworkTransform : Component
     public bool SyncRotation { get; set; } = true;
     public bool SyncScale { get; set; } = true;
 
+    /// <summary>Velocidad de interpolación visual (0 = instantánea).</summary>
+    public float Interpolation { get; set; } = 12f;
+
     public override Component CloneFor(Entity newOwner) => new NetworkTransform
     {
-        Enabled = Enabled, SyncPosition = SyncPosition, SyncRotation = SyncRotation, SyncScale = SyncScale, Owner = newOwner,
+        Enabled = Enabled, SyncPosition = SyncPosition, SyncRotation = SyncRotation, SyncScale = SyncScale, Interpolation = Interpolation, Owner = newOwner,
     };
 }
