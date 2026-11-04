@@ -17,6 +17,7 @@ public static class GraphCodeGenerator
         sb.AppendLine($"public sealed class {className} : OllinScript");
         sb.AppendLine("{");
         sb.AppendLine("    // Generado por Ollin desde el grafo visual. Edita libremente.");
+        sb.AppendLine("    private readonly Dictionary<string, float> _vars = new();");
 
         var events = graph.Nodes.Where(n => n.Kind == GraphNodeKind.Event).ToList();
         foreach (var node in events)
@@ -122,7 +123,15 @@ public static class GraphCodeGenerator
             case ActionKind.Teleport:
                 sb.AppendLine($"        if ({target} is {{ }} point) Position = Scene!.GetWorldPosition(point);");
                 break;
-            default:
+            case ActionKind.SetVariable:
+                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = {node.Amount:0.###}f;");
+                break;
+            case ActionKind.AddVariable:
+                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") + {node.Amount:0.###}f;");
+                break;
+            case ActionKind.ToggleFlag:
+                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") > 0f ? 0f : 1f;");
+                break;            default:
                 sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", {node.Amount:0.###}f);");
                 break;
         }
