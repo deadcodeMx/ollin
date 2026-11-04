@@ -9,7 +9,7 @@
 
 - Entrada "Inspector 2D" en el menú Ver.
 
-### Verificación
+### Linux`n`n- Paquete `Ollin-6.196.0-linux-x64.tar.gz` actualizado.`n`n### Verificación
 
 - **220/220 pruebas**.
 - Instalador 6.196.0 instalado.
