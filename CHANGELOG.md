@@ -17,6 +17,17 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.168.0] — 2026-11-04
+
+### Corregido
+
+- El programa por defecto del SpriteBatch no se restauraba tras un material, dejando de dibujar sprites.
+- SubViewport2D duplicaba Enabled.
+
+### Añadido
+
+- Uniforms vec4 por material.
+
 ## [6.167.0] — 2026-11-04
 
 ### Añadido

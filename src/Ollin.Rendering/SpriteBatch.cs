@@ -47,6 +47,9 @@ public sealed class SpriteBatch : IDisposable
     public unsafe void Initialize(uint program, int uniformMvp, int uniformTexture, Texture2D whiteTexture)
     {
         _program = program;
+        _defaultProgram = program;
+        _defaultMvp = uniformMvp;
+        _defaultTexture = uniformTexture;
         _uMvp = uniformMvp;
         _uTexture = uniformTexture;
         _whiteTexture = whiteTexture;
