@@ -77,4 +77,18 @@ public sealed class CanvasAnimationUiTests
         Assert.Equal(3, skeleton.WorldPoints.Count);
         Assert.InRange(Vector2.Distance(skeleton.WorldPoints[2], new Vector2(1f, 0f)), 0f, 0.05f);
     }
+
+    [Fact]
+    public void UiCanvasAplanaContenedores()
+    {
+        var canvas = new UiCanvas();
+        canvas.Elements.Add(new UiElement { Id = "menu", Kind = UiElementKind.Container, X = 100, Y = 50, Layout = UiLayout.Vertical, Padding = 10, Gap = 4 });
+        canvas.Elements.Add(new UiElement { Id = "a", Kind = UiElementKind.Button, ParentId = "menu", X = 0, Y = 0, Height = 30 });
+        canvas.Elements.Add(new UiElement { Id = "b", Kind = UiElementKind.Button, ParentId = "menu", X = 0, Y = 0, Height = 30 });
+
+        var flat = canvas.Flatten();
+        Assert.Equal(110f, flat[1].X);
+        Assert.Equal(60f, flat[1].Y);
+        Assert.Equal(94f, flat[2].Y);
+    }
 }

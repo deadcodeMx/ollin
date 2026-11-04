@@ -188,15 +188,16 @@ public sealed partial class MainViewModel
     private void RefreshUi()
     {
         var canvas = _runtime.PlayerUi;
-        var signature = canvas is null ? "none" : string.Join("|", canvas.Elements.Select(element =>
-            $"{element.Id}:{element.Kind}:{element.Text}:{element.X}:{element.Y}:{element.Visible}:{element.Value}:{element.Max}"));
+        var flattened = canvas?.Flatten() ?? new List<UiElement>();
+        var signature = canvas is null ? "none" : string.Join("|", flattened.Select(element =>
+            $"{element.Id}:{element.Kind}:{element.Text}:{element.X}:{element.Y}:{element.Visible}:{element.Value}:{element.Max}:{element.ParentId}"));
         IsUiVisible = canvas is { Visible: true } && IsPlaying;
         if (signature == _uiSignature) return;
         _uiSignature = signature;
         UiElements.Clear();
         if (canvas is not null)
-            foreach (var element in canvas.Elements)
-                UiElements.Add(new UiElementView(element, InvokeUiAction));
+            foreach (var element in flattened)
+                UiElements.Add(new UiElementView(element, InvokeUiAction, canvas.Theme));
         OnPropertyChanged(nameof(IsUiVisible));
     }
 

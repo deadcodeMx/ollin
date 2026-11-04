@@ -34,7 +34,7 @@
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <Border Background="#CC10131A" CornerRadius="5" Padding="11,6" Margin="0,2">
-            <TextBlock Text="{Binding Text}" FontSize="13" Foreground="#F2F5FA" />
+            <TextBlock Text="{Binding Text}" FontSize="13" Foreground="{Binding TextBrush}" />
           </Border>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
@@ -48,7 +48,7 @@
       <StackPanel Spacing="7">
         <TextBlock Text="{Binding DialogueSpeaker}" Foreground="#E9A23B"
                    FontWeight="SemiBold" FontSize="12.5" />
-        <TextBlock Text="{Binding DialogueText}" TextWrapping="Wrap" FontSize="14" Foreground="#F2F5FA" />
+        <TextBlock Text="{Binding DialogueText}" TextWrapping="Wrap" FontSize="14" Foreground="{Binding TextBrush}" />
         <TextBlock Text="E / Espacio: continuar" FontSize="10" Foreground="#8B94A7"
                    HorizontalAlignment="Right" />
       </StackPanel>
@@ -80,7 +80,7 @@
                   Background="#CC151922" BorderBrush="#40E9A23B" BorderThickness="1" CornerRadius="6"
                   IsVisible="{Binding Visible}" Padding="6">
             <Grid>
-              <TextBlock Text="{Binding Text}" FontSize="{Binding FontSize}" Foreground="#F2F5FA" TextWrapping="Wrap" IsVisible="{Binding IsLabel}" VerticalAlignment="Center" />
+              <TextBlock Text="{Binding Text}" FontSize="{Binding FontSize}" Foreground="{Binding TextBrush}" TextWrapping="Wrap" IsVisible="{Binding IsLabel}" VerticalAlignment="Center" />
               <ProgressBar Minimum="0" Maximum="1" Value="{Binding Value}" Height="12" IsVisible="{Binding IsBar}" />
               <Button Content="{Binding Text}" Command="{Binding Command}" IsVisible="{Binding IsButton}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </Grid>

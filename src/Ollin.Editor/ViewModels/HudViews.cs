@@ -71,7 +71,7 @@ public sealed class EquipmentSlotView
 /// <summary>Elemento de UI runtime expuesto a Avalonia.</summary>
 public sealed class UiElementView
 {
-    public UiElementView(Ollin.Core.Model.Components.UiElement element, Action<string> invoke)
+    public UiElementView(Ollin.Core.Model.Components.UiElement element, Action<string> invoke, Ollin.Core.Model.Components.UiTheme? theme = null)
     {
         Id = element.Id;
         Kind = element.Kind;
@@ -81,15 +81,24 @@ public sealed class UiElementView
         Width = element.Width;
         Height = element.Height;
         FontSize = element.FontSize;
+        var textColor = element.Color.W <= 0f ? (theme?.TextColor ?? element.Color) : element.Color;
+        var panelColor = element.Kind == Ollin.Core.Model.Components.UiElementKind.Button
+            ? (theme?.ButtonColor ?? element.Color)
+            : (theme?.PanelColor ?? element.Color);
         Anchor = element.Anchor;
         Visible = element.Visible;
         Value = element.Max <= 0 ? 0 : System.Math.Clamp(element.Value / element.Max, 0, 1);
         Command = new UiActionCommand(() => invoke(element.Action ?? element.Id));
         Brush = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(
-            (byte)(System.Math.Clamp(element.Color.W, 0f, 1f) * 255),
-            (byte)(System.Math.Clamp(element.Color.X, 0f, 1f) * 255),
-            (byte)(System.Math.Clamp(element.Color.Y, 0f, 1f) * 255),
-            (byte)(System.Math.Clamp(element.Color.Z, 0f, 1f) * 255)));
+            (byte)(System.Math.Clamp(panelColor.W, 0f, 1f) * 255),
+            (byte)(System.Math.Clamp(panelColor.X, 0f, 1f) * 255),
+            (byte)(System.Math.Clamp(panelColor.Y, 0f, 1f) * 255),
+            (byte)(System.Math.Clamp(panelColor.Z, 0f, 1f) * 255)));
+        TextBrush = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(
+            (byte)(System.Math.Clamp(textColor.W, 0f, 1f) * 255),
+            (byte)(System.Math.Clamp(textColor.X, 0f, 1f) * 255),
+            (byte)(System.Math.Clamp(textColor.Y, 0f, 1f) * 255),
+            (byte)(System.Math.Clamp(textColor.Z, 0f, 1f) * 255)));
     }
 
     public string Id { get; }
@@ -118,7 +127,8 @@ public sealed class UiElementView
     public double Value { get; }
     public System.Windows.Input.ICommand Command { get; }
     public Avalonia.Media.IBrush Brush { get; }
-    public bool IsPanel => Kind == Ollin.Core.Model.Components.UiElementKind.Panel;
+    public Avalonia.Media.IBrush TextBrush { get; }
+    public bool IsPanel => Kind is Ollin.Core.Model.Components.UiElementKind.Panel or Ollin.Core.Model.Components.UiElementKind.Container;
     public bool IsLabel => Kind == Ollin.Core.Model.Components.UiElementKind.Label || Kind == Ollin.Core.Model.Components.UiElementKind.Panel;
     public bool IsButton => Kind == Ollin.Core.Model.Components.UiElementKind.Button;
     public bool IsBar => Kind == Ollin.Core.Model.Components.UiElementKind.Bar;
