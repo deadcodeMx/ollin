@@ -1486,6 +1486,7 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public bool CameraPixelPerfect { get => Camera?.PixelPerfect ?? false; set { if (Camera is null || Camera.PixelPerfect == value) return; Camera.PixelPerfect = value; OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw(); } }
     public decimal CameraZoom
     {
         get => (decimal)(Camera?.Zoom ?? 1f);
@@ -1548,6 +1549,7 @@ public sealed class EntityNode : ObservableObject
         OnPropertyChanged(nameof(FlipY));
         OnPropertyChanged(nameof(OrthographicSize));
         OnPropertyChanged(nameof(CameraZoom));
+        OnPropertyChanged(nameof(CameraPixelPerfect));
         OnPropertyChanged(nameof(CameraDeadzoneX));
         OnPropertyChanged(nameof(CameraDeadzoneY));
         OnPropertyChanged(nameof(CameraUseBounds));

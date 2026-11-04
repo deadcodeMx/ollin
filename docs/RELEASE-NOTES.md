@@ -1,15 +1,14 @@
-## Ollin Beta 6.132.0 — localización y touch
+## Ollin Beta 6.133.0 — pixel perfect
 
 ### Añadido
 
-- Plurales por idioma.
-- Detección RTL.
-- Selector de idioma en opciones.
-- Zona muerta configurable del Input Map.
-- Estado de touch en el reproductor.
+- Cámara pixel-perfect.
+- Editor de animación.
+- Anclajes de UI.
+- Localización, deadzone y touch.
 
 ### Verificación
 
 - **218/218 pruebas**.
-- Instalador 6.132.0 instalado y abierto.
+- Instalador 6.133.0 instalado y abierto.
 - Demo técnica no publicada.

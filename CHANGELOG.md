@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.133.0] — 2026-11-04
+
+### Añadido
+
+- Cámara pixel-perfect.
+- Editor de animación y anclajes de UI consolidados.
+- Localización, deadzone y touch.
+
 ## [6.132.0] — 2026-11-04
 
 ### Añadido

@@ -1771,6 +1771,7 @@
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Zoom" VerticalAlignment="Center" Classes="hint" />
                       <NumericUpDown Grid.Column="1" Value="{Binding Selected.CameraZoom, Mode=TwoWay}" Increment="0.1" Minimum="0.05" FormatString="0.###" />
+                    <CheckBox Content="Pixel perfect" IsChecked="{Binding Selected.CameraPixelPerfect, Mode=TwoWay}" FontSize="11.5" />
                     </Grid>
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Ambiente" VerticalAlignment="Center" Classes="hint" />

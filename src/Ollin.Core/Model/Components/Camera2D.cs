@@ -17,6 +17,9 @@ public sealed class Camera2D : Component
 
     public bool IsMain { get; set; } = true;
 
+    /// <summary>Alinea la cámara a la rejilla de píxeles para evitar temblor.</summary>
+    public bool PixelPerfect { get; set; }
+
     /// <summary>Luz ambiente de la escena (blanco = sin oscurecer).</summary>
     public Vector4 Ambient { get; set; } = Vector4.One;
 
@@ -42,6 +45,7 @@ public sealed class Camera2D : Component
         Zoom = Zoom,
         Background = Background,
         IsMain = IsMain,
+        PixelPerfect = PixelPerfect,
         Ambient = Ambient,
         FollowTag = FollowTag,
         FollowSmoothing = FollowSmoothing,

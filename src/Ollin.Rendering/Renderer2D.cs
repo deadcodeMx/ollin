@@ -120,6 +120,11 @@ public sealed class Renderer2D : IDisposable
         _gl.ClearColor(camera.Background.X, camera.Background.Y, camera.Background.Z, 1f);
         _gl.Clear(ClearBufferMask.ColorBufferBit);
 
+        if (camera.PixelPerfect)
+        {
+            var ppu = CameraMath.PixelsPerUnit(camera.OrthographicSize, camera.Zoom, height);
+            cameraPosition = new Vector2(MathF.Round(cameraPosition.X * ppu) / ppu, MathF.Round(cameraPosition.Y * ppu) / ppu);
+        }
         var viewProjection = CameraMath.GetViewProjection(cameraPosition, camera.OrthographicSize, camera.Zoom, width, height);
         _batch.Begin(viewProjection);
 
