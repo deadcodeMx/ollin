@@ -79,8 +79,15 @@ public static class GraphCodeGenerator
         }
         else if (node.Kind == GraphNodeKind.Condition)
         {
+            var condition = node.Condition switch
+            {
+                GraphConditionKind.Always => "true",
+                GraphConditionKind.HasItem => $"Find(\"{Escape(node.TargetName)}\")?.GetComponent<Inventory>()?.Has(\"{Escape(node.ItemId)}\") == true",
+                GraphConditionKind.HealthBelow => $"Find(\"{Escape(node.TargetName)}\")?.GetComponent<Health>()?.Current <= {node.Threshold:0.###}f",
+                _ => "true",
+            };
             sb.AppendLine($"        // Condición: {node.Condition} {(string.IsNullOrWhiteSpace(node.Expression) ? "" : node.Expression)}");
-            sb.AppendLine("        if (true) // TODO: traducir la condición del grafo");
+            sb.AppendLine($"        if ({condition})");
             sb.AppendLine("        {");
             if (node.TrueNext is { } t) sb.AppendLine($"            {MethodName(Find(graph, t))}();");
             sb.AppendLine("        }");

@@ -1,13 +1,14 @@
-## Ollin Beta 6.191.0 — inspector filtrable
+## Ollin Beta 6.192.0 — condiciones del grafo
 
 ### Añadido
 
-- Buscador de componentes en el inspector.
-- Filtrado en tiempo real por nombre de sección.
+- Condiciones del grafo generan código C# real.
+- Always, HasItem y HealthBelow.
+- Expression sigue como TODO editable.
 
 ### Verificación
 
 - **237/237 pruebas**.
-- Instalador 6.191.0 instalado.
+- Instalador 6.192.0 instalado.
 
-## [6.190.0] — 2026-11-04
+## [6.191.0] — 2026-11-04
