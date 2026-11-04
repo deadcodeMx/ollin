@@ -66,6 +66,7 @@ public sealed class Renderer2D : IDisposable
     private int _uniformMvp;
     private int _uniformTexture;
     private Texture2D? _whiteTexture;
+    private readonly Ollin.Core.Rendering.RenderServer2D _renderServer = new();
     private Texture2D? _checkerTexture;
     private Texture2D? _radialLight;
     private Texture2D? _vignette;
@@ -407,39 +408,8 @@ public sealed class Renderer2D : IDisposable
     }
     private void DrawSprites(Scene scene, Vector2 cameraPosition)
     {
-        var drawables = new List<(Entity Entity, SpriteRenderer Sprite, CanvasLayer? Layer, CanvasItem2D? Item)>();
-        foreach (var entity in scene.Entities)
-        {
-            if (!entity.Active)
-            {
-                continue;
-            }
-
-            var sprite = entity.GetComponent<SpriteRenderer>();
-            var layer = entity.GetComponent<CanvasLayer>();
-            var item = entity.GetComponent<CanvasItem2D>();
-            if (layer is { Visible: false } || item is { Visible: false }) continue;
-            if (sprite is { Enabled: true, Visible: true })
-            {
-                drawables.Add((entity, sprite, layer, item));
-            }
-
-        }
-        drawables.Sort((a, b) =>
-        {
-            var layerOrder = (a.Layer?.Order ?? 0).CompareTo(b.Layer?.Order ?? 0);
-            if (layerOrder != 0) return layerOrder;
-            var zOrder = (a.Item?.ZIndex ?? 0).CompareTo(b.Item?.ZIndex ?? 0);
-            if (zOrder != 0) return zOrder;
-            if (a.Layer?.YSort == true || b.Layer?.YSort == true || a.Item?.YSort == true || b.Item?.YSort == true)
-            {
-                var yOrder = b.Entity.Transform.Position.Y.CompareTo(a.Entity.Transform.Position.Y);
-                if (yOrder != 0) return yOrder;
-            }
-            var order = a.Sprite.SortingOrder.CompareTo(b.Sprite.SortingOrder);
-            return order != 0 ? order : string.CompareOrdinal(a.Entity.Name, b.Entity.Name);
-        });
-
+        _renderServer.Submit(scene);
+        var drawables = _renderServer.Sprites;
         foreach (var (entity, sprite, _, item) in drawables)
         {
             var world = scene.GetWorldMatrix(entity);

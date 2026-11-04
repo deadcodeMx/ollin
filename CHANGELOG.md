@@ -17,6 +17,14 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.162.0] — 2026-11-04
+
+### Añadido
+
+- RenderServer2D con display list y ordenación.
+- DrawSprites consume el servidor en lugar de recorrer la escena.
+- Prueba de recolección/orden.
+
 ## [6.161.0] — 2026-11-04
 
 ### Añadido

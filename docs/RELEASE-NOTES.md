@@ -1,15 +1,16 @@
-## Ollin Beta 6.161.0 — ResourceLoader
+## Ollin Beta 6.162.0 — RenderServer2D
 
 ### Añadido
 
-- `OllinResource` y `TileSetResource`.
-- `ResourceLoader` con cache, `res://`, dependencias y detección de ciclos.
-- Integración del root del proyecto.
-- Prueba de carga/cache.
+- Display list de sprites con `RenderServer2D`.
+- Recolección y ordenación separadas de la escena.
+- `DrawSprites` consume el servidor.
+- Prueba de recolección/orden.
 
 ### Verificación
 
-- **232/232 pruebas**.
-- Instalador 6.161.0 instalado y abierto.
+- **233/233 pruebas**.
+- Instalador 6.162.0 instalado.
+- Escena de La Mansión renderizando tras el cambio.
 
-## [6.160.0] — 2026-11-04
+## [6.161.0] — 2026-11-04
