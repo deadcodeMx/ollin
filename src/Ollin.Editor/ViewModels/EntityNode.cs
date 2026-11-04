@@ -441,6 +441,8 @@ public sealed class EntityNode : ObservableObject
     public decimal DungeonHeight { get => Entity.GetComponent<DungeonGenerator2D>()?.Height ?? 20; set { if (Entity.GetComponent<DungeonGenerator2D>() is { } d) { d.Height = System.Math.Max(4, (int)value); OnPropertyChanged(); _owner.MarkDirty(); } } }
     public decimal DungeonSeed { get => Entity.GetComponent<DungeonGenerator2D>()?.Seed ?? 12345; set { if (Entity.GetComponent<DungeonGenerator2D>() is { } d) { d.Seed = (int)value; OnPropertyChanged(); _owner.MarkDirty(); } } }
 
+    public string ColliderIgnoreTags { get => string.Join(", ", Collider?.IgnoreTags ?? new List<string>()); set { if (Collider is null) return; Collider.IgnoreTags = value.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(tag => tag.Trim()).Where(tag => tag.Length > 0).ToList(); OnPropertyChanged(); _owner.MarkDirty(); } }
+
     public bool HasUiCanvas => Entity.GetComponent<UiCanvas>() is not null;
     public string UiCanvasSummary => Entity.GetComponent<UiCanvas>() is { } canvas ? $"{canvas.Elements.Count} elementos" : "-";
 
@@ -1532,6 +1534,7 @@ _scriptFields = null;
         OnPropertyChanged(nameof(HasCanvasLayer));
         OnPropertyChanged(nameof(HasAnimationPlayer));
         OnPropertyChanged(nameof(HasUiCanvas));
+        OnPropertyChanged(nameof(ColliderIgnoreTags));
         OnPropertyChanged(nameof(UiCanvasSummary));
         OnPropertyChanged(nameof(AnimationPlayerClip));
         OnPropertyChanged(nameof(AnimationPlayerPlaying));

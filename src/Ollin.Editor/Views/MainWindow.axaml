@@ -816,6 +816,7 @@
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderMask, Mode=TwoWay}" Increment="1" Minimum="0" Maximum="2147483647" FormatString="0" />
                       </Grid>
                         <TextBlock Text="Radio" VerticalAlignment="Center" Classes="hint" />
+                      <Grid ColumnDefinitions="96,*" Margin="0,1"><TextBlock Text="Ignorar tags" VerticalAlignment="Center" Classes="hint" /><TextBox Grid.Column="1" Text="{Binding Selected.ColliderIgnoreTags, Mode=TwoWay}" Watermark="projectile, trigger" /></Grid>
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.ColliderRadius, Mode=TwoWay}" Increment="0.05" Minimum="0.01" FormatString="0.###" />
                       </Grid>
                       <CheckBox Content="Es disparador (trigger)" IsChecked="{Binding Selected.IsTrigger, Mode=TwoWay}" FontSize="11.5" />

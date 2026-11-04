@@ -1606,6 +1606,8 @@ public partial class MainWindow : Window
         Add(combat, "Knockback 2D", "knockback2d");
         Add(combat, "Checkpoint 2D", "checkpoint2d");
         Add(combat, "Arma 2D", "weapon2d");
+        Add(combat, "RayCast 2D", "raycast2d");
+        Add(combat, "ShapeCast 2D", "shapecast2d");
         if (combat.Items.Count > 0) flyout.Items.Add(combat);
 
         var strategy = new MenuItem { Header = "Estrategia" };

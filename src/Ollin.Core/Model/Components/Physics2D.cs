@@ -19,6 +19,9 @@ public abstract class Collider2D : Component
     /// <summary>Máscara de capas con las que colisiona.</summary>
     public int Mask { get; set; } = ~0;
 
+    /// <summary>Etiquetas de entidades que este collider ignora.</summary>
+    public List<string> IgnoreTags { get; set; } = new();
+
     /// <summary>Plataforma de un solo sentido: solo colisiona desde arriba.</summary>
     public bool OneWay { get; set; }
 
@@ -40,6 +43,7 @@ public sealed class BoxCollider : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        IgnoreTags = new List<string>(IgnoreTags),
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -82,6 +86,7 @@ public sealed class CircleCollider2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        IgnoreTags = new List<string>(IgnoreTags),
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -114,6 +119,7 @@ public sealed class CapsuleCollider2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        IgnoreTags = new List<string>(IgnoreTags),
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -159,6 +165,7 @@ public sealed class PolygonCollider2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        IgnoreTags = new List<string>(IgnoreTags),
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -184,6 +191,7 @@ public sealed class EdgeCollider2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        IgnoreTags = new List<string>(IgnoreTags),
         OneWay = OneWay,
         Owner = newOwner,
     };
@@ -227,6 +235,7 @@ public sealed class Area2D : Collider2D
         ShowInEditor = ShowInEditor,
         Layer = Layer,
         Mask = Mask,
+        IgnoreTags = new List<string>(IgnoreTags),
         OneWay = OneWay,
         Owner = newOwner,
     };

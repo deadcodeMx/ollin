@@ -18,6 +18,8 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.CanvasLayer), "canvaslayer")]
 [JsonDerivedType(typeof(Components.AnimationPlayer2D), "animationplayer")]
 [JsonDerivedType(typeof(Components.UiCanvas), "uicanvas")]
+[JsonDerivedType(typeof(Components.RayCast2D), "raycast2d")]
+[JsonDerivedType(typeof(Components.ShapeCast2D), "shapecast2d")]
 [JsonDerivedType(typeof(Components.BoxCollider), "collider")]
 [JsonDerivedType(typeof(Components.CircleCollider2D), "circlecollider")]
 [JsonDerivedType(typeof(Components.CapsuleCollider2D), "capsulecollider")]

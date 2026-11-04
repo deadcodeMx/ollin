@@ -27,7 +27,7 @@ tilemap/animación/UI y audio/navegación**.
 
 | Área | Godot 2D | Ollin 2D | Falta |
 |---|---|---|---|
-| Física | CharacterBody2D con pendientes, floor snap, plataformas móviles, CCD, joints, raycast/shapecast, consultas | Contactos suelo/pared/techo, pendientes por normal, floor snap, arrastre de plataforma, subpasos adaptativos | Raycast/shapecast, joints, consultas, materiales, excepciones, CCD swept real |
+| Física | CharacterBody2D con pendientes, floor snap, plataformas móviles, CCD, joints, raycast/shapecast, consultas | Contactos suelo/pared/techo, pendientes por normal, floor snap, arrastre de plataforma, subpasos adaptativos, RayCast/ShapeCast y excepciones por tags | Joints, materiales, CCD swept real, consultas de área completas |
 | Formas | Box, circle, capsule, convex/concave polygon, segment, world boundary | Box, circle, capsule aproximada, polygon, edge | Segmento, world boundary, convex/concave real, separation ray |
 | Tilemap | TileMapLayer, TileSet, terrenos/autotile, colisiones/navegación/oclusión por tile, capas, Y-sort | TileMapLayer, TileSet inline, colisión por tile, autotile básico | Terrenos, navegación/oclusión por tile, Y-sort, editor de TileSet |
 | Render 2D | CanvasLayer, shaders de canvas, blend modes, meshes, MultiMesh, Line2D/Polygon2D, Y-sort, viewports, pixel snap/AA | SpriteBatch propio, sprites, líneas, partículas, luces | Shaders, blend modes, meshes, CanvasLayer, Y-sort, viewports, antialiasing, pixel perfect |

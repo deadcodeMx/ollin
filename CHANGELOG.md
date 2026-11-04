@@ -17,6 +17,16 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.121.0] — 2026-11-04
+
+### Añadido
+
+- RayCast2D y ShapeCast2D.
+- Consultas `Physics2D.Raycast` y `Physics2D.BoxCast` para scripts.
+- Excepciones de colisión por tags.
+- Inspector de tags ignoradas.
+- Pruebas de consultas físicas.
+
 ## [6.120.0] — 2026-11-04
 
 ### Añadido

@@ -70,6 +70,12 @@ internal sealed class PhysicsSystem
                     continue;
                 }
 
+                if (a.Collider.IgnoreTags.Any(tag => b.Entity.Tags.Contains(tag)) ||
+                    b.Collider.IgnoreTags.Any(tag => a.Entity.Tags.Contains(tag)))
+                {
+                    continue;
+                }
+
                 var aPosition = scene.GetWorldPosition(a.Entity);
                 var bPosition = scene.GetWorldPosition(b.Entity);
                 if ((a.Collider.OneWay && bPosition.Y <= aPosition.Y) ||

@@ -1,21 +1,16 @@
-## Ollin Beta 6.120.0 — Canvas, timeline y UI runtime
+## Ollin Beta 6.121.0 — consultas físicas y excepciones
 
 ### Añadido
 
-- `CanvasLayer` con orden, visibilidad y Y-sort.
-- `AnimationPlayer2D` con timelines y tracks de transformación, frame y audio.
-- `UiCanvas` runtime con panel, etiqueta, botón y barra.
-- Overlay de UI en editor y reproductor.
-- Inspector de AnimationPlayer y UI Canvas.
-
-### Limitaciones
-
-- Sin shaders de canvas, blend modes, meshes ni viewports.
-- Timeline sin editor visual ni blend trees.
-- UI sin anchors, layouts, temas, listas ni foco.
+- `RayCast2D`.
+- `ShapeCast2D`.
+- `Physics2D.Raycast` y `Physics2D.BoxCast`.
+- Excepciones de colisión por tags.
+- Inspector de tags ignoradas.
+- Pruebas de consultas.
 
 ### Verificación
 
-- **212/212 pruebas**.
-- Instalador 6.120.0 instalado y abierto.
+- **214/214 pruebas**.
+- Instalador 6.121.0 instalado y abierto.
 - Demo técnica no publicada.
