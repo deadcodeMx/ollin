@@ -1,20 +1,21 @@
-## Ollin Beta 6.165.0 — SubViewport2D
+## Ollin Beta 6.166.0 — materiales de canvas
 
 ### Añadido
 
-- `SubViewport2D` con cámara secundaria.
-- Rectángulo normalizado.
-- Render en una región del viewport.
-- Inspector.
+- `CanvasMaterial2D` con shader GLSL ES 3.0.
+- Compilación y cache por fuente.
+- `uTint` por material.
+- Inspector de shader.
 
-### Limitación
+### Limitaciones
 
-- No hay render-to-texture ni viewport como recurso de textura.
-- Es una segunda pasada de escena.
+- El shader debe respetar el contrato `uTexture`, `vTexCoord`, `vColor`.
+- Sin hot-reload de shaders.
+- Sin uniforms arbitrarios desde el inspector.
 
 ### Verificación
 
-- **235/235 pruebas**.
-- Instalador 6.165.0 instalado y abierto.
+- **236/236 pruebas**.
+- Instalador 6.166.0 instalado y abierto.
 
-## [6.164.0] — 2026-11-04
+## [6.165.0] — 2026-11-04

@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.166.0] — 2026-11-04
+
+### Añadido
+
+- CanvasMaterial2D con shader GLSL ES 3.0.
+- Compilación y cache de programas por material.
+- uTint por material.
+- Inspector de shader.
+
 ## [6.165.0] — 2026-11-04
 
 ### Añadido

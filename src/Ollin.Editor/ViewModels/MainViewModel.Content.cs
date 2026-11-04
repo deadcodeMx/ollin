@@ -564,6 +564,7 @@ public sealed partial class MainViewModel
             "canvaslayer" => entity.GetComponent<CanvasLayer>(),
             "canvasitem2d" => entity.GetComponent<CanvasItem2D>(),
             "subviewport2d" => entity.GetComponent<SubViewport2D>(),
+            "canvasmaterial2d" => entity.GetComponent<CanvasMaterial2D>(),
             "animationplayer" => entity.GetComponent<AnimationPlayer2D>(),
             "animationblendtree" => entity.GetComponent<AnimationBlendTree2D>(),
             "uicanvas" => entity.GetComponent<UiCanvas>(),

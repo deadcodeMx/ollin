@@ -67,6 +67,7 @@ public sealed class Renderer2D : IDisposable
     private int _uniformTexture;
     private Texture2D? _whiteTexture;
     private readonly Ollin.Core.Rendering.RenderServer2D _renderServer = new();
+    private readonly Dictionary<string, uint> _materialPrograms = new(StringComparer.Ordinal);
     private Texture2D? _checkerTexture;
     private Texture2D? _radialLight;
     private Texture2D? _vignette;
@@ -295,6 +296,24 @@ public sealed class Renderer2D : IDisposable
         var rotated = new Vector2(local.X * cos - local.Y * sin, local.X * sin + local.Y * cos) * scale;
         return currentStart + rotated;
     }
+    private uint GetMaterialProgram(string source)
+    {
+        if (string.IsNullOrWhiteSpace(source)) return 0;
+        if (_materialPrograms.TryGetValue(source, out var cached)) return cached;
+        try
+        {
+            var program = CreateProgram(VertexShaderSource, source);
+            _materialPrograms[source] = program;
+            return program;
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"Shader de material inválido: {exception.Message}", "Render");
+            _materialPrograms[source] = 0;
+            return 0;
+        }
+    }
+
     private void DrawShapes(Scene scene)
     {
         foreach (var entity in scene.Entities)
@@ -459,10 +478,18 @@ public sealed class Renderer2D : IDisposable
                 (v0, v1) = (v1, v0);
             }
 
+            var material = entity.GetComponent<CanvasMaterial2D>();
+            if (material is { Enabled: true })
+            {
+                var program = GetMaterialProgram(material.FragmentSource);
+                if (program != 0) _batch.SetProgram(program, _uniformMvp, _uniformTexture);
+                _batch.SetUniform4("uTint", material.Tint);
+            }
             _batch.DrawQuad(texture,
                 corners[0], corners[1], corners[2], corners[3],
                 new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1),
                 tint);
+            if (material is { Enabled: true }) _batch.ResetProgram();
         }
     }
 

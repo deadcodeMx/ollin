@@ -26,6 +26,10 @@ public sealed class SpriteBatch : IDisposable
     private int _vertexOffset;
     private Texture2D? _currentTexture;
     private uint _program;
+    private uint _defaultProgram;
+    private int _defaultMvp;
+    private int _defaultTexture;
+    private Matrix4x4 _viewProjection;
     private int _uMvp;
     private int _uTexture;
     private Texture2D? _whiteTexture;
@@ -97,9 +101,33 @@ public sealed class SpriteBatch : IDisposable
         _gl.Uniform1(_uTexture, 0);
         _gl.ActiveTexture(TextureUnit.Texture0);
 
+        _viewProjection = viewProjection;
         _gl.UniformMatrix4(_uMvp, 1, false, &viewProjection.M11);
 
         _gl.BindVertexArray(_vao);
+    }
+
+    public void SetProgram(uint program, int uniformMvp, int uniformTexture)
+    {
+        if (_program == program) return;
+        Flush();
+        _program = program;
+        _uMvp = uniformMvp;
+        _uTexture = uniformTexture;
+        _gl.UseProgram(_program);
+        _gl.Uniform1(_uTexture, 0);
+        unsafe { var mvp = _viewProjection; _gl.UniformMatrix4(_uMvp, 1, false, &mvp.M11); }
+    }
+
+    public void ResetProgram()
+    {
+        SetProgram(_defaultProgram, _defaultMvp, _defaultTexture);
+    }
+
+    public void SetUniform4(string name, Vector4 value)
+    {
+        var location = _gl.GetUniformLocation(_program, name);
+        if (location >= 0) _gl.Uniform4(location, value.X, value.Y, value.Z, value.W);
     }
 
     public void SetBlendMode(BlendMode2D mode)

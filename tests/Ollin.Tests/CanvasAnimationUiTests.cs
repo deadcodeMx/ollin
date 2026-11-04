@@ -239,4 +239,13 @@ public sealed class CanvasAnimationUiTests
         Assert.Equal("minimap", copy.CameraTag);
         Assert.Equal(0.3f, copy.Rect.Z);
     }
+
+    [Fact]
+    public void CanvasMaterialConservaShader()
+    {
+        var material = new CanvasMaterial2D { FragmentSource = "void main(){}", Tint = new Vector4(1f, 0.5f, 1f, 1f) };
+        var copy = (CanvasMaterial2D)material.CloneFor(new Entity());
+        Assert.Equal("void main(){}", copy.FragmentSource);
+        Assert.Equal(0.5f, copy.Tint.Y);
+    }
 }
