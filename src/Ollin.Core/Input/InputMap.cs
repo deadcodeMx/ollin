@@ -36,6 +36,9 @@ public static class InputMap
 
     public static IReadOnlyList<InputActionDefinition> Actions => _actions;
 
+    /// <summary>Zona muerta de los ejes analógicos (0..1).</summary>
+    public static float Deadzone { get; set; } = 0.25f;
+
     public static void Set(IEnumerable<InputActionDefinition>? actions)
     {
         _actions = actions?.ToList() ?? CreateDefaults().ToList();
@@ -76,7 +79,7 @@ public static class InputMap
     {
         "key" => Enum.TryParse<KeyCode>(binding.Control, true, out var key) && InputState.IsKeyDown(key),
         "gamepad" => GamepadInput.IsDown(binding.Control),
-        "axis" => GamepadInput.Axis(binding.Control) * MathF.Sign(binding.Direction) >= 0.5f,
+        "axis" => MathF.Abs(GamepadInput.Axis(binding.Control)) >= System.Math.Clamp(Deadzone, 0.05f, 0.95f) && GamepadInput.Axis(binding.Control) * MathF.Sign(binding.Direction) >= 0,
         _ => false,
     };
 

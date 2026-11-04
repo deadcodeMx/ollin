@@ -41,6 +41,8 @@ public sealed class ProjectInfo
     /// <summary>Acciones del Input Map del proyecto.</summary>
     public List<InputActionDefinition> InputActions { get; set; } = InputMap.CreateDefaults();
 
+    public float InputDeadzone { get; set; } = 0.25f;
+
     /// <summary>Carpeta raíz del proyecto (no se guarda en el archivo).</summary>
     public string RootPath { get; set; } = string.Empty;
 
@@ -155,6 +157,9 @@ public static class ProjectService
             ?? throw new InvalidOperationException("El archivo de proyecto no es válido.");
 
         project.RootPath = Path.GetDirectoryName(fullPath)!;
+        project.InputDeadzone = System.Math.Clamp(project.InputDeadzone, 0.05f, 0.95f);
+        InputMap.Deadzone = project.InputDeadzone;
+
         if (project.InputActions is null || project.InputActions.Count == 0)
             project.InputActions = InputMap.CreateDefaults();
         return project;

@@ -42,6 +42,15 @@ public sealed class LocalizationDatabase
         if (_languages.ContainsKey(language)) Language = language;
     }
 
+    public bool IsRightToLeft => Language is "ar" or "he" or "fa" or "ur";
+
+    public string GetPlural(string key, int count, string? fallback = null)
+    {
+        var suffix = count == 0 ? ".zero" : count == 1 ? ".one" : ".other";
+        var plural = Get(key + suffix, string.Empty);
+        return string.IsNullOrEmpty(plural) ? Get(key, fallback) : plural;
+    }
+
     public string Get(string key, string? fallback = null)
     {
         if (_languages.TryGetValue(Language, out var table) && table.TryGetValue(key, out var text)) return text;
@@ -55,6 +64,8 @@ public static class Localization
 {
     private static LocalizationDatabase? _database;
     public static string Language => _database?.Language ?? "es";
+    public static IReadOnlyCollection<string> Languages => _database?.Languages ?? Array.Empty<string>();
+    public static bool IsRightToLeft => _database?.IsRightToLeft ?? false;
 
     public static void Load(string root, string? language = null)
     {
@@ -62,7 +73,11 @@ public static class Localization
         if (!string.IsNullOrWhiteSpace(language)) _database.SetLanguage(language);
     }
 
+    public static void SetLanguage(string language) => _database?.SetLanguage(language);
+
     public static string Get(string key, string? fallback = null) => _database?.Get(key, fallback) ?? fallback ?? key;
+
+    public static string GetPlural(string key, int count, string? fallback = null) => _database?.GetPlural(key, count, fallback) ?? fallback ?? key;
 
     public static string Format(string key, params object[] values) =>
         string.Format(Get(key), values);

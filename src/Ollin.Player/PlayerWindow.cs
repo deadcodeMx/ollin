@@ -7,12 +7,14 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using System.IO;
+using System.Numerics;
 using System.Text.Json;
 using Ollin.Core.Audio;
 using Ollin.Core.Model.Components;
 using Ollin.Core.Model;
 using Avalonia.Controls.Primitives;
 using Ollin.Core.Input;
+using CoreLocalization = Ollin.Core.Localization.Localization;
 using Ollin.Core.Projects;
 using Ollin.Core.Saves;
 using Ollin.Editor.Controls;
@@ -42,6 +44,7 @@ public sealed class PlayerWindow : Window
     private StackPanel? _optionsPanel;
     private StackPanel? _mainPanel;
     private ComboBox? _slotCombo;
+    private ComboBox? _languageCombo;
     private int _saveSlot = 1;
     private readonly SaveSlotService _saves = new();
     private readonly AutosaveScheduler _autosaveScheduler = new(45d);
@@ -61,6 +64,7 @@ public sealed class PlayerWindow : Window
 
         _viewModel = new MainViewModel(initialize: false);
         Ollin.Core.Audio.Audio.Root = game.Root;
+        CoreLocalization.Load(game.Root);
         _viewModel.OpenProjectLocation(game.Root, logToConsole: false, remember: false);
 
         if (game.ScriptsImage is { Length: > 0 })
@@ -293,6 +297,10 @@ public sealed class PlayerWindow : Window
         root.Children.Add(_saveStatus);
 
         _optionsPanel = new StackPanel { Spacing = 7, IsVisible = false };
+        _optionsPanel.Children.Add(new TextBlock { Text = "Idioma", FontSize = 12, Foreground = new SolidColorBrush(Color.Parse("#E7EAF0")) });
+        _languageCombo = new ComboBox { ItemsSource = CoreLocalization.Languages.Count > 0 ? CoreLocalization.Languages.OrderBy(value => value).ToArray() : new[] { "es", "en" }, SelectedItem = CoreLocalization.Language, Width = 290, HorizontalAlignment = HorizontalAlignment.Left };
+        _languageCombo.SelectionChanged += (_, _) => { if (_languageCombo.SelectedItem is string language) { CoreLocalization.SetLanguage(language); SaveSettings(); } };
+        _optionsPanel.Children.Add(_languageCombo);
         _optionsPanel.Children.Add(new TextBlock
         {
             Text = "Volumen",
@@ -524,6 +532,8 @@ public sealed class PlayerWindow : Window
             Audio.MasterVolume = settings.Volume;
             Audio.MusicVolume = settings.MusicVolume;
             Audio.EffectsVolume = settings.EffectsVolume;
+            CoreLocalization.SetLanguage(settings.Language);
+            if (_languageCombo is not null) _languageCombo.SelectedItem = CoreLocalization.Language;
 
             if (_volumeSlider is not null) _volumeSlider.Value = settings.Volume;
             if (_musicSlider is not null) _musicSlider.Value = settings.MusicVolume;
@@ -561,6 +571,7 @@ public sealed class PlayerWindow : Window
                 InvertY = _invertYCheck?.IsChecked == true,
                 Smoothing = _smoothingSlider is null ? 0f : (float)_smoothingSlider.Value,
                 Fullscreen = _fullscreenCheck?.IsChecked == true,
+                Language = _languageCombo?.SelectedItem as string ?? CoreLocalization.Language,
             };
             settings.Save(SettingsPath);
         }
@@ -610,6 +621,7 @@ public sealed class PlayerWindow : Window
         if (_started && !_paused)
         {
             _surface.Viewport.UpdatePointerInput(e.GetPosition(_surface));
+            if (e.Pointer.Type == PointerType.Touch) InputState.SetTouch(true, new Vector2((float)e.GetPosition(_surface).X, (float)e.GetPosition(_surface).Y));
         }
     }
 
@@ -622,6 +634,7 @@ public sealed class PlayerWindow : Window
 
         var point = e.GetCurrentPoint(_surface);
         _surface.Viewport.UpdatePointerInput(point.Position);
+        if (e.Pointer.Type == PointerType.Touch) InputState.SetTouch(true, new Vector2((float)point.Position.X, (float)point.Position.Y));
         _surface.Viewport.UpdateMouseButton(0, point.Properties.IsLeftButtonPressed);
         _surface.Viewport.UpdateMouseButton(1, point.Properties.IsRightButtonPressed);
         _surface.Viewport.UpdateMouseButton(2, point.Properties.IsMiddleButtonPressed);

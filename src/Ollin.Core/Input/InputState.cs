@@ -18,6 +18,9 @@ public static class InputState
     private static Vector2 _mouseWorld;
     private static Vector2 _mouseDelta;
     private static Vector2 _lastMouseScreen;
+    private static bool _touchDown;
+    private static Vector2 _touchPosition;
+    private static Vector2 _touchPrevious;
 
     /// <summary>Posición del ratón en píxeles del viewport.</summary>
     public static Vector2 MouseScreenPosition => _mouseScreen;
@@ -33,6 +36,16 @@ public static class InputState
     public static bool WasKeyPressed(KeyCode key) => Down.Contains(key) && !Previous.Contains(key);
 
     public static bool WasKeyReleased(KeyCode key) => !Down.Contains(key) && Previous.Contains(key);
+
+    public static bool IsTouchDown => _touchDown;
+    public static Vector2 TouchPosition => _touchPosition;
+    public static Vector2 TouchDelta => _touchPosition - _touchPrevious;
+
+    public static void SetTouch(bool down, Vector2 position)
+    {
+        _touchDown = down;
+        _touchPosition = position;
+    }
 
     public static bool IsMouseButtonDown(int button) => InRange(button) && MouseDown[button];
 
@@ -74,6 +87,7 @@ public static class InputState
     /// <summary>Cierra el cuadro: calcula flancos y delta del ratón. Lo llama el runtime.</summary>
     public static void Update()
     {
+        _touchPrevious = _touchPosition;
         _mouseDelta = _mouseScreen - _lastMouseScreen;
         _lastMouseScreen = _mouseScreen;
 
@@ -101,6 +115,9 @@ public static class InputState
         _mouseWorld = Vector2.Zero;
         _mouseDelta = Vector2.Zero;
         _lastMouseScreen = Vector2.Zero;
+        _touchDown = false;
+        _touchPosition = Vector2.Zero;
+        _touchPrevious = Vector2.Zero;
     }
 
     private static bool InRange(int button) => button is >= 0 and < 3;

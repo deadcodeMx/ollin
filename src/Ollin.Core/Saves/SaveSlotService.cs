@@ -81,6 +81,7 @@ public sealed class AutosaveScheduler
 public sealed class PlayerSettings
 {
     public float Volume { get; set; } = 0.8f;
+    public string Language { get; set; } = "es";
     public float MusicVolume { get; set; } = 1f;
     public float EffectsVolume { get; set; } = 1f;
 
@@ -97,6 +98,7 @@ public sealed class PlayerSettings
     public void Normalize()
     {
         Volume = System.Math.Clamp(Volume, 0f, 1f);
+        Language = string.IsNullOrWhiteSpace(Language) ? "es" : Language;
         MusicVolume = System.Math.Clamp(MusicVolume, 0f, 1f);
         EffectsVolume = System.Math.Clamp(EffectsVolume, 0f, 1f);
         SensitivityX = System.Math.Clamp(SensitivityX, 0.0004f, 0.006f);

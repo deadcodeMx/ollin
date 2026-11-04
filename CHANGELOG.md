@@ -17,6 +17,15 @@ versionado [SemVer](https://semver.org/lang/es/).
 - Puente 2.5D y 3D.
 - Exportación de un juego a un ejecutable.
 
+## [6.132.0] — 2026-11-04
+
+### Añadido
+
+- Localización con plurales y detección RTL.
+- Selector de idioma en opciones del reproductor.
+- Zona muerta configurable del Input Map.
+- Estado de touch en el reproductor.
+
 ## [6.131.0] — 2026-11-04
 
 ### Añadido

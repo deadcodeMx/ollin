@@ -14,6 +14,7 @@ public sealed class InputMapWindow : Window
     private readonly ProjectInfo _project;
     private readonly StackPanel _rows = new() { Spacing = 6 };
     private readonly TextBlock _error;
+    private readonly NumericUpDown _deadzone;
     private TextBox? _captureBox;
     private TextBox? _capturePadBox;
     private DispatcherTimer? _padTimer;
@@ -28,6 +29,8 @@ public sealed class InputMapWindow : Window
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         Background = new SolidColorBrush(Color.Parse("#151922"));
         Foreground = new SolidColorBrush(Color.Parse("#E7EAF0"));
+
+        _deadzone = new NumericUpDown { Minimum = 0.05m, Maximum = 0.95m, Increment = 0.05m, Value = (decimal)InputMap.Deadzone, FormatString = "0.##", Width = 120 };
 
         _error = new TextBlock
         {
@@ -74,7 +77,8 @@ public sealed class InputMapWindow : Window
                     TextWrapping = TextWrapping.Wrap,
                     Foreground = new SolidColorBrush(Color.Parse("#8B94A7")),
                 },
-                new ScrollViewer { Content = _rows, Height = 380 },
+                new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { new TextBlock { Text = "Zona muerta", VerticalAlignment = VerticalAlignment.Center, Classes = { "hint" } }, _deadzone } },
+                new ScrollViewer { Content = _rows, Height = 350 },
                 _error,
                 new StackPanel
                 {
@@ -180,6 +184,8 @@ public sealed class InputMapWindow : Window
         }
 
         _project.InputActions = result;
+        _project.InputDeadzone = (float)(_deadzone.Value ?? 0.25m);
+        InputMap.Deadzone = _project.InputDeadzone;
         ProjectService.Save(_project);
         InputMap.Set(result);
         _padTimer?.Stop();
