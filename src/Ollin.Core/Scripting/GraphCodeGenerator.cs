@@ -143,7 +143,8 @@ public static class GraphCodeGenerator
 
     private static string ValueOf(NodeGraph graph, GraphNode node)
     {
-        if (graph.DataLinkTo(node.Id, "amount") is { } link && graph.Find(link.SourceNodeId) is { Kind: GraphNodeKind.Value } value)
+        var port = node.Action == ActionKind.SetComponentProperty && !string.IsNullOrWhiteSpace(node.PropertyName) ? node.PropertyName : "amount";
+        if ((graph.DataLinkTo(node.Id, port) ?? graph.DataLinkTo(node.Id, "amount")) is { } link && graph.Find(link.SourceNodeId) is { Kind: GraphNodeKind.Value } value)
         {
             return value.ValueKind switch
             {

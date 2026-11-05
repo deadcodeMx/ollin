@@ -1,15 +1,15 @@
-## Ollin Beta 6.227.0 — cierre grafo
+## Ollin Beta 6.228.0 — pines por propiedad
 
-### Corregido
+### Añadido
 
-- Pestañas de grafos inicializadas correctamente.
-- Arrastre de nodos corregido.
-- Migración al abrir grafos.
+- Pines por propiedad del componente.
+- Conexión directa desde nodo Valor.
+- Codegen usa el puerto con el nombre de la propiedad.
 
 ### Verificación
 
 - Build 0 errores.
 - 140/140 pruebas.
-- Instalador 6.227.0 instalado.
+- Instalador 6.228.0 instalado.
 
-## [6.226.0] — 2026-11-05
+## [6.227.0] — 2026-11-05
