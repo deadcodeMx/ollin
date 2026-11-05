@@ -1,16 +1,15 @@
-## Ollin Beta 6.244.0 — funciones con ramas
+## Ollin Beta 6.245.0 — P0 grafo
 
-### Añadido
+### Corregido
 
-- Condiciones dentro de funciones.
-- Bucles dentro de funciones.
-- Codegen inline recursivo.
-- Prueba de función con ramas.
+- SetVariable/AddVariable usan la expresión.
+- Eventos personalizados inline con parámetros.
+- Prueba de ambos.
 
 ### Verificación
 
 - Build 0 errores.
-- 149/149 pruebas.
-- Instalador 6.244.0.
+- 150/150 pruebas.
+- Instalador 6.245.0.
 
-## [6.243.0] — 2026-11-05
+## [6.244.0] — 2026-11-05

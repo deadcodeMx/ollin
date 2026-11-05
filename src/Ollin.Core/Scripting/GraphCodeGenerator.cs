@@ -187,7 +187,7 @@ public static class GraphCodeGenerator
         sb.AppendLine();
         sb.AppendLine($"    private void {CustomMethodName(node)}({parameters})");
         sb.AppendLine("    {");
-        if (node.Next is { } body) sb.AppendLine($"        {MethodName(Find(graph, body))}();");
+        if (node.Next is { } body) EmitInlineChain(sb, graph, Find(graph, body), 2, insideFunction: false);
         sb.AppendLine("    }");
         if (node.Next is { } next) EmitChain(sb, graph, Find(graph, next), emitted);
     }
@@ -319,10 +319,10 @@ public static class GraphCodeGenerator
                 sb.AppendLine($"        if ({target} is {{ }} point) Position = Scene!.GetWorldPosition(point);");
                 break;
             case ActionKind.SetVariable:
-                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = {ValueOf(graph, node)};");
+                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = {ValueOrExpression(graph, node)};");
                 break;
             case ActionKind.AddVariable:
-                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") + {ValueOf(graph, node)};");
+                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") + {ValueOrExpression(graph, node)};");
                 break;
             case ActionKind.ToggleFlag:
                 sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") > 0f ? 0f : 1f;");
@@ -349,6 +349,13 @@ public static class GraphCodeGenerator
         var parts = source.Value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length < 2) return null;
         return $"new Vector2({parts[0]}f, {parts[1]}f)";
+    }
+    private static string ValueOrExpression(NodeGraph graph, GraphNode node)
+    {
+        if (graph.DataLinkTo(node.Id, "amount") is not null) return ValueOf(graph, node);
+        return string.IsNullOrWhiteSpace(node.Expression)
+            ? ValueOf(graph, node)
+            : node.Expression;
     }
     private static string ValueOf(NodeGraph graph, GraphNode node)
     {

@@ -248,4 +248,22 @@ public sealed class GraphV2Tests
         Assert.Contains("return 1;", code);
         Assert.Contains("return 0;", code);
     }
+
+    [Fact]
+    public void SetVariableUsaLaExpresionYElEventoInlineaParametros()
+    {
+        var graph = new NodeGraph();
+        var custom = graph.AddNode(GraphNodeKind.CustomEvent, 0, 0);
+        custom.CustomEventName = "Sumar";
+        custom.ParameterText = "cantidad:Number";
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "total";
+        action.Expression = "cantidad + 1";
+        custom.Next = action.Id;
+
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("Event_Sumar(float cantidad)", code);
+        Assert.Contains("_vars[\"total\"] = cantidad + 1;", code);
+    }
 }
