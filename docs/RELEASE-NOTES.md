@@ -1,15 +1,15 @@
-## Ollin Beta 6.275.0 — auto-cast
+## Ollin Beta 6.276.0 — conversiones
 
 ### Añadido
 
-- Matriz de auto-cast completa.
-- Listas/structs entre sí.
+- Conversión explícita en codegen.
+- Convert.ToSingle/ToInt32/ToBoolean/ToString.
 - Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 180/180 pruebas.
-- Instalador 6.275.0.
+- 181/181 pruebas.
+- Instalador 6.276.0.
 
-## [6.274.0] — 2026-11-05
+## [6.275.0] — 2026-11-05

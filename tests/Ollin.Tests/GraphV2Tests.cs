@@ -287,7 +287,7 @@ public sealed class GraphV2Tests
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("private float _var_contador = 5f;", code);
         Assert.Contains("private string _var_nombre = \"hola\";", code);
-        Assert.Contains("_var_contador = _var_contador + 1;", code);
+        Assert.Contains("_var_contador = Convert.ToSingle(_var_contador + 1);", code);
     }
 
     [Fact]
@@ -785,5 +785,25 @@ public sealed class GraphV2Tests
         Assert.True(NodeGraph.CanConnect(GraphPinType.Struct, GraphPinType.Struct));
         Assert.False(NodeGraph.CanConnect(GraphPinType.List, GraphPinType.Struct));
         Assert.False(NodeGraph.CanConnect(GraphPinType.Number, GraphPinType.List));
+    }
+
+    [Fact]
+    public void ElCodegenConvierteBooleanANumber()
+    {
+        var graph = new NodeGraph();
+        graph.Variables.Add(new GraphVariable { Name = "numero", Type = GraphPinType.Number, DefaultValue = "0" });
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var value = graph.AddNode(GraphNodeKind.Value, 0, 100);
+        value.ValueKind = GraphValueKind.Boolean;
+        value.Value = "true";
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "numero";
+        action.Expression = "";
+        start.Next = action.Id;
+        graph.AddDataLink(value.Id, action.Id, "amount", GraphPinType.Boolean);
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("Convert.ToSingle(true)", code);
+        AssertGeneratedCompiles(graph);
     }
 }

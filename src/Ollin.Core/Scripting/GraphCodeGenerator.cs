@@ -638,7 +638,7 @@ public static class GraphCodeGenerator
                 if (VectorOf(graph, node) is { } vector)
                     sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", {FieldText(graph, node, "message", node.Message)}, \"player\", 0f, {FieldText(graph, node, "component", node.ComponentName)}, {FieldText(graph, node, "property", node.PropertyName)}, {vector}, {node.Radius:0.###}f, {node.Interval:0.###}f, {node.Threshold:0.###}f);");
                 else
-                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", {FieldText(graph, node, "message", node.Message)}, \"player\", {ValueOf(graph, node)}, {FieldText(graph, node, "component", node.ComponentName)}, {FieldText(graph, node, "property", node.PropertyName)}, default, {node.Radius:0.###}f, {node.Interval:0.###}f, {node.Threshold:0.###}f);");
+                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", {FieldText(graph, node, "message", node.Message)}, \"player\", Convert.ToSingle({ValueOf(graph, node)}), {FieldText(graph, node, "component", node.ComponentName)}, {FieldText(graph, node, "property", node.PropertyName)}, default, {node.Radius:0.###}f, {node.Interval:0.###}f, {node.Threshold:0.###}f);");
                 break;
         }
     }
@@ -662,6 +662,7 @@ public static class GraphCodeGenerator
         if (graph.DataLinkTo(node.Id, port) is { } link && graph.Find(link.SourceNodeId) is { } source)
         {
             if (source.Kind == GraphNodeKind.Value && source.ValueKind == GraphValueKind.Text) return $"\"{Escape(source.Value)}\"";
+            if (source.Kind == GraphNodeKind.Value) return $"Convert.ToString({source.Value})";
             if (source.Kind == GraphNodeKind.CallFunction) return $"Func_{SafeName(source.FunctionName, "Funcion")}({source.ArgumentsText})";
         }
         return $"\"{Escape(fallback)}\"";
@@ -680,13 +681,26 @@ public static class GraphCodeGenerator
         }
         return fallback.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
     }
+    private static string ConvertTo(string expression, GraphPinType target) => target switch
+    {
+        GraphPinType.Number => $"Convert.ToSingle({expression})",
+        GraphPinType.Integer => $"Convert.ToInt32({expression})",
+        GraphPinType.Boolean => $"Convert.ToBoolean({expression})",
+        GraphPinType.Text => $"Convert.ToString({expression})",
+        _ => expression,
+    };
     private static string ValueOrExpression(NodeGraph graph, GraphNode node)
     {
-        if (graph.DataLinkTo(node.Id, "amount") is not null) return ValueOf(graph, node);
+        if (graph.DataLinkTo(node.Id, "amount") is not null)
+        {
+            var linked = ValueOf(graph, node);
+            return FindVariable(graph, node.VariableName) is { } linkedVariable ? ConvertTo(linked, linkedVariable.Type) : linked;
+        }
         if (graph.DataLinkTo(node.Id, "expression") is not null) return ExpressionLink(graph, node, node.Expression);
-        return string.IsNullOrWhiteSpace(node.Expression)
+        var value = string.IsNullOrWhiteSpace(node.Expression)
             ? ValueOf(graph, node)
             : RewriteVariables(graph, node.Expression);
+        return FindVariable(graph, node.VariableName) is { } variable ? ConvertTo(value, variable.Type) : value;
     }
     private static string ValueOf(NodeGraph graph, GraphNode node)
     {
