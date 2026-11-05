@@ -204,6 +204,9 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Valor: Vector2", () => AddValue(GraphValueKind.Vector2));
         AddPalette(panel, "Evento personalizado", () => AddNode(GraphNodeKind.CustomEvent, GraphEventKind.OnStart));
         AddPalette(panel, "Llamar evento", () => AddNode(GraphNodeKind.CallEvent, GraphEventKind.OnStart));
+        AddPalette(panel, "Break", () => AddNode(GraphNodeKind.Break, GraphEventKind.OnStart));
+        AddPalette(panel, "Continue", () => AddNode(GraphNodeKind.Continue, GraphEventKind.OnStart));
+        AddPalette(panel, "Return", () => AddNode(GraphNodeKind.Return, GraphEventKind.OnStart));
         AddPalette(panel, "Bucle", () => AddNode(GraphNodeKind.Loop, GraphEventKind.OnStart));
         AddPalette(panel, "Subgrafo", () => AddNode(GraphNodeKind.Subgraph, GraphEventKind.OnStart));
         AddPalette(panel, "Túnel entrada", () => AddNode(GraphNodeKind.TunnelIn, GraphEventKind.OnStart));
@@ -2524,6 +2527,9 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         GraphNodeKind.Loop => "BUCLE",
         GraphNodeKind.CustomEvent => "EVENTO PERSONALIZADO",
         GraphNodeKind.CallEvent => "LLAMAR EVENTO",
+        GraphNodeKind.Break => "BREAK",
+        GraphNodeKind.Continue => "CONTINUE",
+        GraphNodeKind.Return => "RETURN",
         GraphNodeKind.TunnelIn => "TÚNEL ENTRADA",
         GraphNodeKind.TunnelOut => "TÚNEL SALIDA",
         GraphNodeKind.Group => "GRUPO",

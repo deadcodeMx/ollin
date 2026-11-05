@@ -1,16 +1,16 @@
-## Ollin Beta 6.238.0 — eventos personalizados
+## Ollin Beta 6.239.0 — break/continue/return
 
 ### Añadido
 
-- Evento personalizado con nombre y parámetros.
-- Nodo Llamar evento con argumentos.
-- Codegen de métodos Event_ y llamadas.
-- Prueba de eventos personalizados.
+- Nodos Break, Continue y Return.
+- Cuerpo de bucle generado inline.
+- Control de flujo válido dentro de bucles.
+- Prueba de break.
 
 ### Verificación
 
 - Build 0 errores.
-- 143/143 pruebas.
-- Instalador 6.238.0.
+- 144/144 pruebas.
+- Instalador 6.239.0.
 
-## [6.237.0] — 2026-11-05
+## [6.238.0] — 2026-11-05

@@ -159,7 +159,27 @@ public static class GraphCodeGenerator
             };
             sb.AppendLine($"        {header}");
             sb.AppendLine("        {");
-            if (node.Next is { } body) sb.AppendLine($"            {MethodName(Find(graph, body))}();");
+            var body = node.Next is { } bodyId ? Find(graph, bodyId) : null;
+            var guard = 0;
+            while (body is not null && guard++ < 64)
+            {
+                if (body.Kind == GraphNodeKind.Break) { sb.AppendLine("            break;"); body = null; break; }
+                if (body.Kind == GraphNodeKind.Continue) { sb.AppendLine("            continue;"); body = null; break; }
+                if (body.Kind == GraphNodeKind.Return) { sb.AppendLine("            return;"); body = null; break; }
+                if (body.Kind == GraphNodeKind.Action)
+                {
+                    var actionCode = new StringBuilder();
+                    EmitAction(actionCode, graph, body);
+                    foreach (var line in actionCode.ToString().Split('\n'))
+                        if (line.Trim().Length > 0) sb.AppendLine("            " + line.TrimStart());
+                }
+                else
+                {
+                    sb.AppendLine($"            {MethodName(body)}();");
+                    break;
+                }
+                body = body.Next is { } nextBody ? Find(graph, nextBody) : null;
+            }
             sb.AppendLine("        }");
             if (node.LoopAfter is { } after) sb.AppendLine($"        {MethodName(Find(graph, after))}();");
         }

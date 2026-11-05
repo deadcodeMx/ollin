@@ -183,4 +183,17 @@ public sealed class GraphV2Tests
         Assert.Contains("private void Event_AbrirPuerta(float cantidad)", code);
         Assert.Contains("Event_AbrirPuerta(3);", code);
     }
+
+    [Fact]
+    public void BreakContinueYReturnSeGeneranDentroDelBucle()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var loop = graph.AddNode(GraphNodeKind.Loop, 100, 0);
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        var brk = graph.AddNode(GraphNodeKind.Break, 400, 0);
+        start.Next = loop.Id; loop.Next = action.Id; action.Next = brk.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("break;", code);
+    }
 }
