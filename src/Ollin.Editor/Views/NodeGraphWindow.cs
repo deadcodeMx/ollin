@@ -176,13 +176,16 @@ public sealed class NodeGraphWindow : Window
                 button.IsVisible = query.Length == 0 || label.Contains(query, StringComparison.OrdinalIgnoreCase);
         };
         panel.Children.Add(search);
+        AddSection(panel, "EVENTOS");
         AddPalette(panel, "Evento: iniciar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnStart));
         AddPalette(panel, "Evento: cada tiempo", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnTimer));
         AddPalette(panel, "Evento: entrar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerEnter));
         AddPalette(panel, "Evento: pulsar E", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnInteract));
         AddPalette(panel, "Evento: morir", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerDeath));
+        AddSection(panel, "CONDICIONES");
         AddPalette(panel, "Condición: tiene objeto", () => AddCondition(GraphConditionKind.HasItem));
         AddPalette(panel, "Condición: vida baja", () => AddCondition(GraphConditionKind.HealthBelow));
+        AddSection(panel, "ACCIONES");
         AddPalette(panel, "Acción: mensaje", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Message));
         AddPalette(panel, "Acción: abrir puerta", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.OpenDoor));
         AddPalette(panel, "Acción: activar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Activate));
@@ -193,6 +196,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: dañar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Damage));
         AddPalette(panel, "Acción: curar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Heal));
         AddPalette(panel, "Acción: teletransportar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Teleport));
+        AddSection(panel, "DATOS");
         AddPalette(panel, "Valor: número", () => AddValue(GraphValueKind.Number));
         AddPalette(panel, "Valor: entero", () => AddValue(GraphValueKind.Integer));
         AddPalette(panel, "Valor: booleano", () => AddValue(GraphValueKind.Boolean));
@@ -202,10 +206,16 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Túnel entrada", () => AddNode(GraphNodeKind.TunnelIn, GraphEventKind.OnStart));
         AddPalette(panel, "Túnel salida", () => AddNode(GraphNodeKind.TunnelOut, GraphEventKind.OnStart));
         AddPalette(panel, "Reroute (paso)", () => AddNode(GraphNodeKind.Reroute, GraphEventKind.OnStart));
+        AddSection(panel, "ORGANIZACIÓN");
         AddPalette(panel, "Comentario", AddComment);
         AddPalette(panel, "Grupo", AddGroup);
 
         return new ScrollViewer { Content = panel };
+    }
+
+    private static void AddSection(StackPanel panel, string title)
+    {
+        panel.Children.Add(new TextBlock { Text = title, FontSize = 9.5, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")), Margin = new Thickness(0, 8, 0, 2) });
     }
 
     private void AddPalette(StackPanel panel, string label, Action action)
@@ -1058,6 +1068,15 @@ public sealed class NodeGraphWindow : Window
     private void OnGraphKeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Source is TextBox) return;
+        if (e.Key == Key.Escape && (_linkSource is not null || _dataSource is not null))
+        {
+            _linkSource = null;
+            _dataSource = null;
+            _status.Text = "Conexión cancelada.";
+            Render();
+            e.Handled = true;
+            return;
+        }
         var control = e.KeyModifiers.HasFlag(KeyModifiers.Control);
         var shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
 
@@ -1400,6 +1419,33 @@ public sealed class NodeGraphWindow : Window
         _canvas.Children.Clear();
         _nodeCards.Clear();
 
+        if (_graph.Nodes.Count == 0)
+        {
+            var help = new Border
+            {
+                Width = 420,
+                Background = new SolidColorBrush(Color.Parse("#1A1F29")),
+                BorderBrush = new SolidColorBrush(Color.Parse("#F2A93B")),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(18),
+            };
+            var helpPanel = new StackPanel { Spacing = 8 };
+            helpPanel.Children.Add(new TextBlock { Text = "EMPIEZA ASÍ", FontSize = 11, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) });
+            helpPanel.Children.Add(new TextBlock { Text = "1. Añade un evento (por ejemplo, Al iniciar).\n2. Añade una acción.\n3. Pulsa «Conectar» en el evento y luego en la acción.", FontSize = 11, TextWrapping = TextWrapping.Wrap, Foreground = new SolidColorBrush(Color.Parse("#D6DCE8")) });
+            var quickStart = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
+            var addEvent = new Button { Content = "Añadir evento", FontSize = 10.5 };
+            addEvent.Click += (_, _) => AddNode(GraphNodeKind.Event, GraphEventKind.OnStart);
+            var addAction = new Button { Content = "Añadir acción", FontSize = 10.5 };
+            addAction.Click += (_, _) => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Message);
+            quickStart.Children.Add(addEvent);
+            quickStart.Children.Add(addAction);
+            helpPanel.Children.Add(quickStart);
+            help.Child = helpPanel;
+            Canvas.SetLeft(help, 40);
+            Canvas.SetTop(help, 40);
+            _canvas.Children.Add(help);
+        }
         foreach (var node in _graph.Nodes.Where(node => !IsHidden(node)))
         {
             if (node.Next is { } next)
@@ -1556,13 +1602,14 @@ public sealed class NodeGraphWindow : Window
         var breakpoint = _graph.Breakpoints.Contains(node.Id);
         var match = !string.IsNullOrWhiteSpace(_searchText) &&
                     $"{KindLabel(node)} {NodeSummary(node)}".Contains(_searchText, StringComparison.OrdinalIgnoreCase);
-        var borderColor = active ? "#53D6FF" : breakpoint ? "#E05BE0" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : match ? "#F2A93B" : selected ? "#FFFFFF" : kindColor;
+        var linkTarget = _linkSource is not null && _linkSource != node;
+        var borderColor = active || linkTarget ? "#53D6FF" : breakpoint ? "#E05BE0" : issue is { IsError: true } ? "#E05B5B" : issue is not null ? "#E9C46A" : match ? "#F2A93B" : selected ? "#FFFFFF" : kindColor;
         var card = new Border
         {
             Width = 200,
             Background = new SolidColorBrush(Color.Parse("#1A1F29")),
             BorderBrush = new SolidColorBrush(Color.Parse(borderColor)),
-            BorderThickness = new Thickness(active ? 3 : selected ? 2 : 1),
+            BorderThickness = new Thickness(active || linkTarget ? 3 : selected ? 2 : 1),
             CornerRadius = new CornerRadius(6),
         };
         Canvas.SetLeft(card, node.X);
@@ -1743,6 +1790,33 @@ public sealed class NodeGraphWindow : Window
 
         var selection = new Rect(left, top, Math.Max(1, right - left), Math.Max(1, bottom - top));
 
+        if (_graph.Nodes.Count == 0)
+        {
+            var help = new Border
+            {
+                Width = 420,
+                Background = new SolidColorBrush(Color.Parse("#1A1F29")),
+                BorderBrush = new SolidColorBrush(Color.Parse("#F2A93B")),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(18),
+            };
+            var helpPanel = new StackPanel { Spacing = 8 };
+            helpPanel.Children.Add(new TextBlock { Text = "EMPIEZA ASÍ", FontSize = 11, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) });
+            helpPanel.Children.Add(new TextBlock { Text = "1. Añade un evento (por ejemplo, Al iniciar).\n2. Añade una acción.\n3. Pulsa «Conectar» en el evento y luego en la acción.", FontSize = 11, TextWrapping = TextWrapping.Wrap, Foreground = new SolidColorBrush(Color.Parse("#D6DCE8")) });
+            var quickStart = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
+            var addEvent = new Button { Content = "Añadir evento", FontSize = 10.5 };
+            addEvent.Click += (_, _) => AddNode(GraphNodeKind.Event, GraphEventKind.OnStart);
+            var addAction = new Button { Content = "Añadir acción", FontSize = 10.5 };
+            addAction.Click += (_, _) => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Message);
+            quickStart.Children.Add(addEvent);
+            quickStart.Children.Add(addAction);
+            helpPanel.Children.Add(quickStart);
+            help.Child = helpPanel;
+            Canvas.SetLeft(help, 40);
+            Canvas.SetTop(help, 40);
+            _canvas.Children.Add(help);
+        }
         foreach (var node in _graph.Nodes.Where(node => !IsHidden(node)))
         {
             var size = NodeSize(node);

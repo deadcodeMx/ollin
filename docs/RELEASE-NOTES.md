@@ -1,15 +1,17 @@
-## Ollin Beta 6.232.0 — arrastre de nodos
+## Ollin Beta 6.233.0 — grafo más guiado
 
-### Corregido
+### Añadido
 
-- Arrastrar nodos desde cualquier parte de la tarjeta.
-- Los botones internos no inician arrastre.
-- Conexión al pulsar la tarjeta destino.
+- Estado vacío con pasos y botones rápidos.
+- Destinos resaltados al conectar.
+- Escape cancela conexión.
+- Paleta por categorías.
+- Tooltips.
 
 ### Verificación
 
 - Build 0 errores.
 - 142/142 pruebas.
-- Instalador 6.232.0 instalado.
+- Instalador 6.233.0.
 
-## [6.231.0] — 2026-11-05
+## [6.232.0] — 2026-11-05
