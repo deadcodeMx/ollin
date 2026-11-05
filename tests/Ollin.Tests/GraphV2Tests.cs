@@ -773,4 +773,17 @@ public sealed class GraphV2Tests
         Assert.Contains("Struct_Entidad", code);
         AssertGeneratedCompiles(graph);
     }
+
+    [Fact]
+    public void ElAutoCastCubrePrimitivosYRechazaListasDistintas()
+    {
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Boolean, GraphPinType.Number));
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Number, GraphPinType.Text));
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Text, GraphPinType.Vector2));
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Vector2, GraphPinType.Text));
+        Assert.True(NodeGraph.CanConnect(GraphPinType.List, GraphPinType.List));
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Struct, GraphPinType.Struct));
+        Assert.False(NodeGraph.CanConnect(GraphPinType.List, GraphPinType.Struct));
+        Assert.False(NodeGraph.CanConnect(GraphPinType.Number, GraphPinType.List));
+    }
 }

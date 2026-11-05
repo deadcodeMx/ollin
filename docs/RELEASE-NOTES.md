@@ -1,16 +1,15 @@
-## Ollin Beta 6.274.0 — structs anidados
+## Ollin Beta 6.275.0 — auto-cast
 
 ### Añadido
 
-- Listas de structs.
-- Structs anidados.
-- UI de elemento struct.
+- Matriz de auto-cast completa.
+- Listas/structs entre sí.
 - Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 179/179 pruebas.
-- Instalador 6.274.0.
+- 180/180 pruebas.
+- Instalador 6.275.0.
 
-## [6.273.0] — 2026-11-05
+## [6.274.0] — 2026-11-05

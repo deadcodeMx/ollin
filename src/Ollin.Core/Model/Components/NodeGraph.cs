@@ -351,20 +351,11 @@ public sealed class NodeGraph : Component, ITickable
     public static bool CanConnect(GraphPinType source, GraphPinType target)
     {
         if (target is GraphPinType.Any || source is GraphPinType.Any || source == target) return true;
-        return (source, target) switch
-        {
-            (GraphPinType.Integer, GraphPinType.Number) => true,
-            (GraphPinType.Number, GraphPinType.Integer) => true,
-            (GraphPinType.Boolean, GraphPinType.Number or GraphPinType.Integer) => true,
-            (GraphPinType.Number or GraphPinType.Integer, GraphPinType.Boolean) => true,
-            (GraphPinType.Text, GraphPinType.Number or GraphPinType.Integer) => true,
-            (GraphPinType.Number or GraphPinType.Integer or GraphPinType.Boolean, GraphPinType.Text) => true,
-            (GraphPinType.Vector2, GraphPinType.Text) => true,
-            (GraphPinType.Text, GraphPinType.Vector2) => true,
-            _ => false,
-        };
+        if (source is GraphPinType.List or GraphPinType.Struct || target is GraphPinType.List or GraphPinType.Struct) return false;
+        if (source == GraphPinType.Vector2) return target == GraphPinType.Text;
+        if (target == GraphPinType.Vector2) return source == GraphPinType.Text;
+        return true;
     }
-
     public void RemoveDataLink(Guid linkId) => DataLinks.RemoveAll(link => link.Id == linkId);
 
     public GraphDataLink? DataLinkTo(Guid targetNodeId, string targetPort) =>
