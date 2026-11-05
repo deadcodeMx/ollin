@@ -1,3 +1,4 @@
+using Ollin.Core.Saves;
 using Ollin.Scripting;
 using System.Numerics;
 using Ollin.Core.Model.Components;
@@ -334,5 +335,21 @@ public sealed class GraphV2Tests
         inner.Next = body.Id;
         var code = GraphCodeGenerator.Generate(graph);
         Assert.True(code.Split("for (").Length - 1 >= 2, code);
+    }
+
+    [Fact]
+    public void ElReturnSeValidaContraElTipoDeLaFuncion()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Grafo", Vector2.Zero);
+        var graph = entity.AddComponent(new NodeGraph());
+        var function = graph.AddNode(GraphNodeKind.Function, 0, 0);
+        function.FunctionName = "Texto";
+        function.ReturnType = GraphPinType.Vector2;
+        var ret = graph.AddNode(GraphNodeKind.Return, 200, 0);
+        ret.ReturnExpression = "1";
+        function.Next = ret.Id;
+        var issues = GraphValidator.Validate(graph, scene);
+        Assert.Contains(issues, issue => issue.IsError && issue.Message.Contains("Return"));
     }
 }

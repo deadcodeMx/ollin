@@ -240,10 +240,67 @@ public static class GraphValidator
             issues.Add(new GraphIssue(node, "Nodo sin conexión de entrada.", false));
         }
 
+        ValidateReturns(graph, issues);
         DetectCycles(graph, issues);
         return issues;
     }
 
+    private static void ValidateReturns(NodeGraph graph, List<GraphIssue> issues)
+    {
+        var visitedReturns = new HashSet<Guid>();
+        foreach (var function in graph.Nodes.Where(node => node.Kind == GraphNodeKind.Function))
+        {
+            var parameters = new Dictionary<string, GraphPinType>(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in function.ParameterText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+            {
+                var parts = item.Split(':', StringSplitOptions.TrimEntries);
+                parameters[parts[0]] = parts.Length > 1 && Enum.TryParse<GraphPinType>(parts[1], true, out var type) ? type : GraphPinType.Number;
+            }
+
+            foreach (var node in Walk(function.Next, graph))
+            {
+                if (node.Kind != GraphNodeKind.Return || !visitedReturns.Add(node.Id)) continue;
+                var actual = InferReturnType(node.ReturnExpression, graph, parameters);
+                if (actual != GraphPinType.Any && !NodeGraph.CanConnect(actual, function.ReturnType))
+                    issues.Add(new GraphIssue(node, $"Return de tipo {actual}; la función espera {function.ReturnType}.", true));
+            }
+        }
+
+        foreach (var node in graph.Nodes.Where(node => node.Kind == GraphNodeKind.Return && !visitedReturns.Contains(node.Id)))
+            issues.Add(new GraphIssue(node, "Return fuera de una función.", false));
+    }
+
+    private static IEnumerable<GraphNode> Walk(Guid? start, NodeGraph graph)
+    {
+        var pending = new Stack<GraphNode>();
+        var visited = new HashSet<Guid>();
+        if (start is { } id && graph.Find(id) is { } first) pending.Push(first);
+        while (pending.Count > 0)
+        {
+            var node = pending.Pop();
+            if (!visited.Add(node.Id)) continue;
+            yield return node;
+            if (node.Next is { } next && graph.Find(next) is { } n) pending.Push(n);
+            if (node.TrueNext is { } yes && graph.Find(yes) is { } y) pending.Push(y);
+            if (node.FalseNext is { } no && graph.Find(no) is { } f) pending.Push(f);
+            if (node.LoopAfter is { } after && graph.Find(after) is { } a) pending.Push(a);
+        }
+    }
+
+    private static GraphPinType InferReturnType(string expression, NodeGraph graph, IReadOnlyDictionary<string, GraphPinType> parameters)
+    {
+        var value = expression.Trim();
+        if (value.Length >= 2 && value[0] == '"' && value[^1] == '"') return GraphPinType.Text;
+        if (value is "true" or "false" or "True" or "False") return GraphPinType.Boolean;
+        if (value.Contains(',')) return GraphPinType.Vector2;
+        if (int.TryParse(value, out _)) return GraphPinType.Integer;
+        if (float.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out _)) return GraphPinType.Number;
+        if (parameters.TryGetValue(value, out var parameter)) return parameter;
+        var variable = graph.Variables.FirstOrDefault(item => string.Equals(item.Name, value, StringComparison.OrdinalIgnoreCase));
+        if (variable is not null) return variable.Type;
+        var function = graph.Nodes.FirstOrDefault(item => item.Kind == GraphNodeKind.Function && item.FunctionName.Equals(value, StringComparison.OrdinalIgnoreCase));
+        return function?.ReturnType ?? GraphPinType.Any;
+    }
     private static readonly HashSet<string> SystemIdentifiers = new(StringComparer.OrdinalIgnoreCase)
     {
         "vida", "health", "vidamax", "healthmax", "vidas", "lives",
