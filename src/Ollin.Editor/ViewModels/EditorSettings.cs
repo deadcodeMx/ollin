@@ -12,6 +12,9 @@ public sealed class EditorSettings
     /// <summary>Tema de la interfaz: Dark, Light u Ollin.</summary>
     public string Theme { get; set; } = "Dark";
 
+    /// <summary>Idioma: es (oficial) o en.</summary>
+    public string Language { get; set; } = "es";
+
     /// <summary>Últimos proyectos abiertos, del más reciente al más antiguo.</summary>
     public List<string> RecentProjects { get; set; } = new();
 

@@ -21,6 +21,7 @@ using Ollin.Rendering;
 using Ollin.Core.Input;
 using Ollin.Editor.Controls;
 using Ollin.Editor.ViewModels;
+using Ollin.Editor.Localization;
 
 namespace Ollin.Editor.Views;
 
@@ -413,6 +414,7 @@ public partial class MainWindow : Window
         }
 
         ViewportHost.Viewport.ViewModel = vm;
+        Ollin.Editor.Localization.Localization.Apply(this, vm.Settings.Language);
         CameraPreview.ViewModel = vm;
         ShowFileFolder(null);
         CameraPreview.CameraPreview = true;
@@ -2171,6 +2173,17 @@ public partial class MainWindow : Window
     }
     private void OnSaveGame(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SaveGame();
 
+    private void OnLanguageSpanish(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => SetLanguage("es");
+    private void OnLanguageEnglish(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => SetLanguage("en");
+
+    private void SetLanguage(string language)
+    {
+        if (ViewModel is not { } vm) return;
+        vm.Settings.Language = language;
+        vm.Settings.Save();
+        Ollin.Editor.Localization.Localization.Apply(this, language);
+        vm.StatusMessage = language == "en" ? "Language: English" : "Idioma: Español";
+    }
     private void OnThemeDark(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTheme(Ollin.Editor.Styles.EditorThemeMode.Dark);
 
     private void OnThemeLight(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.SetTheme(Ollin.Editor.Styles.EditorThemeMode.Light);
