@@ -25,6 +25,7 @@ public enum ActionKind
     Destroy,
     EmitSignal,
     QueryArea,
+    Wait,
 }
 
 /// <summary>Puente por reflexión para que el grafo y las expresiones no dependan de sistemas RPG.</summary>

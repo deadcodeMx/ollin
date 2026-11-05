@@ -13,6 +13,7 @@ public static class GraphCodeGenerator
         sb.AppendLine("using System;");
         sb.AppendLine("using System.Collections.Generic;");
         sb.AppendLine("using System.Numerics;");
+        sb.AppendLine("using System.Collections;");
         sb.AppendLine("using Ollin.Core.Model.Components;");
         sb.AppendLine("using Ollin.Scripting;");
         sb.AppendLine("using Ollin.Core.Saves;");
@@ -101,7 +102,14 @@ public static class GraphCodeGenerator
             EmitChain(sb, graph, node, emitted);
         }
 
-        sb.AppendLine("}");
+        foreach (var wait in graph.Nodes.Where(item => item.Kind == GraphNodeKind.Action && item.Action == ActionKind.Wait))
+        {
+            sb.AppendLine($"    private IEnumerator Wait_{Short(wait.Id)}()");
+            sb.AppendLine("    {");
+            sb.AppendLine($"        yield return new WaitForSeconds({wait.Amount:0.###}f);");
+            EmitInlineChain(sb, graph, wait.Next is { } next ? Find(graph, next) : null, 2, insideFunction: false);
+            sb.AppendLine("    }");
+        }        sb.AppendLine("}");
         return sb.ToString();
     }
 
@@ -119,6 +127,9 @@ public static class GraphCodeGenerator
             EmitBreakpoint(sb, graph, node, indent);
             switch (node.Kind)
             {
+                case GraphNodeKind.Action when node.Action == ActionKind.Wait:
+                    sb.AppendLine($"{new string(' ', indent * 4)}StartCoroutine(Wait_{Short(node.Id)}());");
+                    return;
                 case GraphNodeKind.Action:
                 {
                     var action = new StringBuilder();
@@ -548,6 +559,10 @@ public static class GraphCodeGenerator
             EmitInlineChain(sb, graph, node.Next is { } bodyId ? Find(graph, bodyId) : null, 3, insideFunction: false, useLocals: false);
             sb.AppendLine("        }");
             if (node.LoopAfter is { } after) sb.AppendLine($"        {MethodName(Find(graph, after))}();");
+        }
+        else if (node.Kind == GraphNodeKind.Action && node.Action == ActionKind.Wait)
+        {
+            sb.AppendLine($"        StartCoroutine(Wait_{Short(node.Id)}());");
         }
         else if (node.Kind == GraphNodeKind.Subgraph)
         {

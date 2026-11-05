@@ -1,16 +1,16 @@
-## Ollin Beta 6.271.0 — consultar área
+## Ollin Beta 6.272.0 — esperar
 
 ### Añadido
 
-- QueryRadius en escena.
-- Acción Consultar área.
-- Variable resultado.
+- Acción Esperar.
+- Corrutina con WaitForSeconds.
+- Continuación de la cadena.
 - Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 176/176 pruebas.
-- Instalador 6.271.0.
+- 177/177 pruebas.
+- Instalador 6.272.0.
 
-## [6.270.0] — 2026-11-05
+## [6.271.0] — 2026-11-05

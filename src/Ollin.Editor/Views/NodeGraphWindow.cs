@@ -193,6 +193,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: crear entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Instantiate));
         AddPalette(panel, "Acción: emitir señal", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.EmitSignal));
         AddPalette(panel, "Acción: consultar área", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.QueryArea));
+        AddPalette(panel, "Acción: esperar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Wait));
         AddPalette(panel, "Acción: destruir entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Destroy));
         AddPalette(panel, "Acción: ganar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Win));
         AddPalette(panel, "Acción: dañar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Damage));

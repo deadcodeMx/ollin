@@ -719,4 +719,21 @@ public sealed class GraphV2Tests
         start.Next = query.Id;
         AssertGeneratedCompiles(graph);
     }
+
+    [Fact]
+    public void ElTemporizadorDeEsperaCompila()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var wait = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        wait.Action = ActionKind.Wait;
+        wait.Amount = 1.5f;
+        var message = graph.AddNode(GraphNodeKind.Action, 400, 0);
+        message.Action = ActionKind.Message;
+        start.Next = wait.Id;
+        wait.Next = message.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("WaitForSeconds(1.5f)", code);
+        AssertGeneratedCompiles(graph);
+    }
 }
