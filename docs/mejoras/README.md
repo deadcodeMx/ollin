@@ -29,6 +29,10 @@ verificables.
 | [FISICA.md](FISICA.md) | Física 2D | P1 | Activo |
 | [UI.md](UI.md) | UI Canvas / editor | P1 | Activo |
 | [TILEMAP.md](TILEMAP.md) | Tilemap y autotile | P1 | Activo |
+| [PREFABS.md](PREFABS.md) | Prefabs y blueprints | P1 | Activo |
+| [GUARDADO.md](GUARDADO.md) | Guardado y estado | P1 | Activo |
+| [DIALOGOS.md](DIALOGOS.md) | Diálogos | P1 | Activo |
+| [RENDER.md](RENDER.md) | Render 2D | P1 | Activo |
 | [ANIMACION.md](ANIMACION.md) | Animación y esqueletos | P1 | Activo |
 | [AUDIO.md](AUDIO.md) | Audio 2D y Linux | P1 | Activo |
 | [EDITOR.md](EDITOR.md) | Editor, undo y flujo | P1 | Activo |
