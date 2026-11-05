@@ -517,4 +517,90 @@ public sealed class GraphV2Tests
         var result = ScriptCompiler.Compile(new[] { ("sync.cs", code) });
         Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
     }
+
+    private static void AssertGeneratedCompiles(NodeGraph graph)
+    {
+        var code = GraphCodeGenerator.Generate(graph);
+        var result = ScriptCompiler.Compile(new[] { ("case.cs", code) });
+        Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)) + "\n" + code);
+    }
+
+    [Fact]
+    public void CompilaVariablesTipadas()
+    {
+        var graph = new NodeGraph();
+        graph.Variables.Add(new GraphVariable { Name = "numero", Type = GraphPinType.Number, DefaultValue = "1" });
+        graph.Variables.Add(new GraphVariable { Name = "texto", Type = GraphPinType.Text, DefaultValue = "hola" });
+        graph.Variables.Add(new GraphVariable { Name = "activo", Type = GraphPinType.Boolean, DefaultValue = "true" });
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "numero";
+        action.Expression = "numero + 1";
+        start.Next = action.Id;
+        AssertGeneratedCompiles(graph);
+    }
+
+    [Fact]
+    public void CompilaFuncionConParametrosYLocales()
+    {
+        var graph = new NodeGraph();
+        var function = graph.AddNode(GraphNodeKind.Function, 0, 0);
+        function.FunctionName = "Clasificar";
+        function.ParameterText = "x:Number";
+        function.LocalVariableText = "temp:Number=0";
+        function.ReturnType = GraphPinType.Number;
+        var condition = graph.AddNode(GraphNodeKind.Condition, 200, 0);
+        condition.Condition = GraphConditionKind.Expression;
+        condition.Expression = "x > 0";
+        var yes = graph.AddNode(GraphNodeKind.Return, 400, 0);
+        yes.ReturnExpression = "x";
+        var no = graph.AddNode(GraphNodeKind.Return, 400, 100);
+        no.ReturnExpression = "temp";
+        function.Next = condition.Id;
+        condition.TrueNext = yes.Id;
+        condition.FalseNext = no.Id;
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 200);
+        var call = graph.AddNode(GraphNodeKind.CallFunction, 200, 200);
+        call.FunctionName = "Clasificar";
+        call.ArgumentsText = "2";
+        start.Next = call.Id;
+        AssertGeneratedCompiles(graph);
+    }
+
+    [Fact]
+    public void CompilaSubgrafo()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var subgraphCall = graph.AddNode(GraphNodeKind.Subgraph, 200, 0);
+        subgraphCall.SubgraphName = "Hijo";
+        start.Next = subgraphCall.Id;
+        var child = graph.AddSubgraph("Hijo");
+        var childEvent = child.AddNode(GraphNodeKind.Event, 0, 0);
+        var action = child.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.Message;
+        childEvent.Next = action.Id;
+        AssertGeneratedCompiles(graph);
+    }
+
+    [Fact]
+    public void CompilaEventoPersonalizadoConParametros()
+    {
+        var graph = new NodeGraph();
+        var custom = graph.AddNode(GraphNodeKind.CustomEvent, 0, 0);
+        custom.CustomEventName = "Sumar";
+        custom.ParameterText = "cantidad:Number";
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "total";
+        action.Expression = "cantidad + 1";
+        custom.Next = action.Id;
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 200);
+        var call = graph.AddNode(GraphNodeKind.CallEvent, 200, 200);
+        call.CustomEventName = "Sumar";
+        call.ArgumentsText = "2";
+        start.Next = call.Id;
+        AssertGeneratedCompiles(graph);
+    }
 }

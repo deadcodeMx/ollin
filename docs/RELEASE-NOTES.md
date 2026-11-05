@@ -1,16 +1,17 @@
-## Ollin Beta 6.264.0 — estado compartido
+## Ollin Beta 6.265.0 — pruebas por caso
 
 ### Añadido
 
-- Variables sincronizadas con GameState.
-- OnStart restaura valores.
-- Set/Add/Toggle escriben al estado.
-- Prueba de compilación y sincronización.
+- Compilación real de variables.
+- Compilación de funciones con parámetros/locales.
+- Compilación de subgrafos.
+- Compilación de eventos personalizados.
+- Corregidos using y doble cuerpo de evento.
 
 ### Verificación
 
 - Build 0 errores.
-- 165/165 pruebas.
-- Instalador 6.264.0.
+- 169/169 pruebas.
+- Instalador 6.265.0.
 
-## [6.263.0] — 2026-11-05
+## [6.264.0] — 2026-11-05

@@ -16,6 +16,7 @@ public static class GraphCodeGenerator
         sb.AppendLine("using Ollin.Core.Model.Components;");
         sb.AppendLine("using Ollin.Scripting;");
         sb.AppendLine("using Ollin.Core.Saves;");
+        sb.AppendLine("using Ollin.Core.Scripting;");
         sb.AppendLine();
         sb.AppendLine($"public sealed class {className} : OllinScript");
         sb.AppendLine("{");
@@ -362,7 +363,6 @@ public static class GraphCodeGenerator
         if (eventLocals.Length > 0) sb.AppendLine("        " + eventLocals);
         if (node.Next is { } body) EmitInlineChain(sb, graph, Find(graph, body), 2, insideFunction: false, useLocals: true);
         sb.AppendLine("    }");
-        if (node.Next is { } next) EmitChain(sb, graph, Find(graph, next), emitted);
     }
 
 
