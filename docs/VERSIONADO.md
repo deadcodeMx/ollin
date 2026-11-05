@@ -64,8 +64,8 @@ El **2026-11-05** se conservaron las 10 releases/tags más recientes:
 v6.269.0 … v6.278.0
 ```
 
-Se eliminaron **246 releases** y **148 tags**. El corte se debe a que se habían
-acumulado 256 releases y 158 tags, muchas de un solo cambio.
+Se eliminaron **246 releases** y **167 tags**. El corte se debe a que se habían
+acumulado 256 releases y más de 160 tags, muchas de un solo cambio.
 
 La versión de desarrollo actual es **7.0.0-beta.1**; todavía no tiene release público.
 
