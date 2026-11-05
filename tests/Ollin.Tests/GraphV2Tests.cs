@@ -196,4 +196,31 @@ public sealed class GraphV2Tests
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("break;", code);
     }
+
+    [Fact]
+    public void LasFuncionesConRetornoSeGeneranYSeLlaman()
+    {
+        var graph = new NodeGraph();
+        var function = graph.AddNode(GraphNodeKind.Function, 0, 0);
+        function.FunctionName = "Doble";
+        function.ParameterText = "x:Number";
+        function.ReturnType = GraphPinType.Number;
+        var ret = graph.AddNode(GraphNodeKind.Return, 200, 0);
+        ret.ReturnExpression = "x * 2";
+        function.Next = ret.Id;
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 200);
+        var call = graph.AddNode(GraphNodeKind.CallFunction, 200, 200);
+        call.FunctionName = "Doble";
+        call.ArgumentsText = "3";
+        var action = graph.AddNode(GraphNodeKind.Action, 400, 200);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "resultado";
+        start.Next = action.Id;
+        graph.AddDataLink(call.Id, action.Id, "amount", GraphPinType.Number);
+
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("private float Func_Doble(float x)", code);
+        Assert.Contains("return x * 2;", code);
+        Assert.Contains("Func_Doble(3)", code);
+    }
 }

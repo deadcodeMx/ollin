@@ -50,6 +50,10 @@ public static class GraphCodeGenerator
         }
 
         var emitted = new HashSet<Guid>();
+        foreach (var function in graph.Nodes.Where(node => node.Kind == GraphNodeKind.Function))
+        {
+            EmitFunction(sb, graph, function, emitted);
+        }
         foreach (var custom in graph.Nodes.Where(node => node.Kind == GraphNodeKind.CustomEvent))
         {
             EmitCustomEvent(sb, graph, custom, emitted);
@@ -63,6 +67,48 @@ public static class GraphCodeGenerator
         return sb.ToString();
     }
 
+    private static void EmitFunction(StringBuilder sb, NodeGraph graph, GraphNode node, HashSet<Guid> emitted)
+    {
+        var parameters = ParameterList(node);
+        var returnType = TypeName(node.ReturnType.ToString());
+        sb.AppendLine();
+        sb.AppendLine($"    private {returnType} Func_{SafeName(node.FunctionName, "Funcion")}({parameters})");
+        sb.AppendLine("    {");
+        var body = node.Next is { } bodyId ? Find(graph, bodyId) : null;
+        var guard = 0;
+        while (body is not null && guard++ < 64)
+        {
+            if (body.Kind == GraphNodeKind.Return) { sb.AppendLine($"        return {body.ReturnExpression};"); body = null; break; }
+            if (body.Kind == GraphNodeKind.Action)
+            {
+                var actionCode = new StringBuilder();
+                EmitAction(actionCode, graph, body);
+                foreach (var line in actionCode.ToString().Split('\n'))
+                    if (line.Trim().Length > 0) sb.AppendLine("        " + line.TrimStart());
+            }
+            else if (body.Kind == GraphNodeKind.CallEvent) sb.AppendLine($"        Event_{SafeName(body.CustomEventName, "Evento")}({body.ArgumentsText});");
+            body = body.Next is { } nextBody ? Find(graph, nextBody) : null;
+        }
+        sb.AppendLine("        return default;");
+        sb.AppendLine("    }");
+    }
+
+    private static string ParameterList(GraphNode node) => string.Join(", ", node.ParameterText
+        .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+        .Select(item =>
+        {
+            var parts = item.Split(':', StringSplitOptions.TrimEntries);
+            return $"{TypeName(parts.Length > 1 ? parts[1] : "Number")} {SafeName(parts[0], "arg")}";
+        }));
+
+    private static string TypeName(string type) => type.ToLowerInvariant() switch
+    {
+        "boolean" or "bool" => "bool",
+        "integer" or "int" => "int",
+        "text" or "string" => "string",
+        "vector2" => "Vector2",
+        _ => "float",
+    };
     private static void EmitCustomEvent(StringBuilder sb, NodeGraph graph, GraphNode node, HashSet<Guid> emitted)
     {
         var parameters = string.Join(", ", node.ParameterText
@@ -82,14 +128,6 @@ public static class GraphCodeGenerator
         if (node.Next is { } next) EmitChain(sb, graph, Find(graph, next), emitted);
     }
 
-    private static string TypeName(string type) => type.ToLowerInvariant() switch
-    {
-        "boolean" or "bool" => "bool",
-        "integer" or "int" => "int",
-        "text" or "string" => "string",
-        "vector2" => "Vector2",
-        _ => "float",
-    };
 
     private static string CustomMethodName(GraphNode node) => "Event_" + SafeName(node.CustomEventName, "Evento");
 
@@ -143,6 +181,10 @@ public static class GraphCodeGenerator
             sb.AppendLine("        {");
             if (node.FalseNext is { } f) sb.AppendLine($"            {MethodName(Find(graph, f))}();");
             sb.AppendLine("        }");
+        }
+        else if (node.Kind == GraphNodeKind.CallFunction)
+        {
+            sb.AppendLine($"        Func_{SafeName(node.FunctionName, "Funcion")}({node.ArgumentsText});");
         }
         else if (node.Kind == GraphNodeKind.CallEvent)
         {
@@ -247,8 +289,10 @@ public static class GraphCodeGenerator
     private static string ValueOf(NodeGraph graph, GraphNode node)
     {
         var port = node.Action == ActionKind.SetComponentProperty && !string.IsNullOrWhiteSpace(node.PropertyName) ? node.PropertyName : "amount";
-        if ((graph.DataLinkTo(node.Id, port) ?? graph.DataLinkTo(node.Id, "amount")) is { } link && graph.Find(link.SourceNodeId) is { Kind: GraphNodeKind.Value } value)
+        if ((graph.DataLinkTo(node.Id, port) ?? graph.DataLinkTo(node.Id, "amount")) is { } link && graph.Find(link.SourceNodeId) is { } source)
         {
+            if (source is { Kind: GraphNodeKind.CallFunction }) return $"Func_{SafeName(source.FunctionName, "Funcion")}({source.ArgumentsText})";
+            if (source is not { Kind: GraphNodeKind.Value } value) return node.Amount.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
             return value.ValueKind switch
             {
                 GraphValueKind.Text => $"\"{Escape(value.Value)}\"",

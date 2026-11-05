@@ -11,6 +11,8 @@ public enum GraphNodeKind
     Event,
     CustomEvent,
     CallEvent,
+    Function,
+    CallFunction,
     Break,
     Continue,
     Return,
@@ -142,6 +144,9 @@ public sealed class GraphNode
     public string CustomEventName { get; set; } = "MiEvento";
     public string ParameterText { get; set; } = "valor:Number";
     public string ArgumentsText { get; set; } = string.Empty;
+    public string FunctionName { get; set; } = "MiFuncion";
+    public GraphPinType ReturnType { get; set; } = GraphPinType.Number;
+    public string ReturnExpression { get; set; } = "0";
 
     public float GroupWidth { get; set; } = 280f;
 

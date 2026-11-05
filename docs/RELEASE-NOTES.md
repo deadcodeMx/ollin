@@ -1,16 +1,17 @@
-## Ollin Beta 6.239.0 — break/continue/return
+## Ollin Beta 6.240.0 — funciones con retorno
 
 ### Añadido
 
-- Nodos Break, Continue y Return.
-- Cuerpo de bucle generado inline.
-- Control de flujo válido dentro de bucles.
-- Prueba de break.
+- Funciones con parámetros y retorno.
+- Nodo Return con expresión.
+- Llamada a función con argumentos.
+- Resultado usado como dato.
+- Prueba de función.
 
 ### Verificación
 
 - Build 0 errores.
-- 144/144 pruebas.
-- Instalador 6.239.0.
+- 145/145 pruebas.
+- Instalador 6.240.0.
 
-## [6.238.0] — 2026-11-05
+## [6.239.0] — 2026-11-05
