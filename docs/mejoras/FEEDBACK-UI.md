@@ -1,7 +1,7 @@
 # Feedback de interfaz
 
 **Prioridad:** P0
-**Estado:** En curso
+**Estado:** Completado — 13/13 puntos
 **Origen:** usuarios beta, 2026-11-05
 
 ## Objetivo
@@ -27,23 +27,17 @@ de trabajo existente.
 | 12 | Botón Scripts con lista del proyecto | **Hecho**: menú con scripts y recompilar |
 | 13 | Arrastrar archivos al inspector | **Hecho**: texturas y scripts |
 
-## Funciones nuevas
-
-- [ ] Viewport de cámara secundario.
-- [ ] Modos de gizmo: mover, rotar, escalar.
-- [ ] Panel de archivos con árbol, breadcrumbs y drag-and-drop.
-- [ ] Localización español/inglés.
-- [ ] Drag-and-drop de texturas/scripts al inspector.
-- [ ] Script de personaje también editable desde el grafo.
-- [ ] Menú de entidad por categorías, igual que el espacio vacío.
-
 ## Limitaciones conocidas
 
 - Cilindro/cono usan contorno aproximado; la física trabaja con caja envolvente.
-- El script de personaje es una plantilla editable, no un generador automático.
-- El tema claro necesita revisión visual completa.
-- El menú de jerarquía de una entidad sigue siendo más plano que el de espacio vacío.
+- La traducción cubre textos conocidos; ventanas nuevas pueden quedar en español.
+- El grafo de personaje expone salto, velocidad y gravedad, no todos los métodos internos.
 
+## Siguientes mejoras
+
+- [ ] Cobertura de traducción para todas las ventanas.
+- [ ] Más acciones de personaje expuestas al grafo (dash, pared, techo).
+- [ ] Colisión exacta para cilindro/cono.
 ## Criterios de aceptación
 
 1. Los cuatro colliders se dibujan y serializan.
@@ -64,7 +58,7 @@ de trabajo existente.
 
 - ColliderShapeTests: esquinas, cilindro, cono y serialización.
 - Serialización de SpriteRenderer.Shape.
-- Build del editor y 186 pruebas.
+- Build del editor y 187 pruebas.
 
 ## Dependencias
 
