@@ -24,6 +24,7 @@ public enum ActionKind
     Instantiate,
     Destroy,
     EmitSignal,
+    QueryArea,
 }
 
 /// <summary>Puente por reflexión para que el grafo y las expresiones no dependan de sistemas RPG.</summary>
@@ -60,6 +61,13 @@ public static class ActionExecutor
 
         switch (action)
         {
+            case ActionKind.QueryArea:
+            {
+                var center = target ?? FindPlayer(scene, playerTag);
+                var count = center is null ? 0 : scene.QueryRadius(scene.GetWorldPosition(center), radius, message).Count;
+                if (!string.IsNullOrWhiteSpace(propertyName)) Ollin.Core.Saves.GameStateHost.Current?.SetNumber(propertyName, count);
+                break;
+            }
             case ActionKind.EmitSignal:
                 Ollin.Core.Scripting.SignalBus.Emit(message, target);
                 break;

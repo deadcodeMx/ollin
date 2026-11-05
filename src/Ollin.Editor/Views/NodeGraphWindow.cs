@@ -192,6 +192,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: desactivar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Deactivate));
         AddPalette(panel, "Acción: crear entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Instantiate));
         AddPalette(panel, "Acción: emitir señal", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.EmitSignal));
+        AddPalette(panel, "Acción: consultar área", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.QueryArea));
         AddPalette(panel, "Acción: destruir entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Destroy));
         AddPalette(panel, "Acción: ganar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Win));
         AddPalette(panel, "Acción: dañar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Damage));
@@ -1950,7 +1951,7 @@ public sealed class NodeGraphWindow : Window
         var flyout = new MenuFlyout();
         var fields = node.Action switch
         {
-            ActionKind.Message or ActionKind.Win or ActionKind.Instantiate or ActionKind.EmitSignal => new[] { "message" },
+            ActionKind.Message or ActionKind.Win or ActionKind.Instantiate or ActionKind.EmitSignal or ActionKind.QueryArea => new[] { "message", "radius" },
             ActionKind.SetComponentProperty => new[] { "amount", "message", "component", "property" },
             ActionKind.Checkpoint or ActionKind.OpenDoor => new[] { "radius" },
             ActionKind.Spawn => new[] { "interval" },
@@ -2588,6 +2589,11 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
             _inspector.Children.Add(Label("Umbral"));
             _inspector.Children.Add(Number(node.Threshold, 0, value => { node.Threshold = (float)value; MarkChanged(); }));
 
+            if (node.Action == ActionKind.QueryArea)
+            {
+                _inspector.Children.Add(Label("Variable resultado"));
+                _inspector.Children.Add(TextInput(node.VariableName, value => { node.VariableName = value; MarkChanged(); }));
+            }
             if (node.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.ToggleFlag)
             {
                 _inspector.Children.Add(Label("Variable"));

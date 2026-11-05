@@ -697,5 +697,26 @@ public sealed class GraphV2Tests
         var result = ScriptCompiler.Compile(new[] { ("signal.cs", code) });
         Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
     }
-}
 
+    [Fact]
+    public void ConsultarAreaCuentaEntidadesYCompila()
+    {
+        var scene = new Scene();
+        scene.Create("Centro", Vector2.Zero);
+        scene.Create("Cerca", new Vector2(1, 0));
+        scene.Create("Lejos", new Vector2(10, 0));
+        var found = scene.QueryRadius(Vector2.Zero, 2f);
+        Assert.Equal(2, found.Count);
+
+        var graph = new NodeGraph();
+        graph.Variables.Add(new GraphVariable { Name = "enemigos", Type = GraphPinType.Integer, DefaultValue = "0" });
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var query = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        query.Action = ActionKind.QueryArea;
+        query.TargetName = "Centro";
+        query.Radius = 2f;
+        query.VariableName = "enemigos";
+        start.Next = query.Id;
+        AssertGeneratedCompiles(graph);
+    }
+}

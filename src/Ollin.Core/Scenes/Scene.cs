@@ -36,6 +36,19 @@ public sealed class Scene
     }
 
     public Entity? Find(string name) => Entities.FirstOrDefault(e => e.Name == name);
+    /// <summary>Entidades activas dentro de un radio, opcionalmente filtradas por tag.</summary>
+    public IReadOnlyList<Entity> QueryRadius(Vector2 center, float radius, string tag = "")
+    {
+        var result = new List<Entity>();
+        foreach (var entity in Entities)
+        {
+            if (!entity.Active) continue;
+            if (!string.IsNullOrWhiteSpace(tag) && !entity.Tags.Any(item => item.Equals(tag, StringComparison.OrdinalIgnoreCase))) continue;
+            if (Vector2.Distance(GetWorldPosition(entity), center) <= radius) result.Add(entity);
+        }
+        return result;
+    }
+
 
     public Entity Add(Entity entity)
     {

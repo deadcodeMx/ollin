@@ -586,7 +586,14 @@ public static class GraphCodeGenerator
             case ActionKind.Teleport:
                 sb.AppendLine($"        if ({target} is {{ }} point) Position = Scene!.GetWorldPosition(point);");
                 break;
-            case ActionKind.SetVariable:
+            case ActionKind.QueryArea:
+            {
+                var center = string.IsNullOrWhiteSpace(node.TargetName) ? "Find(\"player\")" : target;
+                var guard = $"__area_{Short(node.Id)}";
+                sb.AppendLine($"        var {guard} = {center} is {{ }} areaCenter ? Scene!.QueryRadius(Scene.GetWorldPosition(areaCenter), {node.Radius:0.###}f, {FieldText(graph, node, "message", node.Message)}).Count : 0;");
+                sb.AppendLine($"        {variableField} = {guard};{StateWrite(graph, node.VariableName, variableField)}");
+                break;
+            }            case ActionKind.SetVariable:
                 sb.AppendLine($"        {variableField} = {ValueOrExpression(graph, node)};{StateWrite(graph, node.VariableName, variableField)}");
                 break;
             case ActionKind.AddVariable:
