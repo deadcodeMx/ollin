@@ -192,6 +192,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Valor: entero", () => AddValue(GraphValueKind.Integer));
         AddPalette(panel, "Valor: booleano", () => AddValue(GraphValueKind.Boolean));
         AddPalette(panel, "Valor: texto", () => AddValue(GraphValueKind.Text));
+        AddPalette(panel, "Subgrafo", () => AddNode(GraphNodeKind.Subgraph, GraphEventKind.OnStart));
         AddPalette(panel, "Reroute (paso)", () => AddNode(GraphNodeKind.Reroute, GraphEventKind.OnStart));
         AddPalette(panel, "Comentario", AddComment);
         AddPalette(panel, "Grupo", AddGroup);
@@ -220,7 +221,7 @@ public sealed class NodeGraphWindow : Window
             var index = i;
             var tab = new Button
             {
-                Content = $"Grafo {i + 1}",
+                Content = string.IsNullOrWhiteSpace(_graphs[i].Name) ? $"Grafo {i + 1}" : _graphs[i].Name,
                 FontSize = 10.5,
                 Padding = new Thickness(7, 3),
                 Background = new SolidColorBrush(Color.Parse(ReferenceEquals(_graphs[i], _graph) ? "#2A3648" : "#19212E")),
@@ -231,13 +232,13 @@ public sealed class NodeGraphWindow : Window
         var add = new Button { Content = "+", FontSize = 11, Padding = new Thickness(6, 3) };
         add.Click += (_, _) =>
         {
-            var graph = _entity.AddComponent(new NodeGraph());
+            var graph = _graph.AddSubgraph($"Subgrafo {_graph.Subgraphs.Count + 1}");
             _graphs.Add(graph);
             _viewModel.MarkDirty("grafo");
             SwitchGraph(_graphs.Count - 1);
         };
         _tabs.Children.Add(add);
-        _breadcrumb.Text = $"{_entity.Name} / Grafo {_graphs.IndexOf(_graph) + 1}";
+        _breadcrumb.Text = $"{_entity.Name} / {_graph.Name}";
     }
 
     private void SwitchGraph(int index)
@@ -2326,6 +2327,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         GraphNodeKind.Comment => "COMENTARIO",
         GraphNodeKind.Reroute => "REROUTE",
         GraphNodeKind.Value => "VALOR",
+        GraphNodeKind.Subgraph => "SUBRAFO",
         GraphNodeKind.Group => "GRUPO",
         _ => "ACCIÓN",
     };

@@ -1,17 +1,23 @@
-## Ollin Beta 6.221.0 — pestañas y tipos
+## Ollin Beta 6.222.0 — base de subgrafos
 
 ### Añadido
 
-- Pestañas de grafos por entidad.
+- Modelo de subgrafos por grafo.
+- Pestañas de grafos y subgrafos.
 - Breadcrumb entidad/grafo.
-- Botón + para crear otro grafo.
-- Validación de tipos en enlaces de datos.
-- Auto-cast básico número/entero.
+- Nodo Subgrafo con nombre editable.
+- Prueba de creación, búsqueda y borrado de subgrafos.
+
+### Pendiente
+
+- Túneles de entrada/salida.
+- Ejecución recursiva del subgrafo.
+- Pines de datos a cualquier campo.
 
 ### Verificación
 
 - Build 0 errores.
-- 136/136 pruebas.
-- Instalador 6.221.0 instalado.
+- 137/137 pruebas.
+- Instalador 6.222.0 instalado.
 
-## [6.220.0] — 2026-11-05
+## [6.221.0] — 2026-11-05

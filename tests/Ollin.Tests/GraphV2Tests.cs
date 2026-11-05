@@ -47,6 +47,15 @@ public sealed class GraphV2Tests
         Assert.Contains("42", code);
         Assert.DoesNotContain("Amount", code);
     }
+
+    [Fact]
+    public void LosSubgrafosSeCreanYBuscanPorNombre()
+    {
+        var graph = new NodeGraph();
+        var sub = graph.AddSubgraph("Puerta");
+        Assert.Same(sub, graph.FindSubgraph("puerta"));
+        Assert.Single(graph.Subgraphs);
+        Assert.True(graph.RemoveSubgraph("PUERTA"));
+        Assert.Empty(graph.Subgraphs);
+    }
 }
-
-

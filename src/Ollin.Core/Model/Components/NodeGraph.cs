@@ -11,6 +11,7 @@ public enum GraphNodeKind
     Condition,
     Action,
     Value,
+    Subgraph,
     Reroute,
     Comment,
     Group,
@@ -104,6 +105,7 @@ public sealed class GraphNode
     public string Expression { get; set; } = "1";
     public GraphValueKind ValueKind { get; set; } = GraphValueKind.Number;
     public string Value { get; set; } = "0";
+    public string SubgraphName { get; set; } = string.Empty;
 
     public float GroupWidth { get; set; } = 280f;
 
@@ -175,8 +177,10 @@ public sealed class GraphNode
 /// </summary>
 public sealed class NodeGraph : Component, ITickable
 {
+    public string Name { get; set; } = "Grafo principal";
     public List<GraphNode> Nodes { get; set; } = new();
     public List<GraphDataLink> DataLinks { get; set; } = new();
+    public List<NodeGraph> Subgraphs { get; set; } = new();
 
     [JsonIgnore]
     public NodeGraphHistory History { get; } = new();
@@ -213,6 +217,19 @@ public sealed class NodeGraph : Component, ITickable
 
     public GraphNode? Find(Guid? id) => id is null ? null : Nodes.FirstOrDefault(node => node.Id == id);
 
+    public NodeGraph AddSubgraph(string name)
+    {
+        var subgraph = new NodeGraph { };
+        var unique = string.IsNullOrWhiteSpace(name) ? $"Subgrafo {Subgraphs.Count + 1}" : name.Trim();
+        subgraph.Name = unique;
+        Subgraphs.Add(subgraph);
+        return subgraph;
+    }
+
+    public NodeGraph? FindSubgraph(string name) =>
+        Subgraphs.FirstOrDefault(graph => graph.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+    public bool RemoveSubgraph(string name) => Subgraphs.RemoveAll(graph => graph.Name.Equals(name, StringComparison.OrdinalIgnoreCase)) > 0;
     /// <summary>Crea un enlace de datos validando el tipo.</summary>
     public GraphDataLink? AddDataLink(Guid sourceNodeId, Guid targetNodeId, string targetPort, GraphPinType type)
     {
@@ -485,7 +502,7 @@ public sealed class NodeGraph : Component, ITickable
 
     public override Component CloneFor(Entity newOwner)
     {
-        var copy = new NodeGraph { Owner = newOwner };
+        var copy = new NodeGraph { Owner = newOwner, Name = Name };
         var map = new Dictionary<Guid, Guid>();
 
         foreach (var node in Nodes)
@@ -495,6 +512,7 @@ public sealed class NodeGraph : Component, ITickable
             copy.Nodes.Add(clone);
         }
 
+        copy.Subgraphs.AddRange(Subgraphs.Select(graph => (NodeGraph)graph.CloneFor(newOwner)));
         for (var i = 0; i < Nodes.Count; i++)
         {
             var source = Nodes[i];
