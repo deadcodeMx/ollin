@@ -25,15 +25,15 @@ Ollin es **gratis y de código abierto (MIT)**: puedes usarlo, modificarlo y dis
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
 ![Roslyn](https://img.shields.io/badge/Roslyn-4.11-2E7D32)
 ![Pruebas](https://img.shields.io/badge/pruebas-186%2F186-47B8A8)
-![Ciclo](https://img.shields.io/badge/ciclo-7.0.0--beta.5-7B2CFF)
+![Ciclo](https://img.shields.io/badge/ciclo-7.0.0--beta.6-7B2CFF)
 
 ![Editor de Ollin](docs/images/editor.png)
 
 ## Descargas
 
-- **Última beta**: [Ollin-Setup-7.0.0-beta.5.exe](https://github.com/deadcodeMx/ollin/releases/tag/v7.0.0-beta.1)
+- **Última beta**: [Ollin-Setup-7.0.0-beta.6.exe](https://github.com/deadcodeMx/ollin/releases/tag/v7.0.0-beta.1)
 - **Últimas 10 versiones**: [Releases del proyecto](https://github.com/deadcodeMx/ollin/releases)
-- **Ciclo actual**: 7.0.0-beta.5 (ver [versionado](docs/VERSIONADO.md))
+- **Ciclo actual**: 7.0.0-beta.6 (ver [versionado](docs/VERSIONADO.md))
 - **Guía completa de uso**: [docs/GUIA.md](docs/GUIA.md)
 
 Cada hito del motor se publica como *release* con su instalador y sus notas. No se publica una versión por cada cambio pequeño. El

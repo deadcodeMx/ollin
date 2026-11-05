@@ -1,29 +1,24 @@
-# Ollin 7.0.0-beta.5 — panel de archivos
+# Ollin 7.0.0-beta.6 — español/inglés
 
 ## Añadido
 
-- Panel de archivos con árbol y cuadrícula.
-- Breadcrumb de la carpeta actual.
-- Búsqueda por nombre.
-- Doble clic para abrir carpeta o archivo.
-- Drag-and-drop de texturas y scripts desde el panel al inspector.
-- Los scripts se adjuntan a la entidad seleccionada.
-- Las texturas se asignan al SpriteRenderer seleccionado.
+- Idioma español oficial e inglés opcional.
+- Menú Ver → Idioma.
+- Persistencia del idioma en `editor.json`.
+- Traducción runtime de menús, botones, pestañas, etiquetas y tooltips conocidos.
 
 ## Feedback cubierto
 
-- Punto 7: panel de archivos estilo Unity.
-- Punto 13: arrastrar archivos al inspector.
+- Punto 8: traducción al inglés, con español como oficial.
 
 ## Verificación
 
 - Build: 0 errores.
 - Pruebas: 186/186.
-- Instalador: `Ollin-Setup-7.0.0-beta.5.exe`.
+- Instalador: `Ollin-Setup-7.0.0-beta.6.exe`.
 
 ## Pendiente general
 
-- Traducción al inglés.
 - Revisión visual del tema claro.
 - Menú de jerarquía de entidad por categorías.
 - Script de personaje editable desde el grafo.
