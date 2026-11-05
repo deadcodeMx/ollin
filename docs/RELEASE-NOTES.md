@@ -1,17 +1,16 @@
-## Ollin Beta 6.243.0 — parser de argumentos
+## Ollin Beta 6.244.0 — funciones con ramas
 
 ### Añadido
 
-- Parser que respeta comas dentro de textos.
-- Paréntesis y corchetes anidados.
-- Comillas escapadas.
-- Validación de llamadas con el parser.
-- Pruebas del parser.
+- Condiciones dentro de funciones.
+- Bucles dentro de funciones.
+- Codegen inline recursivo.
+- Prueba de función con ramas.
 
 ### Verificación
 
 - Build 0 errores.
-- 148/148 pruebas.
-- Instalador 6.243.0.
+- 149/149 pruebas.
+- Instalador 6.244.0.
 
-## [6.242.0] — 2026-11-05
+## [6.243.0] — 2026-11-05

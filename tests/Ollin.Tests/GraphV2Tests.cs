@@ -223,4 +223,29 @@ public sealed class GraphV2Tests
         Assert.Contains("return x * 2;", code);
         Assert.Contains("Func_Doble(3)", code);
     }
+
+    [Fact]
+    public void LaFuncionGeneraCondicionesYBucles()
+    {
+        var graph = new NodeGraph();
+        var function = graph.AddNode(GraphNodeKind.Function, 0, 0);
+        function.FunctionName = "Clasificar";
+        function.ParameterText = "x:Number";
+        function.ReturnType = GraphPinType.Number;
+        var condition = graph.AddNode(GraphNodeKind.Condition, 150, 0);
+        condition.Condition = GraphConditionKind.Expression;
+        condition.Expression = "x > 0";
+        var yes = graph.AddNode(GraphNodeKind.Return, 300, 0);
+        yes.ReturnExpression = "1";
+        var no = graph.AddNode(GraphNodeKind.Return, 300, 100);
+        no.ReturnExpression = "0";
+        function.Next = condition.Id;
+        condition.TrueNext = yes.Id;
+        condition.FalseNext = no.Id;
+
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("if (", code);
+        Assert.Contains("return 1;", code);
+        Assert.Contains("return 0;", code);
+    }
 }

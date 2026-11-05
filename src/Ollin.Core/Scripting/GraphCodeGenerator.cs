@@ -67,6 +67,84 @@ public static class GraphCodeGenerator
         return sb.ToString();
     }
 
+    private static void EmitInlineChain(StringBuilder sb, NodeGraph graph, GraphNode? node, int indent, bool insideFunction, HashSet<Guid>? visited = null)
+    {
+        visited ??= new HashSet<Guid>();
+        var guard = 0;
+        while (node is not null && guard++ < 128 && visited.Add(node.Id))
+        {
+            switch (node.Kind)
+            {
+                case GraphNodeKind.Action:
+                {
+                    var action = new StringBuilder();
+                    EmitAction(action, graph, node);
+                    foreach (var line in action.ToString().Split('\n'))
+                        if (line.Trim().Length > 0) sb.AppendLine(new string(' ', indent * 4) + line.TrimStart());
+                    node = node.Next is { } next ? Find(graph, next) : null;
+                    break;
+                }
+                case GraphNodeKind.CallEvent:
+                    sb.AppendLine($"{new string(' ', indent * 4)}{CustomMethodName(node)}({node.ArgumentsText});");
+                    node = node.Next is { } callNext ? Find(graph, callNext) : null;
+                    break;
+                case GraphNodeKind.CallFunction:
+                    sb.AppendLine($"{new string(' ', indent * 4)}Func_{SafeName(node.FunctionName, "Funcion")}({node.ArgumentsText});");
+                    node = node.Next is { } funcNext ? Find(graph, funcNext) : null;
+                    break;
+                case GraphNodeKind.Break:
+                    sb.AppendLine($"{new string(' ', indent * 4)}break;");
+                    return;
+                case GraphNodeKind.Continue:
+                    sb.AppendLine($"{new string(' ', indent * 4)}continue;");
+                    return;
+                case GraphNodeKind.Return:
+                    sb.AppendLine($"{new string(' ', indent * 4)}return {(insideFunction ? node.ReturnExpression : string.Empty)};");
+                    return;
+                case GraphNodeKind.Condition:
+                {
+                    sb.AppendLine($"{new string(' ', indent * 4)}if ({ConditionExpression(node)})");
+                    sb.AppendLine($"{new string(' ', indent * 4)}{{");
+                    EmitInlineChain(sb, graph, node.TrueNext is { } t ? Find(graph, t) : null, indent + 1, insideFunction, visited);
+                    sb.AppendLine($"{new string(' ', indent * 4)}}}");
+                    sb.AppendLine($"{new string(' ', indent * 4)}else");
+                    sb.AppendLine($"{new string(' ', indent * 4)}{{");
+                    EmitInlineChain(sb, graph, node.FalseNext is { } f ? Find(graph, f) : null, indent + 1, insideFunction, visited);
+                    sb.AppendLine($"{new string(' ', indent * 4)}}}");
+                    return;
+                }
+                case GraphNodeKind.Loop:
+                {
+                    var variable = string.IsNullOrWhiteSpace(node.LoopVariable) ? "i" : node.LoopVariable;
+                    var header = node.LoopKind switch
+                    {
+                        GraphLoopKind.While => $"while ({node.LoopExpression})",
+                        GraphLoopKind.ForEach => $"foreach (var {variable} in {node.LoopCollection})",
+                        _ => $"for (int {variable} = 0; {variable} < {node.LoopCount}; {variable}++)",
+                    };
+                    sb.AppendLine($"{new string(' ', indent * 4)}{header}");
+                    sb.AppendLine($"{new string(' ', indent * 4)}{{");
+                    EmitInlineChain(sb, graph, node.Next is { } b ? Find(graph, b) : null, indent + 1, insideFunction, visited);
+                    sb.AppendLine($"{new string(' ', indent * 4)}}}");
+                    if (node.LoopAfter is { } after) node = Find(graph, after); else return;
+                    break;
+                }
+                case GraphNodeKind.Reroute:
+                    node = node.Next is { } reroute ? Find(graph, reroute) : null;
+                    break;
+                default:
+                    return;
+            }
+        }
+    }
+
+    private static string ConditionExpression(GraphNode node) => node.Condition switch
+    {
+        GraphConditionKind.HasItem => $"GameplayReflection.HasItem(Find(\"{Escape(node.TargetName)}\"), \"{Escape(node.ItemId)}\")",
+        GraphConditionKind.HealthBelow => $"GameplayReflection.HealthBelow(Find(\"{Escape(node.TargetName)}\"), {node.Threshold:0.###}f)",
+        GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(node.Expression)}\", new ExpressionContext {{ Player = Find(\"player\") }})",
+        _ => "true",
+    };
     private static void EmitFunction(StringBuilder sb, NodeGraph graph, GraphNode node, HashSet<Guid> emitted)
     {
         var parameters = ParameterList(node);
@@ -74,21 +152,7 @@ public static class GraphCodeGenerator
         sb.AppendLine();
         sb.AppendLine($"    private {returnType} Func_{SafeName(node.FunctionName, "Funcion")}({parameters})");
         sb.AppendLine("    {");
-        var body = node.Next is { } bodyId ? Find(graph, bodyId) : null;
-        var guard = 0;
-        while (body is not null && guard++ < 64)
-        {
-            if (body.Kind == GraphNodeKind.Return) { sb.AppendLine($"        return {body.ReturnExpression};"); body = null; break; }
-            if (body.Kind == GraphNodeKind.Action)
-            {
-                var actionCode = new StringBuilder();
-                EmitAction(actionCode, graph, body);
-                foreach (var line in actionCode.ToString().Split('\n'))
-                    if (line.Trim().Length > 0) sb.AppendLine("        " + line.TrimStart());
-            }
-            else if (body.Kind == GraphNodeKind.CallEvent) sb.AppendLine($"        Event_{SafeName(body.CustomEventName, "Evento")}({body.ArgumentsText});");
-            body = body.Next is { } nextBody ? Find(graph, nextBody) : null;
-        }
+        EmitInlineChain(sb, graph, node.Next is { } bodyId ? Find(graph, bodyId) : null, 2, insideFunction: true);
         sb.AppendLine("        return default;");
         sb.AppendLine("    }");
     }
