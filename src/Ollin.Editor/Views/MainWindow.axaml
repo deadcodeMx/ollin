@@ -375,6 +375,15 @@
               <!-- Viewport -->
               <Grid IsVisible="{Binding IsSceneActive}">
                 <controls:ViewportSurface x:Name="ViewportHost" />
+                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="300" Height="205"
+                        Margin="0,0,12,12" Background="{DynamicResource Ollin.Panel}"
+                        BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1" CornerRadius="7"
+                        IsHitTestVisible="False">
+                  <Grid RowDefinitions="Auto,*">
+                    <TextBlock Text="VISTA DE CÁMARA" Classes="section" Margin="8,6,8,4" />
+                    <controls:ViewportControl x:Name="CameraPreview" Grid.Row="1" IsHitTestVisible="False" />
+                  </Grid>
+                </Border>
                 <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"
                         Background="#D910131A" CornerRadius="6" Padding="10,5" IsHitTestVisible="False">
                   <StackPanel Orientation="Horizontal" Spacing="8">

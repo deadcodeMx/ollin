@@ -51,6 +51,9 @@ public sealed class ViewportControl : OpenGlControlBase
     /// <summary>Actualiza la caja fantasma que sigue al puntero con el pincel activo.</summary>
 
     /// <summary>Ajuste de posición 2D a la rejilla.</summary>
+    /// <summary>Renderiza la vista de la primera cámara 2D activa, sin gizmos ni rejilla.</summary>
+    public bool CameraPreview { get; set; }
+
     public bool Snap2D { get; set; }
 
     public float Snap2DStep { get; set; } = 0.25f;
@@ -238,6 +241,23 @@ public sealed class ViewportControl : OpenGlControlBase
         }
     }
 
+    private void RenderCameraPreview(int width, int height)
+    {
+        if (_viewModel is null) return;
+        var cameraEntity = _viewModel.Scene.Entities.FirstOrDefault(entity => entity.Active && entity.GetComponent<Camera2D>() is { Enabled: true });
+        if (cameraEntity?.GetComponent<Camera2D>() is not { } source) return;
+        var camera = (Camera2D)source.CloneFor(cameraEntity);
+        camera.Viewport = new Vector4(0f, 0f, 1f, 1f);
+        _renderer?.RenderFrame(
+            _viewModel.Scene,
+            _viewModel.Scene.GetWorldPosition(cameraEntity),
+            camera,
+            width,
+            height,
+            null,
+            false,
+            false);
+    }
     private void RenderSubViewports(int width, int height)
     {
         if (_viewModel is null) return;

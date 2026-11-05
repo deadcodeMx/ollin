@@ -15,7 +15,7 @@ de trabajo existente.
 |---|---|---|
 | 1 | BoxCollider se veía circular y faltaban formas | **Hecho**: caja real de 4 esquinas, cilindro y cono |
 | 2 | CharacterBody no genera código | **Parcial**: botón “Crear script de personaje” con esqueleto C# |
-| 3 | Segundo viewport con la cámara | Pendiente |
+| 3 | Segundo viewport con la cámara | **Hecho**: vista de cámara en vivo sobre el viewport |
 | 4 | Clic derecho en jerarquía vacía | **Hecho**: menú contextual con entidades y componentes por categoría |
 | 5 | Añadir componente desde inspector | **Verificado**: el botón ya abre la lista por categorías |
 | 6 | Gizmos de mover/rotar/escalar | Pendiente: modos tipo Godot |

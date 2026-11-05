@@ -410,6 +410,8 @@ public partial class MainWindow : Window
         }
 
         ViewportHost.Viewport.ViewModel = vm;
+        CameraPreview.ViewModel = vm;
+        CameraPreview.CameraPreview = true;
         _componentInspector = new ComponentInspectorView(vm);
         Inspector2DHost.Content = _componentInspector;
         _componentInspector.ShowEntity(vm.Selected?.Entity);
