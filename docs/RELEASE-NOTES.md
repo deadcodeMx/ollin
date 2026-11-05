@@ -1,27 +1,26 @@
-# Ollin 7.0.0-beta.3 — vista de cámara completa
+# Ollin 7.0.0-beta.4 — gizmos por modo
 
 ## Añadido
 
-- Selector de cámara 2D.
-- Botón para mostrar u ocultar la vista de cámara.
-- Placeholder cuando no hay cámara activa.
-- Ventana independiente y redimensionable para la vista de cámara.
-- Actualización manual de la lista de cámaras.
+- Modos de gizmo: mover, rotar y escalar.
+- Botones en la barra superior.
+- Atajos W, E y R fuera de campos de texto.
+- Solo se dibuja y detecta el gizmo del modo activo.
 
 ## Feedback cubierto
 
-- Punto 3: segundo viewport con la cámara, sin las limitaciones anteriores.
+- Punto 6: gizmos tipo Godot.
 
 ## Verificación
 
 - Build: 0 errores.
 - Pruebas: 186/186.
-- Instalador: `Ollin-Setup-7.0.0-beta.3.exe`.
+- Instalador: `Ollin-Setup-7.0.0-beta.4.exe`.
 
 ## Pendiente general
 
-- Gizmos mover/rotar/escalar.
 - Panel de archivos estilo Unity.
 - Traducción al inglés.
 - Drag-and-drop de archivos al inspector.
 - Revisión visual del tema claro.
+- Jerarquía de entidad por categorías.
