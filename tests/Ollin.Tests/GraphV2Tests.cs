@@ -183,7 +183,7 @@ public sealed class GraphV2Tests
 
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("private void Event_AbrirPuerta(float cantidad)", code);
-        Assert.Contains("Event_AbrirPuerta(3);", code);
+        Assert.Contains("Event_AbrirPuerta(Convert.ToSingle(3));", code);
     }
 
     [Fact]
@@ -222,8 +222,8 @@ public sealed class GraphV2Tests
 
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("private float Func_Doble(float x)", code);
-        Assert.Contains("return x * 2;", code);
-        Assert.Contains("Func_Doble(3)", code);
+        Assert.Contains("return Convert.ToSingle(x * 2);", code);
+        Assert.Contains("Func_Doble(Convert.ToSingle(3))", code);
     }
 
     [Fact]
@@ -247,8 +247,8 @@ public sealed class GraphV2Tests
 
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("if (", code);
-        Assert.Contains("return 1;", code);
-        Assert.Contains("return 0;", code);
+        Assert.Contains("return Convert.ToSingle(1);", code);
+        Assert.Contains("return Convert.ToSingle(0);", code);
         Assert.Contains("[\"x\"] = x", code);
         Assert.Contains("Locals = __locals", code);
     }
@@ -807,3 +807,4 @@ public sealed class GraphV2Tests
         AssertGeneratedCompiles(graph);
     }
 }
+

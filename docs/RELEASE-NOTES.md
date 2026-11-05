@@ -1,15 +1,15 @@
-## Ollin Beta 6.276.0 — conversiones
+## Ollin Beta 6.277.0 — conversión Return/argumentos
 
 ### Añadido
 
-- Conversión explícita en codegen.
-- Convert.ToSingle/ToInt32/ToBoolean/ToString.
-- Prueba.
+- Return convierte al tipo de retorno.
+- Argumentos convierten según firma.
+- Pruebas actualizadas.
 
 ### Verificación
 
 - Build 0 errores.
 - 181/181 pruebas.
-- Instalador 6.276.0.
+- Instalador 6.277.0.
 
-## [6.275.0] — 2026-11-05
+## [6.276.0] — 2026-11-05

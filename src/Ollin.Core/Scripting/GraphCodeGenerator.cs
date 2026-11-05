@@ -118,7 +118,7 @@ public static class GraphCodeGenerator
         if (!graph.Breakpoints.Contains(node.Id)) return;
         sb.AppendLine($"{new string(' ', indent * 4)}System.Diagnostics.Debugger.Break(); // breakpoint");
     }
-    private static void EmitInlineChain(StringBuilder sb, NodeGraph graph, GraphNode? node, int indent, bool insideFunction, bool useLocals = false, HashSet<Guid>? visited = null)
+    private static void EmitInlineChain(StringBuilder sb, NodeGraph graph, GraphNode? node, int indent, bool insideFunction, bool useLocals = false, HashSet<Guid>? visited = null, GraphPinType? returnType = null)
     {
         visited ??= new HashSet<Guid>();
         var guard = 0;
@@ -140,11 +140,11 @@ public static class GraphCodeGenerator
                     break;
                 }
                 case GraphNodeKind.CallEvent:
-                    sb.AppendLine($"{new string(' ', indent * 4)}{CustomMethodName(node)}({node.ArgumentsText});");
+                    sb.AppendLine($"{new string(' ', indent * 4)}{CustomMethodName(node)}({CallArguments(graph, node, true)});");
                     node = node.Next is { } callNext ? Find(graph, callNext) : null;
                     break;
                 case GraphNodeKind.CallFunction:
-                    sb.AppendLine($"{new string(' ', indent * 4)}Func_{SafeName(node.FunctionName, "Funcion")}({node.ArgumentsText});");
+                    sb.AppendLine($"{new string(' ', indent * 4)}Func_{SafeName(node.FunctionName, "Funcion")}({CallArguments(graph, node, false)});");
                     node = node.Next is { } funcNext ? Find(graph, funcNext) : null;
                     break;
                 case GraphNodeKind.Break:
@@ -154,17 +154,17 @@ public static class GraphCodeGenerator
                     sb.AppendLine($"{new string(' ', indent * 4)}continue;");
                     return;
                 case GraphNodeKind.Return:
-                    sb.AppendLine($"{new string(' ', indent * 4)}return {(insideFunction ? ExpressionLink(graph, node, node.ReturnExpression) : string.Empty)};");
+                    sb.AppendLine($"{new string(' ', indent * 4)}return {(insideFunction ? (returnType is { } type ? ConvertTo(ExpressionLink(graph, node, node.ReturnExpression), type) : ExpressionLink(graph, node, node.ReturnExpression)) : string.Empty)};");
                     return;
                 case GraphNodeKind.Condition:
                 {
                     sb.AppendLine($"{new string(' ', indent * 4)}if ({ConditionExpression(node, useLocals, graph)})");
                     sb.AppendLine($"{new string(' ', indent * 4)}{{");
-                    EmitInlineChain(sb, graph, node.TrueNext is { } t ? Find(graph, t) : null, indent + 1, insideFunction, useLocals, visited);
+                    EmitInlineChain(sb, graph, node.TrueNext is { } t ? Find(graph, t) : null, indent + 1, insideFunction, useLocals, visited, returnType);
                     sb.AppendLine($"{new string(' ', indent * 4)}}}");
                     sb.AppendLine($"{new string(' ', indent * 4)}else");
                     sb.AppendLine($"{new string(' ', indent * 4)}{{");
-                    EmitInlineChain(sb, graph, node.FalseNext is { } f ? Find(graph, f) : null, indent + 1, insideFunction, useLocals, visited);
+                    EmitInlineChain(sb, graph, node.FalseNext is { } f ? Find(graph, f) : null, indent + 1, insideFunction, useLocals, visited, returnType);
                     sb.AppendLine($"{new string(' ', indent * 4)}}}");
                     return;
                 }
@@ -183,7 +183,7 @@ public static class GraphCodeGenerator
                     sb.AppendLine($"{new string(' ', indent * 4)}{{");
                     if (node.LoopKind == GraphLoopKind.While)
                         sb.AppendLine($"{new string(' ', (indent + 1) * 4)}if (++__loop_guard_{Short(node.Id)} > {System.Math.Max(1, node.LoopMaxIterations)}) {{ Debug(\"Bucle while detenido por límite\"); break; }}");
-                    EmitInlineChain(sb, graph, node.Next is { } b ? Find(graph, b) : null, indent + 1, insideFunction, useLocals, visited);
+                    EmitInlineChain(sb, graph, node.Next is { } b ? Find(graph, b) : null, indent + 1, insideFunction, useLocals, visited, returnType);
                     sb.AppendLine($"{new string(' ', indent * 4)}}}");
                     if (node.LoopAfter is { } after) node = Find(graph, after); else return;
                     break;
@@ -272,7 +272,7 @@ public static class GraphCodeGenerator
         _currentLocals = LocalNames(node);
         var functionLocals = LocalsInitializer(graph, node);
         if (functionLocals.Length > 0) sb.AppendLine("        " + functionLocals);
-        EmitInlineChain(sb, graph, node.Next is { } bodyId ? Find(graph, bodyId) : null, 2, insideFunction: true, useLocals: true);
+        EmitInlineChain(sb, graph, node.Next is { } bodyId ? Find(graph, bodyId) : null, 2, insideFunction: true, useLocals: true, returnType: node.ReturnType);
         sb.AppendLine("        return default;");
         sb.AppendLine("    }");
         _currentLocals = null;
@@ -285,7 +285,7 @@ public static class GraphCodeGenerator
         {
             GraphNodeKind.Value => source.Value,
             GraphNodeKind.Operator => OperatorExpression(graph, source),
-            GraphNodeKind.CallFunction => $"Func_{SafeName(source.FunctionName, "Funcion")}({source.ArgumentsText})",
+            GraphNodeKind.CallFunction => $"Func_{SafeName(source.FunctionName, "Funcion")}({CallArguments(graph, source, false)})",
             _ => fallback,
         };
     }
@@ -551,11 +551,11 @@ public static class GraphCodeGenerator
         }
         else if (node.Kind == GraphNodeKind.CallFunction)
         {
-            sb.AppendLine($"        Func_{SafeName(node.FunctionName, "Funcion")}({node.ArgumentsText});");
+            sb.AppendLine($"        Func_{SafeName(node.FunctionName, "Funcion")}({CallArguments(graph, node, false)});");
         }
         else if (node.Kind == GraphNodeKind.CallEvent)
         {
-            sb.AppendLine($"        {CustomMethodName(node)}({node.ArgumentsText});");
+            sb.AppendLine($"        {CustomMethodName(node)}({CallArguments(graph, node, true)});");
         }
         else if (node.Kind == GraphNodeKind.Loop)
         {
@@ -663,7 +663,7 @@ public static class GraphCodeGenerator
         {
             if (source.Kind == GraphNodeKind.Value && source.ValueKind == GraphValueKind.Text) return $"\"{Escape(source.Value)}\"";
             if (source.Kind == GraphNodeKind.Value) return $"Convert.ToString({source.Value})";
-            if (source.Kind == GraphNodeKind.CallFunction) return $"Func_{SafeName(source.FunctionName, "Funcion")}({source.ArgumentsText})";
+            if (source.Kind == GraphNodeKind.CallFunction) return $"Func_{SafeName(source.FunctionName, "Funcion")}({CallArguments(graph, source, false)})";
         }
         return $"\"{Escape(fallback)}\"";
     }
@@ -680,6 +680,22 @@ public static class GraphCodeGenerator
             };
         }
         return fallback.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+    }
+    private static string CallArguments(NodeGraph graph, GraphNode node, bool customEvent)
+    {
+        var definition = graph.Nodes.FirstOrDefault(item =>
+            item.Kind == (customEvent ? GraphNodeKind.CustomEvent : GraphNodeKind.Function) &&
+            (customEvent ? item.CustomEventName : item.FunctionName).Equals(customEvent ? node.CustomEventName : node.FunctionName, StringComparison.OrdinalIgnoreCase));
+        var arguments = GraphArgumentParser.Split(node.ArgumentsText).ToList();
+        if (definition is null) return string.Join(", ", arguments);
+        var types = definition.ParameterText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .Select(item =>
+            {
+                var parts = item.Split(':', StringSplitOptions.TrimEntries);
+                return parts.Length > 1 && Enum.TryParse<GraphPinType>(parts[1], true, out var type) ? type : GraphPinType.Number;
+            }).ToList();
+        for (var i = 0; i < arguments.Count && i < types.Count; i++) arguments[i] = ConvertTo(arguments[i], types[i]);
+        return string.Join(", ", arguments);
     }
     private static string ConvertTo(string expression, GraphPinType target) => target switch
     {
@@ -707,7 +723,7 @@ public static class GraphCodeGenerator
         var port = node.Action == ActionKind.SetComponentProperty && !string.IsNullOrWhiteSpace(node.PropertyName) ? node.PropertyName : "amount";
         if ((graph.DataLinkTo(node.Id, port) ?? graph.DataLinkTo(node.Id, "amount")) is { } link && graph.Find(link.SourceNodeId) is { } source)
         {
-            if (source is { Kind: GraphNodeKind.CallFunction }) return $"Func_{SafeName(source.FunctionName, "Funcion")}({source.ArgumentsText})";
+            if (source is { Kind: GraphNodeKind.CallFunction }) return $"Func_{SafeName(source.FunctionName, "Funcion")}({CallArguments(graph, source, false)})";
             if (source is { Kind: GraphNodeKind.Operator }) return OperatorExpression(graph, source);
             if (source is not { Kind: GraphNodeKind.Value } value) return node.Amount.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
             return value.ValueKind switch
