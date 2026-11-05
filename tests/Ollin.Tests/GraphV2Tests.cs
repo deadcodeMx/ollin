@@ -448,4 +448,19 @@ public sealed class GraphV2Tests
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("Debugger.Break()", code);
     }
+
+    [Fact]
+    public void LosOperadoresTienenTipoDeResultado()
+    {
+        var graph = new NodeGraph();
+        var compare = graph.AddNode(GraphNodeKind.Operator, 0, 0);
+        compare.OperatorKind = GraphOperatorKind.Greater;
+        compare.LeftExpression = "2";
+        compare.RightExpression = "1";
+        Assert.Equal(GraphPinType.Boolean, NodeGraph.OperatorResultType(compare));
+        compare.OperatorKind = GraphOperatorKind.Add;
+        Assert.Equal(GraphPinType.Integer, NodeGraph.OperatorResultType(compare));
+        compare.LeftExpression = "2.5";
+        Assert.Equal(GraphPinType.Number, NodeGraph.OperatorResultType(compare));
+    }
 }

@@ -312,6 +312,15 @@ public sealed class NodeGraph : Component, ITickable
         Subgraphs.FirstOrDefault(graph => graph.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
     public bool RemoveSubgraph(string name) => Subgraphs.RemoveAll(graph => graph.Name.Equals(name, StringComparison.OrdinalIgnoreCase)) > 0;
+    /// <summary>Tipo de dato que produce un operador.</summary>
+    public static GraphPinType OperatorResultType(GraphNode node)
+    {
+        if (node.Kind != GraphNodeKind.Operator) return GraphPinType.Any;
+        if (node.OperatorKind is GraphOperatorKind.Equal or GraphOperatorKind.NotEqual or GraphOperatorKind.Greater or GraphOperatorKind.Less or GraphOperatorKind.And or GraphOperatorKind.Or or GraphOperatorKind.Not)
+            return GraphPinType.Boolean;
+        if (node.LeftExpression.Contains(',') || node.RightExpression.Contains(',')) return GraphPinType.Vector2;
+        return int.TryParse(node.LeftExpression.Trim(), out _) && int.TryParse(node.RightExpression.Trim(), out _) ? GraphPinType.Integer : GraphPinType.Number;
+    }
     /// <summary>Crea un enlace de datos validando el tipo.</summary>
     public GraphDataLink? AddDataLink(Guid sourceNodeId, Guid targetNodeId, string targetPort, GraphPinType type)
     {

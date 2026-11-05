@@ -1849,6 +1849,15 @@ public sealed class NodeGraphWindow : Window
         return card;
     }
 
+    private GraphPinType DataSourceType() => _dataSource switch
+    {
+        { Kind: GraphNodeKind.Operator } op => NodeGraph.OperatorResultType(op),
+        { ValueKind: GraphValueKind.Integer } => GraphPinType.Integer,
+        { ValueKind: GraphValueKind.Boolean } => GraphPinType.Boolean,
+        { ValueKind: GraphValueKind.Text } => GraphPinType.Text,
+        { ValueKind: GraphValueKind.Vector2 } => GraphPinType.Vector2,
+        _ => GraphPinType.Number,
+    };
     private Button DataOutButton(GraphNode node)
     {
         var button = new Button { Content = "Dato →", FontSize = 10, Padding = new Thickness(6, 2) };
