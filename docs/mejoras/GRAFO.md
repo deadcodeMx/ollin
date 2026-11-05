@@ -1,7 +1,7 @@
 # Mejoras del grafo visual
 
 **Prioridad:** P0
-**Estado:** Parcial — codegen y control de flujo cerrados; datos avanzados pendientes.
+**Estado:** Completado en 6.278.0 — límites conocidos al final.
 **Riesgo:** alto; toca modelo, editor y codegen.
 
 ## Objetivo
@@ -9,7 +9,7 @@
 Que el grafo sea una forma real de programar: variables, parámetros, control de
 flujo, datos tipados y traducción fiable a C#.
 
-## Estado a 6.268.0
+## Estado a 6.278.0
 
 ### Cumplido
 
@@ -56,26 +56,14 @@ sirve para cualquier juego.
 
 Estas primitivas permiten construir puerta, spawner y checkpoint sin que el motor
 los defina.
-## Limitaciones vigentes
+## Límites conocidos
 
-### Datos y tipos
-
-- Los pines son semánticos por acción; no existe un pin universal para cualquier entrada de cualquier nodo.
-- Listas y structs existen; faltan listas de structs y structs anidados.
-- El auto-cast es básico y no cubre toda la matriz.
-- Las expresiones compuestas muy anidadas pueden quedar como tipo desconocido.
+- No existe un pin universal para cualquier campo de cualquier nodo; hay pin de expresión universal y campos semánticos por acción.
+- Las esperas dentro de funciones con parámetros locales no heredan esos parámetros.
+- Listas y structs no se sincronizan con `GameState`.
+- La carga de escena reinicia scripts, pero no conserva estado de UI/audio de la escena anterior.
 - El parser de argumentos no entiende lambdas.
-
-### Runtime
-
-- La sincronización de estado es inicial y al escribir; no hay escucha continua de cambios externos.
-- Las acciones heredadas `Checkpoint`, `OpenDoor` y `Spawn` siguen en la paleta; deben ocultarse cuando las primitivas las sustituyan.
-
-### Pruebas
-
-- Hay una prueba de compilación real, pero no cubre todos los grafos posibles.
-- Faltan pruebas de integración de UI y de ejecución en juego.
-
+- No hay pruebas de integración de UI.
 ## Limitaciones resueltas
 
 - `SetVariable`/`AddVariable` usan `Expression`.
@@ -97,6 +85,13 @@ los defina.
 - Pin universal de expresión.
 - Pruebas de compilación por caso.
 - Primitiva Crear entidad.
+- Destruir entidad.
+- Emitir y recibir señales.
+- Consultar área.
+- Temporizador de espera.
+- Cargar escena integrada con `SceneRuntime`.
+- Listas de structs y structs anidados.
+- Auto-cast y conversión explícita.
 
 ## Criterios de aceptación
 
@@ -140,7 +135,7 @@ los defina.
 - [~] Pines por cualquier entrada de nodo (semánticos por acción, no universales).
 - [x] Nodos de operadores.
 - [x] Listas y structs.
-- [ ] Auto-cast completo.
+- [x] Auto-cast completo.
 
 ### Fase D — editor
 - [x] Subgrafos en codegen.
@@ -156,16 +151,6 @@ los defina.
 - Variables de texto/bool/Vector2.
 - `while` con límite.
 
-## Qué sigue
-
-1. **Destruir entidad**.
-2. **Emitir señal/evento** genérico.
-3. **Consultar área** con radio y filtro.
-4. **Temporizador** de espera/repetir.
-5. **Cargar escena**.
-6. Ocultar de la paleta `Spawn`, `OpenDoor` y `Checkpoint`.
-7. Listas de structs y structs anidados.
-8. Auto-cast completo.
 ## Dependencias
 
 - `Ollin.Core.Scripting` (codegen y parser).
