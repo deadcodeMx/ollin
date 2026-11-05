@@ -749,9 +749,8 @@ public sealed class GraphV2Tests
             var current = new Scene { Name = "Vieja" };
             current.Create("Origen", Vector2.Zero);
             ActionExecutor.Execute(current, ActionKind.LoadScene, "", path);
-            Assert.Equal("Nueva", current.Name);
-            Assert.NotNull(current.Find("Destino"));
-            Assert.Null(current.Find("Origen"));
+            Assert.True(Ollin.Core.Scenes.SceneLoadQueue.TryTake(out var requested));
+            Assert.Equal(path, requested);
         }
         finally
         {
@@ -806,5 +805,27 @@ public sealed class GraphV2Tests
         Assert.Contains("Convert.ToSingle(true)", code);
         AssertGeneratedCompiles(graph);
     }
-}
 
+    [Fact]
+    public void ElRuntimeProcesaLaCargaDeEscena()
+    {
+        var source = new Scene { Name = "Destino" };
+        source.Create("Nueva", Vector2.Zero);
+        var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"ollin-runtime-{Guid.NewGuid():N}.json");
+        Ollin.Core.Serialization.SceneSerializer.Save(source, path);
+        try
+        {
+            var runtime = new Ollin.Runtime.SceneRuntime();
+            runtime.Play(new Scene { Name = "Inicio" });
+            Ollin.Core.Scenes.SceneLoadQueue.Request(path);
+            runtime.Tick(0.016f);
+            Assert.Equal("Destino", runtime.CurrentScene?.Name);
+            Assert.NotNull(runtime.CurrentScene?.Find("Nueva"));
+        }
+        finally
+        {
+            System.IO.File.Delete(path);
+            Ollin.Core.Scenes.SceneLoadQueue.TryTake(out _);
+        }
+    }
+}

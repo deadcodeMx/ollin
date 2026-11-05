@@ -64,17 +64,8 @@ public static class ActionExecutor
         switch (action)
         {
             case ActionKind.LoadScene:
-            {
-                var path = Path.IsPathRooted(message) ? message : Path.GetFullPath(message);
-                if (Ollin.Core.Serialization.SceneSerializer.TryLoad(path, out var loaded, out _) && loaded is not null)
-                {
-                    scene.Name = loaded.Name;
-                    scene.Entities.Clear();
-                    foreach (var entity in loaded.Entities) scene.Add(entity);
-                }
-                break;
-            }
-            case ActionKind.QueryArea:
+                Ollin.Core.Scenes.SceneLoadQueue.Request(message);
+                break;            case ActionKind.QueryArea:
             {
                 var center = target ?? FindPlayer(scene, playerTag);
                 var count = center is null ? 0 : scene.QueryRadius(scene.GetWorldPosition(center), radius, message).Count;

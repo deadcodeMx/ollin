@@ -43,6 +43,7 @@ public sealed class SceneRuntime
 
     /// <summary>Scripts activos en la reproducción actual.</summary>
     public int ScriptCount => _scripts.Count;
+    public Scene? CurrentScene => _scene;
 
     public bool IsPlaying { get; private set; }
 
@@ -427,6 +428,11 @@ public sealed class SceneRuntime
     /// <summary>Avanza la simulación. El delta se recorta para evitar saltos tras un parón.</summary>
     public void Tick(float deltaTime)
     {
+        if (SceneLoadQueue.TryTake(out var scenePath) && SceneSerializer.TryLoad(scenePath!, out var loadedScene, out _) && loadedScene is not null)
+        {
+            Play(loadedScene, _scriptsWorkspace);
+            return;
+        }
         Ollin.Core.Diagnostics.Profiler.Tick(deltaTime);
         if (!IsPlaying || IsPaused || _scene is null)
         {

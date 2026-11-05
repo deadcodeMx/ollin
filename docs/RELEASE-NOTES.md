@@ -1,15 +1,15 @@
-## Ollin Beta 6.277.0 — conversión Return/argumentos
+## Ollin Beta 6.278.0 — carga de escena en runtime
 
 ### Añadido
 
-- Return convierte al tipo de retorno.
-- Argumentos convierten según firma.
-- Pruebas actualizadas.
+- Cola de carga.
+- SceneRuntime recarga escena y scripts.
+- Prueba de integración.
 
 ### Verificación
 
 - Build 0 errores.
-- 181/181 pruebas.
-- Instalador 6.277.0.
+- 182/182 pruebas.
+- Instalador 6.278.0.
 
-## [6.276.0] — 2026-11-05
+## [6.277.0] — 2026-11-05
