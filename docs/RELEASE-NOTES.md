@@ -1,26 +1,29 @@
-# Ollin 7.0.0-beta.4 — gizmos por modo
+# Ollin 7.0.0-beta.5 — panel de archivos
 
 ## Añadido
 
-- Modos de gizmo: mover, rotar y escalar.
-- Botones en la barra superior.
-- Atajos W, E y R fuera de campos de texto.
-- Solo se dibuja y detecta el gizmo del modo activo.
+- Panel de archivos con árbol y cuadrícula.
+- Breadcrumb de la carpeta actual.
+- Búsqueda por nombre.
+- Doble clic para abrir carpeta o archivo.
+- Drag-and-drop de texturas y scripts desde el panel al inspector.
+- Los scripts se adjuntan a la entidad seleccionada.
+- Las texturas se asignan al SpriteRenderer seleccionado.
 
 ## Feedback cubierto
 
-- Punto 6: gizmos tipo Godot.
+- Punto 7: panel de archivos estilo Unity.
+- Punto 13: arrastrar archivos al inspector.
 
 ## Verificación
 
 - Build: 0 errores.
 - Pruebas: 186/186.
-- Instalador: `Ollin-Setup-7.0.0-beta.4.exe`.
+- Instalador: `Ollin-Setup-7.0.0-beta.5.exe`.
 
 ## Pendiente general
 
-- Panel de archivos estilo Unity.
 - Traducción al inglés.
-- Drag-and-drop de archivos al inspector.
 - Revisión visual del tema claro.
-- Jerarquía de entidad por categorías.
+- Menú de jerarquía de entidad por categorías.
+- Script de personaje editable desde el grafo.
