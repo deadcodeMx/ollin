@@ -1,18 +1,20 @@
-## Ollin Beta 6.217.0 — plantilla de script vacía
+## Ollin Beta 6.218.0 — grafo Fase 1
+
+### Añadido
+
+- Buscador de nodos con filtro.
+- **Buscar nodo…** en el menú contextual.
+- Soltar una conexión en vacío abre el buscador y conecta el nodo elegido.
+- Fase 3 verificada: breakpoints, paso, traza, validación y resaltado.
 
 ### Corregido
 
-- La plantilla real de scripts nuevos se genera vacía, sin movimiento de ejemplo.
-- La plantilla de proyecto también queda vacía.
-
-### Grafo
-
-- Fase 1 en curso: buscador de nodos y menú contextual.
+- Plantilla de script realmente vacía.
 
 ### Verificación
 
 - Build 0 errores.
 - 134/134 pruebas.
-- Instalador 6.217.0 instalado.
+- Instalador 6.218.0 instalado.
 
-## [6.216.0] — 2026-11-04
+## [6.217.0] — 2026-11-04

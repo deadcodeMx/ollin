@@ -215,7 +215,7 @@ public sealed class NodeGraphWindow : Window
             item.Click += (_, _) => action();
             canvasMenu.Items.Add(item);
         }
-        AddCanvasItem("Añadir evento: iniciar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnStart));
+        AddCanvasItem("Buscar nodo…", ShowNodeSearch);        AddCanvasItem("Añadir evento: iniciar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnStart));
         AddCanvasItem("Añadir acción: mensaje", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Message));
         AddCanvasItem("Añadir condición", () => AddCondition(GraphConditionKind.HasItem));
         AddCanvasItem("Añadir comentario", AddComment);
@@ -786,6 +786,67 @@ public sealed class NodeGraphWindow : Window
         };
     }
 
+    private void ShowNodeSearchForLink(GraphNode source)
+    {
+        var trueBranch = _linkTrue;
+        var choices = new List<(string Label, Action Action)>
+        {
+            ("Acción: mensaje", () => ConnectNew(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Message, source, trueBranch)),
+            ("Acción: activar", () => ConnectNew(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Activate, source, trueBranch)),
+            ("Acción: desactivar", () => ConnectNew(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Deactivate, source, trueBranch)),
+            ("Acción: teletransportar", () => ConnectNew(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Teleport, source, trueBranch)),
+            ("Condición: tiene objeto", () => ConnectNew(GraphNodeKind.Condition, GraphEventKind.OnStart, ActionKind.Message, source, trueBranch, GraphConditionKind.HasItem)),
+            ("Condición: expresión", () => ConnectNew(GraphNodeKind.Condition, GraphEventKind.OnStart, ActionKind.Message, source, trueBranch, GraphConditionKind.Expression)),
+            ("Comentario", () => AddComment()),
+        };
+        new NodeSearchWindow(choices).ShowDialog(this);
+    }
+
+    private void ConnectNew(GraphNodeKind kind, GraphEventKind eventKind, ActionKind action, GraphNode source, bool trueBranch, GraphConditionKind condition = GraphConditionKind.Always)
+    {
+        var node = _graph.AddNode(kind, 120 + _graph.Nodes.Count * 24, 120 + _graph.Nodes.Count * 22);
+        node.Event = eventKind;
+        node.Action = action;
+        node.Condition = condition;
+        if (source.Kind == GraphNodeKind.Condition)
+        {
+            if (trueBranch) source.TrueNext = node.Id; else source.FalseNext = node.Id;
+        }
+        else
+        {
+            source.Next = node.Id;
+            source.DisabledPorts.Remove("next");
+        }
+        _selected = node;
+        MarkChanged();
+        Render();
+    }
+    private void ShowNodeSearch()
+    {
+        var choices = new List<(string Label, Action Action)>
+        {
+            ("Evento: iniciar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnStart)),
+            ("Evento: cada tiempo", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnTimer)),
+            ("Evento: entrar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerEnter)),
+            ("Evento: pulsar E", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnInteract)),
+            ("Evento: morir", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerDeath)),
+            ("Condición: siempre", () => AddCondition(GraphConditionKind.Always)),
+            ("Condición: tiene objeto", () => AddCondition(GraphConditionKind.HasItem)),
+            ("Condición: vida baja", () => AddCondition(GraphConditionKind.HealthBelow)),
+            ("Condición: expresión", () => AddCondition(GraphConditionKind.Expression)),
+            ("Acción: mensaje", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Message)),
+            ("Acción: activar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Activate)),
+            ("Acción: desactivar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Deactivate)),
+            ("Acción: generar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Spawn)),
+            ("Acción: teletransportar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Teleport)),
+            ("Acción: fijar variable", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.SetVariable)),
+            ("Acción: sumar variable", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.AddVariable)),
+            ("Acción: alternar flag", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.ToggleFlag)),
+            ("Comentario", AddComment),
+            ("Grupo", AddGroup),
+        };
+        new NodeSearchWindow(choices).ShowDialog(this);
+    }
     private void AddNode(GraphNodeKind kind, GraphEventKind eventKind, ActionKind action = ActionKind.Message)
     {
         var node = _graph.AddNode(kind, 70 + _graph.Nodes.Count * 24, 70 + _graph.Nodes.Count * 22);
