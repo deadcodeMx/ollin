@@ -9,6 +9,8 @@ namespace Ollin.Core.Model.Components;
 public enum GraphNodeKind
 {
     Event,
+    CustomEvent,
+    CallEvent,
     Condition,
     Action,
     Value,
@@ -134,6 +136,9 @@ public sealed class GraphNode
     public string LoopExpression { get; set; } = "i < 3";
     public string LoopCollection { get; set; } = "items";
     public Guid? LoopAfter { get; set; }
+    public string CustomEventName { get; set; } = "MiEvento";
+    public string ParameterText { get; set; } = "valor:Number";
+    public string ArgumentsText { get; set; } = string.Empty;
 
     public float GroupWidth { get; set; } = 280f;
 

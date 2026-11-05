@@ -202,6 +202,8 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Valor: booleano", () => AddValue(GraphValueKind.Boolean));
         AddPalette(panel, "Valor: texto", () => AddValue(GraphValueKind.Text));
         AddPalette(panel, "Valor: Vector2", () => AddValue(GraphValueKind.Vector2));
+        AddPalette(panel, "Evento personalizado", () => AddNode(GraphNodeKind.CustomEvent, GraphEventKind.OnStart));
+        AddPalette(panel, "Llamar evento", () => AddNode(GraphNodeKind.CallEvent, GraphEventKind.OnStart));
         AddPalette(panel, "Bucle", () => AddNode(GraphNodeKind.Loop, GraphEventKind.OnStart));
         AddPalette(panel, "Subgrafo", () => AddNode(GraphNodeKind.Subgraph, GraphEventKind.OnStart));
         AddPalette(panel, "Túnel entrada", () => AddNode(GraphNodeKind.TunnelIn, GraphEventKind.OnStart));
@@ -2520,6 +2522,8 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         GraphNodeKind.Value => "VALOR",
         GraphNodeKind.Subgraph => "SUBRAFO",
         GraphNodeKind.Loop => "BUCLE",
+        GraphNodeKind.CustomEvent => "EVENTO PERSONALIZADO",
+        GraphNodeKind.CallEvent => "LLAMAR EVENTO",
         GraphNodeKind.TunnelIn => "TÚNEL ENTRADA",
         GraphNodeKind.TunnelOut => "TÚNEL SALIDA",
         GraphNodeKind.Group => "GRUPO",

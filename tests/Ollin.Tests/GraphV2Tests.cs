@@ -162,5 +162,25 @@ public sealed class GraphV2Tests
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("for (int i = 0; i < 2; i++)", code);
     }
-}
 
+    [Fact]
+    public void LosEventosPersonalizadosGeneranMetodoYLLamada()
+    {
+        var graph = new NodeGraph();
+        var custom = graph.AddNode(GraphNodeKind.CustomEvent, 0, 0);
+        custom.CustomEventName = "AbrirPuerta";
+        custom.ParameterText = "cantidad:Number";
+        var body = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        body.Action = ActionKind.Message;
+        custom.Next = body.Id;
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 200);
+        var call = graph.AddNode(GraphNodeKind.CallEvent, 200, 200);
+        call.CustomEventName = "AbrirPuerta";
+        call.ArgumentsText = "3";
+        start.Next = call.Id;
+
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("private void Event_AbrirPuerta(float cantidad)", code);
+        Assert.Contains("Event_AbrirPuerta(3);", code);
+    }
+}

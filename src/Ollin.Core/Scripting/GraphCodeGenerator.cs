@@ -50,6 +50,10 @@ public static class GraphCodeGenerator
         }
 
         var emitted = new HashSet<Guid>();
+        foreach (var custom in graph.Nodes.Where(node => node.Kind == GraphNodeKind.CustomEvent))
+        {
+            EmitCustomEvent(sb, graph, custom, emitted);
+        }
         foreach (var node in events)
         {
             EmitChain(sb, graph, node, emitted);
@@ -59,6 +63,43 @@ public static class GraphCodeGenerator
         return sb.ToString();
     }
 
+    private static void EmitCustomEvent(StringBuilder sb, NodeGraph graph, GraphNode node, HashSet<Guid> emitted)
+    {
+        var parameters = string.Join(", ", node.ParameterText
+            .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .Select(item =>
+            {
+                var parts = item.Split(':', StringSplitOptions.TrimEntries);
+                var name = SafeName(parts[0], "arg");
+                var type = parts.Length > 1 ? parts[1] : "Number";
+                return $"{TypeName(type)} {name}";
+            }));
+        sb.AppendLine();
+        sb.AppendLine($"    private void {CustomMethodName(node)}({parameters})");
+        sb.AppendLine("    {");
+        if (node.Next is { } body) sb.AppendLine($"        {MethodName(Find(graph, body))}();");
+        sb.AppendLine("    }");
+        if (node.Next is { } next) EmitChain(sb, graph, Find(graph, next), emitted);
+    }
+
+    private static string TypeName(string type) => type.ToLowerInvariant() switch
+    {
+        "boolean" or "bool" => "bool",
+        "integer" or "int" => "int",
+        "text" or "string" => "string",
+        "vector2" => "Vector2",
+        _ => "float",
+    };
+
+    private static string CustomMethodName(GraphNode node) => "Event_" + SafeName(node.CustomEventName, "Evento");
+
+    private static string SafeName(string value, string fallback)
+    {
+        var builder = new StringBuilder();
+        foreach (var character in value) if (char.IsLetterOrDigit(character) || character == '_') builder.Append(character);
+        var result = builder.Length == 0 ? fallback : builder.ToString();
+        return char.IsDigit(result[0]) ? "E" + result : result;
+    }
     private static void EmitChain(StringBuilder sb, NodeGraph graph, GraphNode? node, HashSet<Guid> emitted)
     {
         while (node is not null && emitted.Add(node.Id))
@@ -102,6 +143,10 @@ public static class GraphCodeGenerator
             sb.AppendLine("        {");
             if (node.FalseNext is { } f) sb.AppendLine($"            {MethodName(Find(graph, f))}();");
             sb.AppendLine("        }");
+        }
+        else if (node.Kind == GraphNodeKind.CallEvent)
+        {
+            sb.AppendLine($"        {CustomMethodName(node)}({node.ArgumentsText});");
         }
         else if (node.Kind == GraphNodeKind.Loop)
         {
