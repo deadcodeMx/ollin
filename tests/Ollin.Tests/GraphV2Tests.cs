@@ -1,0 +1,29 @@
+using System.Numerics;
+using Ollin.Core.Model.Components;
+using Ollin.Core.Scenes;
+using Xunit;
+
+namespace Ollin.Tests;
+
+public sealed class GraphV2Tests
+{
+    [Fact]
+    public void LosEnlacesDeDatosSeCreanValidanYSeLimpian()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Grafo", Vector2.Zero);
+        var graph = entity.AddComponent(new NodeGraph());
+        var source = graph.AddNode(GraphNodeKind.Action, 0, 0);
+        var target = graph.AddNode(GraphNodeKind.Action, 200, 0);
+
+        var link = graph.AddDataLink(source.Id, target.Id, "value", GraphPinType.Number);
+        Assert.NotNull(link);
+        Assert.Single(graph.DataLinks);
+        Assert.Equal(target.Id, graph.DataLinkTo(target.Id, "value")!.TargetNodeId);
+
+        Assert.Null(graph.AddDataLink(source.Id, target.Id, "value", GraphPinType.Text));
+
+        graph.RemoveNode(source.Id);
+        Assert.Empty(graph.DataLinks);
+    }
+}

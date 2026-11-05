@@ -32,6 +32,26 @@ public enum GraphConditionKind
     Expression,
 }
 
+/// <summary>Tipo de dato de un pin del grafo.</summary>
+public enum GraphPinType
+{
+    Number,
+    Integer,
+    Boolean,
+    Text,
+    Vector2,
+    Any,
+}
+
+/// <summary>Enlace de datos entre la salida de un nodo y la entrada de otro.</summary>
+public sealed class GraphDataLink
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid SourceNodeId { get; set; }
+    public Guid TargetNodeId { get; set; }
+    public string TargetPort { get; set; } = "value";
+    public GraphPinType Type { get; set; } = GraphPinType.Any;
+}
 public sealed class GraphDebugFrame
 {
     public GraphDebugFrame(Guid nodeId, Dictionary<string, string> variablesBefore)
@@ -145,6 +165,7 @@ public sealed class GraphNode
 public sealed class NodeGraph : Component, ITickable
 {
     public List<GraphNode> Nodes { get; set; } = new();
+    public List<GraphDataLink> DataLinks { get; set; } = new();
 
     [JsonIgnore]
     public NodeGraphHistory History { get; } = new();
@@ -181,6 +202,20 @@ public sealed class NodeGraph : Component, ITickable
 
     public GraphNode? Find(Guid? id) => id is null ? null : Nodes.FirstOrDefault(node => node.Id == id);
 
+    /// <summary>Crea un enlace de datos validando el tipo.</summary>
+    public GraphDataLink? AddDataLink(Guid sourceNodeId, Guid targetNodeId, string targetPort, GraphPinType type)
+    {
+        if (Find(sourceNodeId) is null || Find(targetNodeId) is null) return null;
+        if (DataLinks.Any(link => link.TargetNodeId == targetNodeId && link.TargetPort == targetPort)) return null;
+        var link = new GraphDataLink { SourceNodeId = sourceNodeId, TargetNodeId = targetNodeId, TargetPort = targetPort, Type = type };
+        DataLinks.Add(link);
+        return link;
+    }
+
+    public void RemoveDataLink(Guid linkId) => DataLinks.RemoveAll(link => link.Id == linkId);
+
+    public GraphDataLink? DataLinkTo(Guid targetNodeId, string targetPort) =>
+        DataLinks.FirstOrDefault(link => link.TargetNodeId == targetNodeId && link.TargetPort == targetPort);
     public void RemoveNode(Guid id)
     {
         Nodes.RemoveAll(node => node.Id == id);
@@ -191,6 +226,7 @@ public sealed class NodeGraph : Component, ITickable
             if (node.TrueNext == id) node.TrueNext = null;
             if (node.FalseNext == id) node.FalseNext = null;
             if (node.ParentGroupId == id) node.ParentGroupId = null;
+            DataLinks.RemoveAll(link => link.SourceNodeId == id || link.TargetNodeId == id);
         }
     }
 
