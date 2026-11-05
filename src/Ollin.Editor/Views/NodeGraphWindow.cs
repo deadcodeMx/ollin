@@ -329,7 +329,9 @@ public sealed class NodeGraphWindow : Window
         quick.Children.Add(ToolButton("⇅", AutoLayout, "Ordenar (Ctrl+Shift+O)"));
         quick.Children.Add(ToolButton("⏭", StepGraph, "Paso (F8)"));
         quick.Children.Add(ToolButton("↔", () => Distribute(true), "Distribuir H (Ctrl+Shift+H)"));
-        quick.Children.Add(ToolButton("</>", ShowCode, "Generar código C# del grafo"));
+        quick.Children.Add(ToolButton("Guardar", SaveGraph, "Guardar grafo y escena"));
+        quick.Children.Add(ToolButton("Script", GenerateScript, "Generar/actualizar el script C# desde el grafo"));
+        quick.Children.Add(ToolButton("</>", ShowCode, "Ver código C# del grafo"));
         quick.Children.Add(ToolButton("↕", () => Distribute(false), "Distribuir V (Ctrl+Shift+V)"));
         _quickActions = quick;
         toolbar.Children.Add(quick);
@@ -449,6 +451,57 @@ public sealed class NodeGraphWindow : Window
         return dock;
     }
 
+    private void SaveGraph()
+    {
+        _graph.Migrate();
+        MarkChanged();
+        if (string.IsNullOrWhiteSpace(_viewModel.ScenePath))
+        {
+            _viewModel.StatusMessage = "Guarda la escena antes de guardar el grafo.";
+            return;
+        }
+        _viewModel.SaveScene(_viewModel.ScenePath);
+        if (_entity.GetComponent<ScriptComponent>() is { ScriptPath: { } path } && path.StartsWith("scripts/Graph", StringComparison.OrdinalIgnoreCase))
+        {
+            WriteGeneratedScript();
+        }
+        _status.Text = "Grafo guardado.";
+    }
+
+    private void GenerateScript()
+    {
+        _graph.Migrate();
+        WriteGeneratedScript();
+        if (!string.IsNullOrWhiteSpace(_viewModel.ScenePath)) _viewModel.SaveScene(_viewModel.ScenePath);
+    }
+
+    private void WriteGeneratedScript()
+    {
+        try
+        {
+            var safeName = new string(_entity.Name.Where(char.IsLetterOrDigit).ToArray());
+            if (string.IsNullOrWhiteSpace(safeName)) safeName = "Entity";
+            if (char.IsDigit(safeName[0])) safeName = "E" + safeName;
+            var className = "Graph" + safeName;
+            var relativePath = $"scripts/{className}.cs";
+            var folder = System.IO.Path.Combine(_viewModel.ProjectRoot, "scripts");
+            System.IO.Directory.CreateDirectory(folder);
+            var fullPath = System.IO.Path.Combine(folder, className + ".cs");
+            System.IO.File.WriteAllText(fullPath, Ollin.Core.Scripting.GraphCodeGenerator.Generate(_graph, className));
+            var script = _entity.GetComponent<ScriptComponent>() ?? _entity.AddComponent(new ScriptComponent());
+            script.ScriptPath = relativePath;
+            script.ClassName = className;
+            _graph.Enabled = false;
+            _viewModel.ReloadScripts();
+            _viewModel.RefreshProjectFiles();
+            _viewModel.MarkDirty("script");
+            _status.Text = $"Script actualizado: {relativePath} (grafo desactivado para no duplicar).";
+        }
+        catch (Exception exception)
+        {
+            _status.Text = $"No se pudo generar el script: {exception.Message}";
+        }
+    }
     private void ShowCode()
     {
         var code = Ollin.Core.Scripting.GraphCodeGenerator.Generate(_graph, "GraphScript");

@@ -1,17 +1,17 @@
-## Ollin Beta 6.234.0 — Obsidiana Neón
+## Ollin Beta 6.235.0 — grafo a script
 
 ### Añadido
 
-- Tema global Obsidiana Neón.
-- Fondo #0A0A0C.
-- Paneles glass con borde degradado violeta→magenta→naranja.
-- `GlassPanel` reutilizable con brillo opcional.
-- Paleta y documentación de UI.
+- Botón Guardar en el grafo.
+- Botón Script para generar/actualizar C#.
+- Asociación automática al ScriptComponent.
+- NodeGraph desactivado tras generar para evitar doble ejecución.
+- Sincronización al guardar.
 
 ### Verificación
 
 - Build 0 errores.
 - 142/142 pruebas.
-- Instalador 6.234.0 instalado.
+- Instalador 6.235.0.
 
-## [6.233.0] — 2026-11-05
+## [6.234.0] — 2026-11-05
