@@ -22,7 +22,7 @@ de trabajo existente.
 | 7 | Panel de archivos estilo Unity | **Hecho**: árbol + cuadrícula, breadcrumb y búsqueda |
 | 8 | Traducción al inglés | **Hecho**: español oficial, inglés opcional y persistente |
 | 9 | Emojis en jerarquía | **Hecho**: símbolos y emojis |
-| 10 | Tema claro pierde contraste | **Parcial**: colores duros reemplazados por recursos; falta QA visual |
+| 10 | Tema claro pierde contraste | **Hecho**: revisión visual, paneles claros y texto oscuro |
 | 11 | Formas en SpriteRenderer | **Hecho**: cuadrado, cilindro y cono |
 | 12 | Botón Scripts con lista del proyecto | **Hecho**: menú con scripts y recompilar |
 | 13 | Arrastrar archivos al inspector | **Hecho**: texturas y scripts |
@@ -35,6 +35,7 @@ de trabajo existente.
 - [ ] Localización español/inglés.
 - [ ] Drag-and-drop de texturas/scripts al inspector.
 - [ ] Script de personaje también editable desde el grafo.
+- [ ] Menú de entidad por categorías, igual que el espacio vacío.
 
 ## Limitaciones conocidas
 
@@ -56,6 +57,7 @@ de trabajo existente.
 9. Panel de archivos con cuadrícula, breadcrumb y búsqueda.
 10. Drag-and-drop de texturas/scripts al inspector.
 11. Idioma español oficial e inglés opcional.
+12. Tema claro legible en jerarquía, inspector y consola.
 
 ## Pruebas
 

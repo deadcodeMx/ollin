@@ -125,7 +125,7 @@ public sealed class EntityNode : ObservableObject
 
     public bool IsExpanded { get; set; } = true;
 
-    private static readonly IBrush NeutralBrush = new SolidColorBrush(Color.Parse("#C7D0DE"));
+    private static IBrush NeutralBrush => new SolidColorBrush(Color.Parse(Ollin.Editor.Styles.EditorTheme.Current == Ollin.Editor.Styles.EditorThemeMode.Light ? "#1B2230" : "#C7D0DE"));
 
     public string Icon =>
         !string.IsNullOrWhiteSpace(Entity.EditorIcon)
@@ -1558,6 +1558,13 @@ public sealed class EntityNode : ObservableObject
     }
 
     /// <summary>Refresca el inspector tras cambios externos (por ejemplo, mover con la cámara).</summary>
+    public void RefreshTheme()
+    {
+        OnPropertyChanged(nameof(NameBrush));
+        OnPropertyChanged(nameof(Icon));
+        foreach (var child in Children) child.RefreshTheme();
+    }
+
     public void RefreshAll()
     {
         OnPropertyChanged(nameof(Name));

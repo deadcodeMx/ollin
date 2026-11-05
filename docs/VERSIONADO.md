@@ -39,8 +39,17 @@ Ejemplos:
 4. No se publica si el build o las pruebas fallan.
 5. Una release debe tener notas en `docs/RELEASE-NOTES.md`.
 6. Los builds de desarrollo no se publican como releases.
-7. Se conservan como máximo las **10 releases más recientes**.
+7. Se conservan como máximo las **5 releases más recientes**.
+8. No se publica una release por cada corrección: se acumulan en una ventana.
+9. Los builds intermedios son locales; solo se publica el cierre de ventana.
 8. Las releases antiguas se eliminan de GitHub; el historial resumido queda en `CHANGELOG.md`.
+
+## Ventanas de release
+
+- Una ventana dura como mínimo una semana o hasta cerrar un bloque de feedback.
+- Dentro de la ventana: build y pruebas locales, sin releases.
+- Al cerrar: una sola release con todas las correcciones.
+- No se reutiliza ni se renombra un tag publicado.
 
 ## Cadencia
 
@@ -62,7 +71,7 @@ El **2026-11-05** se conservaron las 10 releases/tags más recientes:
 
 ```text
 v6.275.0 … v6.278.0
-v7.0.0-beta.1 … v7.0.0-beta.6
+v7.0.0-beta.6
 ```
 
 Se eliminaron **246 releases** y **167 tags**. El corte se debe a que se habían

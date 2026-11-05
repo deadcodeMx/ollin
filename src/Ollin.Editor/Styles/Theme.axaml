@@ -54,7 +54,7 @@
   </Style>
 
   <Style Selector="Border.card">
-    <Setter Property="Background" Value="#B30F0F14" />
+    <Setter Property="Background" Value="{DynamicResource Ollin.Panel}" />
     <Setter Property="BorderBrush" Value="{DynamicResource Ollin.NeonBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="12" />
