@@ -319,4 +319,20 @@ public sealed class GraphV2Tests
         Assert.Contains("__loop_guard", code);
         Assert.Contains("> 5", code);
     }
+
+    [Fact]
+    public void LosBuclesAnidadosSeInlinean()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var outer = graph.AddNode(GraphNodeKind.Loop, 100, 0);
+        var inner = graph.AddNode(GraphNodeKind.Loop, 300, 0);
+        var body = graph.AddNode(GraphNodeKind.Action, 500, 0);
+        body.Action = ActionKind.Message;
+        start.Next = outer.Id;
+        outer.Next = inner.Id;
+        inner.Next = body.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.True(code.Split("for (").Length - 1 >= 2, code);
+    }
 }
