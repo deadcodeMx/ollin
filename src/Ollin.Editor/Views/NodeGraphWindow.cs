@@ -194,6 +194,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: emitir señal", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.EmitSignal));
         AddPalette(panel, "Acción: consultar área", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.QueryArea));
         AddPalette(panel, "Acción: esperar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Wait));
+        AddPalette(panel, "Acción: cargar escena", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.LoadScene));
         AddPalette(panel, "Acción: destruir entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Destroy));
         AddPalette(panel, "Acción: ganar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Win));
         AddPalette(panel, "Acción: dañar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Damage));
@@ -1952,7 +1953,7 @@ public sealed class NodeGraphWindow : Window
         var flyout = new MenuFlyout();
         var fields = node.Action switch
         {
-            ActionKind.Message or ActionKind.Win or ActionKind.Instantiate or ActionKind.EmitSignal or ActionKind.QueryArea => new[] { "message", "radius" },
+            ActionKind.Message or ActionKind.Win or ActionKind.Instantiate or ActionKind.EmitSignal or ActionKind.QueryArea or ActionKind.LoadScene => new[] { "message", "radius" },
             ActionKind.SetComponentProperty => new[] { "amount", "message", "component", "property" },
             ActionKind.Checkpoint or ActionKind.OpenDoor => new[] { "radius" },
             ActionKind.Spawn => new[] { "interval" },

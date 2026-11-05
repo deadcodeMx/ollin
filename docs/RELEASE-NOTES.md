@@ -1,16 +1,15 @@
-## Ollin Beta 6.272.0 — esperar
+## Ollin Beta 6.273.0 — cargar escena
 
 ### Añadido
 
-- Acción Esperar.
-- Corrutina con WaitForSeconds.
-- Continuación de la cadena.
+- Acción Cargar escena.
+- Reemplazo desde archivo.
 - Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 177/177 pruebas.
-- Instalador 6.272.0.
+- 178/178 pruebas.
+- Instalador 6.273.0.
 
-## [6.271.0] — 2026-11-05
+## [6.272.0] — 2026-11-05

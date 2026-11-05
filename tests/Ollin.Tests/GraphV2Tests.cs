@@ -736,4 +736,26 @@ public sealed class GraphV2Tests
         Assert.Contains("WaitForSeconds(1.5f)", code);
         AssertGeneratedCompiles(graph);
     }
+
+    [Fact]
+    public void CargarEscenaReemplazaLasEntidades()
+    {
+        var source = new Scene { Name = "Nueva" };
+        source.Create("Destino", new Vector2(3, 4));
+        var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"ollin-scene-{Guid.NewGuid():N}.json");
+        Ollin.Core.Serialization.SceneSerializer.Save(source, path);
+        try
+        {
+            var current = new Scene { Name = "Vieja" };
+            current.Create("Origen", Vector2.Zero);
+            ActionExecutor.Execute(current, ActionKind.LoadScene, "", path);
+            Assert.Equal("Nueva", current.Name);
+            Assert.NotNull(current.Find("Destino"));
+            Assert.Null(current.Find("Origen"));
+        }
+        finally
+        {
+            System.IO.File.Delete(path);
+        }
+    }
 }
