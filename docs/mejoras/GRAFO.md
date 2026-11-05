@@ -33,7 +33,7 @@ flujo, datos tipados y traducción fiable a C#.
 - Pines por entrada: hay pines semánticos para `amount`, `message`, `component`, `property`, `radius` e `interval`, pero no para cualquier entrada de cualquier nodo.
 - Auto-cast: cubre número/entero/booleano/texto; no toda la matriz.
 - Pruebas de codegen compilado: hay prueba de compilación, pero no de todos los grafos posibles.
-- Runtime `NodeGraph` y script generado siguen usando estados distintos (`GameState` vs `_vars`).
+- Sincronización de estado: el script restaura variables al `OnStart` y escribe cambios; los cambios externos posteriores no se reflejan hasta reiniciar.
 
 ## Limitaciones vigentes
 
@@ -71,6 +71,7 @@ flujo, datos tipados y traducción fiable a C#.
 - Nombres duplicados de variables/funciones/eventos.
 - Breakpoints en el código generado.
 - Operadores con tipo de resultado.
+- Sincronización inicial de variables con `GameState`.
 
 ## Criterios de aceptación
 
