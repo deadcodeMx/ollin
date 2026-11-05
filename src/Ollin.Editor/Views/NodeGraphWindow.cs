@@ -1586,6 +1586,9 @@ public sealed class NodeGraphWindow : Window
         header.PointerPressed += (_, e) => OnNodePressed(node, card, e);
         header.PointerMoved += (_, e) => OnNodeMoved(node, card, e);
         header.PointerReleased += (_, e) => OnNodeReleased(node, card, e);
+        card.PointerPressed += (_, e) => { if (e.Source is Button) return; OnNodePressed(node, card, e); };
+        card.PointerMoved += (_, e) => OnNodeMoved(node, card, e);
+        card.PointerReleased += (_, e) => OnNodeReleased(node, card, e);
         content.Children.Add(header);
 
         content.Children.Add(new TextBlock

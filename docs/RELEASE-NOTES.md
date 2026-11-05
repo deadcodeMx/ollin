@@ -1,17 +1,15 @@
-## Ollin Beta 6.231.0 — pruebas visuales del grafo
+## Ollin Beta 6.232.0 — arrastre de nodos
 
 ### Corregido
 
-- Pestañas visibles al abrir el grafo.
-- Nodos nuevos ya no se solapan.
-- Acceso directo **Grafo** en barra y menú Ver.
+- Arrastrar nodos desde cualquier parte de la tarjeta.
+- Los botones internos no inician arrastre.
+- Conexión al pulsar la tarjeta destino.
 
-### Verificación visual
+### Verificación
 
-- Abrir grafo desde una entidad.
-- Paleta, buscador, pestañas y breadcrumb.
-- Crear evento y acción.
-- Inspector y validación.
-- Instalador 6.231.0.
+- Build 0 errores.
+- 142/142 pruebas.
+- Instalador 6.232.0 instalado.
 
-## [6.230.0] — 2026-11-05
+## [6.231.0] — 2026-11-05
