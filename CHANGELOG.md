@@ -5,18 +5,28 @@ versionado [SemVer](https://semver.org/lang/es/).
 
 ## [No publicado]
 
-### Cambiado
-
-- Roadmap reorientado a un motor personal para terror lineal y supervivencia, con
-  puente 2.5D antes del 3D y etapas reordenadas (4–8).
-
 ### Planeado
 
-- Audio 2D y prefabs.
-- Luces 2D, triggers y diálogos para terror.
-- Puente 2.5D y 3D.
-- Exportación de un juego a un ejecutable.
+- Ciclo **7.0.0-beta.1**.
+- Cierre del juego de validación.
+- Limpieza de releases antiguas.
 
+## [6.278.0] — 2026-11-05
+
+### Añadido
+
+- Grafo visual con variables tipadas, listas y structs.
+- Funciones, eventos, bucles, condiciones y subgrafos en codegen.
+- Señales, consulta de área, espera y carga de escena en runtime.
+- Compilación del script antes de guardar y diff previo.
+- Auto-cast y conversiones explícitas.
+- Documentos de mejoras por área y política de versionado.
+
+### Nota
+
+Esta entrada resume el trabajo acumulado entre **6.175.0 y 6.278.0**.
+Las releases intermedias se retiraron de GitHub para reducir ruido; el detalle
+técnico queda en el historial de git. Ver [docs/VERSIONADO.md](docs/VERSIONADO.md).
 ## [6.174.0] — 2026-11-04
 
 ### Corregido

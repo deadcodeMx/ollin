@@ -1,15 +1,32 @@
-# Mejoras de animación y esqueletos
+# Animación y esqueletos
 
 **Prioridad:** P1
-**Estado:** Pendiente
+**Estado:** Activo
+**Dueño:** editor + render
 
 ## Objetivo
 
 Animación 2D suficiente para personajes y efectos.
 
-## Limitaciones
+## Estado actual (6.278.0)
 
-- Timeline editable básica.
+- `SpriteAnimator`, `AnimationPlayer2D`.
+- `AnimationBlendTree2D` y `AnimationStateMachine`.
+- `Skeleton2D` y `SkinnedMesh2D`.
+- Clips, estados y transiciones básicas.
+- Inspector de animación en el editor.
+
+## Funciones nuevas
+
+- [ ] Timeline editable con curvas.
+- [ ] Eventos de frame.
+- [ ] Pesos de skinning completos.
+- [ ] Mezcla por capas.
+- [ ] FSM visual.
+- [ ] Editor de curvas.
+
+## Limitaciones conocidas
+
 - Curvas y eventos de frame limitados.
 - Skinning con pesos no completo.
 - Mezcla por capas limitada.
@@ -18,21 +35,17 @@ Animación 2D suficiente para personajes y efectos.
 
 ## Criterios de aceptación
 
-- Timeline con curvas.
-- Eventos de frame.
-- Clips skeletal con pesos.
-- Mezcla por capas.
-- FSM visual.
-- Pruebas.
-
-## Tareas
-
-- [ ] Curvas.
-- [ ] Eventos.
-- [ ] Pesos.
-- [ ] Mezcla.
-- [ ] FSM.
+1. Timeline con curvas.
+2. Eventos de frame.
+3. Clips skeletal con pesos.
+4. Mezcla por capas.
+5. FSM visual.
+6. Pruebas.
 
 ## Dependencias
 
 Render y editor.
+
+## Riesgos
+
+El formato de clip puede cambiar; prever migración.

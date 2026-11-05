@@ -1,7 +1,7 @@
 # Mejoras del grafo visual
 
 **Prioridad:** P0
-**Estado:** Completado en 6.278.0 — límites conocidos al final.
+**Estado:** Completado 6.278.0 — nuevas funciones para 7.x al final.
 **Riesgo:** alto; toca modelo, editor y codegen.
 
 ## Objetivo
@@ -31,7 +31,7 @@ flujo, datos tipados y traducción fiable a C#.
 ### Parcial
 
 - Pines por entrada: hay pines semánticos para `amount`, `message`, `component`, `property`, `radius` e `interval`, pero no para cualquier entrada de cualquier nodo.
-- Auto-cast: cubre número/entero/booleano/texto; no toda la matriz.
+- Auto-cast: primitivos completos; listas/structs solo entre sí.
 - Pruebas de codegen compilado: hay prueba de compilación, pero no de todos los grafos posibles.
 - Sincronización de estado: el script restaura variables al `OnStart` y escribe cambios; los cambios externos posteriores no se reflejan hasta reiniciar.
 
@@ -43,19 +43,29 @@ El usuario debe poder construir esos comportamientos combinando primitivas.
 Una acción cerrada obliga a adivinar el juego del usuario. Una primitiva genérica
 sirve para cualquier juego.
 
-## Primitivas genéricas objetivo
+## Primitivas genéricas (implementadas en 6.278)
 
-- **Crear entidad**: instanciar una entidad o prefab por nombre.
-- **Destruir entidad**.
+- **Crear entidad**: instanciar una entidad o prefab por nombre. ✅
+- **Destruir entidad**. ✅
 - **Fijar propiedad**: ya existe.
-- **Emitir señal/evento**: comunicación sin acoplar componentes.
-- **Consultar área**: entidades dentro de un radio, con filtro.
-- **Temporizador**: esperar o repetir cada intervalo.
-- **Cargar escena**.
+- **Emitir señal/evento**: comunicación sin acoplar componentes. ✅
+- **Consultar área**: entidades dentro de un radio, con filtro. ✅
+- **Temporizador**: esperar o repetir cada intervalo. ✅
+- **Cargar escena**. ✅
 - **Variables y expresiones**: ya existen.
 
 Estas primitivas permiten construir puerta, spawner y checkpoint sin que el motor
 los defina.
+
+## Funciones nuevas (7.x)
+
+- [ ] Pin universal para cualquier campo de nodo.
+- [ ] Esperas dentro de funciones con parámetros locales.
+- [ ] Sincronización continua de listas/structs con `GameState`.
+- [ ] Conversión de Vector2/listas/structs en argumentos.
+- [ ] Lambdas y expresiones avanzadas.
+- [ ] Persistencia del estado de UI/audio al cargar escena.
+
 ## Límites conocidos
 
 - No existe un pin universal para cualquier campo de cualquier nodo; hay pin de expresión universal y campos semánticos por acción.
@@ -64,6 +74,7 @@ los defina.
 - La carga de escena reinicia scripts, pero no conserva estado de UI/audio de la escena anterior.
 - El parser de argumentos no entiende lambdas.
 - No hay pruebas de integración de UI.
+
 ## Limitaciones resueltas
 
 - `SetVariable`/`AddVariable` usan `Expression`.

@@ -1,39 +1,52 @@
-# Mejoras de UI
+# UI Canvas
 
 **Prioridad:** P1
-**Estado:** Pendiente
+**Estado:** Activo
+**Dueño:** editor + runtime
 
 ## Objetivo
 
-Una UI 2D cómoda para menús, HUD y diálogos.
+UI 2D cómoda para menús, HUD y diálogos.
 
-## Limitaciones
+## Estado actual (6.278.0)
 
-- Faltan contenedores/layout avanzados.
-- Anclas y márgenes no cubren todos los casos.
-- Foco/teclado/navegación entre controles es básico.
-- Temas limitados.
-- No hay tooltips/listas/scroll completos.
-- Editor visual de UI básico.
-- No hay eventos de UI enlazados a scripts.
+- `UiCanvas`, `UiElement` y `UiTheme`.
+- `CanvasLayer`, `CanvasItem2D`, `ScreenTransition2D` y `SubViewport2D`.
+- `VariableHud` y HUD de mensajes/barras.
+- Inspector de UI en el editor.
+- Temas y estilos básicos.
+
+## Funciones nuevas
+
+- [ ] Contenedores y layout (horizontal, vertical, grid).
+- [ ] Anchors y márgenes completos.
+- [ ] Foco, teclado y navegación entre controles.
+- [ ] Listas, scroll y tooltips.
+- [ ] Editor visual de UI con jerarquía.
+- [ ] Eventos de UI hacia scripts y grafo.
+- [ ] Pruebas de layout y eventos.
+
+## Limitaciones conocidas
+
+- Layout avanzado incompleto.
+- Foco/teclado básico.
+- Sin listas/scroll completos.
+- Editor visual básico.
+- Eventos de UI no enlazados a scripts.
+- Sin tests de UI.
 
 ## Criterios de aceptación
 
-- Layout con anchors, márgenes y contenedores.
-- Navegación por teclado y foco visible.
-- Temas reutilizables.
-- Listas y scroll.
-- Pruebas de layout y eventos.
-
-## Tareas
-
-- [ ] Contenedores.
-- [ ] Anchors/margins.
-- [ ] Foco y teclado.
-- [ ] Temas.
-- [ ] Listas/scroll.
-- [ ] Eventos a scripts.
+1. Layout con anchors, márgenes y contenedores.
+2. Navegación por teclado con foco visible.
+3. Temas reutilizables.
+4. Listas y scroll.
+5. Pruebas de layout y eventos.
 
 ## Dependencias
 
 UI Canvas, editor y scripting.
+
+## Riesgos
+
+Cambios de layout pueden mover menús existentes; incluir migración.

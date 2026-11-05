@@ -18,7 +18,11 @@ try {
     }
 
     $version = $Matches[1]
-    $installer = 'dist/installer/Ollin-Setup-' + $version + '-beta.exe'
+    if ($version -notmatch '^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$') { throw 'La version no cumple SemVer: ' + $version }
+    $tagVersion = 'v' + $version
+    if (git tag -l $tagVersion) { throw 'El tag ' + $tagVersion + ' ya existe. Sube la version antes de publicar.' }
+    $suffix = if ($version -match '-') { '' } else { '-beta' }
+    $installer = 'dist/installer/Ollin-Setup-' + $version + $suffix + '.exe'
 
     Write-Host ('Ollin ' + $version + ' - compilando') -ForegroundColor Cyan
 
@@ -46,7 +50,7 @@ try {
     if (-not $Publish) {
         Write-Host ''
         Write-Host 'Para publicarlo en GitHub (instala GitHub CLI si no lo tienes):' -ForegroundColor Yellow
-        Write-Host ('  gh release create v' + $version + ' ' + $installer + ' --title "Ollin ' + $version + ' beta" --notes-file docs/RELEASE-NOTES.md')
+        Write-Host ('  gh release create ' + $tagVersion + ' ' + $installer + ' --title "Ollin ' + $version + ' beta" --notes-file docs/RELEASE-NOTES.md')
         Write-Host 'O subelo a mano desde Releases -> Draft a new release.'
         return
     }
@@ -56,7 +60,7 @@ try {
         throw 'GitHub CLI (gh) no esta instalado. Instalalo con: winget install GitHub.cli'
     }
 
-    gh release create ('v' + $version) $installer --title ('Ollin ' + $version + ' beta') --notes-file docs/RELEASE-NOTES.md
+    gh release create $tagVersion $installer --title ('Ollin ' + $version + ' beta') --notes-file docs/RELEASE-NOTES.md
     if ($LASTEXITCODE -ne 0) { throw 'Fallo la creacion del release' }
 
     Write-Host ('Release v' + $version + ' publicado') -ForegroundColor Green

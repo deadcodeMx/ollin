@@ -1,16 +1,24 @@
 # Juego de validación
 
 **Prioridad:** P1
-**Estado:** Pendiente
+**Estado:** Activo
+**Dueño:** QA + diseño
 
 ## Objetivo
 
 Validar el motor con un juego 2D completo y pequeño.
 
-## Alcance
+## Estado actual (6.278.0)
+
+- Existe `samples/JardinOllin`.
+- El editor puede crear, guardar, reproducir y exportar.
+- Hay grafo, física, UI, audio, guardado y scripts.
+- No hay juego terminado de principio a fin.
+
+## Alcance del juego
 
 - Menú.
-- Nivel.
+- Un nivel completo.
 - Cámara.
 - Física.
 - Enemigos.
@@ -18,6 +26,16 @@ Validar el motor con un juego 2D completo y pequeño.
 - Audio.
 - Guardado.
 - Exportación.
+
+## Funciones nuevas necesarias
+
+- [ ] Diseño y flujo del juego.
+- [ ] Nivel con tilemap.
+- [ ] Enemigos con FSM.
+- [ ] Menú y HUD.
+- [ ] Guardado por ranura.
+- [ ] Exportación a ejecutable.
+- [ ] Informe de huecos del motor.
 
 ## Limitaciones que debe revelar
 
@@ -30,20 +48,15 @@ Validar el motor con un juego 2D completo y pequeño.
 
 ## Criterios de aceptación
 
-- Juego jugable de principio a fin.
-- Sin errores en consola.
-- Exportado y probado.
-- Documento de huecos encontrados.
-
-## Tareas
-
-- [ ] Diseño.
-- [ ] Nivel.
-- [ ] Lógica.
-- [ ] UI/audio.
-- [ ] Export.
-- [ ] Informe.
+1. Jugable de principio a fin.
+2. Sin errores en consola.
+3. Exportado y probado.
+4. Documento de huecos encontrados.
 
 ## Dependencias
 
 Todas las áreas anteriores.
+
+## Riesgos
+
+Es el mejor detector de problemas reales; no posponerlo por pulir sistemas.

@@ -1,38 +1,49 @@
-# Mejoras de tilemap
+# Tilemap
 
 **Prioridad:** P1
-**Estado:** Pendiente
+**Estado:** Activo
+**Dueño:** render + editor
 
 ## Objetivo
 
 Tilemaps rápidos y cómodos para niveles 2D.
 
-## Limitaciones
+## Estado actual (6.278.0)
 
-- Autotile/terrain limitado.
-- Colisión por tile no cubre todos los tilesets.
-- Capas y Y-sort básicos.
-- Editor de tileset básico.
-- Sin pintado por lotes optimizado.
+- `TileSet`, `TileDefinition` y `TileMapLayer`/`Tilemap`.
+- Autotile por variantes (`ResolveAutotile`).
+- Serialización de tilesets (`TileSetSerializer`).
+- Pintado y edición básica en el editor.
+- Capas mediante varias entidades.
+
+## Funciones nuevas
+
+- [ ] Autotile por vecindad/terreno.
+- [ ] Colisión por tile.
+- [ ] Capas y Y-sort nativos.
+- [ ] Editor de tileset usable.
+- [ ] Pintado por lotes optimizado.
+- [ ] Pruebas de mapas grandes.
+
+## Limitaciones conocidas
+
+- Autotile limitado a variantes.
+- Colisión por tile incompleta.
+- Capas/Y-sort básicos.
 - Sin pruebas de mapas grandes.
 
 ## Criterios de aceptación
 
-- Autotile por vecindad.
-- Colisión por tile correcta.
-- Capas y Y-sort.
-- Editor de tileset usable.
-- Pruebas de mapas grandes y rendimiento.
-
-## Tareas
-
-- [ ] Autotile.
-- [ ] Colisión por tile.
-- [ ] Capas.
-- [ ] Editor de tileset.
-- [ ] Pintado por lotes.
-- [ ] Pruebas.
+1. Autotile por vecindad.
+2. Colisión por tile correcta.
+3. Capas y Y-sort.
+4. Editor de tileset usable.
+5. Pruebas de rendimiento.
 
 ## Dependencias
 
 Render, física y editor.
+
+## Riesgos
+
+Cambios en el formato de tileset requieren migración.

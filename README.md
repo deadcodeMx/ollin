@@ -4,6 +4,7 @@
 - [Guía en HTML](docs/guia-beta/GUIA-BETA.html)
 - [Proyecto de ejemplo Jardín de Ollin](samples/JardinOllin)
 - [Mejoras futuras del motor](docs/mejoras/README.md)
+- [Política de versionado](docs/VERSIONADO.md)
 
 <p align="center">
   <img src="docs/images/logo.png" alt="Ollin" width="520">
@@ -23,18 +24,19 @@ Ollin es **gratis y de código abierto (MIT)**: puedes usarlo, modificarlo y dis
 ![Avalonia](https://img.shields.io/badge/Avalonia-11.3-8B44AC)
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
 ![Roslyn](https://img.shields.io/badge/Roslyn-4.11-2E7D32)
-![Pruebas](https://img.shields.io/badge/pruebas-204%2F204-47B8A8)
-![Etapa](https://img.shields.io/badge/etapa-6%20de%208%20completada-E9A23B)
+![Pruebas](https://img.shields.io/badge/pruebas-182%2F182-47B8A8)
+![Ciclo](https://img.shields.io/badge/ciclo-6.278.0%20legacy-7B2CFF)
 
 ![Editor de Ollin](docs/images/editor.png)
 
 ## Descargas
 
-- **Última beta**: [Ollin-Setup-6.69.0-beta.exe](https://github.com/deadcodeMx/ollin/releases/latest)
-- **Todas las versiones**: [Releases del proyecto](https://github.com/deadcodeMx/ollin/releases)
+- **Última beta**: [Ollin-Setup-6.278.0-beta.exe](https://github.com/deadcodeMx/ollin/releases/latest)
+- **Últimas 10 versiones**: [Releases del proyecto](https://github.com/deadcodeMx/ollin/releases)
+- **Siguiente ciclo**: 7.0.0-beta.1 (ver [versionado](docs/VERSIONADO.md))
 - **Guía completa de uso**: [docs/GUIA.md](docs/GUIA.md)
 
-Cada versión del motor se publica como *release* con su instalador y sus notas. El
+Cada hito del motor se publica como *release* con su instalador y sus notas. No se publica una versión por cada cambio pequeño. El
 instalador copia el motor en `%LOCALAPPDATA%\Ollin`, crea accesos directos y añade
 un desinstalador. Requiere **.NET 8 Desktop Runtime**.
 

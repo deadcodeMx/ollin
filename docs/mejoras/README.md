@@ -1,50 +1,63 @@
-# Mejoras futuras del motor
+# Documentos de desarrollo
 
-Documentos vivos para planificar el trabajo que no forma parte del cierre actual.
-Cada documento describe estado, limitaciones, prioridad, criterios de aceptación y
-dependencias. No son promesas de fecha; son una cola de trabajo revisable.
+Estos documentos son la guía de trabajo del motor. No son una lista de deseos:
+cada área tiene estado actual, funciones nuevas, límites conocidos y criterios
+verificables.
+
+## Cómo se usan
+
+1. Elegir un documento por prioridad.
+2. Tomar una función nueva o una limitación.
+3. Implementarla con pruebas.
+4. Actualizar el documento y `CHANGELOG.md`.
+5. Publicar solo cuando el bloque esté cerrado.
 
 ## Reglas
 
-- Una mejora por documento.
-- Prioridad `P0` = bloquea uso real; `P1` = importante; `P2` = pulido.
-- Cada documento debe poder cerrarse con pruebas y criterio verificable.
-- Si una mejora rompe compatibilidad, se indica en el documento.
-- No se marca como hecha sin build 0 errores y pruebas verdes.
+- Una tarea debe ser verificable.
+- `P0` bloquea uso real; `P1` importante; `P2` pulido.
+- No se marca como hecha sin build en 0 errores y pruebas verdes.
+- Si cambia el C# generado o un formato, se anota compatibilidad.
+- Las releases siguen [VERSIONADO.md](../VERSIONADO.md).
 
 ## Índice
 
 | Documento | Área | Prioridad | Estado |
 |---|---|---|---|
-| [GRAFO.md](GRAFO.md) | Grafo visual / codegen | P0 | Pendiente |
-| [SCRIPTING.md](SCRIPTING.md) | API de scripting | P1 | Pendiente |
-| [FISICA.md](FISICA.md) | Física 2D | P1 | Pendiente |
-| [UI.md](UI.md) | UI Canvas / editor | P1 | Pendiente |
-| [TILEMAP.md](TILEMAP.md) | Tilemap y autotile | P1 | Pendiente |
-| [ANIMACION.md](ANIMACION.md) | Animación y esqueletos | P1 | Pendiente |
-| [AUDIO.md](AUDIO.md) | Audio 2D y Linux | P1 | Pendiente |
-| [EDITOR.md](EDITOR.md) | Editor, undo y flujo | P1 | Pendiente |
-| [RENDIMIENTO.md](RENDIMIENTO.md) | Render, batching y pruebas | P1 | Pendiente |
-| [RED.md](RED.md) | Multijugador y RPC | P2 | Pendiente |
-| [LINUX.md](LINUX.md) | Linux real y empaquetado | P1 | Pendiente |
-| [JUEGO-VALIDACION.md](JUEGO-VALIDACION.md) | Juego de validación | P1 | Pendiente |
+| [GRAFO.md](GRAFO.md) | Grafo visual / codegen | P0 | Completado 6.278 |
+| [SCRIPTING.md](SCRIPTING.md) | API de scripting | P1 | Activo |
+| [FISICA.md](FISICA.md) | Física 2D | P1 | Activo |
+| [UI.md](UI.md) | UI Canvas / editor | P1 | Activo |
+| [TILEMAP.md](TILEMAP.md) | Tilemap y autotile | P1 | Activo |
+| [ANIMACION.md](ANIMACION.md) | Animación y esqueletos | P1 | Activo |
+| [AUDIO.md](AUDIO.md) | Audio 2D y Linux | P1 | Activo |
+| [EDITOR.md](EDITOR.md) | Editor, undo y flujo | P1 | Activo |
+| [RENDIMIENTO.md](RENDIMIENTO.md) | Render, batching y pruebas | P1 | Activo |
+| [RED.md](RED.md) | Multijugador y RPC | P2 | Activo |
+| [LINUX.md](LINUX.md) | Linux real y empaquetado | P1 | Activo |
+| [JUEGO-VALIDACION.md](JUEGO-VALIDACION.md) | Juego de validación | P1 | Activo |
 
 ## Orden recomendado
 
-1. Grafo P0: variables, parámetros y codegen fiable.
-2. Pruebas de compilación del código generado.
-3. Física y UI: lo que más afecta a juegos reales.
-4. Tilemap/animación/audio.
-5. Editor y rendimiento.
-6. Red y Linux.
-7. Juego de validación completo.
+1. **Juego de validación**: revela qué falta de verdad.
+2. **Física y UI**: lo que más bloquea jugabilidad.
+3. **Tilemap, animación y audio**.
+4. **Editor y rendimiento**.
+5. **Red y Linux**.
+6. **Cierre de 7.0.0-beta.1**.
+
+El grafo ya está cerrado como bloque; sus límites viven en `GRAFO.md` y no se
+reabren sin una función nueva concreta.
+
+## Plantilla
+
+Usar [_PLANTILLA.md](_PLANTILLA.md) para documentos nuevos.
 
 ## Definición de terminado
 
-Un documento se considera cerrado cuando:
-
 - Build de la solución en 0 errores.
 - Pruebas verdes y nuevas pruebas del área.
-- Documentación actualizada.
-- Sin limitaciones conocidas del documento sin marcar.
-- Si aplica, instalador y release publicados.
+- Documento actualizado.
+- `CHANGELOG.md` actualizado.
+- Sin límites del documento sin marcar.
+- Si aplica, instalador, release y notas publicadas.

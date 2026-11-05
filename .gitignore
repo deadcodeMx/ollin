@@ -29,3 +29,7 @@ desktop.ini
 captures/
 dist/
 tools/payload.zip
+
+# Capturas de auditoría locales
+audit-*.png
+audit-*.json
