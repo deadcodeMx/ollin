@@ -2356,7 +2356,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
             if (node.Condition == GraphConditionKind.Expression)
             {
                 _inspector.Children.Add(Label("Expresión"));
-                _inspector.Children.Add(ExpressionInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
+                _inspector.Children.Add(ExpressionInput(node.Expression, value => { node.Expression = value; MarkChanged(); }, ExpressionTokens()));
                 _inspector.Children.Add(new TextBlock
                 {
                     Text = "Ej: contador >= 3 && tiene(\"llave\")",
@@ -2392,7 +2392,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
                 variablePick.SelectionChanged += (_, _) => { if (variablePick.SelectedItem is string name) { node.VariableName = name; MarkChanged(); } };
                 _inspector.Children.Add(variablePick);
                 _inspector.Children.Add(Label("Expresión / valor"));
-                _inspector.Children.Add(ExpressionInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
+                _inspector.Children.Add(ExpressionInput(node.Expression, value => { node.Expression = value; MarkChanged(); }, ExpressionTokens()));
                 AddExpressionError(node.Expression);
                 _inspector.Children.Add(new TextBlock
                 {
@@ -2490,20 +2490,54 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         return box;
     }
 
-    private static TextBox ExpressionInput(string value, Action<string> changed)
+    private static Control ExpressionInput(string value, Action<string> changed, IEnumerable<string>? tokens = null)
     {
         var box = new TextBox { Text = value, FontSize = 11 };
-
         if (ExpressionEvaluator.Validate(value) is not null)
         {
             box.BorderBrush = new SolidColorBrush(Color.Parse("#E05B5B"));
             box.BorderThickness = new Thickness(2);
         }
-
         box.LostFocus += (_, _) => changed(box.Text ?? string.Empty);
-        return box;
+
+        var available = tokens?.Where(token => !string.IsNullOrWhiteSpace(token)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        if (available is not { Count: > 0 }) return box;
+
+        var panel = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
+        panel.Children.Add(box);
+        var insert = new Button { Content = "+", FontSize = 11, Padding = new Thickness(6, 2), Margin = new Thickness(4, 0, 0, 0) };
+        ToolTip.SetTip(insert, "Insertar variable o parámetro");
+        var flyout = new MenuFlyout();
+        foreach (var token in available)
+        {
+            var item = new MenuItem { Header = token };
+            item.Click += (_, _) =>
+            {
+                var text = box.Text ?? string.Empty;
+                var caret = Math.Clamp(box.CaretIndex, 0, text.Length);
+                box.Text = text.Insert(caret, token);
+                box.CaretIndex = caret + token.Length;
+                changed(box.Text);
+            };
+            flyout.Items.Add(item);
+        }
+        insert.Flyout = flyout;
+        Grid.SetColumn(insert, 1);
+        panel.Children.Add(insert);
+        return panel;
     }
 
+    private IReadOnlyList<string> ExpressionTokens()
+    {
+        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var variable in _graph.Variables) names.Add(variable.Name);
+        foreach (var node in _graph.Nodes.Where(node => node.Kind is GraphNodeKind.CustomEvent or GraphNodeKind.Function))
+        {
+            foreach (var parameter in node.ParameterText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+                names.Add(parameter.Split(':', StringSplitOptions.TrimEntries)[0]);
+        }
+        return names.OrderBy(name => name, StringComparer.OrdinalIgnoreCase).ToList();
+    }
     private static TextBox TextInput(string value, Action<string> changed)
     {
         var box = new TextBox { Text = value, FontSize = 11 };
