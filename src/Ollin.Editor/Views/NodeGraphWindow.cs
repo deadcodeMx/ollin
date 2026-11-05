@@ -183,6 +183,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Evento: entrar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerEnter));
         AddPalette(panel, "Evento: pulsar E", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnInteract));
         AddPalette(panel, "Evento: morir", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerDeath));
+        AddPalette(panel, "Evento: al recibir señal", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnSignal));
         AddSection(panel, "CONDICIONES");
         AddPalette(panel, "Condición: expresión", () => AddCondition(GraphConditionKind.Expression));
         AddSection(panel, "ACCIONES");
@@ -190,6 +191,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: activar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Activate));
         AddPalette(panel, "Acción: desactivar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Deactivate));
         AddPalette(panel, "Acción: crear entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Instantiate));
+        AddPalette(panel, "Acción: emitir señal", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.EmitSignal));
         AddPalette(panel, "Acción: destruir entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Destroy));
         AddPalette(panel, "Acción: ganar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Win));
         AddPalette(panel, "Acción: dañar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Damage));
@@ -1948,7 +1950,7 @@ public sealed class NodeGraphWindow : Window
         var flyout = new MenuFlyout();
         var fields = node.Action switch
         {
-            ActionKind.Message or ActionKind.Win or ActionKind.Instantiate => new[] { "message" },
+            ActionKind.Message or ActionKind.Win or ActionKind.Instantiate or ActionKind.EmitSignal => new[] { "message" },
             ActionKind.SetComponentProperty => new[] { "amount", "message", "component", "property" },
             ActionKind.Checkpoint or ActionKind.OpenDoor => new[] { "radius" },
             ActionKind.Spawn => new[] { "interval" },

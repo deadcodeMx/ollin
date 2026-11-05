@@ -1,15 +1,17 @@
-## Ollin Beta 6.269.0 — destruir entidad
+## Ollin Beta 6.270.0 — señales
 
 ### Añadido
 
-- Acción Destruir entidad.
-- Acciones heredadas ocultas.
-- Prueba.
+- Bus de señales.
+- Emitir señal.
+- Al recibir señal.
+- Suscripción/limpieza.
+- Pruebas.
 
 ### Verificación
 
 - Build 0 errores.
-- 173/173 pruebas.
-- Instalador 6.269.0.
+- 175/175 pruebas.
+- Instalador 6.270.0.
 
-## [6.268.0] — 2026-11-05
+## [6.269.0] — 2026-11-05

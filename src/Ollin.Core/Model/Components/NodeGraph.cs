@@ -36,6 +36,7 @@ public enum GraphEventKind
     OnPlayerEnter,
     OnInteract,
     OnPlayerDeath,
+    OnSignal,
 }
 
 public enum GraphConditionKind
@@ -170,6 +171,7 @@ public sealed class GraphNode
     public string LoopCollection { get; set; } = "items";
     public Guid? LoopAfter { get; set; }
     public string CustomEventName { get; set; } = "MiEvento";
+    public string SignalName { get; set; } = "senal";
     public string ParameterText { get; set; } = "valor:Number";
     public string ArgumentsText { get; set; } = string.Empty;
     public string FunctionName { get; set; } = "MiFuncion";

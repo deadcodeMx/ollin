@@ -37,8 +37,15 @@ public static class GraphCodeGenerator
                     sb.AppendLine("    public override void OnStart()");
                     sb.AppendLine("    {");
                     sb.AppendLine("        SyncVariables();");
+                    foreach (var signalEvent in events.Where(item => item.Event == GraphEventKind.OnSignal))
+                    {
+                        sb.AppendLine($"        _signal_{Short(signalEvent.Id)} = SignalBus.Subscribe(\"{Escape(signalEvent.SignalName)}\", _ => {MethodName(signalEvent)}());");
+                    }
                     sb.AppendLine($"        {MethodName(node)}();");
                     sb.AppendLine("    }");
+                    break;
+                case GraphEventKind.OnSignal:
+                    sb.AppendLine($"    private IDisposable? _signal_{Short(node.Id)};");
                     break;
                 case GraphEventKind.OnTimer:
                     sb.AppendLine($"    private float _timer_{Short(node.Id)};");
@@ -72,7 +79,23 @@ public static class GraphCodeGenerator
         {
             EmitCustomEvent(sb, graph, custom, emitted);
         }
-        EmitStateSync(sb, graph);
+        if (events.All(item => item.Event != GraphEventKind.OnStart) && events.Any(item => item.Event == GraphEventKind.OnSignal))
+        {
+            sb.AppendLine("    public override void OnStart()");
+            sb.AppendLine("    {");
+            sb.AppendLine("        SyncVariables();");
+            foreach (var signalEvent in events.Where(item => item.Event == GraphEventKind.OnSignal))
+                sb.AppendLine($"        _signal_{Short(signalEvent.Id)} = SignalBus.Subscribe(\"{Escape(signalEvent.SignalName)}\", _ => {MethodName(signalEvent)}());");
+            sb.AppendLine("    }");
+        }
+        var signalEvents = events.Where(item => item.Event == GraphEventKind.OnSignal).ToList();
+        if (signalEvents.Count > 0)
+        {
+            sb.AppendLine("    public override void OnDestroy()");
+            sb.AppendLine("    {");
+            foreach (var signalEvent in signalEvents) sb.AppendLine($"        _signal_{Short(signalEvent.Id)}?.Dispose();");
+            sb.AppendLine("    }");
+        }        EmitStateSync(sb, graph);
         foreach (var node in events)
         {
             EmitChain(sb, graph, node, emitted);

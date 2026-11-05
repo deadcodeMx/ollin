@@ -661,4 +661,41 @@ public sealed class GraphV2Tests
         Assert.Null(scene.Find("Temporal"));
         Assert.DoesNotContain(entity, scene.Entities);
     }
+
+    [Fact]
+    public void ElBusDeSenalesEmiteYSeDesuscribe()
+    {
+        SignalBus.Clear();
+        var received = 0;
+        using (SignalBus.Subscribe("abrir", _ => received++))
+        {
+            SignalBus.Emit("abrir");
+            SignalBus.Emit("abrir");
+        }
+        SignalBus.Emit("abrir");
+        Assert.Equal(2, received);
+    }
+
+    [Fact]
+    public void CompilaEventoYAccionDeSenal()
+    {
+        var graph = new NodeGraph();
+        var onSignal = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        onSignal.Event = GraphEventKind.OnSignal;
+        onSignal.SignalName = "abrir";
+        var message = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        message.Action = ActionKind.Message;
+        onSignal.Next = message.Id;
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 200);
+        var emit = graph.AddNode(GraphNodeKind.Action, 200, 200);
+        emit.Action = ActionKind.EmitSignal;
+        emit.Message = "abrir";
+        start.Next = emit.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("SignalBus.Subscribe", code);
+
+        var result = ScriptCompiler.Compile(new[] { ("signal.cs", code) });
+        Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
+    }
 }
+

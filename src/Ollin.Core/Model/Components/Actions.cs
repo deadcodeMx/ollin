@@ -23,6 +23,7 @@ public enum ActionKind
     Heal,
     Instantiate,
     Destroy,
+    EmitSignal,
 }
 
 /// <summary>Puente por reflexión para que el grafo y las expresiones no dependan de sistemas RPG.</summary>
@@ -54,11 +55,14 @@ public static class ActionExecutor
 {
     public static void Execute(Scenes.Scene scene, ActionKind action, string targetName, string message, string playerTag = "player", float amount = 0f, string componentName = "", string propertyName = "", Vector2 vectorValue = default, float radius = 0f, float interval = 0f, float threshold = 0f)
     {
-        if (action != ActionKind.Instantiate && !string.IsNullOrWhiteSpace(message)) HudHost.ShowMessage(message, 2.5f);
+        if (action is not (ActionKind.Instantiate or ActionKind.EmitSignal) && !string.IsNullOrWhiteSpace(message)) HudHost.ShowMessage(message, 2.5f);
         var target = string.IsNullOrWhiteSpace(targetName) ? null : scene.Find(targetName);
 
         switch (action)
         {
+            case ActionKind.EmitSignal:
+                Ollin.Core.Scripting.SignalBus.Emit(message, target);
+                break;
             case ActionKind.Destroy when target is not null:
                 scene.Remove(target.Id);
                 break;
