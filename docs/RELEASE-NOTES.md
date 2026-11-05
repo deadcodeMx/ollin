@@ -1,17 +1,17 @@
-## Ollin Beta 6.230.0 — Vector2
+## Ollin Beta 6.231.0 — pruebas visuales del grafo
 
-### Añadido
+### Corregido
 
-- Nodo Valor Vector2.
-- Auto-cast Vector2 ↔ texto.
-- Asignación de propiedades Vector2 por dato.
-- Codegen `new Vector2(x, y)`.
-- Prueba de Vector2.
+- Pestañas visibles al abrir el grafo.
+- Nodos nuevos ya no se solapan.
+- Acceso directo **Grafo** en barra y menú Ver.
 
-### Verificación
+### Verificación visual
 
-- Build 0 errores.
-- 142/142 pruebas.
-- Instalador 6.230.0 instalado.
+- Abrir grafo desde una entidad.
+- Paleta, buscador, pestañas y breadcrumb.
+- Crear evento y acción.
+- Inspector y validación.
+- Instalador 6.231.0.
 
-## [6.229.0] — 2026-11-05
+## [6.230.0] — 2026-11-05

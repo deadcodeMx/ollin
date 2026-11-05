@@ -107,6 +107,7 @@ public sealed class NodeGraphWindow : Window
 
         var palette = BuildPalette();
         var canvasArea = BuildCanvasArea();
+        UpdateTabs();
         var inspectorArea = BuildInspectorArea();
         Grid.SetColumn(palette, 0);
         Grid.SetColumn(canvasArea, 1);
@@ -913,7 +914,8 @@ public sealed class NodeGraphWindow : Window
     }
     private void AddNode(GraphNodeKind kind, GraphEventKind eventKind, ActionKind action = ActionKind.Message)
     {
-        var node = _graph.AddNode(kind, 70 + _graph.Nodes.Count * 24, 70 + _graph.Nodes.Count * 22);
+        var index = _graph.Nodes.Count;
+        var node = _graph.AddNode(kind, 90 + (index % 3) * 260, 70 + (index / 3) * 150);
         node.Event = eventKind;
         node.Action = action;
         _selected = node;
@@ -923,7 +925,8 @@ public sealed class NodeGraphWindow : Window
 
     private void AddValue(GraphValueKind kind)
     {
-        var node = _graph.AddNode(GraphNodeKind.Value, 70 + _graph.Nodes.Count * 24, 70 + _graph.Nodes.Count * 22);
+        var index = _graph.Nodes.Count;
+        var node = _graph.AddNode(GraphNodeKind.Value, 90 + (index % 3) * 260, 70 + (index / 3) * 150);
         node.ValueKind = kind;
         node.Value = kind switch { GraphValueKind.Boolean => "false", GraphValueKind.Text => "texto", GraphValueKind.Vector2 => "0,0", GraphValueKind.Integer => "0", _ => "0" };
         _selected = node; MarkChanged(); Render();
@@ -931,7 +934,8 @@ public sealed class NodeGraphWindow : Window
 
     private void AddCondition(GraphConditionKind condition)
     {
-        var node = _graph.AddNode(GraphNodeKind.Condition, 70 + _graph.Nodes.Count * 24, 70 + _graph.Nodes.Count * 22);
+        var index = _graph.Nodes.Count;
+        var node = _graph.AddNode(GraphNodeKind.Condition, 90 + (index % 3) * 260, 70 + (index / 3) * 150);
         node.Condition = condition;
         _selected = node;
         MarkChanged();

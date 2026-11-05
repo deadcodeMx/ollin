@@ -53,7 +53,8 @@
         <MenuItem Header="Mapa de entrada…" Click="OnEditInputMap" />
       </MenuItem>
       <MenuItem Header="Ver">
-        <MenuItem Header="Centrar cámara" InputGesture="Home" Click="OnResetCamera" />
+        <MenuItem Header="Grafo de la selección" Click="OnOpenGraph" />
+          <MenuItem Header="Centrar cámara" InputGesture="Home" Click="OnResetCamera" />
         <MenuItem Header="Enfocar selección" InputGesture="F" Click="OnFrameSelected" />
         <MenuItem Header="Mostrar cuadrícula" ToggleType="CheckBox" IsChecked="{Binding ShowGrid}" />
         <Separator />
@@ -132,6 +133,7 @@
 
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
           <Button Classes="tool" Content="⟳ Scripts" Click="OnReloadScripts" ToolTip.Tip="Recompilar scripts" />
+            <Button Classes="tool" Content="Grafo" Click="OnOpenGraph" ToolTip.Tip="Abrir el grafo de la selección" />
           <Button Classes="tool accent" Content="▶ Reproducir" Click="OnPlay"
                   IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
           <Button Classes="tool" Content="⏸ Pausa" Click="OnPause"
