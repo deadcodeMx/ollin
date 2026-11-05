@@ -640,4 +640,15 @@ public sealed class GraphV2Tests
         Assert.Contains("Struct_Punto _var_punto = new Struct_Punto { X = 1, Y = 2 };", code);
         AssertGeneratedCompiles(graph);
     }
+
+    [Fact]
+    public void CrearEntidadClonaLaPlantilla()
+    {
+        var scene = new Scene();
+        scene.Create("Plantilla", new Vector2(1, 2));
+        ActionExecutor.Execute(scene, ActionKind.Instantiate, "Plantilla", "Copia", vectorValue: new Vector2(5, 6));
+        var copy = scene.Find("Copia");
+        Assert.NotNull(copy);
+        Assert.Equal(new Vector2(5, 6), copy!.Transform.Position);
+    }
 }

@@ -190,6 +190,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: abrir puerta", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.OpenDoor));
         AddPalette(panel, "Acción: activar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Activate));
         AddPalette(panel, "Acción: desactivar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Deactivate));
+        AddPalette(panel, "Acción: crear entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Instantiate));
         AddPalette(panel, "Acción: generar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Spawn));
         AddPalette(panel, "Acción: checkpoint", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Checkpoint));
         AddPalette(panel, "Acción: ganar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Win));
@@ -1949,7 +1950,7 @@ public sealed class NodeGraphWindow : Window
         var flyout = new MenuFlyout();
         var fields = node.Action switch
         {
-            ActionKind.Message or ActionKind.Win => new[] { "message" },
+            ActionKind.Message or ActionKind.Win or ActionKind.Instantiate => new[] { "message" },
             ActionKind.SetComponentProperty => new[] { "amount", "message", "component", "property" },
             ActionKind.Checkpoint or ActionKind.OpenDoor => new[] { "radius" },
             ActionKind.Spawn => new[] { "interval" },
