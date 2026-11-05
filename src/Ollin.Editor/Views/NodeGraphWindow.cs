@@ -1264,7 +1264,7 @@ public sealed class NodeGraphWindow : Window
                 continue;
             }
             var parameters = ParseParameters(definition.ParameterText);
-            var arguments = call.ArgumentsText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            var arguments = Ollin.Core.Scripting.GraphArgumentParser.Split(call.ArgumentsText).ToArray();
             if (parameters.Count != arguments.Length)
             {
                 _issues.Add(new GraphIssue(call, $"La llamada espera {parameters.Count} argumentos y recibe {arguments.Length}.", true));
