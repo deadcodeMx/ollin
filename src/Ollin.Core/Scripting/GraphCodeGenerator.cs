@@ -56,6 +56,7 @@ public static class GraphCodeGenerator
         }
 
         var emitted = new HashSet<Guid>();
+        foreach (var subgraph in graph.Subgraphs) EmitSubgraph(sb, subgraph, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
         foreach (var function in graph.Nodes.Where(node => node.Kind == GraphNodeKind.Function))
         {
             EmitFunction(sb, graph, function, emitted);
@@ -139,6 +140,10 @@ public static class GraphCodeGenerator
                     if (node.LoopAfter is { } after) node = Find(graph, after); else return;
                     break;
                 }
+                case GraphNodeKind.Subgraph:
+                    sb.AppendLine($"{new string(' ', indent * 4)}Sub_{SafeName(node.SubgraphName, "Subgrafo")}();");
+                    node = node.Next is { } subNext ? Find(graph, subNext) : null;
+                    break;
                 case GraphNodeKind.Reroute:
                     node = node.Next is { } reroute ? Find(graph, reroute) : null;
                     break;
@@ -155,6 +160,19 @@ public static class GraphCodeGenerator
         GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(node.Expression)}\", new ExpressionContext {{ Player = Find(\"player\"){(useLocals ? ", Locals = __locals" : string.Empty)} }})",
         _ => "true",
     };
+    private static void EmitSubgraph(StringBuilder sb, NodeGraph subgraph, HashSet<string> emitted)
+    {
+        var name = "Sub_" + SafeName(subgraph.Name, "Subgrafo");
+        if (!emitted.Add(name)) return;
+        var start = subgraph.Nodes.FirstOrDefault(node => node.Kind == GraphNodeKind.Event && node.Next is not null)?.Next
+            ?? subgraph.Nodes.FirstOrDefault(node => node.Kind is not (GraphNodeKind.Event or GraphNodeKind.Comment or GraphNodeKind.Group))?.Id;
+        sb.AppendLine();
+        sb.AppendLine($"    private void {name}()");
+        sb.AppendLine("    {");
+        EmitInlineChain(sb, subgraph, start is { } id ? subgraph.Find(id) : null, 2, insideFunction: false);
+        sb.AppendLine("    }");
+        foreach (var nested in subgraph.Subgraphs) EmitSubgraph(sb, nested, emitted);
+    }
     private static void EmitFunction(StringBuilder sb, NodeGraph graph, GraphNode node, HashSet<Guid> emitted)
     {
         var parameters = ParameterList(node);
@@ -359,6 +377,11 @@ public static class GraphCodeGenerator
             EmitInlineChain(sb, graph, node.Next is { } bodyId ? Find(graph, bodyId) : null, 3, insideFunction: false, useLocals: false);
             sb.AppendLine("        }");
             if (node.LoopAfter is { } after) sb.AppendLine($"        {MethodName(Find(graph, after))}();");
+        }
+        else if (node.Kind == GraphNodeKind.Subgraph)
+        {
+            sb.AppendLine($"        Sub_{SafeName(node.SubgraphName, "Subgrafo")}();");
+            if (node.Next is { } subNext) sb.AppendLine($"        {MethodName(Find(graph, subNext))}();");
         }
         else if (node.Kind == GraphNodeKind.Reroute)
         {

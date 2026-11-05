@@ -1,17 +1,16 @@
-## Ollin Beta 6.253.0 — variables locales
+## Ollin Beta 6.254.0 — subgrafos en codegen
 
 ### Añadido
 
-- Variables locales por función.
-- Tipo y valor inicial.
-- Contexto local de expresiones.
-- Acciones que modifican locales.
+- Subgrafos como métodos.
+- Llamada desde nodo Subgrafo.
+- Subgrafos anidados.
 - Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 156/156 pruebas.
-- Instalador 6.253.0.
+- 157/157 pruebas.
+- Instalador 6.254.0.
 
-## [6.252.0] — 2026-11-05
+## [6.253.0] — 2026-11-05

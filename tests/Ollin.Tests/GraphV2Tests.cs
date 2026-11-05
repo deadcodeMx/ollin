@@ -369,4 +369,22 @@ public sealed class GraphV2Tests
         Assert.Contains("float temp = 7;", code);
         Assert.Contains("temp = temp + 1;", code);
     }
+
+    [Fact]
+    public void ElSubgrafoSeGeneraComoMetodo()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var call = graph.AddNode(GraphNodeKind.Subgraph, 200, 0);
+        call.SubgraphName = "Hijo";
+        start.Next = call.Id;
+        var child = graph.AddSubgraph("Hijo");
+        var childEvent = child.AddNode(GraphNodeKind.Event, 0, 0);
+        var action = child.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.Message;
+        childEvent.Next = action.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("private void Sub_Hijo()", code);
+        Assert.Contains("Sub_Hijo();", code);
+    }
 }
