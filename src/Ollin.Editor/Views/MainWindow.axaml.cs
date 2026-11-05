@@ -414,6 +414,7 @@ public partial class MainWindow : Window
 
         ViewportHost.Viewport.ViewModel = vm;
         CameraPreview.ViewModel = vm;
+        ShowFileFolder(null);
         CameraPreview.CameraPreview = true;
         RefreshCameraPreviewCameras();
         _componentInspector = new ComponentInspectorView(vm);
@@ -431,6 +432,7 @@ public partial class MainWindow : Window
             }
         };
         vm.Logs.CollectionChanged += OnLogsChanged;
+        vm.ProjectFiles.CollectionChanged += (_, _) => ShowFileFolder(FileTree.SelectedItem as FileNode);
         vm.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName is nameof(ViewModels.MainViewModel.ActiveDocument) or nameof(ViewModels.MainViewModel.ActiveScript))
@@ -1420,6 +1422,36 @@ public partial class MainWindow : Window
         ViewModel?.RefreshAssets();
     }
 
+    private void OnFileTreeSelectionChanged(object? sender, SelectionChangedEventArgs e) => ShowFileFolder(FileTree.SelectedItem as FileNode);
+
+    private void OnFileSearchChanged(object? sender, TextChangedEventArgs e) => ShowFileFolder(FileTree.SelectedItem as FileNode);
+
+    private void ShowFileFolder(FileNode? folder)
+    {
+        if (ViewModel is null) return;
+        var source = folder is { IsFolder: true } ? folder.Children : ViewModel.ProjectFiles;
+        var query = FileSearch.Text?.Trim() ?? string.Empty;
+        FileGrid.ItemsSource = source
+            .Where(node => query.Length == 0 || node.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(node => node.IsFolder ? 0 : 1)
+            .ThenBy(node => node.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        FileBreadcrumb.Text = folder is null
+            ? "proyecto/"
+            : Path.GetRelativePath(ViewModel.ProjectRoot, folder.FullPath).Replace('\\', '/') + "/";
+    }
+
+    private void OnFileGridDoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    {
+        if (FileGrid.SelectedItem is not FileNode node || ViewModel is null) return;
+        if (node.IsFolder)
+        {
+            FileTree.SelectedItem = node;
+            ShowFileFolder(node);
+            return;
+        }
+        ViewModel.OpenProjectFile(node);
+    }
     private void OnFileDoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
     {
         if (FileTree.SelectedItem is ViewModels.FileNode node)
@@ -1447,9 +1479,43 @@ public partial class MainWindow : Window
 
         FileTree.AddHandler(PointerPressedEvent, OnFileTreePointerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
         FileTree.AddHandler(PointerMovedEvent, OnFileTreePointerMoved, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+
+        DragDrop.SetAllowDrop(Inspector2DHost, true);
+        Inspector2DHost.AddHandler(DragDrop.DragOverEvent, OnInspectorDragOver);
+        Inspector2DHost.AddHandler(DragDrop.DropEvent, OnInspectorDrop);
     }
 
 
+    private void OnInspectorDragOver(object? sender, DragEventArgs e)
+    {
+        var path = DraggedPath(e);
+        var extension = path is null ? string.Empty : Path.GetExtension(path).ToLowerInvariant();
+        e.DragEffects = path is not null && (extension == ".cs" || extension is ".png" or ".jpg" or ".jpeg" or ".bmp" or ".webp")
+            ? DragDropEffects.Copy
+            : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private void OnInspectorDrop(object? sender, DragEventArgs e)
+    {
+        var path = DraggedPath(e);
+        if (path is null || ViewModel?.Selected is not { } selected) return;
+        if (path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+        {
+            ViewModel.AttachScript(selected.Entity, path);
+            ViewModel.StatusMessage = $"Script adjuntado a {selected.Name}";
+            e.Handled = true;
+            return;
+        }
+
+        var extension = Path.GetExtension(path).ToLowerInvariant();
+        if (extension is not (".png" or ".jpg" or ".jpeg" or ".bmp" or ".webp")) return;
+        if (selected.Entity.GetComponent<SpriteRenderer>() is null) ViewModel.AddComponentTo("sprite");
+        selected.TexturePath = Path.GetRelativePath(ViewModel.ProjectRoot, path).Replace('\\', '/');
+        ViewModel.RequestRedraw();
+        ViewModel.StatusMessage = $"Textura asignada a {selected.Name}";
+        e.Handled = true;
+    }
     private static ViewModels.EntityNode? EntityUnder(object? source)
     {
         var control = source as Control;

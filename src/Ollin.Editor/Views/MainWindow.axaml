@@ -1980,25 +1980,49 @@
                   <Button Classes="tool" Content="⟳" Click="OnRefreshFiles" ToolTip.Tip="Actualizar archivos" />
                 </StackPanel>
               </Grid>
-              <TreeView Grid.Row="1" x:Name="FileTree" ItemsSource="{Binding ProjectFiles}" Background="Transparent"
-                        Margin="4,0,4,6" DoubleTapped="OnFileDoubleTapped">
-                <TreeView.ItemTemplate>
-                  <TreeDataTemplate ItemsSource="{Binding Children}">
-                    <StackPanel Orientation="Horizontal" Spacing="7" Background="Transparent">
-                      <StackPanel.ContextMenu>
-                        <ContextMenu>
-                          <MenuItem Header="Abrir" Click="OnFileMenuOpen" />
-                          <Separator />
-                          <MenuItem Header="Eliminar…" Click="OnFileMenuDelete" />
-                        </ContextMenu>
-                      </StackPanel.ContextMenu>
-                      <TextBlock Text="{Binding Icon}" FontSize="10" Width="18"
-                                 Foreground="{DynamicResource Ollin.Jade}" VerticalAlignment="Center" />
-                      <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
-                    </StackPanel>
-                  </TreeDataTemplate>
-                </TreeView.ItemTemplate>
-              </TreeView>
+              <Grid Grid.Row="1" ColumnDefinitions="220,*">
+                <TreeView Grid.Column="0" x:Name="FileTree" ItemsSource="{Binding ProjectFiles}" Background="Transparent"
+                          Margin="4,0,4,6" DoubleTapped="OnFileDoubleTapped" SelectionChanged="OnFileTreeSelectionChanged">
+                  <TreeView.ItemTemplate>
+                    <TreeDataTemplate ItemsSource="{Binding Children}">
+                      <StackPanel Orientation="Horizontal" Spacing="7" Background="Transparent">
+                        <StackPanel.ContextMenu>
+                          <ContextMenu>
+                            <MenuItem Header="Abrir" Click="OnFileMenuOpen" />
+                            <Separator />
+                            <MenuItem Header="Eliminar…" Click="OnFileMenuDelete" />
+                          </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        <TextBlock Text="{Binding Icon}" FontSize="10" Width="18"
+                                   Foreground="{DynamicResource Ollin.Jade}" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                      </StackPanel>
+                    </TreeDataTemplate>
+                  </TreeView.ItemTemplate>
+                </TreeView>
+                <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*" Margin="8,0,8,6">
+                  <TextBlock x:Name="FileBreadcrumb" Text="proyecto/" Classes="section" TextTrimming="CharacterEllipsis" />
+                  <TextBox x:Name="FileSearch" Grid.Row="1" Watermark="Buscar en esta carpeta…" Margin="0,5,0,5" TextChanged="OnFileSearchChanged" />
+                  <ListBox x:Name="FileGrid" Grid.Row="2" Background="Transparent" DoubleTapped="OnFileGridDoubleTapped">
+                    <ListBox.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                      </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                      <DataTemplate>
+                        <Border Width="108" Height="88" Margin="4" Padding="6" CornerRadius="6"
+                                Background="{DynamicResource Ollin.PanelAlt}" BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1">
+                          <StackPanel Spacing="5">
+                            <TextBlock Text="{Binding Icon}" FontSize="24" HorizontalAlignment="Center" Foreground="{DynamicResource Ollin.Jade}" />
+                            <TextBlock Text="{Binding Name}" FontSize="10.5" TextAlignment="Center" TextTrimming="CharacterEllipsis" />
+                          </StackPanel>
+                        </Border>
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </ListBox>
+                </Grid>
+              </Grid>
             </Grid>
           </TabItem>
         </TabControl>

@@ -19,13 +19,13 @@ de trabajo existente.
 | 4 | Clic derecho en jerarquía vacía | **Hecho**: menú contextual con entidades y componentes por categoría |
 | 5 | Añadir componente desde inspector | **Verificado**: el botón ya abre la lista por categorías |
 | 6 | Gizmos de mover/rotar/escalar | **Hecho**: modos con botones y atajos W/E/R |
-| 7 | Panel de archivos estilo Unity | Pendiente |
+| 7 | Panel de archivos estilo Unity | **Hecho**: árbol + cuadrícula, breadcrumb y búsqueda |
 | 8 | Traducción al inglés | Pendiente: español oficial, inglés opcional |
 | 9 | Emojis en jerarquía | **Hecho**: símbolos y emojis |
 | 10 | Tema claro pierde contraste | **Parcial**: colores duros reemplazados por recursos; falta QA visual |
 | 11 | Formas en SpriteRenderer | **Hecho**: cuadrado, cilindro y cono |
 | 12 | Botón Scripts con lista del proyecto | **Hecho**: menú con scripts y recompilar |
-| 13 | Arrastrar archivos al inspector | Pendiente |
+| 13 | Arrastrar archivos al inspector | **Hecho**: texturas y scripts |
 
 ## Funciones nuevas
 
@@ -53,6 +53,8 @@ de trabajo existente.
 6. SpriteRenderer dibuja las tres formas.
 7. Vista de cámara con selector, ocultar/mostrar y ventana independiente.
 8. Gizmos separados de mover, rotar y escalar.
+9. Panel de archivos con cuadrícula, breadcrumb y búsqueda.
+10. Drag-and-drop de texturas/scripts al inspector.
 
 ## Pruebas
 
