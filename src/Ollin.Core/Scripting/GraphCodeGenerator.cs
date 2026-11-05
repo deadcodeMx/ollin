@@ -74,12 +74,18 @@ public static class GraphCodeGenerator
         return sb.ToString();
     }
 
+    private static void EmitBreakpoint(StringBuilder sb, NodeGraph graph, GraphNode node, int indent)
+    {
+        if (!graph.Breakpoints.Contains(node.Id)) return;
+        sb.AppendLine($"{new string(' ', indent * 4)}System.Diagnostics.Debugger.Break(); // breakpoint");
+    }
     private static void EmitInlineChain(StringBuilder sb, NodeGraph graph, GraphNode? node, int indent, bool insideFunction, bool useLocals = false, HashSet<Guid>? visited = null)
     {
         visited ??= new HashSet<Guid>();
         var guard = 0;
         while (node is not null && guard++ < 128 && visited.Add(node.Id))
         {
+            EmitBreakpoint(sb, graph, node, indent);
             switch (node.Kind)
             {
                 case GraphNodeKind.Action:
@@ -347,6 +353,7 @@ public static class GraphCodeGenerator
         sb.AppendLine();
         sb.AppendLine($"    private void {MethodName(node)}()");
         sb.AppendLine("    {");
+        EmitBreakpoint(sb, graph, node, 2);
         if (node.Kind == GraphNodeKind.Event)
         {
             sb.AppendLine($"        // Evento: {node.Event}");

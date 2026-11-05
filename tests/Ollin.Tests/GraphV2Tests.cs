@@ -435,4 +435,17 @@ public sealed class GraphV2Tests
         var issues = GraphValidator.Validate(graph, scene);
         Assert.Contains(issues, issue => issue.IsError && issue.Message.Contains("duplicada"));
     }
+
+    [Fact]
+    public void LosBreakpointsSeGeneranEnElCodigo()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.Message;
+        start.Next = action.Id;
+        graph.Breakpoints.Add(action.Id);
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("Debugger.Break()", code);
+    }
 }

@@ -1,16 +1,15 @@
-## Ollin Beta 6.257.0 — duplicados
+## Ollin Beta 6.258.0 — breakpoints en código
 
 ### Añadido
 
-- Variables locales duplicadas detectadas.
-- Parámetros duplicados.
-- Variables globales duplicadas.
+- Breakpoints en el C# generado.
+- Debugger.Break por nodo.
 - Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 160/160 pruebas.
-- Instalador 6.257.0.
+- 161/161 pruebas.
+- Instalador 6.258.0.
 
-## [6.256.0] — 2026-11-05
+## [6.257.0] — 2026-11-05
