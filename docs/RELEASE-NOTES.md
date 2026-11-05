@@ -1,19 +1,17 @@
-## Ollin Beta 6.223.0 — subgrafos ejecutables
+## Ollin Beta 6.224.0 — propiedad de componente
 
 ### Añadido
 
-- Ejecución recursiva de subgrafos.
-- Límite de profundidad 16.
-- Prueba de ejecución de subgrafo.
-
-### Pendiente
-
-- Túneles de entrada/salida con pines.
+- Acción **Fijar propiedad** por reflexión.
+- Campos Componente y Propiedad.
+- Pin de dato para la cantidad.
+- Codegen con componente/propiedad.
+- Prueba de asignación.
 
 ### Verificación
 
 - Build 0 errores.
-- 138/138 pruebas.
-- Instalador 6.223.0 instalado.
+- 139/139 pruebas.
+- Instalador 6.224.0 instalado.
 
-## [6.222.0] — 2026-11-05
+## [6.223.0] — 2026-11-05

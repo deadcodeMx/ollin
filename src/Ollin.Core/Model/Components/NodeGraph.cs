@@ -106,6 +106,8 @@ public sealed class GraphNode
     public GraphValueKind ValueKind { get; set; } = GraphValueKind.Number;
     public string Value { get; set; } = "0";
     public string SubgraphName { get; set; } = string.Empty;
+    public string ComponentName { get; set; } = string.Empty;
+    public string PropertyName { get; set; } = string.Empty;
 
     public float GroupWidth { get; set; } = 280f;
 
@@ -237,7 +239,7 @@ public sealed class NodeGraph : Component, ITickable
     {
         if (Find(sourceNodeId) is null || Find(targetNodeId) is null) return null;
         var targetNode = Find(targetNodeId)!;
-        var expected = targetNode.Kind == GraphNodeKind.Action && targetNode.Action is ActionKind.SetVariable or ActionKind.AddVariable ? GraphPinType.Number : GraphPinType.Any;
+        var expected = targetNode.Kind == GraphNodeKind.Action && targetNode.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.SetComponentProperty ? GraphPinType.Number : GraphPinType.Any;
         if (!CanConnect(type, expected)) return null;
         if (DataLinks.Any(link => link.TargetNodeId == targetNodeId && link.TargetPort == targetPort)) return null;
         var link = new GraphDataLink { SourceNodeId = sourceNodeId, TargetNodeId = targetNodeId, TargetPort = targetPort, Type = type };
@@ -391,7 +393,7 @@ public sealed class NodeGraph : Component, ITickable
                     }
                     else
                     {
-                        ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount);
+                        ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount, node.ComponentName, node.PropertyName);
                     }
                 }
 

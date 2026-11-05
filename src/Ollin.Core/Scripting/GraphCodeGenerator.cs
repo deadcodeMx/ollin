@@ -136,7 +136,7 @@ public static class GraphCodeGenerator
             case ActionKind.ToggleFlag:
                 sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") > 0f ? 0f : 1f;");
                 break;            default:
-                sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", {node.Amount:0.###}f);");
+                sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", {ValueOf(graph, node)}, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\");");
                 break;
         }
     }

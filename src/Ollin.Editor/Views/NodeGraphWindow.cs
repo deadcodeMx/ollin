@@ -2176,7 +2176,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         {
             _inspector.Children.Add(Label("Acción"));
             _inspector.Children.Add(Combo(
-                new[] { "Mensaje", "Abrir puerta", "Activar", "Desactivar", "Generar", "Checkpoint", "Ganar", "Dañar", "Curar", "Teletransportar", "Fijar variable", "Sumar variable", "Alternar flag" },
+                new[] { "Mensaje", "Abrir puerta", "Activar", "Desactivar", "Generar", "Checkpoint", "Ganar", "Dañar", "Curar", "Teletransportar", "Fijar variable", "Sumar variable", "Alternar flag", "Fijar propiedad" },
                 (int)node.Action,
                 index => { node.Action = (ActionKind)index; MarkChanged(); Render(); }));
 

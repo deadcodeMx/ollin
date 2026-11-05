@@ -81,5 +81,25 @@ public sealed class GraphV2Tests
         root.RunFirst(scene, null);
         Assert.True(target.Active);
     }
-}
 
+    [Fact]
+    public void LaAccionFijaUnaPropiedadDeComponente()
+    {
+        var scene = new Scene();
+        var owner = scene.Create("Grafo", Vector2.Zero);
+        var target = scene.Create("Objetivo", Vector2.Zero);
+        var sprite = target.AddComponent(new SpriteRenderer { SortingOrder = 1 });
+        var graph = owner.AddComponent(new NodeGraph());
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetComponentProperty;
+        action.TargetName = "Objetivo";
+        action.ComponentName = "SpriteRenderer";
+        action.PropertyName = "SortingOrder";
+        action.Amount = 7;
+        start.Next = action.Id;
+
+        graph.RunFirst(scene, null);
+        Assert.Equal(7, sprite.SortingOrder);
+    }
+}

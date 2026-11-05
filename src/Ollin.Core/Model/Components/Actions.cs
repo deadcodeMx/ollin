@@ -1,3 +1,4 @@
+using System.Reflection;
 using Ollin.Core.Hud;
 
 namespace Ollin.Core.Model.Components;
@@ -12,6 +13,7 @@ public enum ActionKind
     SetVariable,
     AddVariable,
     ToggleFlag,
+    SetComponentProperty,
     Win,
     OpenDoor,
     Spawn,
@@ -47,13 +49,16 @@ public static class GameplayReflection
 /// <summary>Ejecutor genérico: no depende de componentes 3D ni de gameplay.</summary>
 public static class ActionExecutor
 {
-    public static void Execute(Scenes.Scene scene, ActionKind action, string targetName, string message, string playerTag = "player", float amount = 0f)
+    public static void Execute(Scenes.Scene scene, ActionKind action, string targetName, string message, string playerTag = "player", float amount = 0f, string componentName = "", string propertyName = "")
     {
         if (!string.IsNullOrWhiteSpace(message)) HudHost.ShowMessage(message, 2.5f);
         var target = string.IsNullOrWhiteSpace(targetName) ? null : scene.Find(targetName);
 
         switch (action)
         {
+            case ActionKind.SetComponentProperty when target is not null:
+                SetComponentProperty(target, componentName, propertyName, amount, message);
+                break;
             case ActionKind.Activate when target is not null:
                 target.Active = true;
                 break;
@@ -97,6 +102,27 @@ public static class ActionExecutor
     {
         var component = entity?.Components.FirstOrDefault(c => c.GetType().Name == componentName);
         component?.GetType().GetMethod(methodName)?.Invoke(component, args);
+    }
+    private static void SetComponentProperty(Entity target, string componentName, string propertyName, float amount, string text)
+    {
+        var component = target.Components.FirstOrDefault(item => item.GetType().Name.Equals(componentName, StringComparison.OrdinalIgnoreCase));
+        var property = component?.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+        if (property is null || !property.CanWrite) return;
+        try
+        {
+            object? value = property.PropertyType switch
+            {
+                var type when type == typeof(float) => amount,
+                var type when type == typeof(double) => (double)amount,
+                var type when type == typeof(int) => (int)amount,
+                var type when type == typeof(bool) => amount != 0f,
+                var type when type == typeof(string) => text,
+                var type when type.IsEnum => Enum.ToObject(type, (int)amount),
+                _ => Convert.ChangeType(amount, property.PropertyType, System.Globalization.CultureInfo.InvariantCulture),
+            };
+            property.SetValue(component, value);
+        }
+        catch { }
     }
     public static Entity? FindPlayer(Scenes.Scene scene, string tag = "player") =>
         scene.Entities.FirstOrDefault(e => e.Active && e.Tags.Any(t => t.Equals(tag, StringComparison.OrdinalIgnoreCase)));
