@@ -183,8 +183,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Evento: pulsar E", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnInteract));
         AddPalette(panel, "Evento: morir", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerDeath));
         AddSection(panel, "CONDICIONES");
-        AddPalette(panel, "Condición: tiene objeto", () => AddCondition(GraphConditionKind.HasItem));
-        AddPalette(panel, "Condición: vida baja", () => AddCondition(GraphConditionKind.HealthBelow));
+        AddPalette(panel, "Condición: expresión", () => AddCondition(GraphConditionKind.Expression));
         AddSection(panel, "ACCIONES");
         AddPalette(panel, "Acción: mensaje", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Message));
         AddPalette(panel, "Acción: abrir puerta", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.OpenDoor));
@@ -329,6 +328,7 @@ public sealed class NodeGraphWindow : Window
         quick.Children.Add(ToolButton("⇅", AutoLayout, "Ordenar (Ctrl+Shift+O)"));
         quick.Children.Add(ToolButton("⏭", StepGraph, "Paso (F8)"));
         quick.Children.Add(ToolButton("↔", () => Distribute(true), "Distribuir H (Ctrl+Shift+H)"));
+        quick.Children.Add(ToolButton("Vars", ShowVariables, "Variables del grafo"));
         quick.Children.Add(ToolButton("Guardar", SaveGraph, "Guardar grafo y escena"));
         quick.Children.Add(ToolButton("Script", GenerateScript, "Generar/actualizar el script C# desde el grafo"));
         quick.Children.Add(ToolButton("</>", ShowCode, "Ver código C# del grafo"));
@@ -451,6 +451,46 @@ public sealed class NodeGraphWindow : Window
         return dock;
     }
 
+    private void ShowVariables()
+    {
+        var window = new Window
+        {
+            Title = "Variables del grafo",
+            Width = 560,
+            Height = 620,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Background = new SolidColorBrush(Color.Parse("#0A0A0C")),
+            Foreground = new SolidColorBrush(Color.Parse("#F2EEF7")),
+        };
+        var list = new StackPanel { Spacing = 6, Margin = new Thickness(16) };
+        void Rebuild()
+        {
+            list.Children.Clear();
+            list.Children.Add(new TextBlock { Text = "Variables propias", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#FF2FA8")) });
+            list.Children.Add(new TextBlock { Text = "Estas variables se usan en acciones y expresiones. No hay condiciones preestablecidas.", FontSize = 11, TextWrapping = TextWrapping.Wrap, Foreground = new SolidColorBrush(Color.Parse("#A79FB5")) });
+            foreach (var variable in _graph.Variables.ToList())
+            {
+                var row = new Grid { ColumnDefinitions = new ColumnDefinitions("150,110,*,Auto"), Margin = new Thickness(0, 4, 0, 0) };
+                var name = new TextBox { Text = variable.Name, Watermark = "nombre" };
+                name.LostFocus += (_, _) => { variable.Name = name.Text?.Trim() ?? "variable"; MarkChanged(); };
+                var type = new ComboBox { ItemsSource = Enum.GetNames<GraphPinType>(), SelectedItem = variable.Type.ToString(), Margin = new Thickness(4, 0) };
+                type.SelectionChanged += (_, _) => { if (type.SelectedItem is string value && Enum.TryParse<GraphPinType>(value, out var parsed)) { variable.Type = parsed; MarkChanged(); } };
+                var value = new TextBox { Text = variable.DefaultValue, Watermark = "valor inicial" };
+                value.LostFocus += (_, _) => { variable.DefaultValue = value.Text ?? "0"; MarkChanged(); };
+                var remove = new Button { Content = "✕", Margin = new Thickness(6, 0, 0, 0) };
+                remove.Click += (_, _) => { _graph.Variables.Remove(variable); MarkChanged(); Rebuild(); };
+                Grid.SetColumn(type, 1); Grid.SetColumn(value, 2); Grid.SetColumn(remove, 3);
+                row.Children.Add(name); row.Children.Add(type); row.Children.Add(value); row.Children.Add(remove);
+                list.Children.Add(row);
+            }
+            var add = new Button { Content = "Añadir variable", Classes = { "accent" }, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 10, 0, 0) };
+            add.Click += (_, _) => { _graph.Variables.Add(new GraphVariable { Name = $"variable{_graph.Variables.Count + 1}" }); MarkChanged(); Rebuild(); };
+            list.Children.Add(add);
+        }
+        Rebuild();
+        window.Content = new ScrollViewer { Content = list };
+        window.ShowDialog(this);
+    }
     private void SaveGraph()
     {
         _graph.Migrate();
@@ -922,7 +962,6 @@ public sealed class NodeGraphWindow : Window
             ("Acción: activar", () => ConnectNew(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Activate, source, trueBranch)),
             ("Acción: desactivar", () => ConnectNew(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Deactivate, source, trueBranch)),
             ("Acción: teletransportar", () => ConnectNew(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Teleport, source, trueBranch)),
-            ("Condición: tiene objeto", () => ConnectNew(GraphNodeKind.Condition, GraphEventKind.OnStart, ActionKind.Message, source, trueBranch, GraphConditionKind.HasItem)),
             ("Condición: expresión", () => ConnectNew(GraphNodeKind.Condition, GraphEventKind.OnStart, ActionKind.Message, source, trueBranch, GraphConditionKind.Expression)),
             ("Comentario", () => AddComment()),
         };
@@ -958,8 +997,6 @@ public sealed class NodeGraphWindow : Window
             ("Evento: pulsar E", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnInteract)),
             ("Evento: morir", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerDeath)),
             ("Condición: siempre", () => AddCondition(GraphConditionKind.Always)),
-            ("Condición: tiene objeto", () => AddCondition(GraphConditionKind.HasItem)),
-            ("Condición: vida baja", () => AddCondition(GraphConditionKind.HealthBelow)),
             ("Condición: expresión", () => AddCondition(GraphConditionKind.Expression)),
             ("Acción: mensaje", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Message)),
             ("Acción: activar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Activate)),
@@ -2335,6 +2372,9 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
             {
                 _inspector.Children.Add(Label("Variable"));
                 _inspector.Children.Add(TextInput(node.VariableName, value => { node.VariableName = value; MarkChanged(); }));
+                var variablePick = new ComboBox { ItemsSource = _graph.Variables.Select(variable => variable.Name).ToList(), HorizontalAlignment = HorizontalAlignment.Stretch };
+                variablePick.SelectionChanged += (_, _) => { if (variablePick.SelectedItem is string name) { node.VariableName = name; MarkChanged(); } };
+                _inspector.Children.Add(variablePick);
                 _inspector.Children.Add(Label("Expresión / valor"));
                 _inspector.Children.Add(ExpressionInput(node.Expression, value => { node.Expression = value; MarkChanged(); }));
                 AddExpressionError(node.Expression);

@@ -49,6 +49,13 @@ public enum GraphPinType
 }
 
 /// <summary>Enlace de datos entre la salida de un nodo y la entrada de otro.</summary>
+/// <summary>Variable definida por el usuario del grafo.</summary>
+public sealed class GraphVariable
+{
+    public string Name { get; set; } = "variable";
+    public GraphPinType Type { get; set; } = GraphPinType.Number;
+    public string DefaultValue { get; set; } = "0";
+}
 public sealed class GraphDataLink
 {
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -191,6 +198,7 @@ public sealed class NodeGraph : Component, ITickable
     public List<GraphNode> Nodes { get; set; } = new();
     public List<GraphDataLink> DataLinks { get; set; } = new();
     public List<NodeGraph> Subgraphs { get; set; } = new();
+    public List<GraphVariable> Variables { get; set; } = new();
 
     [JsonIgnore]
     public NodeGraphHistory History { get; } = new();
