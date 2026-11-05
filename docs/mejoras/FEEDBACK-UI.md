@@ -38,6 +38,7 @@ de trabajo existente.
 - [ ] Cobertura de traducción para todas las ventanas.
 - [ ] Más acciones de personaje expuestas al grafo (dash, pared, techo).
 - [ ] Colisión exacta para cilindro/cono.
+
 ## Criterios de aceptación
 
 1. Los cuatro colliders se dibujan y serializan.
