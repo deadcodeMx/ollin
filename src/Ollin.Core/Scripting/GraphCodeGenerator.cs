@@ -104,13 +104,13 @@ public static class GraphCodeGenerator
         }
         else if (node.Kind == GraphNodeKind.Action)
         {
-            EmitAction(sb, node);
+            EmitAction(sb, graph, node);
             if (node.Next is { } next) sb.AppendLine($"        {MethodName(Find(graph, next))}();");
         }
         sb.AppendLine("    }");
     }
 
-    private static void EmitAction(StringBuilder sb, GraphNode node)
+    private static void EmitAction(StringBuilder sb, NodeGraph graph, GraphNode node)
     {
         var target = string.IsNullOrWhiteSpace(node.TargetName) ? "null" : $"Find(\"{Escape(node.TargetName)}\")";
         switch (node.Action)
@@ -128,10 +128,10 @@ public static class GraphCodeGenerator
                 sb.AppendLine($"        if ({target} is {{ }} point) Position = Scene!.GetWorldPosition(point);");
                 break;
             case ActionKind.SetVariable:
-                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = {node.Amount:0.###}f;");
+                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = {ValueOf(graph, node)};");
                 break;
             case ActionKind.AddVariable:
-                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") + {node.Amount:0.###}f;");
+                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") + {ValueOf(graph, node)};");
                 break;
             case ActionKind.ToggleFlag:
                 sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") > 0f ? 0f : 1f;");
@@ -141,6 +141,20 @@ public static class GraphCodeGenerator
         }
     }
 
+    private static string ValueOf(NodeGraph graph, GraphNode node)
+    {
+        if (graph.DataLinkTo(node.Id, "amount") is { } link && graph.Find(link.SourceNodeId) is { Kind: GraphNodeKind.Value } value)
+        {
+            return value.ValueKind switch
+            {
+                GraphValueKind.Text => $"\"{Escape(value.Value)}\"",
+                GraphValueKind.Boolean => value.Value is "true" or "True" or "1" ? "true" : "false",
+                GraphValueKind.Integer => int.TryParse(value.Value, out var integer) ? integer.ToString() : "0",
+                _ => float.TryParse(value.Value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var number) ? number.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) : "0",
+            };
+        }
+        return node.Amount.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+    }
     private static GraphNode? Find(NodeGraph graph, Guid id) => graph.Nodes.FirstOrDefault(n => n.Id == id);
 
     private static string MethodName(GraphNode? node) => node is null ? "Noop" : "Node_" + Short(node.Id);

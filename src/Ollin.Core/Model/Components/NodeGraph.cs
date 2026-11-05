@@ -10,6 +10,7 @@ public enum GraphNodeKind
     Event,
     Condition,
     Action,
+    Value,
     Reroute,
     Comment,
     Group,
@@ -68,6 +69,14 @@ public sealed class GraphDebugFrame
 }
 
 /// <summary>Nodo de un grafo visual de ejecución.</summary>
+/// <summary>Tipo de valor de un nodo Value.</summary>
+public enum GraphValueKind
+{
+    Number,
+    Integer,
+    Boolean,
+    Text,
+}
 public sealed class GraphNode
 {
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -93,6 +102,8 @@ public sealed class GraphNode
     public string VariableName { get; set; } = "contador";
 
     public string Expression { get; set; } = "1";
+    public GraphValueKind ValueKind { get; set; } = GraphValueKind.Number;
+    public string Value { get; set; } = "0";
 
     public float GroupWidth { get; set; } = 280f;
 

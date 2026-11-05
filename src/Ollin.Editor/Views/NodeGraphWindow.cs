@@ -50,6 +50,7 @@ public sealed class NodeGraphWindow : Window
     private readonly TextBlock _status = new() { FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#AAB4C4")), Margin = new Thickness(8) };
     private GraphNode? _selected;
     private GraphNode? _linkSource;
+    private GraphNode? _dataSource;
     private bool _linkTrue = true;
     private Border? _dragCard;
     private GraphNode? _dragNode;
@@ -184,6 +185,10 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: dañar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Damage));
         AddPalette(panel, "Acción: curar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Heal));
         AddPalette(panel, "Acción: teletransportar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Teleport));
+        AddPalette(panel, "Valor: número", () => AddValue(GraphValueKind.Number));
+        AddPalette(panel, "Valor: entero", () => AddValue(GraphValueKind.Integer));
+        AddPalette(panel, "Valor: booleano", () => AddValue(GraphValueKind.Boolean));
+        AddPalette(panel, "Valor: texto", () => AddValue(GraphValueKind.Text));
         AddPalette(panel, "Reroute (paso)", () => AddNode(GraphNodeKind.Reroute, GraphEventKind.OnStart));
         AddPalette(panel, "Comentario", AddComment);
         AddPalette(panel, "Grupo", AddGroup);
@@ -859,6 +864,14 @@ public sealed class NodeGraphWindow : Window
         Render();
     }
 
+    private void AddValue(GraphValueKind kind)
+    {
+        var node = _graph.AddNode(GraphNodeKind.Value, 70 + _graph.Nodes.Count * 24, 70 + _graph.Nodes.Count * 22);
+        node.ValueKind = kind;
+        node.Value = kind switch { GraphValueKind.Boolean => "false", GraphValueKind.Text => "texto", GraphValueKind.Integer => "0", _ => "0" };
+        _selected = node; MarkChanged(); Render();
+    }
+
     private void AddCondition(GraphConditionKind condition)
     {
         var node = _graph.AddNode(GraphNodeKind.Condition, 70 + _graph.Nodes.Count * 24, 70 + _graph.Nodes.Count * 22);
@@ -1340,6 +1353,13 @@ public sealed class NodeGraphWindow : Window
             }
         }
 
+        foreach (var link in _graph.DataLinks.ToList())
+        {
+            if (_graph.Find(link.SourceNodeId) is { } sourceNode && _graph.Find(link.TargetNodeId) is { } targetNode)
+            {
+                DrawDataLink(sourceNode, targetNode, link.Type);
+            }
+        }
         foreach (var node in _graph.Nodes.Where(node => node.Kind == GraphNodeKind.Group && !IsHidden(node)))
         {
             _canvas.Children.Add(BuildNodeCard(node));
@@ -1408,6 +1428,26 @@ public sealed class NodeGraphWindow : Window
             Canvas.SetTop(label, (source.Y + yOffset + target.Y + 24) / 2 - 14);
             _canvas.Children.Add(label);
         }
+    }
+    private void DrawDataLink(GraphNode source, GraphNode target, GraphPinType type)
+    {
+        var color = type switch
+        {
+            GraphPinType.Boolean => Color.Parse("#E05B5B"),
+            GraphPinType.Text => Color.Parse("#C792EA"),
+            GraphPinType.Integer => Color.Parse("#F2A93B"),
+            GraphPinType.Vector2 => Color.Parse("#53D6FF"),
+            _ => Color.Parse("#47B8A8"),
+        };
+        var line = new Line
+        {
+            StartPoint = new Point(source.X + 200, source.Y + 52),
+            EndPoint = new Point(target.X, target.Y + 72),
+            Stroke = new SolidColorBrush(color),
+            StrokeThickness = 2,
+            StrokeDashArray = new Avalonia.Collections.AvaloniaList<double> { 4, 3 },
+        };
+        _canvas.Children.Add(line);
     }
     private Control BuildNodeCard(GraphNode node)
     {
@@ -1519,6 +1559,41 @@ public sealed class NodeGraphWindow : Window
         return card;
     }
 
+    private Button DataOutButton(GraphNode node)
+    {
+        var button = new Button { Content = "Dato →", FontSize = 10, Padding = new Thickness(6, 2) };
+        button.Click += (_, _) =>
+        {
+            _dataSource = node;
+            _selected = node;
+            _selectedIds.Clear();
+            _selectedIds.Add(node.Id);
+            _status.Text = "Selecciona una acción para conectar el dato.";
+            Render();
+        };
+        return button;
+    }
+
+    private Button DataInButton(GraphNode node)
+    {
+        var button = new Button { Content = "← Dato", FontSize = 10, Padding = new Thickness(6, 2) };
+        button.Click += (_, _) =>
+        {
+            if (_dataSource is null) return;
+            var type = _dataSource.ValueKind switch
+            {
+                GraphValueKind.Integer => GraphPinType.Integer,
+                GraphValueKind.Boolean => GraphPinType.Boolean,
+                GraphValueKind.Text => GraphPinType.Text,
+                _ => GraphPinType.Number,
+            };
+            _graph.AddDataLink(_dataSource.Id, node.Id, "amount", type);
+            _dataSource = null;
+            MarkChanged();
+            Render();
+        };
+        return button;
+    }
     private Button PortButton(string text, GraphNode node, bool trueBranch)
     {
         var button = new Button
@@ -2201,6 +2276,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         GraphNodeKind.Condition => "CONDICIÓN",
         GraphNodeKind.Comment => "COMENTARIO",
         GraphNodeKind.Reroute => "REROUTE",
+        GraphNodeKind.Value => "VALOR",
         GraphNodeKind.Group => "GRUPO",
         _ => "ACCIÓN",
     };
