@@ -603,4 +603,28 @@ public sealed class GraphV2Tests
         start.Next = call.Id;
         AssertGeneratedCompiles(graph);
     }
+
+    [Fact]
+    public void ElPinUniversalDeExpresionSeUsaEnCondicion()
+    {
+        var graph = new NodeGraph();
+        var value = graph.AddNode(GraphNodeKind.Value, 0, 100);
+        value.ValueKind = GraphValueKind.Text;
+        value.Value = "1 > 0";
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var condition = graph.AddNode(GraphNodeKind.Condition, 200, 0);
+        condition.Condition = GraphConditionKind.Expression;
+        condition.Expression = "false";
+        var yes = graph.AddNode(GraphNodeKind.Action, 400, 0);
+        yes.Action = ActionKind.Message;
+        var no = graph.AddNode(GraphNodeKind.Action, 400, 100);
+        no.Action = ActionKind.Message;
+        start.Next = condition.Id;
+        condition.TrueNext = yes.Id;
+        condition.FalseNext = no.Id;
+        graph.AddDataLink(value.Id, condition.Id, "expression", GraphPinType.Text);
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("1 > 0", code);
+        Assert.DoesNotContain("EvaluateBool(\"false\"", code);
+    }
 }

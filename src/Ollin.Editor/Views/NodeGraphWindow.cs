@@ -1883,6 +1883,13 @@ public sealed class NodeGraphWindow : Window
             ports.Children.Add(PortButton("Conectar →", node, true));
         }
 
+        if (node.Kind is GraphNodeKind.Value or GraphNodeKind.Operator or GraphNodeKind.CallFunction)
+            ports.Children.Add(DataOutButton(node));
+        if (_dataSource is not null && node.Kind == GraphNodeKind.Action)
+            ports.Children.Add(DataInFieldButton(node));
+        if (_dataSource is not null && node.Kind is GraphNodeKind.Condition or GraphNodeKind.Loop or GraphNodeKind.Return)
+            ports.Children.Add(DataInButton(node, "expression"));
+
         content.Children.Add(ports);
         card.Child = content;
         _nodeCards[node.Id] = card;

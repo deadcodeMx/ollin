@@ -1,17 +1,16 @@
-## Ollin Beta 6.265.0 — pruebas por caso
+## Ollin Beta 6.266.0 — pines universales
 
 ### Añadido
 
-- Compilación real de variables.
-- Compilación de funciones con parámetros/locales.
-- Compilación de subgrafos.
-- Compilación de eventos personalizados.
-- Corregidos using y doble cuerpo de evento.
+- Pines de datos en tarjetas.
+- Pin de expresión universal.
+- Condiciones/bucles/Return leen el pin.
+- Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 169/169 pruebas.
-- Instalador 6.265.0.
+- 170/170 pruebas.
+- Instalador 6.266.0.
 
-## [6.264.0] — 2026-11-05
+## [6.265.0] — 2026-11-05

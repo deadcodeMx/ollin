@@ -119,11 +119,11 @@ public static class GraphCodeGenerator
                     sb.AppendLine($"{new string(' ', indent * 4)}continue;");
                     return;
                 case GraphNodeKind.Return:
-                    sb.AppendLine($"{new string(' ', indent * 4)}return {(insideFunction ? node.ReturnExpression : string.Empty)};");
+                    sb.AppendLine($"{new string(' ', indent * 4)}return {(insideFunction ? ExpressionLink(graph, node, node.ReturnExpression) : string.Empty)};");
                     return;
                 case GraphNodeKind.Condition:
                 {
-                    sb.AppendLine($"{new string(' ', indent * 4)}if ({ConditionExpression(node, useLocals)})");
+                    sb.AppendLine($"{new string(' ', indent * 4)}if ({ConditionExpression(node, useLocals, graph)})");
                     sb.AppendLine($"{new string(' ', indent * 4)}{{");
                     EmitInlineChain(sb, graph, node.TrueNext is { } t ? Find(graph, t) : null, indent + 1, insideFunction, useLocals, visited);
                     sb.AppendLine($"{new string(' ', indent * 4)}}}");
@@ -138,7 +138,7 @@ public static class GraphCodeGenerator
                     var variable = string.IsNullOrWhiteSpace(node.LoopVariable) ? "i" : node.LoopVariable;
                     var header = node.LoopKind switch
                     {
-                        GraphLoopKind.While => $"while ({node.LoopExpression})",
+                        GraphLoopKind.While => $"while ({ExpressionLink(graph, node, node.LoopExpression)})",
                         GraphLoopKind.ForEach => $"foreach (var {variable} in {node.LoopCollection})",
                         _ => $"for (int {variable} = 0; {variable} < {node.LoopCount}; {variable}++)",
                     };
@@ -166,13 +166,17 @@ public static class GraphCodeGenerator
         }
     }
 
-    private static string ConditionExpression(GraphNode node, bool useLocals = false) => node.Condition switch
+    private static string ConditionExpression(GraphNode node, bool useLocals = false, NodeGraph? graph = null)
     {
+        var expression = graph is null ? node.Expression : ExpressionLink(graph, node, node.Expression);
+        return node.Condition switch
+        {
         GraphConditionKind.HasItem => $"GameplayReflection.HasItem(Find(\"{Escape(node.TargetName)}\"), \"{Escape(node.ItemId)}\")",
         GraphConditionKind.HealthBelow => $"GameplayReflection.HealthBelow(Find(\"{Escape(node.TargetName)}\"), {node.Threshold:0.###}f)",
-        GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(node.Expression)}\", new ExpressionContext {{ Player = Find(\"player\"){(useLocals ? ", Locals = __locals" : string.Empty)} }})",
+        GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(expression)}\", new ExpressionContext {{ Player = Find(\"player\"){(useLocals ? ", Locals = __locals" : string.Empty)} }})",
         _ => "true",
-    };
+        };
+    }
     private static void EmitStateSync(StringBuilder sb, NodeGraph graph)
     {
 
@@ -239,6 +243,17 @@ public static class GraphCodeGenerator
         _currentLocals = null;
     }
 
+    private static string ExpressionLink(NodeGraph graph, GraphNode node, string fallback)
+    {
+        if (graph.DataLinkTo(node.Id, "expression") is not { } link || graph.Find(link.SourceNodeId) is not { } source) return fallback;
+        return source.Kind switch
+        {
+            GraphNodeKind.Value => source.Value,
+            GraphNodeKind.Operator => OperatorExpression(graph, source),
+            GraphNodeKind.CallFunction => $"Func_{SafeName(source.FunctionName, "Funcion")}({source.ArgumentsText})",
+            _ => fallback,
+        };
+    }
     private static string OperatorExpression(NodeGraph graph, GraphNode node)
     {
         var left = RewriteVariables(graph, node.LeftExpression);
@@ -407,7 +422,7 @@ public static class GraphCodeGenerator
                 GraphConditionKind.Always => "true",
                 GraphConditionKind.HasItem => $"GameplayReflection.HasItem(Find(\"{Escape(node.TargetName)}\"), \"{Escape(node.ItemId)}\")",
                 GraphConditionKind.HealthBelow => $"GameplayReflection.HealthBelow(Find(\"{Escape(node.TargetName)}\"), {node.Threshold:0.###}f)",
-                GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(node.Expression)}\", new ExpressionContext {{ Player = Find(\"player\") }})",
+                GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(ExpressionLink(graph, node, node.Expression))}\", new ExpressionContext {{ Player = Find(\"player\") }})",
                 _ => "true",
             };
             sb.AppendLine($"        // Condición: {node.Condition} {(string.IsNullOrWhiteSpace(node.Expression) ? "" : node.Expression)}");
@@ -433,7 +448,7 @@ public static class GraphCodeGenerator
             var variable = string.IsNullOrWhiteSpace(node.LoopVariable) ? "i" : node.LoopVariable;
             var header = node.LoopKind switch
             {
-                GraphLoopKind.While => $"while ({node.LoopExpression})",
+                GraphLoopKind.While => $"while ({ExpressionLink(graph, node, node.LoopExpression)})",
                 GraphLoopKind.ForEach => $"foreach (var {variable} in {node.LoopCollection})",
                 _ => $"for (int {variable} = 0; {variable} < {node.LoopCount}; {variable}++)",
             };
@@ -543,6 +558,7 @@ public static class GraphCodeGenerator
     private static string ValueOrExpression(NodeGraph graph, GraphNode node)
     {
         if (graph.DataLinkTo(node.Id, "amount") is not null) return ValueOf(graph, node);
+        if (graph.DataLinkTo(node.Id, "expression") is not null) return ExpressionLink(graph, node, node.Expression);
         return string.IsNullOrWhiteSpace(node.Expression)
             ? ValueOf(graph, node)
             : RewriteVariables(graph, node.Expression);
