@@ -35,6 +35,27 @@ flujo, datos tipados y traducción fiable a C#.
 - Pruebas de codegen compilado: hay prueba de compilación, pero no de todos los grafos posibles.
 - Sincronización de estado: el script restaura variables al `OnStart` y escribe cambios; los cambios externos posteriores no se reflejan hasta reiniciar.
 
+## Principio de diseño
+
+El grafo no debe incluir acciones cerradas para “puerta”, “spawner” o “checkpoint”.
+El usuario debe poder construir esos comportamientos combinando primitivas.
+
+Una acción cerrada obliga a adivinar el juego del usuario. Una primitiva genérica
+sirve para cualquier juego.
+
+## Primitivas genéricas objetivo
+
+- **Crear entidad**: instanciar una entidad o prefab por nombre.
+- **Destruir entidad**.
+- **Fijar propiedad**: ya existe.
+- **Emitir señal/evento**: comunicación sin acoplar componentes.
+- **Consultar área**: entidades dentro de un radio, con filtro.
+- **Temporizador**: esperar o repetir cada intervalo.
+- **Cargar escena**.
+- **Variables y expresiones**: ya existen.
+
+Estas primitivas permiten construir puerta, spawner y checkpoint sin que el motor
+los defina.
 ## Limitaciones vigentes
 
 ### Datos y tipos
@@ -48,7 +69,7 @@ flujo, datos tipados y traducción fiable a C#.
 ### Runtime
 
 - `NodeGraph` usa `GameState` y el script generado usa campos `_var_*`/`_vars`; no comparten estado.
-- Las acciones Checkpoint/OpenDoor/Spawn dependen de componentes de gameplay eliminados; radio e intervalo se ejecutan, pero no tienen efecto visible.
+- Las acciones heredadas `Checkpoint`, `OpenDoor` y `Spawn` dependen de componentes eliminados. **No se reimplementan**: se retiran del roadmap por ser acciones cerradas.
 
 ### Pruebas
 
