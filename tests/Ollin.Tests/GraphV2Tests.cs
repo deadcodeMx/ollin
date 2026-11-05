@@ -22,6 +22,8 @@ public sealed class GraphV2Tests
         Assert.Single(graph.DataLinks);
         Assert.Equal(target.Id, graph.DataLinkTo(target.Id, "value")!.TargetNodeId);
         Assert.Null(graph.AddDataLink(source.Id, target.Id, "value", GraphPinType.Text));
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Integer, GraphPinType.Number));
+        Assert.False(NodeGraph.CanConnect(GraphPinType.Text, GraphPinType.Number));
 
         graph.RemoveNode(source.Id);
         Assert.Empty(graph.DataLinks);
@@ -46,4 +48,5 @@ public sealed class GraphV2Tests
         Assert.DoesNotContain("Amount", code);
     }
 }
+
 

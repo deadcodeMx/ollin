@@ -22,12 +22,15 @@ public sealed class NodeGraphWindow : Window
 {
     private readonly MainViewModel _viewModel;
     private readonly Entity _entity;
-    private readonly NodeGraph _graph;
+    private NodeGraph _graph;
+    private readonly List<NodeGraph> _graphs;
+    private readonly StackPanel _tabs = new() { Orientation = Orientation.Horizontal, Spacing = 3 };
+    private readonly TextBlock _breadcrumb = new() { FontSize = 10.5, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")), VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0) };
     private readonly Canvas _canvas = new();
     private readonly LayoutTransformControl _canvasTransform = new();
-    private readonly NodeGraphHistory _history;
+    private NodeGraphHistory _history;
     private readonly GraphHistoryStore _historyStore = new();
-    private readonly string _historyKey;
+    private string _historyKey;
     private readonly List<GraphIssue> _issues = new();
     private readonly List<(Button Button, string Label)> _paletteButtons = new();
     private readonly TextBlock _zoomText = new() { FontSize = 11, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0) };
@@ -209,6 +212,50 @@ public sealed class NodeGraphWindow : Window
         panel.Children.Add(button);
     }
 
+    private void UpdateTabs()
+    {
+        _tabs.Children.Clear();
+        for (var i = 0; i < _graphs.Count; i++)
+        {
+            var index = i;
+            var tab = new Button
+            {
+                Content = $"Grafo {i + 1}",
+                FontSize = 10.5,
+                Padding = new Thickness(7, 3),
+                Background = new SolidColorBrush(Color.Parse(ReferenceEquals(_graphs[i], _graph) ? "#2A3648" : "#19212E")),
+            };
+            tab.Click += (_, _) => SwitchGraph(index);
+            _tabs.Children.Add(tab);
+        }
+        var add = new Button { Content = "+", FontSize = 11, Padding = new Thickness(6, 3) };
+        add.Click += (_, _) =>
+        {
+            var graph = _entity.AddComponent(new NodeGraph());
+            _graphs.Add(graph);
+            _viewModel.MarkDirty("grafo");
+            SwitchGraph(_graphs.Count - 1);
+        };
+        _tabs.Children.Add(add);
+        _breadcrumb.Text = $"{_entity.Name} / Grafo {_graphs.IndexOf(_graph) + 1}";
+    }
+
+    private void SwitchGraph(int index)
+    {
+        if (index < 0 || index >= _graphs.Count || ReferenceEquals(_graphs[index], _graph)) return;
+        _historyStore.Save(_historyKey, _entity.Id, _history, _graph.Breakpoints);
+        _graph = _graphs[index];
+        _history = _graph.History;
+        _historyKey = $"{_viewModel.ScenePath ?? "sin-guardar"}|{_entity.Id}|{index}";
+        _historyStore.Load(_historyKey, _entity.Id, _history, _graph.Breakpoints);
+        _selected = null;
+        _selectedIds.Clear();
+        _linkSource = null;
+        _dataSource = null;
+        Title = $"Grafo de nodos — {_entity.Name}";
+        UpdateTabs();
+        Render();
+    }
     private Control BuildCanvasArea()
     {
         _canvas.Width = 2400;
@@ -239,6 +286,8 @@ public sealed class NodeGraphWindow : Window
             Spacing = 3,
             Margin = new Thickness(4, 2),
         };
+        toolbar.Children.Add(_tabs);
+        toolbar.Children.Add(_breadcrumb);
         toolbar.Children.Add(ToolButton("↶", Undo, "Deshacer (Ctrl+Z)"));
         toolbar.Children.Add(ToolButton("↷", Redo, "Rehacer (Ctrl+Y)"));
 

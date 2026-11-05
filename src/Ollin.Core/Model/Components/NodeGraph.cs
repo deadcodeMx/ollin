@@ -217,11 +217,19 @@ public sealed class NodeGraph : Component, ITickable
     public GraphDataLink? AddDataLink(Guid sourceNodeId, Guid targetNodeId, string targetPort, GraphPinType type)
     {
         if (Find(sourceNodeId) is null || Find(targetNodeId) is null) return null;
+        var targetNode = Find(targetNodeId)!;
+        var expected = targetNode.Kind == GraphNodeKind.Action && targetNode.Action is ActionKind.SetVariable or ActionKind.AddVariable ? GraphPinType.Number : GraphPinType.Any;
+        if (!CanConnect(type, expected)) return null;
         if (DataLinks.Any(link => link.TargetNodeId == targetNodeId && link.TargetPort == targetPort)) return null;
         var link = new GraphDataLink { SourceNodeId = sourceNodeId, TargetNodeId = targetNodeId, TargetPort = targetPort, Type = type };
         DataLinks.Add(link);
         return link;
     }
+
+    /// <summary>Tipos compatibles con auto-cast básico.</summary>
+    public static bool CanConnect(GraphPinType source, GraphPinType target) =>
+        target is GraphPinType.Any || source is GraphPinType.Any || source == target ||
+        (source is GraphPinType.Integer or GraphPinType.Number && target is GraphPinType.Integer or GraphPinType.Number);
 
     public void RemoveDataLink(Guid linkId) => DataLinks.RemoveAll(link => link.Id == linkId);
 
