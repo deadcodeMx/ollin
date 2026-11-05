@@ -1,16 +1,16 @@
-## Ollin Beta 6.241.0 — selector de parámetros
+## Ollin Beta 6.242.0 — validación de argumentos
 
 ### Añadido
 
-- Botón + en expresiones.
-- Inserción de variables del grafo.
-- Inserción de parámetros de funciones y eventos.
-- Sugerencias sin escribir nombres a mano.
+- Validación de número de argumentos.
+- Validación de tipos contra la firma.
+- Inferencia de literales, variables y retornos.
+- Avisos en validación.
 
 ### Verificación
 
 - Build 0 errores.
 - 145/145 pruebas.
-- Instalador 6.241.0.
+- Instalador 6.242.0.
 
-## [6.240.0] — 2026-11-05
+## [6.241.0] — 2026-11-05

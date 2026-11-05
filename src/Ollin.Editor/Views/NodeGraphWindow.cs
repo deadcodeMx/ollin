@@ -1247,6 +1247,59 @@ public sealed class NodeGraphWindow : Window
     {
         _issues.Clear();
         _issues.AddRange(GraphValidator.Validate(_graph, _viewModel.Scene));
+        ValidateCallArguments();
+    }
+    private void ValidateCallArguments()
+    {
+        foreach (var call in _graph.Nodes.Where(node => node.Kind is GraphNodeKind.CallEvent or GraphNodeKind.CallFunction))
+        {
+            var definition = _graph.Nodes.FirstOrDefault(node =>
+                node.Kind == (call.Kind == GraphNodeKind.CallEvent ? GraphNodeKind.CustomEvent : GraphNodeKind.Function) &&
+                string.Equals(call.Kind == GraphNodeKind.CallEvent ? node.CustomEventName : node.FunctionName,
+                    call.Kind == GraphNodeKind.CallEvent ? call.CustomEventName : call.FunctionName,
+                    StringComparison.OrdinalIgnoreCase));
+            if (definition is null)
+            {
+                _issues.Add(new GraphIssue(call, $"No existe la definición de {call.CustomEventName}.", true));
+                continue;
+            }
+            var parameters = ParseParameters(definition.ParameterText);
+            var arguments = call.ArgumentsText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            if (parameters.Count != arguments.Length)
+            {
+                _issues.Add(new GraphIssue(call, $"La llamada espera {parameters.Count} argumentos y recibe {arguments.Length}.", true));
+                continue;
+            }
+            for (var i = 0; i < parameters.Count; i++)
+            {
+                var actual = InferArgumentType(arguments[i]);
+                if (!NodeGraph.CanConnect(actual, parameters[i].Type))
+                    _issues.Add(new GraphIssue(call, $"Argumento {i + 1}: se espera {parameters[i].Type} y llega {actual}.", false));
+            }
+        }
+    }
+
+    private List<(string Name, GraphPinType Type)> ParseParameters(string text) => text
+        .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+        .Select(item =>
+        {
+            var parts = item.Split(':', StringSplitOptions.TrimEntries);
+            var type = parts.Length > 1 && Enum.TryParse<GraphPinType>(parts[1], true, out var parsed) ? parsed : GraphPinType.Number;
+            return (parts[0], type);
+        }).ToList();
+
+    private GraphPinType InferArgumentType(string text)
+    {
+        var value = text.Trim();
+        if (value.Length >= 2 && value[0] == '"' && value[^1] == '"') return GraphPinType.Text;
+        if (value is "true" or "false" or "True" or "False") return GraphPinType.Boolean;
+        if (value.Contains(',')) return GraphPinType.Vector2;
+        if (int.TryParse(value, out _)) return GraphPinType.Integer;
+        if (float.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out _)) return GraphPinType.Number;
+        var variable = _graph.Variables.FirstOrDefault(item => string.Equals(item.Name, value, StringComparison.OrdinalIgnoreCase));
+        if (variable is not null) return variable.Type;
+        var function = _graph.Nodes.FirstOrDefault(item => item.Kind == GraphNodeKind.Function && item.FunctionName.Equals(value, StringComparison.OrdinalIgnoreCase));
+        return function?.ReturnType ?? GraphPinType.Any;
     }
     private void AddValidationPanel()
     {
