@@ -4,25 +4,30 @@
              RequestedThemeVariant="Dark">
   <Application.Resources>
     <ResourceDictionary>
-      <SolidColorBrush x:Key="Ollin.Bg" Color="#0B0E14" />
-      <SolidColorBrush x:Key="Ollin.Panel" Color="#121722" />
-      <SolidColorBrush x:Key="Ollin.PanelAlt" Color="#19212E" />
-      <SolidColorBrush x:Key="Ollin.Border" Color="#2B3749" />
-      <SolidColorBrush x:Key="Ollin.Text" Color="#E6ECF7" />
-      <SolidColorBrush x:Key="Ollin.TextDim" Color="#93A4BC" />
-      <SolidColorBrush x:Key="Ollin.Accent" Color="#F2A93B" />
-      <SolidColorBrush x:Key="Ollin.AccentDim" Color="#8A6428" />
-      <SolidColorBrush x:Key="Ollin.Jade" Color="#4FD1C5" />
+      <SolidColorBrush x:Key="Ollin.Bg" Color="#0A0A0C" />
+      <SolidColorBrush x:Key="Ollin.Panel" Color="#0F0F14" />
+      <SolidColorBrush x:Key="Ollin.PanelAlt" Color="#15151D" />
+      <SolidColorBrush x:Key="Ollin.Border" Color="#2A1E38" />
+      <SolidColorBrush x:Key="Ollin.Text" Color="#F2EEF7" />
+      <SolidColorBrush x:Key="Ollin.TextDim" Color="#A79FB5" />
+      <SolidColorBrush x:Key="Ollin.Accent" Color="#FF2FA8" />
+      <SolidColorBrush x:Key="Ollin.AccentDim" Color="#7B2CFF" />
+      <SolidColorBrush x:Key="Ollin.Jade" Color="#7B2CFF" />
       <SolidColorBrush x:Key="Ollin.Danger" Color="#E05B5B" />
       <SolidColorBrush x:Key="Ollin.ViewportBg" Color="#0B0D12" />
-      <SolidColorBrush x:Key="Ollin.AccentHover" Color="#FFC15E" />
-      <SolidColorBrush x:Key="Ollin.AccentText" Color="#1A1206" />
-      <SolidColorBrush x:Key="Ollin.Hover" Color="#222C3B" />
-      <SolidColorBrush x:Key="Ollin.Pressed" Color="#2A3648" />
+      <SolidColorBrush x:Key="Ollin.AccentHover" Color="#FF5BBF" />
+      <SolidColorBrush x:Key="Ollin.AccentText" Color="#14060F" />
+      <SolidColorBrush x:Key="Ollin.Hover" Color="#241B31" />
+      <SolidColorBrush x:Key="Ollin.Pressed" Color="#31233F" />
       <SolidColorBrush x:Key="Ollin.Neutral" Color="#C7D0DE" />
           <SolidColorBrush x:Key="Ollin.Violet" Color="#9B8CFF" />
-      <SolidColorBrush x:Key="Ollin.Surface" Color="#101621" />
+      <SolidColorBrush x:Key="Ollin.Surface" Color="#0A0A0C" />
       <SolidColorBrush x:Key="Ollin.BorderStrong" Color="#3A4A61" />
+          <LinearGradientBrush x:Key="Ollin.NeonBorder" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#7B2CFF" Offset="0" />
+        <GradientStop Color="#FF2FA8" Offset="0.52" />
+        <GradientStop Color="#FF6A3D" Offset="1" />
+      </LinearGradientBrush>
     </ResourceDictionary>
   </Application.Resources>
 

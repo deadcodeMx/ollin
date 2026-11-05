@@ -1,17 +1,17 @@
-## Ollin Beta 6.233.0 — grafo más guiado
+## Ollin Beta 6.234.0 — Obsidiana Neón
 
 ### Añadido
 
-- Estado vacío con pasos y botones rápidos.
-- Destinos resaltados al conectar.
-- Escape cancela conexión.
-- Paleta por categorías.
-- Tooltips.
+- Tema global Obsidiana Neón.
+- Fondo #0A0A0C.
+- Paneles glass con borde degradado violeta→magenta→naranja.
+- `GlassPanel` reutilizable con brillo opcional.
+- Paleta y documentación de UI.
 
 ### Verificación
 
 - Build 0 errores.
 - 142/142 pruebas.
-- Instalador 6.233.0.
+- Instalador 6.234.0 instalado.
 
-## [6.232.0] — 2026-11-05
+## [6.233.0] — 2026-11-05
