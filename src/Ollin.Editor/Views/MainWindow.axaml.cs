@@ -1894,8 +1894,11 @@ public partial class MainWindow : Window
 
     private void OnAddComponentKind(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (sender is MenuItem { Tag: string kind } && ViewModel?.Selected is not null)
+        if (sender is MenuItem { Tag: string kind } && MenuEntity(sender) is { } node && ViewModel is not null)
+        {
+            ViewModel.Select(node.Entity);
             ViewModel.AddComponentTo(kind);
+        }
     }
     private void AddComponentToNode(object? sender, string kind)
     {

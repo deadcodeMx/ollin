@@ -250,16 +250,55 @@
                               <MenuItem Header="Restablecer" Tag="" Click="OnSetEntityColor" />
                             </MenuItem>
                             <MenuItem Header="Añadir componente">
-                              <MenuItem Header="Colisión (caja)" Click="OnAddCollider" />
-                              <MenuItem Header="Disparador (trigger)" Click="OnAddTrigger" />
-                              <MenuItem Header="Cuerpo físico" Click="OnAddRigidbody" />
-                              <MenuItem Header="Cámara" Click="OnAddCameraComponent" />
-                              <MenuItem Header="Animación" Click="OnAddAnimator" />
-                              <MenuItem Header="Tilemap" Click="OnAddTilemap" />
-                              <MenuItem Header="Audio" Click="OnAddAudio" />
-                              <MenuItem Header="Rotador" Click="OnAddRotator" />
-                              <MenuItem Header="Oscilador" Click="OnAddOscillator" />
-                              <MenuItem Header="Script" Click="OnAddScriptComponent" />
+                              <MenuItem Header="Movimiento">
+                                <MenuItem Header="Personaje 2D" Tag="character" Click="OnAddComponentKind" />
+                                <MenuItem Header="Cuerpo físico" Tag="rigidbody" Click="OnAddComponentKind" />
+                                <MenuItem Header="Cámara 2D" Tag="camera" Click="OnAddComponentKind" />
+                                <MenuItem Header="Rotador" Tag="rotator" Click="OnAddComponentKind" />
+                                <MenuItem Header="Oscilador" Tag="oscillator" Click="OnAddComponentKind" />
+                                <MenuItem Header="Plataforma móvil" Tag="movingplatform" Click="OnAddComponentKind" />
+                                <MenuItem Header="Muelle (joint)" Tag="springjoint" Click="OnAddComponentKind" />
+                                <MenuItem Header="Pin (joint)" Tag="pinjoint" Click="OnAddComponentKind" />
+                              </MenuItem>
+                              <MenuItem Header="Colisión">
+                                <MenuItem Header="Caja" Tag="collider" Click="OnAddComponentKind" />
+                                <MenuItem Header="Círculo" Tag="circle" Click="OnAddComponentKind" />
+                                <MenuItem Header="Cilindro" Tag="cylinder" Click="OnAddComponentKind" />
+                                <MenuItem Header="Cono" Tag="cone" Click="OnAddComponentKind" />
+                                <MenuItem Header="Cápsula" Tag="capsule" Click="OnAddComponentKind" />
+                                <MenuItem Header="Polígono" Tag="polygon" Click="OnAddComponentKind" />
+                                <MenuItem Header="Borde" Tag="edge" Click="OnAddComponentKind" />
+                                <MenuItem Header="Disparador" Tag="trigger" Click="OnAddComponentKind" />
+                                <MenuItem Header="Área 2D" Tag="area" Click="OnAddComponentKind" />
+                              </MenuItem>
+                              <MenuItem Header="Visual">
+                                <MenuItem Header="Sprite" Tag="sprite" Click="OnAddComponentKind" />
+                                <MenuItem Header="Animación" Tag="animator" Click="OnAddComponentKind" />
+                                <MenuItem Header="Máquina de animación" Tag="animfsm" Click="OnAddComponentKind" />
+                                <MenuItem Header="AnimationPlayer" Tag="animationplayer" Click="OnAddComponentKind" />
+                                <MenuItem Header="Blend tree" Tag="animationblendtree" Click="OnAddComponentKind" />
+                                <MenuItem Header="Luz 2D" Tag="light" Click="OnAddComponentKind" />
+                                <MenuItem Header="Partículas" Tag="particles" Click="OnAddComponentKind" />
+                                <MenuItem Header="Transición" Tag="transition" Click="OnAddComponentKind" />
+                                <MenuItem Header="Esqueleto 2D" Tag="skeleton" Click="OnAddComponentKind" />
+                                <MenuItem Header="Canvas de UI" Tag="uicanvas" Click="OnAddComponentKind" />
+                              </MenuItem>
+                              <MenuItem Header="Mundo">
+                                <MenuItem Header="Interactuable" Tag="interactable" Click="OnAddComponentKind" />
+                                <MenuItem Header="Tilemap" Tag="tilemap" Click="OnAddComponentKind" />
+                                <MenuItem Header="Audio" Tag="audio" Click="OnAddComponentKind" />
+                                <MenuItem Header="IA" Tag="ai" Click="OnAddComponentKind" />
+                                <MenuItem Header="Salud" Tag="health" Click="OnAddComponentKind" />
+                                <MenuItem Header="Arma" Tag="weapon" Click="OnAddComponentKind" />
+                                <MenuItem Header="Recogible" Tag="pickup" Click="OnAddComponentKind" />
+                                <MenuItem Header="Puerta" Tag="door" Click="OnAddComponentKind" />
+                                <MenuItem Header="Checkpoint" Tag="checkpoint2d" Click="OnAddComponentKind" />
+                              </MenuItem>
+                              <MenuItem Header="Scripts">
+                                <MenuItem Header="Script C#" Tag="script" Click="OnAddComponentKind" />
+                                <MenuItem Header="Script visual" Tag="visual" Click="OnAddComponentKind" />
+                                <MenuItem Header="Grafo de nodos" Tag="nodegraph" Click="OnAddComponentKind" />
+                              </MenuItem>
                             </MenuItem>
                             <MenuItem Header="Quitar componente">
                               <MenuItem Header="Sprite" Tag="sprite" Click="OnRemoveComponentFromMenu" />
