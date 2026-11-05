@@ -54,6 +54,8 @@ public enum GraphPinType
     Boolean,
     Text,
     Vector2,
+    List,
+    Struct,
     Any,
 }
 
@@ -82,11 +84,19 @@ public enum GraphLoopKind
     ForEach,
 }
 /// <summary>Variable definida por el usuario del grafo.</summary>
+public sealed class GraphStruct
+{
+    public string Name { get; set; } = "Struct";
+    public string FieldText { get; set; } = "X:Number=0";
+}
+
 public sealed class GraphVariable
 {
     public string Name { get; set; } = "variable";
     public GraphPinType Type { get; set; } = GraphPinType.Number;
     public string DefaultValue { get; set; } = "0";
+    public GraphPinType ElementType { get; set; } = GraphPinType.Number;
+    public string StructName { get; set; } = string.Empty;
 }
 public sealed class GraphDataLink
 {
@@ -248,6 +258,7 @@ public sealed class NodeGraph : Component, ITickable
     public List<GraphDataLink> DataLinks { get; set; } = new();
     public List<NodeGraph> Subgraphs { get; set; } = new();
     public List<GraphVariable> Variables { get; set; } = new();
+    public List<GraphStruct> Structs { get; set; } = new();
 
     [JsonIgnore]
     public NodeGraphHistory History { get; } = new();

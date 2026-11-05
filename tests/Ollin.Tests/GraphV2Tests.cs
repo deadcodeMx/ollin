@@ -627,4 +627,17 @@ public sealed class GraphV2Tests
         Assert.Contains("1 > 0", code);
         Assert.DoesNotContain("EvaluateBool(\"false\"", code);
     }
+
+    [Fact]
+    public void CompilaListasYStructs()
+    {
+        var graph = new NodeGraph();
+        graph.Structs.Add(new GraphStruct { Name = "Punto", FieldText = "X:Number=0,Y:Number=0" });
+        graph.Variables.Add(new GraphVariable { Name = "numeros", Type = GraphPinType.List, ElementType = GraphPinType.Number, DefaultValue = "[1,2,3]" });
+        graph.Variables.Add(new GraphVariable { Name = "punto", Type = GraphPinType.Struct, StructName = "Punto", DefaultValue = "X=1,Y=2" });
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("List<float> _var_numeros = new List<float> { 1f, 2f, 3f };", code);
+        Assert.Contains("Struct_Punto _var_punto = new Struct_Punto { X = 1, Y = 2 };", code);
+        AssertGeneratedCompiles(graph);
+    }
 }

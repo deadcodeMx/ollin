@@ -506,22 +506,45 @@ public sealed class NodeGraphWindow : Window
             list.Children.Add(new TextBlock { Text = "Estas variables se usan en acciones y expresiones. No hay condiciones preestablecidas.", FontSize = 11, TextWrapping = TextWrapping.Wrap, Foreground = new SolidColorBrush(Color.Parse("#A79FB5")) });
             foreach (var variable in _graph.Variables.ToList())
             {
-                var row = new Grid { ColumnDefinitions = new ColumnDefinitions("150,110,*,Auto"), Margin = new Thickness(0, 4, 0, 0) };
+                var row = new Grid { ColumnDefinitions = new ColumnDefinitions("130,95,95,*,Auto"), Margin = new Thickness(0, 4, 0, 0) };
                 var name = new TextBox { Text = variable.Name, Watermark = "nombre" };
                 name.LostFocus += (_, _) => { variable.Name = name.Text?.Trim() ?? "variable"; MarkChanged(); };
                 var type = new ComboBox { ItemsSource = Enum.GetNames<GraphPinType>(), SelectedItem = variable.Type.ToString(), Margin = new Thickness(4, 0) };
                 type.SelectionChanged += (_, _) => { if (type.SelectedItem is string value && Enum.TryParse<GraphPinType>(value, out var parsed)) { variable.Type = parsed; MarkChanged(); } };
+                var extra = new TextBox { Text = variable.Type == GraphPinType.Struct ? variable.StructName : variable.ElementType.ToString(), Watermark = "elem/struct" };
+                extra.LostFocus += (_, _) =>
+                {
+                    if (variable.Type == GraphPinType.Struct) variable.StructName = extra.Text?.Trim() ?? string.Empty;
+                    else if (Enum.TryParse<GraphPinType>(extra.Text?.Trim(), true, out var element)) variable.ElementType = element;
+                    MarkChanged();
+                };
                 var value = new TextBox { Text = variable.DefaultValue, Watermark = "valor inicial" };
                 value.LostFocus += (_, _) => { variable.DefaultValue = value.Text ?? "0"; MarkChanged(); };
                 var remove = new Button { Content = "✕", Margin = new Thickness(6, 0, 0, 0) };
                 remove.Click += (_, _) => { _graph.Variables.Remove(variable); MarkChanged(); Rebuild(); };
-                Grid.SetColumn(type, 1); Grid.SetColumn(value, 2); Grid.SetColumn(remove, 3);
-                row.Children.Add(name); row.Children.Add(type); row.Children.Add(value); row.Children.Add(remove);
+                Grid.SetColumn(type, 1); Grid.SetColumn(extra, 2); Grid.SetColumn(value, 3); Grid.SetColumn(remove, 4);
+                row.Children.Add(name); row.Children.Add(type); row.Children.Add(extra); row.Children.Add(value); row.Children.Add(remove);
                 list.Children.Add(row);
             }
             var add = new Button { Content = "Añadir variable", Classes = { "accent" }, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 10, 0, 0) };
             add.Click += (_, _) => { _graph.Variables.Add(new GraphVariable { Name = $"variable{_graph.Variables.Count + 1}" }); MarkChanged(); Rebuild(); };
             list.Children.Add(add);
+            list.Children.Add(new TextBlock { Text = "Structs", FontSize = 14, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")), Margin = new Thickness(0, 12, 0, 0) });
+            foreach (var structure in _graph.Structs.ToList())
+            {
+                var row = new Grid { ColumnDefinitions = new ColumnDefinitions("140,* ,Auto"), Margin = new Thickness(0, 4, 0, 0) };
+                var name = new TextBox { Text = structure.Name, Watermark = "nombre" };
+                name.LostFocus += (_, _) => { structure.Name = name.Text?.Trim() ?? "Struct"; MarkChanged(); };
+                var fields = new TextBox { Text = structure.FieldText, Watermark = "X:Number=0,Y:Number=0" };
+                fields.LostFocus += (_, _) => { structure.FieldText = fields.Text ?? string.Empty; MarkChanged(); };
+                var remove = new Button { Content = "✕", Margin = new Thickness(6, 0, 0, 0) };
+                remove.Click += (_, _) => { _graph.Structs.Remove(structure); MarkChanged(); Rebuild(); };
+                Grid.SetColumn(fields, 1); Grid.SetColumn(remove, 2);
+                row.Children.Add(name); row.Children.Add(fields); row.Children.Add(remove); list.Children.Add(row);
+            }
+            var addStruct = new Button { Content = "Añadir struct" };
+            addStruct.Click += (_, _) => { _graph.Structs.Add(new GraphStruct { Name = $"Struct{_graph.Structs.Count + 1}" }); MarkChanged(); Rebuild(); };
+            list.Children.Add(addStruct);
         }
         Rebuild();
         window.Content = new ScrollViewer { Content = list };
