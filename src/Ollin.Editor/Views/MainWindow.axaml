@@ -132,7 +132,7 @@
         </StackPanel>
 
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
-          <Button Classes="tool" Content="⟳ Scripts" Click="OnReloadScripts" ToolTip.Tip="Recompilar scripts" />
+          <Button Classes="tool" Content="Scripts" Click="OnOpenScriptsMenu" ToolTip.Tip="Abrir un script del proyecto" />
             <Button Classes="tool" Content="Grafo" Click="OnOpenGraph" ToolTip.Tip="Abrir el grafo de la selección" />
           <Button Classes="tool accent" Content="▶ Reproducir" Click="OnPlay"
                   IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
@@ -179,6 +179,39 @@
                           SelectionChanged="OnHierarchySelectionChanged"
                           DoubleTapped="OnHierarchyDoubleTapped"
                           Background="Transparent" Margin="4,0,4,4">
+                  <TreeView.ContextMenu>
+                    <ContextMenu>
+                      <MenuItem Header="Entidad vacía" Click="OnAddEmpty" />
+                      <MenuItem Header="Sprite 2D" Click="OnAddSprite" />
+                      <MenuItem Header="Hijo de la selección" Click="OnCreateChild" />
+                      <Separator />
+                      <MenuItem Header="Añadir componente">
+                        <MenuItem Header="Movimiento">
+                          <MenuItem Header="Personaje 2D" Tag="character" Click="OnAddComponentKind" />
+                          <MenuItem Header="Cuerpo físico" Tag="rigidbody" Click="OnAddComponentKind" />
+                          <MenuItem Header="Cámara 2D" Tag="camera" Click="OnAddComponentKind" />
+                          <MenuItem Header="Rotador" Tag="rotator" Click="OnAddComponentKind" />
+                        </MenuItem>
+                        <MenuItem Header="Colisión">
+                          <MenuItem Header="Caja" Tag="collider" Click="OnAddComponentKind" />
+                          <MenuItem Header="Círculo" Tag="circle" Click="OnAddComponentKind" />
+                          <MenuItem Header="Cilindro" Tag="cylinder" Click="OnAddComponentKind" />
+                          <MenuItem Header="Cono" Tag="cone" Click="OnAddComponentKind" />
+                          <MenuItem Header="Cápsula" Tag="capsule" Click="OnAddComponentKind" />
+                          <MenuItem Header="Disparador" Tag="trigger" Click="OnAddComponentKind" />
+                        </MenuItem>
+                        <MenuItem Header="Visual">
+                          <MenuItem Header="Sprite" Tag="sprite" Click="OnAddComponentKind" />
+                          <MenuItem Header="Animación" Tag="animator" Click="OnAddComponentKind" />
+                          <MenuItem Header="Luz 2D" Tag="light" Click="OnAddComponentKind" />
+                          <MenuItem Header="Partículas" Tag="particles" Click="OnAddComponentKind" />
+                        </MenuItem>
+                        <MenuItem Header="Scripts">
+                          <MenuItem Header="Script C#" Tag="script" Click="OnAddComponentKind" />
+                        </MenuItem>
+                      </MenuItem>
+                    </ContextMenu>
+                  </TreeView.ContextMenu>
                   <TreeView.ItemTemplate>
                     <TreeDataTemplate ItemsSource="{Binding Children}">
                       <StackPanel Orientation="Horizontal" Spacing="7" Background="Transparent">
@@ -193,6 +226,14 @@
                               <MenuItem Header="♥" Tag="♥" Click="OnSetEntitySymbol" />
                               <MenuItem Header="☠" Tag="☠" Click="OnSetEntitySymbol" />
                               <MenuItem Header="⚑" Tag="⚑" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="🚪" Tag="🚪" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="🔥" Tag="🔥" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="💀" Tag="💀" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="⭐" Tag="⭐" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="❤️" Tag="❤️" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="⚙️" Tag="⚙️" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="👾" Tag="👾" Click="OnSetEntitySymbol" />
+                              <MenuItem Header="📦" Tag="📦" Click="OnSetEntitySymbol" />
                               <MenuItem Header="Ninguno" Tag="" Click="OnSetEntitySymbol" />
                             </MenuItem>
                             <MenuItem Header="Color">
@@ -282,7 +323,7 @@
                   <ListBox.ItemTemplate>
                     <DataTemplate>
                       <Grid ColumnDefinitions="34,*" Margin="1,2">
-                        <Border Width="32" Height="32" CornerRadius="4" Background="#0F1218"
+                        <Border Width="32" Height="32" CornerRadius="4" Background="{DynamicResource Ollin.Panel}"
                                 BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1">
                           <Image Source="{Binding Thumbnail}" Stretch="Uniform" Margin="2" />
                         </Border>
@@ -388,10 +429,10 @@
                     <ItemsControl.ItemTemplate>
                       <DataTemplate>
                         <StackPanel Spacing="2" Margin="0,0,0,4">
-                          <TextBlock Text="{Binding Name}" FontSize="10.5" Foreground="#E6ECF7" />
+                          <TextBlock Text="{Binding Name}" FontSize="10.5" Foreground="{DynamicResource Ollin.Text}" />
                           <ProgressBar Minimum="0" Maximum="1" Value="{Binding Fraction}" Height="9"
                                        Foreground="{Binding Brush}" Background="#5510131A" />
-                          <TextBlock Text="{Binding ValueText}" FontSize="9.5" Foreground="#AAB4C4"
+                          <TextBlock Text="{Binding ValueText}" FontSize="9.5" Foreground="{DynamicResource Ollin.TextDim}"
                                      HorizontalAlignment="Right" />
                         </StackPanel>
                       </DataTemplate>
@@ -400,7 +441,7 @@
                   <ItemsControl ItemsSource="{Binding HudLabels}">
                     <ItemsControl.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Display}" FontSize="12" Foreground="#E6ECF7" TextWrapping="Wrap" MaxWidth="300" />
+                        <TextBlock Text="{Binding Display}" FontSize="12" Foreground="{DynamicResource Ollin.Text}" TextWrapping="Wrap" MaxWidth="300" />
                       </DataTemplate>
                     </ItemsControl.ItemTemplate>
                   </ItemsControl>
@@ -419,7 +460,7 @@
                 </ItemsControl>
 
                 <!-- Menú de pausa -->
-        <Border IsVisible="{Binding IsPlaying}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,18,0" Background="#AA0B0D12" BorderBrush="#40E9A23B" BorderThickness="1" CornerRadius="4" Padding="7,3" IsHitTestVisible="False" ZIndex="20"><TextBlock Text="{Binding ProfilerText}" FontSize="10.5" Foreground="#AAB4C4" /></Border>
+        <Border IsVisible="{Binding IsPlaying}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,18,0" Background="#AA0B0D12" BorderBrush="#40E9A23B" BorderThickness="1" CornerRadius="4" Padding="7,3" IsHitTestVisible="False" ZIndex="20"><TextBlock Text="{Binding ProfilerText}" FontSize="10.5" Foreground="{DynamicResource Ollin.TextDim}" /></Border>
         <ItemsControl IsVisible="{Binding IsUiVisible}" ItemsSource="{Binding UiElements}" ZIndex="7">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate><Grid /></ItemsPanelTemplate>
@@ -455,16 +496,16 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <Border Width="72" Height="72" Margin="3" CornerRadius="6" Background="#182030" BorderBrush="#2B3342" BorderThickness="1">
+                    <Border Width="72" Height="72" Margin="3" CornerRadius="6" Background="{DynamicResource Ollin.PanelAlt}" BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1">
                       <Grid>
-                        <TextBlock Text="{Binding Initial}" FontSize="26" FontWeight="Bold" Foreground="#F2A93B" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding QuantityText}" FontSize="10" Foreground="#E6ECF7" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
+                        <TextBlock Text="{Binding Initial}" FontSize="26" FontWeight="Bold" Foreground="{DynamicResource Ollin.Accent}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding QuantityText}" FontSize="10" Foreground="{DynamicResource Ollin.Text}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
                       </Grid>
                     </Border>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
-              <TextBlock Text="I para cerrar" FontSize="10" Foreground="#93A4BC" HorizontalAlignment="Right" />
+              <TextBlock Text="I para cerrar" FontSize="10" Foreground="{DynamicResource Ollin.TextDim}" HorizontalAlignment="Right" />
             </StackPanel>
           </Border>
         </Border>
@@ -517,7 +558,7 @@
               </Grid>
 
               <!-- Editor de scripts -->
-              <Grid IsVisible="{Binding IsScriptActive}" RowDefinitions="Auto,*" Background="#12151C">
+              <Grid IsVisible="{Binding IsScriptActive}" RowDefinitions="Auto,*" Background="{DynamicResource Ollin.Bg}">
                 <Border Padding="10,6" BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="0,0,0,1">
                   <Grid ColumnDefinitions="*,Auto">
                     <StackPanel Orientation="Horizontal" Spacing="8">
@@ -538,7 +579,7 @@
                 <ae:TextEditor Grid.Row="1" x:Name="ScriptEditor"
                                FontFamily="Consolas, Cascadia Mono, Courier New, monospace"
                                FontSize="13" Padding="10,8"
-                               Background="#0F1218" Foreground="#E6ECF7"
+                               Background="{DynamicResource Ollin.Panel}" Foreground="{DynamicResource Ollin.Text}"
                                ShowLineNumbers="True" WordWrap="False" />
               </Grid>
             </Grid>
@@ -656,6 +697,7 @@
                     </StackPanel>
                     <StackPanel IsVisible="{Binding Selected.HasCharacterBody}" Spacing="5">
                       <TextBlock Classes="section" Text="PERSONAJE" />
+                      <Button Classes="tool accent" Content="Crear script de personaje" Click="OnCreateCharacterScript" HorizontalAlignment="Stretch" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1">
                         <TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" />
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.CharacterMoveSpeed, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" />
@@ -968,7 +1010,7 @@
                     <Grid ColumnDefinitions="86,*" Margin="0,1">
                       <TextBlock Text="Vista" VerticalAlignment="Top" Margin="0,4,0,0" Classes="hint" />
                       <Border Grid.Column="1" Width="76" Height="76" HorizontalAlignment="Left"
-                              CornerRadius="4" Background="#0F1218" Padding="3"
+                              CornerRadius="4" Background="{DynamicResource Ollin.Panel}" Padding="3"
                               BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1">
                         <Image Source="{Binding Selected.TexturePreview}" Stretch="Uniform" />
                       </Border>

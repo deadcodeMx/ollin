@@ -2,6 +2,13 @@ using System.Numerics;
 
 namespace Ollin.Core.Model.Components;
 
+public enum SpriteShape2D
+{
+    Quad,
+    Cylinder,
+    Cone,
+}
+
 public enum BlendMode2D
 {
     Normal,
@@ -23,6 +30,7 @@ public sealed class SpriteRenderer : Component
     public Vector4 Tint { get; set; } = Vector4.One;
 
     public Vector2 Size { get; set; } = Vector2.One;
+    public SpriteShape2D Shape { get; set; } = SpriteShape2D.Quad;
 
     public Vector2 Origin { get; set; } = new(0.5f, 0.5f);
 

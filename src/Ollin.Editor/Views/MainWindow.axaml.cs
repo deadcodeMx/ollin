@@ -621,6 +621,28 @@ public partial class MainWindow : Window
 
     // ---------- Scripts ----------
 
+    private void OnOpenScriptsMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is not Button button || ViewModel is null) return;
+        var flyout = new MenuFlyout();
+        var scripts = ViewModel.GetProjectScripts();
+        foreach (var script in scripts)
+        {
+            var relative = Path.GetRelativePath(ViewModel.ProjectRoot, script).Replace('\\', '/');
+            var item = new MenuItem { Header = relative };
+            var fullPath = script;
+            item.Click += (_, _) => ViewModel.OpenScript(fullPath);
+            flyout.Items.Add(item);
+        }
+        if (scripts.Count == 0) flyout.Items.Add(new MenuItem { Header = "No hay scripts en el proyecto", IsEnabled = false });
+        flyout.Items.Add(new Separator());
+        var reload = new MenuItem { Header = "Recompilar scripts" };
+        reload.Click += (_, _) => ViewModel.ReloadScripts();
+        flyout.Items.Add(reload);
+        button.Flyout = flyout;
+        flyout.ShowAt(button);
+    }
+    private void OnCreateCharacterScript(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.CreateCharacterScriptForSelected();
     private void OnReloadScripts(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ReloadScripts();
 
     private async void OnCreateFolder(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -1615,6 +1637,8 @@ public partial class MainWindow : Window
         Add(collision, "Área 2D (trigger)", "area");
         Add(collision, "Círculo", "circle");
         Add(collision, "Cápsula", "capsule");
+        Add(collision, "Cilindro", "cylinder");
+        Add(collision, "Cono", "cone");
         Add(collision, "Polígono", "polygon");
         Add(collision, "Borde", "edge");
         Add(collision, "Disparador", "trigger");
@@ -1736,6 +1760,11 @@ public partial class MainWindow : Window
         }
     }
 
+    private void OnAddComponentKind(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is MenuItem { Tag: string kind } && ViewModel?.Selected is not null)
+            ViewModel.AddComponentTo(kind);
+    }
     private void AddComponentToNode(object? sender, string kind)
     {
         if (MenuEntity(sender) is { } node && ViewModel is not null)

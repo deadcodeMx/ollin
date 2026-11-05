@@ -315,6 +315,16 @@ public sealed partial class MainViewModel
                 entity.AddComponent(new CapsuleCollider2D());
                 break;
 
+            case "cylinder":
+                if (entity.HasComponent<Collider2D>()) { added = false; break; }
+                entity.AddComponent(new CylinderCollider2D());
+                break;
+
+            case "cone":
+                if (entity.HasComponent<Collider2D>()) { added = false; break; }
+                entity.AddComponent(new ConeCollider2D());
+                break;
+
             case "edge":
                 if (entity.HasComponent<Collider2D>()) { added = false; break; }
                 entity.AddComponent(new EdgeCollider2D());

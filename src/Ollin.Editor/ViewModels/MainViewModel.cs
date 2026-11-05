@@ -963,7 +963,56 @@ public sealed partial class MainViewModel : ObservableObject
         StatusMessage = $"Script {className} enlazado a {entity.Name}";
         Log.Info($"Script creado: {relative}", "Scripts");
     }
-    private static string SanitizeIdentifier(string name)
+
+    /// <summary>Crea un script C# enlazado a la entidad con un esqueleto de CharacterBody2D.</summary>
+    public void CreateCharacterScriptForSelected()
+    {
+        if (IsPlaying || Selected is null) return;
+        var entity = Selected.Entity;
+        var className = SanitizeIdentifier(entity.Name) + "Controller";
+        var folder = _scripts.ScriptsFolder;
+        Directory.CreateDirectory(folder);
+        var fullPath = Path.Combine(folder, className + ".cs");
+        if (File.Exists(fullPath))
+        {
+            StatusMessage = $"Ya existe {className}.cs";
+            return;
+        }
+
+        var source = $@"using System.Numerics;
+using Ollin.Core.Input;
+using Ollin.Core.Model.Components;
+using Ollin.Scripting;
+
+public sealed class {className} : OllinScript
+{{
+    private CharacterBody2D? _body;
+
+    public override void OnStart() => _body = GetComponent<CharacterBody2D>();
+
+    public override void OnUpdate(float deltaTime)
+    {{
+        if (_body is null) return;
+
+        // CharacterBody2D ya aplica movimiento y salto desde InputMap.
+        // Escribe aquí tu lógica: dash, ataque, animación, estados...
+        if (_body.IsGrounded && Input.GetKey(KeyCode.LeftShift))
+            _body.MoveSpeed = 10f;
+    }}
+}}
+";
+        File.WriteAllText(fullPath, source);
+        var component = entity.AddComponent(new ScriptComponent());
+        var relative = Path.GetRelativePath(ProjectRoot, fullPath).Replace('\\', '/');
+        component.ScriptPath = relative;
+        component.ClassName = className;
+        ReloadScripts();
+        RefreshProjectFiles();
+        Selected.RefreshAll();
+        MarkDirty();
+        StatusMessage = $"Script de personaje creado: {relative}";
+        Log.Info($"Script de personaje: {relative}", "Scripts");
+    }    private static string SanitizeIdentifier(string name)
     {
         var builder = new System.Text.StringBuilder();
         foreach (var character in name)

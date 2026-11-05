@@ -40,6 +40,8 @@ namespace Ollin.Core.Model;
 [JsonDerivedType(typeof(Components.BoxCollider), "collider")]
 [JsonDerivedType(typeof(Components.CircleCollider2D), "circlecollider")]
 [JsonDerivedType(typeof(Components.CapsuleCollider2D), "capsulecollider")]
+[JsonDerivedType(typeof(Components.CylinderCollider2D), "cylindercollider")]
+[JsonDerivedType(typeof(Components.ConeCollider2D), "conecollider")]
 [JsonDerivedType(typeof(Components.PolygonCollider2D), "polygoncollider")]
 [JsonDerivedType(typeof(Components.Area2D), "area")]
 [JsonDerivedType(typeof(Components.EdgeCollider2D), "edgecollider")]

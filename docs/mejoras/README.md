@@ -25,6 +25,7 @@ verificables.
 | Documento | Área | Prioridad | Estado |
 |---|---|---|---|
 | [GRAFO.md](GRAFO.md) | Grafo visual / codegen | P0 | Completado 6.278 |
+| [FEEDBACK-UI.md](FEEDBACK-UI.md) | Feedback de usuarios de la interfaz | P0 | En curso |
 | [SCRIPTING.md](SCRIPTING.md) | API de scripting | P1 | Activo |
 | [FISICA.md](FISICA.md) | Física 2D | P1 | Activo |
 | [UI.md](UI.md) | UI Canvas / editor | P1 | Activo |

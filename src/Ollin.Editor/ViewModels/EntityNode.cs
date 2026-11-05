@@ -1057,6 +1057,8 @@ public sealed class EntityNode : ObservableObject
     private Vector2 ColliderSize => Collider switch
     {
         BoxCollider box => box.Size,
+        CylinderCollider2D cylinder => cylinder.Size,
+        ConeCollider2D cone => new Vector2(cone.Radius * 2f, cone.Height),
         CapsuleCollider2D capsule => capsule.Size,
         Area2D area => area.Size,
         CircleCollider2D circle => new Vector2(circle.Radius * 2f),
@@ -1120,6 +1122,8 @@ public sealed class EntityNode : ObservableObject
         switch (Collider)
         {
             case BoxCollider box: box.Size = size; break;
+            case CylinderCollider2D cylinder: cylinder.Size = size; break;
+            case ConeCollider2D cone: cone.Radius = MathF.Max(0.01f, size.X * 0.5f); cone.Height = MathF.Max(0.01f, size.Y); break;
             case CapsuleCollider2D capsule: capsule.Size = size; break;
             case Area2D area: area.Size = size; break;
             case CircleCollider2D circle: circle.Radius = MathF.Max(0.01f, MathF.Max(size.X, size.Y) * 0.5f); break;
@@ -1394,6 +1398,16 @@ public sealed class EntityNode : ObservableObject
         }
     }
 
+    public int SpriteShapeIndex
+    {
+        get => (int)(Entity.GetComponent<SpriteRenderer>()?.Shape ?? SpriteShape2D.Quad);
+        set
+        {
+            if (Entity.GetComponent<SpriteRenderer>() is not { } sprite || (int)sprite.Shape == value) return;
+            sprite.Shape = (SpriteShape2D)Math.Clamp(value, 0, 2);
+            OnPropertyChanged(); _owner.MarkDirty(); _owner.RequestRedraw();
+        }
+    }
     public decimal SpriteWidth
     {
         get => (decimal)(Sprite?.Size.X ?? 1f);

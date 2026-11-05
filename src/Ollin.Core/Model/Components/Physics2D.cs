@@ -59,27 +59,16 @@ public sealed class BoxCollider : Collider2D
     public override Vector2[] GetWorldCorners(Matrix4x4 world)
     {
         var half = Size * 0.5f;
-        var radius = MathF.Max(0.01f, MathF.Min(half.X, half.Y));
-        var topY = half.Y - radius;
-        var bottomY = -half.Y + radius;
-        const int segments = 12;
-        var points = new List<Vector2>(segments * 4);
-
-        for (var i = 0; i <= segments; i++)
+        var points = new[]
         {
-            var angle = MathF.PI * i / segments;
-            points.Add(new Vector2(MathF.Cos(angle) * radius, topY + MathF.Sin(angle) * radius) + Offset);
-        }
-        for (var i = 0; i <= segments; i++)
-        {
-            var angle = MathF.PI + MathF.PI * i / segments;
-            points.Add(new Vector2(MathF.Cos(angle) * radius, bottomY + MathF.Sin(angle) * radius) + Offset);
-        }
-
+            new Vector2(-half.X, -half.Y) + Offset,
+            new Vector2(half.X, -half.Y) + Offset,
+            new Vector2(half.X, half.Y) + Offset,
+            new Vector2(-half.X, half.Y) + Offset,
+        };
         return points.Select(point => Vector2.Transform(point, world)).ToArray();
     }
 }
-
 /// <summary>Colisión circular exacta.</summary>
 public sealed class CircleCollider2D : Collider2D
 {
@@ -160,6 +149,80 @@ public sealed class CapsuleCollider2D : Collider2D
     }
 }
 
+/// <summary>Cilindro 2D: rectángulo con extremos curvos, para vistas laterales.</summary>
+public sealed class CylinderCollider2D : Collider2D
+{
+    public Vector2 Size { get; set; } = new(1f, 1f);
+
+    public override Component CloneFor(Entity newOwner) => new CylinderCollider2D
+    {
+        Enabled = Enabled,
+        Size = Size,
+        Offset = Offset,
+        IsTrigger = IsTrigger,
+        ShowInEditor = ShowInEditor,
+        Layer = Layer,
+        Mask = Mask,
+        IgnoreTags = new List<string>(IgnoreTags),
+        Bounciness = Bounciness,
+        Friction = Friction,
+        OneWay = OneWay,
+        Owner = newOwner,
+    };
+
+    public override Vector2[] GetWorldCorners(Matrix4x4 world)
+    {
+        var half = Size * 0.5f;
+        var radius = MathF.Max(0.01f, MathF.Min(half.X, half.Y));
+        var points = new List<Vector2>();
+        for (var i = 0; i <= 12; i++)
+        {
+            var angle = MathF.PI * i / 12f;
+            points.Add(new Vector2(MathF.Cos(angle) * radius, half.Y - radius + MathF.Sin(angle) * radius) + Offset);
+        }
+        for (var i = 0; i <= 12; i++)
+        {
+            var angle = MathF.PI + MathF.PI * i / 12f;
+            points.Add(new Vector2(MathF.Cos(angle) * radius, -half.Y + radius + MathF.Sin(angle) * radius) + Offset);
+        }
+        return points.Select(point => Vector2.Transform(point, world)).ToArray();
+    }
+}
+
+/// <summary>Cono 2D: triángulo con base y altura, útil para visión o ataques.</summary>
+public sealed class ConeCollider2D : Collider2D
+{
+    public float Radius { get; set; } = 1f;
+    public float Height { get; set; } = 1.5f;
+
+    public override Component CloneFor(Entity newOwner) => new ConeCollider2D
+    {
+        Enabled = Enabled,
+        Radius = Radius,
+        Height = Height,
+        Offset = Offset,
+        IsTrigger = IsTrigger,
+        ShowInEditor = ShowInEditor,
+        Layer = Layer,
+        Mask = Mask,
+        IgnoreTags = new List<string>(IgnoreTags),
+        Bounciness = Bounciness,
+        Friction = Friction,
+        OneWay = OneWay,
+        Owner = newOwner,
+    };
+
+    public override Vector2[] GetWorldCorners(Matrix4x4 world)
+    {
+        var points = new[]
+        {
+            new Vector2(-Radius, 0f) + Offset,
+            new Vector2(Radius, 0f) + Offset,
+            new Vector2(0f, Height) + Offset,
+        };
+        return points.Select(point => Vector2.Transform(point, world)).ToArray();
+    }
+}
 /// <summary>Polígono de colisión. La física usa su caja envolvente.</summary>
 public sealed class PolygonCollider2D : Collider2D
 {

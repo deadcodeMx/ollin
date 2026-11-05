@@ -478,6 +478,39 @@ public sealed class Renderer2D : IDisposable
         var u1 = (region.X + region.Z) / texture.Width; var v1 = (region.Y + region.W) / texture.Height;
         _batch.DrawQuad(texture, tl, tr, br, bl, new Vector2(u0, v0), new Vector2(u1, v0), new Vector2(u1, v1), new Vector2(u0, v1), Vector4.One);
     }
+    private void DrawSpriteShape(SpriteRenderer sprite, Matrix4x4 world, Vector4 tint)
+    {
+        var half = sprite.Size * 0.5f;
+        var points = new List<Vector2>();
+        if (sprite.Shape == SpriteShape2D.Cone)
+        {
+            points.Add(new Vector2(-half.X, -half.Y));
+            points.Add(new Vector2(half.X, -half.Y));
+            points.Add(new Vector2(0f, half.Y));
+        }
+        else
+        {
+            var radius = MathF.Max(0.01f, MathF.Min(half.X, half.Y));
+            for (var i = 0; i <= 12; i++)
+            {
+                var angle = MathF.PI * i / 12f;
+                points.Add(new Vector2(MathF.Cos(angle) * radius, half.Y - radius + MathF.Sin(angle) * radius));
+            }
+            for (var i = 0; i <= 12; i++)
+            {
+                var angle = MathF.PI + MathF.PI * i / 12f;
+                points.Add(new Vector2(MathF.Cos(angle) * radius, -half.Y + radius + MathF.Sin(angle) * radius));
+            }
+        }
+
+        var center = Vector2.Transform(new Vector2(0f, sprite.Shape == SpriteShape2D.Cone ? -half.Y / 3f : 0f), world);
+        for (var i = 0; i < points.Count; i++)
+        {
+            var a = Vector2.Transform(points[i], world);
+            var b = Vector2.Transform(points[(i + 1) % points.Count], world);
+            _batch.DrawTriangle(null, center, a, b, tint);
+        }
+    }
     private void DrawSprites(Scene scene, Vector2 cameraPosition)
     {
         _renderServer.Submit(scene);
