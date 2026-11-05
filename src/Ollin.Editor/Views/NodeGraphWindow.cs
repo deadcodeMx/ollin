@@ -1863,6 +1863,35 @@ public sealed class NodeGraphWindow : Window
         return button;
     }
 
+    private Button DataInFieldButton(GraphNode node)
+    {
+        var button = new Button { Content = "← Dato", FontSize = 10, Padding = new Thickness(6, 2) };
+        var flyout = new MenuFlyout();
+        foreach (var field in new[] { "amount", "threshold", "radius", "interval" })
+        {
+            var item = new MenuItem { Header = field };
+            var fieldName = field;
+            item.Click += (_, _) =>
+            {
+                if (_dataSource is null) return;
+                var type = _dataSource.ValueKind switch
+                {
+                    GraphValueKind.Integer => GraphPinType.Integer,
+                    GraphValueKind.Boolean => GraphPinType.Boolean,
+                    GraphValueKind.Text => GraphPinType.Text,
+                    GraphValueKind.Vector2 => GraphPinType.Vector2,
+                    _ => GraphPinType.Number,
+                };
+                _graph.AddDataLink(_dataSource.Id, node.Id, fieldName, type);
+                _dataSource = null;
+                MarkChanged();
+                Render();
+            };
+            flyout.Items.Add(item);
+        }
+        button.Flyout = flyout;
+        return button;
+    }
     private Button DataInButton(GraphNode node, string port = "amount")
     {
         var button = new Button { Content = "← Dato", FontSize = 10, Padding = new Thickness(6, 2) };
@@ -2462,6 +2491,12 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
 
             _inspector.Children.Add(Label("Cantidad"));
             _inspector.Children.Add(Number(node.Amount, 0, value => { node.Amount = (float)value; MarkChanged(); }));
+            _inspector.Children.Add(Label("Radio"));
+            _inspector.Children.Add(Number(node.Radius, 0, value => { node.Radius = (float)value; MarkChanged(); }));
+            _inspector.Children.Add(Label("Intervalo"));
+            _inspector.Children.Add(Number(node.Interval, 0, value => { node.Interval = (float)value; MarkChanged(); }));
+            _inspector.Children.Add(Label("Umbral"));
+            _inspector.Children.Add(Number(node.Threshold, 0, value => { node.Threshold = (float)value; MarkChanged(); }));
 
             if (node.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.ToggleFlag)
             {

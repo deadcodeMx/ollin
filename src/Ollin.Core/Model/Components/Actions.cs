@@ -50,7 +50,7 @@ public static class GameplayReflection
 /// <summary>Ejecutor genérico: no depende de componentes 3D ni de gameplay.</summary>
 public static class ActionExecutor
 {
-    public static void Execute(Scenes.Scene scene, ActionKind action, string targetName, string message, string playerTag = "player", float amount = 0f, string componentName = "", string propertyName = "", Vector2 vectorValue = default)
+    public static void Execute(Scenes.Scene scene, ActionKind action, string targetName, string message, string playerTag = "player", float amount = 0f, string componentName = "", string propertyName = "", Vector2 vectorValue = default, float radius = 0f, float interval = 0f, float threshold = 0f)
     {
         if (!string.IsNullOrWhiteSpace(message)) HudHost.ShowMessage(message, 2.5f);
         var target = string.IsNullOrWhiteSpace(targetName) ? null : scene.Find(targetName);

@@ -380,9 +380,9 @@ public static class GraphCodeGenerator
                 break;
             default:
                 if (VectorOf(graph, node) is { } vector)
-                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", 0f, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\", {vector});");
+                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", 0f, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\", {vector}, {node.Radius:0.###}f, {node.Interval:0.###}f, {node.Threshold:0.###}f);");
                 else
-                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", {ValueOf(graph, node)}, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\");");
+                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", {ValueOf(graph, node)}, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\", default, {node.Radius:0.###}f, {node.Interval:0.###}f, {node.Threshold:0.###}f);");
                 break;
         }
     }
@@ -400,6 +400,20 @@ public static class GraphCodeGenerator
         var parts = source.Value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length < 2) return null;
         return $"new Vector2({parts[0]}f, {parts[1]}f)";
+    }
+    private static string FieldNumber(NodeGraph graph, GraphNode node, string port, float fallback)
+    {
+        if (graph.DataLinkTo(node.Id, port) is { } link && graph.Find(link.SourceNodeId) is { Kind: GraphNodeKind.Value } value)
+        {
+            return value.ValueKind switch
+            {
+                GraphValueKind.Integer => int.TryParse(value.Value, out var integer) ? integer.ToString() : "0",
+                GraphValueKind.Boolean => value.Value is "true" or "True" or "1" ? "1" : "0",
+                GraphValueKind.Vector2 => "0",
+                _ => float.TryParse(value.Value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var number) ? number.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) : "0",
+            };
+        }
+        return fallback.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
     }
     private static string ValueOrExpression(NodeGraph graph, GraphNode node)
     {

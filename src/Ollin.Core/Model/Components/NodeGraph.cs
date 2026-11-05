@@ -463,7 +463,7 @@ public sealed class NodeGraph : Component, ITickable
                     }
                     else
                     {
-                        ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount, node.ComponentName, node.PropertyName, VectorValue(node) ?? default);
+                        ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount, node.ComponentName, node.PropertyName, VectorValue(node) ?? default, node.Radius, node.Interval, node.Threshold);
                     }
                 }
 
