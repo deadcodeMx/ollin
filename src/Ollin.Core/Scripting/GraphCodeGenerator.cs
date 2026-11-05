@@ -19,6 +19,10 @@ public static class GraphCodeGenerator
         sb.AppendLine("{");
         sb.AppendLine("    // Generado por Ollin desde el grafo visual. Edita libremente.");
         sb.AppendLine("    private readonly Dictionary<string, float> _vars = new();");
+        foreach (var variable in graph.Variables)
+        {
+            sb.AppendLine($"    private {TypeName(variable.Type.ToString())} {VarField(variable)} = {VarDefault(variable)};");
+        }
 
         var events = graph.Nodes.Where(n => n.Kind == GraphNodeKind.Event).ToList();
         foreach (var node in events)
@@ -160,6 +164,37 @@ public static class GraphCodeGenerator
         sb.AppendLine("    }");
     }
 
+    private static string RewriteVariables(NodeGraph graph, string expression)
+    {
+        var result = expression;
+        foreach (var variable in graph.Variables)
+        {
+            result = System.Text.RegularExpressions.Regex.Replace(
+                result,
+                $@"\b{System.Text.RegularExpressions.Regex.Escape(variable.Name)}\b",
+                VarField(variable));
+        }
+        return result;
+    }
+    private static GraphVariable? FindVariable(NodeGraph graph, string name) =>
+        graph.Variables.FirstOrDefault(variable => string.Equals(variable.Name, name, StringComparison.OrdinalIgnoreCase));
+
+    private static string VarField(GraphVariable variable) => "_var_" + SafeName(variable.Name, "variable");
+
+    private static string VarDefault(GraphVariable variable) => variable.Type switch
+    {
+        GraphPinType.Text => $"\"{Escape(variable.DefaultValue)}\"",
+        GraphPinType.Boolean => variable.DefaultValue is "true" or "True" or "1" ? "true" : "false",
+        GraphPinType.Integer => int.TryParse(variable.DefaultValue, out var integer) ? integer.ToString() : "0",
+        GraphPinType.Vector2 => VectorDefault(variable.DefaultValue),
+        _ => float.TryParse(variable.DefaultValue, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var number) ? number.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + "f" : "0f",
+    };
+
+    private static string VectorDefault(string value)
+    {
+        var parts = value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length >= 2 ? $"new Vector2({parts[0]}f, {parts[1]}f)" : "new Vector2(0f, 0f)";
+    }
     private static string LocalsInitializer(NodeGraph graph, GraphNode definition)
     {
         var entries = new List<string>();
@@ -172,7 +207,11 @@ public static class GraphCodeGenerator
         foreach (var variable in graph.Variables)
         {
             var name = SafeName(variable.Name, "variable");
-            if (used.Add(name)) entries.Add($"[\"{name}\"] = _vars.GetValueOrDefault(\"{name}\")");
+            if (used.Add(name))
+            {
+                var field = FindVariable(graph, variable.Name) is { } typed ? VarField(typed) : $"_vars.GetValueOrDefault(\"{name}\")";
+                entries.Add($"[\"{name}\"] = {field}");
+            }
         }
         return entries.Count == 0 ? string.Empty : $"var __locals = new Dictionary<string, object> {{ {string.Join(", ", entries)} }};";
     }
@@ -325,6 +364,8 @@ public static class GraphCodeGenerator
     private static void EmitAction(StringBuilder sb, NodeGraph graph, GraphNode node)
     {
         var target = string.IsNullOrWhiteSpace(node.TargetName) ? "null" : $"Find(\"{Escape(node.TargetName)}\")";
+        var variable = FindVariable(graph, node.VariableName);
+        var variableField = variable is null ? $"_vars[\"{Escape(node.VariableName)}\"]" : VarField(variable);
         switch (node.Action)
         {
             case ActionKind.Message:
@@ -340,13 +381,14 @@ public static class GraphCodeGenerator
                 sb.AppendLine($"        if ({target} is {{ }} point) Position = Scene!.GetWorldPosition(point);");
                 break;
             case ActionKind.SetVariable:
-                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = {ValueOrExpression(graph, node)};");
+                sb.AppendLine($"        {variableField} = {ValueOrExpression(graph, node)};");
                 break;
             case ActionKind.AddVariable:
-                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") + {ValueOrExpression(graph, node)};");
+                sb.AppendLine($"        {variableField} += {ValueOrExpression(graph, node)};");
                 break;
             case ActionKind.ToggleFlag:
-                sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") > 0f ? 0f : 1f;");
+                if (variable?.Type == GraphPinType.Boolean) sb.AppendLine($"        {variableField} = !{variableField};");
+                else sb.AppendLine($"        {variableField} = {variableField} > 0f ? 0f : 1f;");
                 break;
             default:
                 if (VectorOf(graph, node) is { } vector)
@@ -376,7 +418,7 @@ public static class GraphCodeGenerator
         if (graph.DataLinkTo(node.Id, "amount") is not null) return ValueOf(graph, node);
         return string.IsNullOrWhiteSpace(node.Expression)
             ? ValueOf(graph, node)
-            : node.Expression;
+            : RewriteVariables(graph, node.Expression);
     }
     private static string ValueOf(NodeGraph graph, GraphNode node)
     {

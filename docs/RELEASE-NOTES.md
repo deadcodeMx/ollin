@@ -1,16 +1,17 @@
-## Ollin Beta 6.246.0 — parámetros en expresiones
+## Ollin Beta 6.247.0 — variables tipadas
 
 ### Añadido
 
-- Contexto local de parámetros y variables.
-- Codegen `__locals` por función/evento.
-- Condiciones `x > 0` con parámetro.
-- Prueba de contexto.
+- Variables con tipo y valor inicial.
+- Campos `_var_*`.
+- Expresiones reescriben variables.
+- Contexto local tipado.
+- Prueba Number/Text.
 
 ### Verificación
 
 - Build 0 errores.
-- 150/150 pruebas.
-- Instalador 6.246.0.
+- 151/151 pruebas.
+- Instalador 6.247.0.
 
-## [6.245.0] — 2026-11-05
+## [6.246.0] — 2026-11-05

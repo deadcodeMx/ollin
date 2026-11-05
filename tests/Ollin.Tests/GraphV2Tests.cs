@@ -268,5 +268,23 @@ public sealed class GraphV2Tests
         Assert.Contains("Event_Sumar(float cantidad)", code);
         Assert.Contains("_vars[\"total\"] = cantidad + 1;", code);
     }
-}
 
+    [Fact]
+    public void LasVariablesTipadasSeInicializanYSeUsan()
+    {
+        var graph = new NodeGraph();
+        graph.Variables.Add(new GraphVariable { Name = "contador", Type = GraphPinType.Number, DefaultValue = "5" });
+        graph.Variables.Add(new GraphVariable { Name = "nombre", Type = GraphPinType.Text, DefaultValue = "hola" });
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "contador";
+        action.Expression = "contador + 1";
+        start.Next = action.Id;
+
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("private float _var_contador = 5f;", code);
+        Assert.Contains("private string _var_nombre = \"hola\";", code);
+        Assert.Contains("_var_contador = _var_contador + 1;", code);
+    }
+}
