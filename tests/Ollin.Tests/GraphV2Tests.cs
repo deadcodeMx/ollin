@@ -23,7 +23,8 @@ public sealed class GraphV2Tests
         Assert.Equal(target.Id, graph.DataLinkTo(target.Id, "value")!.TargetNodeId);
         Assert.Null(graph.AddDataLink(source.Id, target.Id, "value", GraphPinType.Text));
         Assert.True(NodeGraph.CanConnect(GraphPinType.Integer, GraphPinType.Number));
-        Assert.False(NodeGraph.CanConnect(GraphPinType.Text, GraphPinType.Number));
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Text, GraphPinType.Number));
+        Assert.False(NodeGraph.CanConnect(GraphPinType.Vector2, GraphPinType.Boolean));
 
         graph.RemoveNode(source.Id);
         Assert.Empty(graph.DataLinks);
@@ -102,4 +103,22 @@ public sealed class GraphV2Tests
         graph.RunFirst(scene, null);
         Assert.Equal(7, sprite.SortingOrder);
     }
+
+    [Fact]
+    public void LaMatrizDeAutoCastYLaMigracionFuncionan()
+    {
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Boolean, GraphPinType.Number));
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Number, GraphPinType.Text));
+        Assert.True(NodeGraph.CanConnect(GraphPinType.Text, GraphPinType.Integer));
+        Assert.False(NodeGraph.CanConnect(GraphPinType.Vector2, GraphPinType.Boolean));
+
+        var graph = new NodeGraph { Name = "", SchemaVersion = 0 };
+        var node = graph.AddNode(GraphNodeKind.Action, 0, 0);
+        graph.DataLinks.Add(new GraphDataLink { TargetNodeId = node.Id, TargetPort = "" });
+        graph.Migrate();
+        Assert.Equal(2, graph.SchemaVersion);
+        Assert.Equal("Grafo principal", graph.Name);
+        Assert.Equal("amount", graph.DataLinks[0].TargetPort);
+    }
 }
+

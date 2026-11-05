@@ -181,6 +181,7 @@ public sealed class GraphNode
 /// </summary>
 public sealed class NodeGraph : Component, ITickable
 {
+    public int SchemaVersion { get; set; } = 2;
     public string Name { get; set; } = "Grafo principal";
     [ThreadStatic] private static int _subgraphDepth;
     public const int MaxSubgraphDepth = 16;
@@ -223,6 +224,21 @@ public sealed class NodeGraph : Component, ITickable
 
     public GraphNode? Find(Guid? id) => id is null ? null : Nodes.FirstOrDefault(node => node.Id == id);
 
+    /// <summary>Migra grafos antiguos al esquema actual.</summary>
+    public void Migrate()
+    {
+        if (string.IsNullOrWhiteSpace(Name)) Name = "Grafo principal";
+        foreach (var subgraph in Subgraphs)
+        {
+            if (string.IsNullOrWhiteSpace(subgraph.Name)) subgraph.Name = $"Subgrafo {Subgraphs.IndexOf(subgraph) + 1}";
+            subgraph.Migrate();
+        }
+        foreach (var link in DataLinks)
+        {
+            if (string.IsNullOrWhiteSpace(link.TargetPort)) link.TargetPort = "amount";
+        }
+        SchemaVersion = 2;
+    }
     public NodeGraph AddSubgraph(string name)
     {
         var subgraph = new NodeGraph { };
@@ -250,9 +266,20 @@ public sealed class NodeGraph : Component, ITickable
     }
 
     /// <summary>Tipos compatibles con auto-cast básico.</summary>
-    public static bool CanConnect(GraphPinType source, GraphPinType target) =>
-        target is GraphPinType.Any || source is GraphPinType.Any || source == target ||
-        (source is GraphPinType.Integer or GraphPinType.Number && target is GraphPinType.Integer or GraphPinType.Number);
+    public static bool CanConnect(GraphPinType source, GraphPinType target)
+    {
+        if (target is GraphPinType.Any || source is GraphPinType.Any || source == target) return true;
+        return (source, target) switch
+        {
+            (GraphPinType.Integer, GraphPinType.Number) => true,
+            (GraphPinType.Number, GraphPinType.Integer) => true,
+            (GraphPinType.Boolean, GraphPinType.Number or GraphPinType.Integer) => true,
+            (GraphPinType.Number or GraphPinType.Integer, GraphPinType.Boolean) => true,
+            (GraphPinType.Text, GraphPinType.Number or GraphPinType.Integer) => true,
+            (GraphPinType.Number or GraphPinType.Integer or GraphPinType.Boolean, GraphPinType.Text) => true,
+            _ => false,
+        };
+    }
 
     public void RemoveDataLink(Guid linkId) => DataLinks.RemoveAll(link => link.Id == linkId);
 
