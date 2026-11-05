@@ -141,4 +141,29 @@ public sealed class GraphV2Tests
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("9", code);
     }
+
+    [Fact]
+    public void Vector2SeConectaYSeAsigna()
+    {
+        var scene = new Scene();
+        var owner = scene.Create("Grafo", Vector2.Zero);
+        var target = scene.Create("Objetivo", Vector2.Zero);
+        var sprite = target.AddComponent(new SpriteRenderer { Size = Vector2.One });
+        var graph = owner.AddComponent(new NodeGraph());
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var value = graph.AddNode(GraphNodeKind.Value, 0, 0);
+        value.ValueKind = GraphValueKind.Vector2;
+        value.Value = "2,3";
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetComponentProperty;
+        action.TargetName = "Objetivo";
+        action.ComponentName = "SpriteRenderer";
+        action.PropertyName = "Size";
+        start.Next = action.Id;
+        graph.AddDataLink(value.Id, action.Id, "Size", GraphPinType.Vector2);
+
+        graph.RunFirst(scene, null);
+        Assert.Equal(new Vector2(2f, 3f), sprite.Size);
+        Assert.Contains("new Vector2", GraphCodeGenerator.Generate(graph));
+    }
 }

@@ -1,16 +1,17 @@
-## Ollin Beta 6.229.0 — túneles tipados
+## Ollin Beta 6.230.0 — Vector2
 
 ### Añadido
 
-- Pin de datos de entrada/salida en túneles.
-- Tipo de túnel editable.
-- Propagación de datos por túnel en codegen.
-- Prueba de túnel tipado.
+- Nodo Valor Vector2.
+- Auto-cast Vector2 ↔ texto.
+- Asignación de propiedades Vector2 por dato.
+- Codegen `new Vector2(x, y)`.
+- Prueba de Vector2.
 
 ### Verificación
 
 - Build 0 errores.
-- 141/141 pruebas.
-- Instalador 6.229.0 instalado.
+- 142/142 pruebas.
+- Instalador 6.230.0 instalado.
 
-## [6.228.0] — 2026-11-05
+## [6.229.0] — 2026-11-05

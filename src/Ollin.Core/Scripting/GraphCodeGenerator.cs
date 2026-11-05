@@ -135,12 +135,30 @@ public static class GraphCodeGenerator
                 break;
             case ActionKind.ToggleFlag:
                 sb.AppendLine($"        _vars[\"{Escape(node.VariableName)}\"] = _vars.GetValueOrDefault(\"{Escape(node.VariableName)}\") > 0f ? 0f : 1f;");
-                break;            default:
-                sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", {ValueOf(graph, node)}, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\");");
+                break;
+            default:
+                if (VectorOf(graph, node) is { } vector)
+                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", 0f, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\", {vector});");
+                else
+                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", {ValueOf(graph, node)}, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\");");
                 break;
         }
     }
 
+    private static string? VectorOf(NodeGraph graph, GraphNode node)
+    {
+        var port = string.IsNullOrWhiteSpace(node.PropertyName) ? "amount" : node.PropertyName;
+        var link = graph.DataLinkTo(node.Id, port) ?? graph.DataLinkTo(node.Id, "amount");
+        if (link is null) return null;
+        var source = graph.Find(link.SourceNodeId);
+        var guard = 0;
+        while (source is { Kind: GraphNodeKind.TunnelOut } && guard++ < 16 && graph.DataLinkTo(source.Id, "value") is { } tunnelLink)
+            source = graph.Find(tunnelLink.SourceNodeId);
+        if (source is not { Kind: GraphNodeKind.Value, ValueKind: GraphValueKind.Vector2 }) return null;
+        var parts = source.Value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 2) return null;
+        return $"new Vector2({parts[0]}f, {parts[1]}f)";
+    }
     private static string ValueOf(NodeGraph graph, GraphNode node)
     {
         var port = node.Action == ActionKind.SetComponentProperty && !string.IsNullOrWhiteSpace(node.PropertyName) ? node.PropertyName : "amount";

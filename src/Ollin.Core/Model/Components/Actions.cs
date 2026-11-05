@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Reflection;
 using Ollin.Core.Hud;
 
@@ -49,7 +50,7 @@ public static class GameplayReflection
 /// <summary>Ejecutor genérico: no depende de componentes 3D ni de gameplay.</summary>
 public static class ActionExecutor
 {
-    public static void Execute(Scenes.Scene scene, ActionKind action, string targetName, string message, string playerTag = "player", float amount = 0f, string componentName = "", string propertyName = "")
+    public static void Execute(Scenes.Scene scene, ActionKind action, string targetName, string message, string playerTag = "player", float amount = 0f, string componentName = "", string propertyName = "", Vector2 vectorValue = default)
     {
         if (!string.IsNullOrWhiteSpace(message)) HudHost.ShowMessage(message, 2.5f);
         var target = string.IsNullOrWhiteSpace(targetName) ? null : scene.Find(targetName);
@@ -57,7 +58,7 @@ public static class ActionExecutor
         switch (action)
         {
             case ActionKind.SetComponentProperty when target is not null:
-                SetComponentProperty(target, componentName, propertyName, amount, message);
+                SetComponentProperty(target, componentName, propertyName, amount, message, vectorValue);
                 break;
             case ActionKind.Activate when target is not null:
                 target.Active = true;
@@ -103,7 +104,19 @@ public static class ActionExecutor
         var component = entity?.Components.FirstOrDefault(c => c.GetType().Name == componentName);
         component?.GetType().GetMethod(methodName)?.Invoke(component, args);
     }
-    private static void SetComponentProperty(Entity target, string componentName, string propertyName, float amount, string text)
+    private static Vector2 ParseVector(string text, float fallback)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return new Vector2(fallback, fallback);
+        var parts = text.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2 &&
+            float.TryParse(parts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var x) &&
+            float.TryParse(parts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var y))
+        {
+            return new Vector2(x, y);
+        }
+        return new Vector2(fallback, fallback);
+    }
+    private static void SetComponentProperty(Entity target, string componentName, string propertyName, float amount, string text, Vector2 vector)
     {
         var component = target.Components.FirstOrDefault(item => item.GetType().Name.Equals(componentName, StringComparison.OrdinalIgnoreCase));
         var property = component?.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
@@ -112,6 +125,7 @@ public static class ActionExecutor
         {
             object? value = property.PropertyType switch
             {
+                var type when type == typeof(Vector2) => vector != default ? vector : ParseVector(text, amount),
                 var type when type == typeof(float) => amount,
                 var type when type == typeof(double) => (double)amount,
                 var type when type == typeof(int) => (int)amount,

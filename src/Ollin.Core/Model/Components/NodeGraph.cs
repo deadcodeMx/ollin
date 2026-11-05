@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text.Json.Serialization;
 using Ollin.Core.Saves;
 using Ollin.Core.Scripting;
@@ -79,6 +80,7 @@ public enum GraphValueKind
     Integer,
     Boolean,
     Text,
+    Vector2,
 }
 public sealed class GraphNode
 {
@@ -258,7 +260,7 @@ public sealed class NodeGraph : Component, ITickable
     {
         if (Find(sourceNodeId) is null || Find(targetNodeId) is null) return null;
         var targetNode = Find(targetNodeId)!;
-        var expected = targetNode.Kind == GraphNodeKind.Action && targetNode.Action is ActionKind.SetVariable or ActionKind.AddVariable or ActionKind.SetComponentProperty ? GraphPinType.Number : GraphPinType.Any;
+        var expected = targetNode.Kind == GraphNodeKind.Action && targetNode.Action is ActionKind.SetVariable or ActionKind.AddVariable ? GraphPinType.Number : GraphPinType.Any;
         if (!CanConnect(type, expected)) return null;
         if (DataLinks.Any(link => link.TargetNodeId == targetNodeId && link.TargetPort == targetPort)) return null;
         var link = new GraphDataLink { SourceNodeId = sourceNodeId, TargetNodeId = targetNodeId, TargetPort = targetPort, Type = type };
@@ -278,6 +280,8 @@ public sealed class NodeGraph : Component, ITickable
             (GraphPinType.Number or GraphPinType.Integer, GraphPinType.Boolean) => true,
             (GraphPinType.Text, GraphPinType.Number or GraphPinType.Integer) => true,
             (GraphPinType.Number or GraphPinType.Integer or GraphPinType.Boolean, GraphPinType.Text) => true,
+            (GraphPinType.Vector2, GraphPinType.Text) => true,
+            (GraphPinType.Text, GraphPinType.Vector2) => true,
             _ => false,
         };
     }
@@ -423,7 +427,7 @@ public sealed class NodeGraph : Component, ITickable
                     }
                     else
                     {
-                        ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount, node.ComponentName, node.PropertyName);
+                        ActionExecutor.Execute(scene, node.Action, node.TargetName, node.Message, "player", node.Amount, node.ComponentName, node.PropertyName, VectorValue(node) ?? default);
                     }
                 }
 
@@ -505,6 +509,22 @@ public sealed class NodeGraph : Component, ITickable
         };
     }
 
+    private Vector2? VectorValue(GraphNode node)
+    {
+        var port = string.IsNullOrWhiteSpace(node.PropertyName) ? "amount" : node.PropertyName;
+        var link = DataLinkTo(node.Id, port) ?? DataLinkTo(node.Id, "amount");
+        if (link is null) return null;
+        var source = Find(link.SourceNodeId);
+        var guard = 0;
+        while (source is { Kind: GraphNodeKind.TunnelOut } && guard++ < 16 && DataLinkTo(source.Id, "value") is { } tunnel)
+            source = Find(tunnel.SourceNodeId);
+        if (source is not { Kind: GraphNodeKind.Value, ValueKind: GraphValueKind.Vector2 }) return null;
+        var parts = source.Value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 2) return null;
+        return float.TryParse(parts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var x) &&
+               float.TryParse(parts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var y)
+            ? new Vector2(x, y) : null;
+    }
     private bool RecordExecution(Guid nodeId, bool honorBreakpoint = true)
     {
         LastNodeId = nodeId;

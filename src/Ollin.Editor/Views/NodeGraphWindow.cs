@@ -196,6 +196,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Valor: entero", () => AddValue(GraphValueKind.Integer));
         AddPalette(panel, "Valor: booleano", () => AddValue(GraphValueKind.Boolean));
         AddPalette(panel, "Valor: texto", () => AddValue(GraphValueKind.Text));
+        AddPalette(panel, "Valor: Vector2", () => AddValue(GraphValueKind.Vector2));
         AddPalette(panel, "Subgrafo", () => AddNode(GraphNodeKind.Subgraph, GraphEventKind.OnStart));
         AddPalette(panel, "Túnel entrada", () => AddNode(GraphNodeKind.TunnelIn, GraphEventKind.OnStart));
         AddPalette(panel, "Túnel salida", () => AddNode(GraphNodeKind.TunnelOut, GraphEventKind.OnStart));
@@ -924,7 +925,7 @@ public sealed class NodeGraphWindow : Window
     {
         var node = _graph.AddNode(GraphNodeKind.Value, 70 + _graph.Nodes.Count * 24, 70 + _graph.Nodes.Count * 22);
         node.ValueKind = kind;
-        node.Value = kind switch { GraphValueKind.Boolean => "false", GraphValueKind.Text => "texto", GraphValueKind.Integer => "0", _ => "0" };
+        node.Value = kind switch { GraphValueKind.Boolean => "false", GraphValueKind.Text => "texto", GraphValueKind.Vector2 => "0,0", GraphValueKind.Integer => "0", _ => "0" };
         _selected = node; MarkChanged(); Render();
     }
 
