@@ -1921,6 +1921,8 @@ public sealed class NodeGraphWindow : Window
         {
             ActionKind.Message or ActionKind.Win => new[] { "message" },
             ActionKind.SetComponentProperty => new[] { "amount", "message", "component", "property" },
+            ActionKind.Checkpoint or ActionKind.OpenDoor => new[] { "radius" },
+            ActionKind.Spawn => new[] { "interval" },
             ActionKind.Damage or ActionKind.Heal => new[] { "amount" },
             _ => new[] { "amount" },
         };

@@ -70,13 +70,15 @@ public static class ActionExecutor
                 scene.SetWorldPosition(player, scene.GetWorldPosition(target));
                 break;
             case ActionKind.OpenDoor when target is not null:
-                SetProperty(target, "Door", "Open", true);
+                if (radius <= 0f || FindPlayer(scene, playerTag) is not { } doorPlayer || scene.WorldDistance(target, doorPlayer) <= radius)
+                    SetProperty(target, "Door", "Open", true);
                 break;
             case ActionKind.Spawn when target is not null:
-                Invoke(target, "Spawner3D", "SpawnNow");
+                if (CanSpawn(targetName, interval)) Invoke(target, "Spawner3D", "SpawnNow");
                 break;
             case ActionKind.Checkpoint when FindPlayer(scene, playerTag) is { } checkpointPlayer:
-                Invoke(checkpointPlayer, "Respawn", "SetCheckpoint", scene.GetWorldPosition(checkpointPlayer));
+                if (radius <= 0f || scene.WorldDistance(checkpointPlayer, target ?? checkpointPlayer) <= radius)
+                    Invoke(checkpointPlayer, "Respawn", "SetCheckpoint", scene.GetWorldPosition(checkpointPlayer));
                 break;
             case ActionKind.Damage when target is not null:
                 Invoke(target, "Health", "TakeDamage", amount > 0f ? amount : 20f);
@@ -115,6 +117,20 @@ public static class ActionExecutor
             return new Vector2(x, y);
         }
         return new Vector2(fallback, fallback);
+    }
+    private static readonly Dictionary<string, DateTime> LastSpawns = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly object SpawnLock = new();
+
+    private static bool CanSpawn(string targetName, float interval)
+    {
+        if (interval <= 0f) return true;
+        lock (SpawnLock)
+        {
+            var now = DateTime.UtcNow;
+            if (LastSpawns.TryGetValue(targetName, out var last) && (now - last).TotalSeconds < interval) return false;
+            LastSpawns[targetName] = now;
+            return true;
+        }
     }
     private static void SetComponentProperty(Entity target, string componentName, string propertyName, float amount, string text, Vector2 vector)
     {
