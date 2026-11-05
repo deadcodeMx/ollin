@@ -22,6 +22,7 @@ public enum ActionKind
     Damage,
     Heal,
     Instantiate,
+    Destroy,
 }
 
 /// <summary>Puente por reflexión para que el grafo y las expresiones no dependan de sistemas RPG.</summary>
@@ -58,6 +59,9 @@ public static class ActionExecutor
 
         switch (action)
         {
+            case ActionKind.Destroy when target is not null:
+                scene.Remove(target.Id);
+                break;
             case ActionKind.Instantiate:
             {
                 var name = string.IsNullOrWhiteSpace(message) ? "Entidad" : message;

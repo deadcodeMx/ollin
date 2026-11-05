@@ -651,4 +651,14 @@ public sealed class GraphV2Tests
         Assert.NotNull(copy);
         Assert.Equal(new Vector2(5, 6), copy!.Transform.Position);
     }
+
+    [Fact]
+    public void DestruirEntidadLaQuitaDeLaEscena()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Temporal", Vector2.Zero);
+        ActionExecutor.Execute(scene, ActionKind.Destroy, "Temporal", "");
+        Assert.Null(scene.Find("Temporal"));
+        Assert.DoesNotContain(entity, scene.Entities);
+    }
 }

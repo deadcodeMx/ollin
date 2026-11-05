@@ -1,16 +1,15 @@
-## Ollin Beta 6.268.0 — crear entidad
+## Ollin Beta 6.269.0 — destruir entidad
 
 ### Añadido
 
-- Acción Crear entidad.
-- Clonar plantilla.
-- Nombre y posición.
+- Acción Destruir entidad.
+- Acciones heredadas ocultas.
 - Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 172/172 pruebas.
-- Instalador 6.268.0.
+- 173/173 pruebas.
+- Instalador 6.269.0.
 
-## [6.267.0] — 2026-11-05
+## [6.268.0] — 2026-11-05
