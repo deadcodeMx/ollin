@@ -80,7 +80,10 @@ public sealed class NodeGraphWindow : Window
     {
         _viewModel = viewModel;
         _entity = entity;
-        _graph = entity.GetComponent<NodeGraph>()!;
+        _graphs = entity.GetComponents<NodeGraph>().ToList();
+        if (_graphs.Count == 0) _graphs.Add(entity.AddComponent(new NodeGraph()));
+        _graph = _graphs[0];
+        _graph.Migrate();
         _history = _graph.History;
         _historyKey = $"{_viewModel.ScenePath ?? "sin-guardar"}|{entity.Id}";
         _historyStore.Load(_historyKey, entity.Id, _history, _graph.Breakpoints);
@@ -1915,6 +1918,7 @@ public sealed class NodeGraphWindow : Window
 
         _dragX = node.X;
         _dragY = node.Y;
+        _dragStart = e.GetPosition(_canvas);
         e.Pointer.Capture(card);
         RenderInspector();
         e.Handled = true;

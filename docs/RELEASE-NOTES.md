@@ -1,16 +1,15 @@
-## Ollin Beta 6.226.0 — auto-cast y migración
+## Ollin Beta 6.227.0 — cierre grafo
 
-### Añadido
+### Corregido
 
-- Matriz de auto-cast número/entero/booleano/texto.
-- Migración de esquema v2.
-- Corrección de nombres/puertos vacíos.
-- Pruebas de auto-cast y migración.
+- Pestañas de grafos inicializadas correctamente.
+- Arrastre de nodos corregido.
+- Migración al abrir grafos.
 
 ### Verificación
 
 - Build 0 errores.
 - 140/140 pruebas.
-- Instalador 6.226.0 instalado.
+- Instalador 6.227.0 instalado.
 
-## [6.225.0] — 2026-11-05
+## [6.226.0] — 2026-11-05
