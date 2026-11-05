@@ -10,6 +10,7 @@ public static class GraphCodeGenerator
     {
         var sb = new StringBuilder();
         sb.AppendLine("using System;");
+        sb.AppendLine("using System.Collections.Generic;");
         sb.AppendLine("using System.Numerics;");
         sb.AppendLine("using Ollin.Core.Model.Components;");
         sb.AppendLine("using Ollin.Scripting;");
@@ -67,7 +68,7 @@ public static class GraphCodeGenerator
         return sb.ToString();
     }
 
-    private static void EmitInlineChain(StringBuilder sb, NodeGraph graph, GraphNode? node, int indent, bool insideFunction, HashSet<Guid>? visited = null)
+    private static void EmitInlineChain(StringBuilder sb, NodeGraph graph, GraphNode? node, int indent, bool insideFunction, bool useLocals = false, HashSet<Guid>? visited = null)
     {
         visited ??= new HashSet<Guid>();
         var guard = 0;
@@ -103,13 +104,13 @@ public static class GraphCodeGenerator
                     return;
                 case GraphNodeKind.Condition:
                 {
-                    sb.AppendLine($"{new string(' ', indent * 4)}if ({ConditionExpression(node)})");
+                    sb.AppendLine($"{new string(' ', indent * 4)}if ({ConditionExpression(node, useLocals)})");
                     sb.AppendLine($"{new string(' ', indent * 4)}{{");
-                    EmitInlineChain(sb, graph, node.TrueNext is { } t ? Find(graph, t) : null, indent + 1, insideFunction, visited);
+                    EmitInlineChain(sb, graph, node.TrueNext is { } t ? Find(graph, t) : null, indent + 1, insideFunction, useLocals, visited);
                     sb.AppendLine($"{new string(' ', indent * 4)}}}");
                     sb.AppendLine($"{new string(' ', indent * 4)}else");
                     sb.AppendLine($"{new string(' ', indent * 4)}{{");
-                    EmitInlineChain(sb, graph, node.FalseNext is { } f ? Find(graph, f) : null, indent + 1, insideFunction, visited);
+                    EmitInlineChain(sb, graph, node.FalseNext is { } f ? Find(graph, f) : null, indent + 1, insideFunction, useLocals, visited);
                     sb.AppendLine($"{new string(' ', indent * 4)}}}");
                     return;
                 }
@@ -124,7 +125,7 @@ public static class GraphCodeGenerator
                     };
                     sb.AppendLine($"{new string(' ', indent * 4)}{header}");
                     sb.AppendLine($"{new string(' ', indent * 4)}{{");
-                    EmitInlineChain(sb, graph, node.Next is { } b ? Find(graph, b) : null, indent + 1, insideFunction, visited);
+                    EmitInlineChain(sb, graph, node.Next is { } b ? Find(graph, b) : null, indent + 1, insideFunction, useLocals, visited);
                     sb.AppendLine($"{new string(' ', indent * 4)}}}");
                     if (node.LoopAfter is { } after) node = Find(graph, after); else return;
                     break;
@@ -138,11 +139,11 @@ public static class GraphCodeGenerator
         }
     }
 
-    private static string ConditionExpression(GraphNode node) => node.Condition switch
+    private static string ConditionExpression(GraphNode node, bool useLocals = false) => node.Condition switch
     {
         GraphConditionKind.HasItem => $"GameplayReflection.HasItem(Find(\"{Escape(node.TargetName)}\"), \"{Escape(node.ItemId)}\")",
         GraphConditionKind.HealthBelow => $"GameplayReflection.HealthBelow(Find(\"{Escape(node.TargetName)}\"), {node.Threshold:0.###}f)",
-        GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(node.Expression)}\", new ExpressionContext {{ Player = Find(\"player\") }})",
+        GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(node.Expression)}\", new ExpressionContext {{ Player = Find(\"player\"){(useLocals ? ", Locals = __locals" : string.Empty)} }})",
         _ => "true",
     };
     private static void EmitFunction(StringBuilder sb, NodeGraph graph, GraphNode node, HashSet<Guid> emitted)
@@ -152,11 +153,29 @@ public static class GraphCodeGenerator
         sb.AppendLine();
         sb.AppendLine($"    private {returnType} Func_{SafeName(node.FunctionName, "Funcion")}({parameters})");
         sb.AppendLine("    {");
-        EmitInlineChain(sb, graph, node.Next is { } bodyId ? Find(graph, bodyId) : null, 2, insideFunction: true);
+        var functionLocals = LocalsInitializer(graph, node);
+        if (functionLocals.Length > 0) sb.AppendLine("        " + functionLocals);
+        EmitInlineChain(sb, graph, node.Next is { } bodyId ? Find(graph, bodyId) : null, 2, insideFunction: true, useLocals: true);
         sb.AppendLine("        return default;");
         sb.AppendLine("    }");
     }
 
+    private static string LocalsInitializer(NodeGraph graph, GraphNode definition)
+    {
+        var entries = new List<string>();
+        var used = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var parameter in definition.ParameterText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+        {
+            var name = SafeName(parameter.Split(':', StringSplitOptions.TrimEntries)[0], "arg");
+            if (used.Add(name)) entries.Add($"[\"{name}\"] = {name}");
+        }
+        foreach (var variable in graph.Variables)
+        {
+            var name = SafeName(variable.Name, "variable");
+            if (used.Add(name)) entries.Add($"[\"{name}\"] = _vars.GetValueOrDefault(\"{name}\")");
+        }
+        return entries.Count == 0 ? string.Empty : $"var __locals = new Dictionary<string, object> {{ {string.Join(", ", entries)} }};";
+    }
     private static string ParameterList(GraphNode node) => string.Join(", ", node.ParameterText
         .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
         .Select(item =>
@@ -187,7 +206,9 @@ public static class GraphCodeGenerator
         sb.AppendLine();
         sb.AppendLine($"    private void {CustomMethodName(node)}({parameters})");
         sb.AppendLine("    {");
-        if (node.Next is { } body) EmitInlineChain(sb, graph, Find(graph, body), 2, insideFunction: false);
+        var eventLocals = LocalsInitializer(graph, node);
+        if (eventLocals.Length > 0) sb.AppendLine("        " + eventLocals);
+        if (node.Next is { } body) EmitInlineChain(sb, graph, Find(graph, body), 2, insideFunction: false, useLocals: true);
         sb.AppendLine("    }");
         if (node.Next is { } next) EmitChain(sb, graph, Find(graph, next), emitted);
     }

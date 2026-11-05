@@ -247,6 +247,8 @@ public sealed class GraphV2Tests
         Assert.Contains("if (", code);
         Assert.Contains("return 1;", code);
         Assert.Contains("return 0;", code);
+        Assert.Contains("[\"x\"] = x", code);
+        Assert.Contains("Locals = __locals", code);
     }
 
     [Fact]
@@ -267,3 +269,4 @@ public sealed class GraphV2Tests
         Assert.Contains("_vars[\"total\"] = cantidad + 1;", code);
     }
 }
+

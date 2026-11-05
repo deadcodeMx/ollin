@@ -11,6 +11,7 @@ public sealed class ExpressionContext
     public GameState? State { get; init; }
 
     public Entity? Player { get; init; }
+    public IReadOnlyDictionary<string, object>? Locals { get; init; }
 }
 
 /// <summary>
@@ -444,6 +445,8 @@ public static class ExpressionEvaluator
 
         private object Resolve(string name)
         {
+            if (_context.Locals is { } locals && locals.TryGetValue(name, out var local)) return local;
+
             var lower = name.ToLowerInvariant();
 
             if (lower is "vida" or "health")
