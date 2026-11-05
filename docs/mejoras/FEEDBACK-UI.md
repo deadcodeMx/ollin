@@ -47,7 +47,7 @@ de trabajo existente.
 4. Scripts abre la lista del proyecto.
 5. Tema claro legible en inspector, jerarquía y toolbar.
 6. SpriteRenderer dibuja las tres formas.
-7. Vista de cámara con selector, ocultar/mostrar y ventana independiente.
+7. Vista de cámara con selector, ocultar/mostrar, ventana independiente y render limpio sin gizmos, rejilla ni ayudas.
 8. Gizmos separados de mover, rotar y escalar.
 9. Panel de archivos con cuadrícula, breadcrumb y búsqueda.
 10. Drag-and-drop de texturas/scripts al inspector.
