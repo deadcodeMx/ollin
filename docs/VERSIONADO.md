@@ -4,7 +4,7 @@
 
 - Última versión legacy: **6.278.0**.
 - Esa versión queda congelada como cierre del ciclo 6.x.
-- El próximo ciclo público será **7.0.0-beta.1**.
+- La beta consolidada actual es **7.0.0-beta.6**.
 - No se publica una release por cada cambio pequeño.
 
 ## Esquema
@@ -42,7 +42,7 @@ Ejemplos:
 7. Se conservan como máximo las **5 releases más recientes**.
 8. No se publica una release por cada corrección: se acumulan en una ventana.
 9. Los builds intermedios son locales; solo se publica el cierre de ventana.
-8. Las releases antiguas se eliminan de GitHub; el historial resumido queda en `CHANGELOG.md`.
+10. Las releases antiguas se eliminan de GitHub; el historial resumido queda en `CHANGELOG.md`.
 
 ## Ventanas de release
 
@@ -67,7 +67,7 @@ Ejemplos:
 
 ## Limpieza aplicada
 
-El **2026-11-05** se conservaron las 10 releases/tags más recientes:
+El **2026-11-05** se consolidaron las betas 7.0.0-beta.1 a beta.5 en **7.0.0-beta.6**. Quedaron 5 releases/tags:
 
 ```text
 v6.275.0 … v6.278.0
@@ -77,11 +77,11 @@ v7.0.0-beta.6
 Se eliminaron **246 releases** y **167 tags**. El corte se debe a que se habían
 acumulado 256 releases y más de 160 tags, muchas de un solo cambio.
 
-La versión de desarrollo actual es **7.0.0-beta.1**; todavía no tiene release público.
+La versión de desarrollo actual es **7.0.0-beta.6**; las correcciones posteriores (tema claro) son locales y se publicarán en la próxima ventana.
 
 ## Próximo ciclo
 
-1. Cerrar 6.278.0 como legacy.
-2. Abrir `7.0.0-beta.1` con el siguiente bloque funcional.
-3. Publicar solo cuando build, pruebas e instalador estén verificados.
-4. Actualizar `CHANGELOG.md` con el resumen del bloque, no con cada commit.
+1. Cerrar el feedback restante de interfaz en local.
+2. Ejecutar build y 186 pruebas.
+3. Publicar una sola vez como `7.0.0-beta.7` o `rc.1`.
+4. No crear releases intermedias por correcciones.
