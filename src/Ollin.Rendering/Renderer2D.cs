@@ -8,6 +8,14 @@ using Silk.NET.OpenGLES;
 
 namespace Ollin.Rendering;
 
+public enum GizmoMode
+{
+    All,
+    Move,
+    Rotate,
+    Scale,
+}
+
 /// <summary>
 /// Renderer 2D del editor: fondo, cuadrícula, sprites ordenados y resaltado de la
 /// selección. Todo el estado de GPU vive aquí; el control de UI solo le pasa el
@@ -153,7 +161,7 @@ public sealed class Renderer2D : IDisposable
     }
 
     public void RenderFrame(Scene scene, Vector2 cameraPosition, Camera2D camera, int width, int height,
-        Guid? selectedEntityId, bool showGrid, bool showHelpers = true, IReadOnlyCollection<Guid>? selectedEntityIds = null)
+        Guid? selectedEntityId, bool showGrid, bool showHelpers = true, IReadOnlyCollection<Guid>? selectedEntityIds = null, GizmoMode gizmoMode = GizmoMode.All)
     {
         if (width <= 0 || height <= 0)
         {
@@ -645,7 +653,7 @@ public sealed class Renderer2D : IDisposable
             }
         }
     }
-    private void DrawSelection(Scene scene, Guid entityId, Camera2D camera, int viewportHeight)
+    private void DrawSelection(Scene scene, Guid entityId, Camera2D camera, int viewportHeight, GizmoMode gizmoMode = GizmoMode.All)
     {
         var entity = scene.Find(entityId);
         if (entity is null)

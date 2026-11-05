@@ -17,6 +17,7 @@ using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Ollin.Core.Assets;
 using Ollin.Core.Model.Components;
+using Ollin.Rendering;
 using Ollin.Core.Input;
 using Ollin.Editor.Controls;
 using Ollin.Editor.ViewModels;
@@ -626,6 +627,15 @@ public partial class MainWindow : Window
 
     // ---------- Scripts ----------
 
+    private void OnGizmoMove(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => SetGizmoMode(GizmoMode.Move);
+    private void OnGizmoRotate(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => SetGizmoMode(GizmoMode.Rotate);
+    private void OnGizmoScale(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => SetGizmoMode(GizmoMode.Scale);
+
+    private void SetGizmoMode(GizmoMode mode)
+    {
+        ViewportHost.Viewport.GizmoMode = mode;
+        if (ViewModel is { } vm) vm.StatusMessage = $"Gizmo: {mode}";
+    }
     private void OnToggleCameraPreview(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         CameraPreviewPanel.IsVisible = !CameraPreviewPanel.IsVisible;
@@ -2237,6 +2247,12 @@ public partial class MainWindow : Window
         if (ShortcutMatches("newscene", "Ctrl+N", e)) { vm.NewScene(); e.Handled = true; return; }
         if (ShortcutMatches("play", "F5", e)) { vm.TogglePlay(); e.Handled = true; return; }
         if (ShortcutMatches("pause", "F6", e)) { vm.TogglePause(); e.Handled = true; return; }
+        if (!vm.IsPlaying && e.Key is Key.W or Key.E or Key.R)
+        {
+            SetGizmoMode(e.Key switch { Key.W => GizmoMode.Move, Key.E => GizmoMode.Rotate, _ => GizmoMode.Scale });
+            e.Handled = true;
+            return;
+        }
         if (e.Key == Key.Escape) { vm.Selected = null; e.Handled = true; return; }
         base.OnKeyDown(e);
     }

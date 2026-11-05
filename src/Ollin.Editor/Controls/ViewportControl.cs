@@ -54,6 +54,7 @@ public sealed class ViewportControl : OpenGlControlBase
     /// <summary>Renderiza la vista de la primera cámara 2D activa, sin gizmos ni rejilla.</summary>
     public bool CameraPreview { get; set; }
     public Guid? PreviewCameraId { get; set; }
+    public GizmoMode GizmoMode { get; set; } = GizmoMode.All;
 
     public bool Snap2D { get; set; }
 
@@ -224,7 +225,8 @@ public sealed class ViewportControl : OpenGlControlBase
                 height,
                 _viewModel.Selected?.Id,
                 _viewModel.ShowGrid,
-                selectedEntityIds: _viewModel.SelectionIds);
+                selectedEntityIds: _viewModel.SelectionIds,
+                gizmoMode: GizmoMode);
 
             RenderSubViewports(width, height);
             _renderer.ResetViewport(width, height);

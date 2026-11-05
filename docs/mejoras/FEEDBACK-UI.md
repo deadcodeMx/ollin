@@ -18,7 +18,7 @@ de trabajo existente.
 | 3 | Segundo viewport con la cámara | **Hecho**: selector, ocultar/mostrar, ventana independiente y placeholder |
 | 4 | Clic derecho en jerarquía vacía | **Hecho**: menú contextual con entidades y componentes por categoría |
 | 5 | Añadir componente desde inspector | **Verificado**: el botón ya abre la lista por categorías |
-| 6 | Gizmos de mover/rotar/escalar | Pendiente: modos tipo Godot |
+| 6 | Gizmos de mover/rotar/escalar | **Hecho**: modos con botones y atajos W/E/R |
 | 7 | Panel de archivos estilo Unity | Pendiente |
 | 8 | Traducción al inglés | Pendiente: español oficial, inglés opcional |
 | 9 | Emojis en jerarquía | **Hecho**: símbolos y emojis |
@@ -52,6 +52,7 @@ de trabajo existente.
 5. Tema claro legible en inspector, jerarquía y toolbar.
 6. SpriteRenderer dibuja las tres formas.
 7. Vista de cámara con selector, ocultar/mostrar y ventana independiente.
+8. Gizmos separados de mover, rotar y escalar.
 
 ## Pruebas
 

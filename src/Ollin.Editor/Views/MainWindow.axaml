@@ -135,6 +135,9 @@
           <Button Classes="tool" Content="Scripts" Click="OnOpenScriptsMenu" ToolTip.Tip="Abrir un script del proyecto" />
             <Button Classes="tool" Content="Grafo" Click="OnOpenGraph" ToolTip.Tip="Abrir el grafo de la selección" />
           <Button Classes="tool" Content="🎥 Cámara" Click="OnToggleCameraPreview" ToolTip.Tip="Mostrar u ocultar la vista de cámara" />
+          <Button Classes="tool" Content="Mover" Click="OnGizmoMove" ToolTip.Tip="Gizmo de mover" />
+          <Button Classes="tool" Content="Rotar" Click="OnGizmoRotate" ToolTip.Tip="Gizmo de rotar" />
+          <Button Classes="tool" Content="Escalar" Click="OnGizmoScale" ToolTip.Tip="Gizmo de escalar" />
           <Button Classes="tool accent" Content="▶ Reproducir" Click="OnPlay"
                   IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
           <Button Classes="tool" Content="⏸ Pausa" Click="OnPause"
