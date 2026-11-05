@@ -12,6 +12,8 @@ public enum GraphNodeKind
     Action,
     Value,
     Subgraph,
+    TunnelIn,
+    TunnelOut,
     Reroute,
     Comment,
     Group,

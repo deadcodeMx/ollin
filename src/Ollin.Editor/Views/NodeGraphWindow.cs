@@ -12,6 +12,7 @@ using Ollin.Editor.ViewModels;
 using Ollin.Editor.Controls;
 using Ollin.Core.Scripting;
 using System.IO;
+using System.Reflection;
 using Avalonia.Automation;
 using Avalonia.Automation.Peers;
 
@@ -193,6 +194,8 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Valor: booleano", () => AddValue(GraphValueKind.Boolean));
         AddPalette(panel, "Valor: texto", () => AddValue(GraphValueKind.Text));
         AddPalette(panel, "Subgrafo", () => AddNode(GraphNodeKind.Subgraph, GraphEventKind.OnStart));
+        AddPalette(panel, "Túnel entrada", () => AddNode(GraphNodeKind.TunnelIn, GraphEventKind.OnStart));
+        AddPalette(panel, "Túnel salida", () => AddNode(GraphNodeKind.TunnelOut, GraphEventKind.OnStart));
         AddPalette(panel, "Reroute (paso)", () => AddNode(GraphNodeKind.Reroute, GraphEventKind.OnStart));
         AddPalette(panel, "Comentario", AddComment);
         AddPalette(panel, "Grupo", AddGroup);
@@ -2328,6 +2331,8 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         GraphNodeKind.Reroute => "REROUTE",
         GraphNodeKind.Value => "VALOR",
         GraphNodeKind.Subgraph => "SUBRAFO",
+        GraphNodeKind.TunnelIn => "TÚNEL ENTRADA",
+        GraphNodeKind.TunnelOut => "TÚNEL SALIDA",
         GraphNodeKind.Group => "GRUPO",
         _ => "ACCIÓN",
     };
