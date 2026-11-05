@@ -51,7 +51,7 @@ Ejemplos:
 
 ## Assets por release
 
-- Windows: `Ollin-Setup-<version>-beta.exe`.
+- Windows: `Ollin-Setup-<version>.exe` (si la versión ya incluye `-beta.N`, no se duplica el sufijo).
 - Linux: paquete `.tar.gz` cuando esté validado.
 - `SHA256SUMS.txt`.
 - Notas de release.
