@@ -16,6 +16,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Ollin.Core.Assets;
+using Ollin.Core.Model.Components;
 using Ollin.Core.Input;
 using Ollin.Editor.Controls;
 using Ollin.Editor.ViewModels;
@@ -31,6 +32,7 @@ public partial class MainWindow : Window
 
     private bool _loadingScript;
     private bool _syncingHierarchy;
+    private bool _syncingCameras;
     private bool _inspectorConsolidated;
     private ComponentInspectorView? _componentInspector;
     private readonly List<(Control Control, string Property)> _physicsSections = new();
@@ -412,6 +414,7 @@ public partial class MainWindow : Window
         ViewportHost.Viewport.ViewModel = vm;
         CameraPreview.ViewModel = vm;
         CameraPreview.CameraPreview = true;
+        RefreshCameraPreviewCameras();
         _componentInspector = new ComponentInspectorView(vm);
         Inspector2DHost.Content = _componentInspector;
         _componentInspector.ShowEntity(vm.Selected?.Entity);
@@ -623,6 +626,55 @@ public partial class MainWindow : Window
 
     // ---------- Scripts ----------
 
+    private void OnToggleCameraPreview(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        CameraPreviewPanel.IsVisible = !CameraPreviewPanel.IsVisible;
+    }
+
+    private void OnRefreshCameraPreview(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => RefreshCameraPreviewCameras();
+
+    private void OnCameraPreviewSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_syncingCameras || CameraPreviewSelector.SelectedItem is not CameraChoice choice) return;
+        CameraPreview.PreviewCameraId = choice.Id;
+    }
+
+    private void OnPopOutCameraPreview(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is not { } vm) return;
+        var preview = new ViewportControl { ViewModel = vm, CameraPreview = true, PreviewCameraId = CameraPreview.PreviewCameraId };
+        var window = new Window
+        {
+            Title = "Vista de cámara",
+            Width = 640,
+            Height = 400,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Content = preview,
+        };
+        window.Show(this);
+    }
+
+    private void RefreshCameraPreviewCameras()
+    {
+        if (ViewModel is null) return;
+        _syncingCameras = true;
+        var cameras = ViewModel.Scene.Entities
+            .Where(entity => entity.Active && entity.GetComponent<Camera2D>() is { Enabled: true })
+            .Select(entity => new CameraChoice(entity.Name, entity.Id))
+            .ToList();
+        CameraPreviewSelector.ItemsSource = cameras;
+        CameraPreviewSelector.IsEnabled = cameras.Count > 0;
+        CameraPreviewEmpty.IsVisible = cameras.Count == 0;
+        var selected = cameras.FirstOrDefault(choice => choice.Id == CameraPreview.PreviewCameraId) ?? cameras.FirstOrDefault();
+        CameraPreviewSelector.SelectedItem = selected;
+        CameraPreview.PreviewCameraId = selected?.Id;
+        _syncingCameras = false;
+    }
+
+    private sealed record CameraChoice(string Name, Guid Id)
+    {
+        public override string ToString() => Name;
+    }
     private void OnOpenScriptsMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (sender is not Button button || ViewModel is null) return;

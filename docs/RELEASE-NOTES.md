@@ -1,24 +1,24 @@
-# Ollin 7.0.0-beta.2 — vista de cámara
-
-Segunda beta del ciclo 7.
+# Ollin 7.0.0-beta.3 — vista de cámara completa
 
 ## Añadido
 
-- Vista de cámara en vivo, superpuesta al viewport.
-- Renderiza la primera cámara 2D activa, sin rejilla ni gizmos.
-- Se actualiza con el viewport y no recibe clic.
+- Selector de cámara 2D.
+- Botón para mostrar u ocultar la vista de cámara.
+- Placeholder cuando no hay cámara activa.
+- Ventana independiente y redimensionable para la vista de cámara.
+- Actualización manual de la lista de cámaras.
 
 ## Feedback cubierto
 
-- Punto 3: segundo viewport con la cámara.
+- Punto 3: segundo viewport con la cámara, sin las limitaciones anteriores.
 
 ## Verificación
 
 - Build: 0 errores.
 - Pruebas: 186/186.
-- Instalador: `Ollin-Setup-7.0.0-beta.2.exe`.
+- Instalador: `Ollin-Setup-7.0.0-beta.3.exe`.
 
-## Pendiente
+## Pendiente general
 
 - Gizmos mover/rotar/escalar.
 - Panel de archivos estilo Unity.

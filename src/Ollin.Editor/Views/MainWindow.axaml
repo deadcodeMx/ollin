@@ -134,6 +134,7 @@
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
           <Button Classes="tool" Content="Scripts" Click="OnOpenScriptsMenu" ToolTip.Tip="Abrir un script del proyecto" />
             <Button Classes="tool" Content="Grafo" Click="OnOpenGraph" ToolTip.Tip="Abrir el grafo de la selección" />
+          <Button Classes="tool" Content="🎥 Cámara" Click="OnToggleCameraPreview" ToolTip.Tip="Mostrar u ocultar la vista de cámara" />
           <Button Classes="tool accent" Content="▶ Reproducir" Click="OnPlay"
                   IsEnabled="{Binding !IsPlaying}" ToolTip.Tip="Reproducir la escena (F5)" />
           <Button Classes="tool" Content="⏸ Pausa" Click="OnPause"
@@ -375,13 +376,22 @@
               <!-- Viewport -->
               <Grid IsVisible="{Binding IsSceneActive}">
                 <controls:ViewportSurface x:Name="ViewportHost" />
-                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="300" Height="205"
+                <Border x:Name="CameraPreviewPanel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="340" Height="230"
                         Margin="0,0,12,12" Background="{DynamicResource Ollin.Panel}"
-                        BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1" CornerRadius="7"
-                        IsHitTestVisible="False">
+                        BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1" CornerRadius="7">
                   <Grid RowDefinitions="Auto,*">
-                    <TextBlock Text="VISTA DE CÁMARA" Classes="section" Margin="8,6,8,4" />
-                    <controls:ViewportControl x:Name="CameraPreview" Grid.Row="1" IsHitTestVisible="False" />
+                    <Grid ColumnDefinitions="*,120,Auto,Auto" Margin="8,5,6,3">
+                      <TextBlock Text="VISTA DE CÁMARA" Classes="section" VerticalAlignment="Center" />
+                      <ComboBox x:Name="CameraPreviewSelector" Grid.Column="1" FontSize="10.5" MinWidth="100"
+                                SelectionChanged="OnCameraPreviewSelectionChanged" ToolTip.Tip="Cámara a mostrar" />
+                      <Button Grid.Column="2" Classes="tool" Content="↻" Padding="6,2" Click="OnRefreshCameraPreview" ToolTip.Tip="Actualizar cámaras" />
+                      <Button Grid.Column="3" Classes="tool" Content="⧉" Padding="6,2" Click="OnPopOutCameraPreview" ToolTip.Tip="Abrir en ventana" />
+                    </Grid>
+                    <Grid Grid.Row="1">
+                      <controls:ViewportControl x:Name="CameraPreview" IsHitTestVisible="False" />
+                      <TextBlock x:Name="CameraPreviewEmpty" Text="Sin cámara 2D activa" HorizontalAlignment="Center"
+                                 VerticalAlignment="Center" Foreground="{DynamicResource Ollin.TextDim}" />
+                    </Grid>
                   </Grid>
                 </Border>
                 <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"
