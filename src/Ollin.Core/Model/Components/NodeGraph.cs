@@ -138,6 +138,7 @@ public sealed class GraphNode
     public GraphLoopKind LoopKind { get; set; } = GraphLoopKind.For;
     public string LoopVariable { get; set; } = "i";
     public int LoopCount { get; set; } = 3;
+    public int LoopMaxIterations { get; set; } = 1000;
     public string LoopExpression { get; set; } = "i < 3";
     public string LoopCollection { get; set; } = "items";
     public Guid? LoopAfter { get; set; }

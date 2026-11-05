@@ -301,4 +301,22 @@ public sealed class GraphV2Tests
         var result = ScriptCompiler.Compile(new[] { ("generated.cs", code) });
         Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
     }
+
+    [Fact]
+    public void ElWhileTieneLimiteDeIteraciones()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var loop = graph.AddNode(GraphNodeKind.Loop, 100, 0);
+        loop.LoopKind = GraphLoopKind.While;
+        loop.LoopExpression = "true";
+        loop.LoopMaxIterations = 5;
+        var body = graph.AddNode(GraphNodeKind.Action, 300, 0);
+        body.Action = ActionKind.Message;
+        start.Next = loop.Id;
+        loop.Next = body.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("__loop_guard", code);
+        Assert.Contains("> 5", code);
+    }
 }

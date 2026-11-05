@@ -127,8 +127,12 @@ public static class GraphCodeGenerator
                         GraphLoopKind.ForEach => $"foreach (var {variable} in {node.LoopCollection})",
                         _ => $"for (int {variable} = 0; {variable} < {node.LoopCount}; {variable}++)",
                     };
+                    if (node.LoopKind == GraphLoopKind.While)
+                        sb.AppendLine($"{new string(' ', indent * 4)}var __loop_guard_{Short(node.Id)} = 0;");
                     sb.AppendLine($"{new string(' ', indent * 4)}{header}");
                     sb.AppendLine($"{new string(' ', indent * 4)}{{");
+                    if (node.LoopKind == GraphLoopKind.While)
+                        sb.AppendLine($"{new string(' ', (indent + 1) * 4)}if (++__loop_guard_{Short(node.Id)} > {System.Math.Max(1, node.LoopMaxIterations)}) {{ Debug(\"Bucle while detenido por límite\"); break; }}");
                     EmitInlineChain(sb, graph, node.Next is { } b ? Find(graph, b) : null, indent + 1, insideFunction, useLocals, visited);
                     sb.AppendLine($"{new string(' ', indent * 4)}}}");
                     if (node.LoopAfter is { } after) node = Find(graph, after); else return;
@@ -323,8 +327,14 @@ public static class GraphCodeGenerator
                 GraphLoopKind.ForEach => $"foreach (var {variable} in {node.LoopCollection})",
                 _ => $"for (int {variable} = 0; {variable} < {node.LoopCount}; {variable}++)",
             };
+            if (node.LoopKind == GraphLoopKind.While)
+                sb.AppendLine($"        var __loop_guard_{Short(node.Id)} = 0;");
             sb.AppendLine($"        {header}");
             sb.AppendLine("        {");
+            if (node.LoopKind == GraphLoopKind.While)
+            {
+                sb.AppendLine($"            if (++__loop_guard_{Short(node.Id)} > {System.Math.Max(1, node.LoopMaxIterations)}) {{ Debug(\"Bucle while detenido por límite\"); break; }}");
+            }
             var body = node.Next is { } bodyId ? Find(graph, bodyId) : null;
             var guard = 0;
             while (body is not null && guard++ < 64)
