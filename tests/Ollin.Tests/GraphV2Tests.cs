@@ -463,4 +463,21 @@ public sealed class GraphV2Tests
         compare.LeftExpression = "2.5";
         Assert.Equal(GraphPinType.Number, NodeGraph.OperatorResultType(compare));
     }
+
+    [Fact]
+    public void ElReturnDeUnaComparacionSeInfiriereComoBooleano()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Grafo", Vector2.Zero);
+        var graph = entity.AddComponent(new NodeGraph());
+        var function = graph.AddNode(GraphNodeKind.Function, 0, 0);
+        function.FunctionName = "EsPositivo";
+        function.ParameterText = "x:Number";
+        function.ReturnType = GraphPinType.Boolean;
+        var ret = graph.AddNode(GraphNodeKind.Return, 200, 0);
+        ret.ReturnExpression = "x > 0";
+        function.Next = ret.Id;
+        var issues = GraphValidator.Validate(graph, scene);
+        Assert.DoesNotContain(issues, issue => issue.IsError && issue.Message.Contains("Return"));
+    }
 }

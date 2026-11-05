@@ -1,10 +1,15 @@
-## Ollin Beta 6.261.0 — radius/interval reales
+## Ollin Beta 6.262.0 — Return compuesto
 
 ### Añadido
 
-- Radio en Checkpoint/OpenDoor.
-- Intervalo como cooldown de Spawn.
-- Pines de radio/intervalo.
-- Verificación.
+- Inferencia de comparaciones/lógica.
+- Texto, Vector2, min/max.
+- Prueba.
 
-## [6.260.0] — 2026-11-05
+### Verificación
+
+- Build 0 errores.
+- 163/163 pruebas.
+- Instalador 6.262.0.
+
+## [6.261.0] — 2026-11-05
