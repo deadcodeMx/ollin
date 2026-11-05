@@ -61,8 +61,8 @@ Ejemplos:
 El **2026-11-05** se conservaron las 10 releases/tags más recientes:
 
 ```text
-v6.273.0 … v6.278.0
-v7.0.0-beta.1 … v7.0.0-beta.4
+v6.274.0 … v6.278.0
+v7.0.0-beta.1 … v7.0.0-beta.5
 ```
 
 Se eliminaron **246 releases** y **167 tags**. El corte se debe a que se habían
