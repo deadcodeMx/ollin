@@ -527,7 +527,7 @@ public sealed class NodeGraphWindow : Window
         window.Content = new ScrollViewer { Content = list };
         window.ShowDialog(this);
     }
-    private void SaveGraph()
+    private async void SaveGraph()
     {
         _graph.Migrate();
         MarkChanged();
@@ -544,14 +544,14 @@ public sealed class NodeGraphWindow : Window
         _status.Text = "Grafo guardado.";
     }
 
-    private void GenerateScript()
+    private async void GenerateScript()
     {
         _graph.Migrate();
         WriteGeneratedScript();
         if (!string.IsNullOrWhiteSpace(_viewModel.ScenePath)) _viewModel.SaveScene(_viewModel.ScenePath);
     }
 
-    private void WriteGeneratedScript()
+    private async Task<bool> WriteGeneratedScript()
     {
         try
         {
@@ -563,7 +563,16 @@ public sealed class NodeGraphWindow : Window
             var folder = System.IO.Path.Combine(_viewModel.ProjectRoot, "scripts");
             System.IO.Directory.CreateDirectory(folder);
             var fullPath = System.IO.Path.Combine(folder, className + ".cs");
-            System.IO.File.WriteAllText(fullPath, Ollin.Core.Scripting.GraphCodeGenerator.Generate(_graph, className));
+            var generated = Ollin.Core.Scripting.GraphCodeGenerator.Generate(_graph, className);
+            if (System.IO.File.Exists(fullPath) && System.IO.File.ReadAllText(fullPath) != generated)
+            {
+                if (!await ShowDiff(fullPath, generated))
+                {
+                    _status.Text = "Cambios descartados.";
+                    return false;
+                }
+            }
+            System.IO.File.WriteAllText(fullPath, generated);
             var script = _entity.GetComponent<ScriptComponent>() ?? _entity.AddComponent(new ScriptComponent());
             script.ScriptPath = relativePath;
             script.ClassName = className;
@@ -572,11 +581,42 @@ public sealed class NodeGraphWindow : Window
             _viewModel.RefreshProjectFiles();
             _viewModel.MarkDirty("script");
             _status.Text = $"Script actualizado: {relativePath} (grafo desactivado para no duplicar).";
+            return true;
         }
         catch (Exception exception)
         {
             _status.Text = $"No se pudo generar el script: {exception.Message}";
+            return false;
         }
+    }
+    private async Task<bool> ShowDiff(string path, string generated)
+    {
+        var oldText = System.IO.File.ReadAllText(path);
+        var oldBox = new TextBox { Text = oldText, IsReadOnly = true, AcceptsReturn = true, FontFamily = new Avalonia.Media.FontFamily("Consolas"), FontSize = 11 };
+        var newBox = new TextBox { Text = generated, IsReadOnly = true, AcceptsReturn = true, FontFamily = new Avalonia.Media.FontFamily("Consolas"), FontSize = 11 };
+        var accept = new Button { Content = "Sobrescribir", Classes = { "accent" } };
+        var cancel = new Button { Content = "Cancelar" };
+        var window = new Window
+        {
+            Title = "Cambios en el script generado",
+            Width = 1100,
+            Height = 700,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Background = new SolidColorBrush(Color.Parse("#0A0A0C")),
+            Foreground = new SolidColorBrush(Color.Parse("#F2EEF7")),
+        };
+        accept.Click += (_, _) => window.Close(true);
+        cancel.Click += (_, _) => window.Close(false);
+        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*"), RowDefinitions = new RowDefinitions("*,Auto"), Margin = new Thickness(14) };
+        var left = new StackPanel { Spacing = 6 }; left.Children.Add(new TextBlock { Text = "ACTUAL", Classes = { "section" } }); left.Children.Add(oldBox);
+        var right = new StackPanel { Spacing = 6 }; right.Children.Add(new TextBlock { Text = "GENERADO", Classes = { "section" } }); right.Children.Add(newBox);
+        Grid.SetColumn(right, 1);
+        var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Spacing = 8 };
+        buttons.Children.Add(cancel); buttons.Children.Add(accept);
+        Grid.SetRow(buttons, 1); Grid.SetColumnSpan(buttons, 2);
+        grid.Children.Add(left); grid.Children.Add(right); grid.Children.Add(buttons);
+        window.Content = grid;
+        return await window.ShowDialog<bool>(this);
     }
     private void ShowCode()
     {

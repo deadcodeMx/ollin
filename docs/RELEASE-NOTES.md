@@ -1,17 +1,16 @@
-## Ollin Beta 6.259.0 — tipos de operadores
+## Ollin Beta 6.260.0 — diff antes de sobrescribir
 
 ### Añadido
 
-- Tipo de resultado por operador.
-- Boolean para comparaciones/lógica.
-- Integer/Number/Vector2 para aritmética.
-- Pines con tipo real.
-- Prueba.
+- Vista diff actual/generado.
+- Confirmación para sobrescribir.
+- Cancelar no escribe.
+- Flujo integrado en Script/Guardar.
 
 ### Verificación
 
 - Build 0 errores.
 - 162/162 pruebas.
-- Instalador 6.259.0.
+- Instalador 6.260.0.
 
-## [6.258.0] — 2026-11-05
+## [6.259.0] — 2026-11-05
