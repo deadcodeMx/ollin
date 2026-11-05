@@ -1,7 +1,7 @@
 # Mejoras del grafo visual
 
 **Prioridad:** P0
-**Estado:** Pendiente
+**Estado:** Parcial — codegen y control de flujo cerrados; datos avanzados pendientes.
 **Riesgo:** alto; toca modelo, editor y codegen.
 
 ## Objetivo
@@ -9,45 +9,68 @@
 Que el grafo sea una forma real de programar: variables, parámetros, control de
 flujo, datos tipados y traducción fiable a C#.
 
-## Limitaciones actuales
+## Estado a 6.263.0
 
-### P0 — codegen incorrecto
+### Cumplido
 
-- `SetVariable` y `AddVariable` ignoran `Expression`; usan `ValueOf` y, sin enlace,
-  `Amount`.
-- Los parámetros de funciones/eventos no están disponibles dentro de
-  `ExpressionEvaluator`; una condición `x > 0` no ve `x`.
-- Los eventos personalizados generan el cuerpo como método sin parámetros; si el
-  cuerpo usa un parámetro, el C# no compila.
-- `GraphVariable` es solo metadato: el script usa `_vars` como
-  `Dictionary<string, float>` e ignora tipo y valor inicial.
-- El runtime `NodeGraph` usa `GameState` y el script generado usa `_vars`; no
-  comparten estado.
+- `SetVariable`/`AddVariable` usan la expresión.
+- Parámetros y variables en `ExpressionEvaluator` mediante `Locals`.
+- Eventos personalizados inline con parámetros.
+- Variables tipadas con valor inicial.
+- Compilación del script antes de guardar.
+- `while` con límite configurable.
+- `Return` validado contra el tipo de función.
+- Variables locales por función.
+- Bucles y condiciones anidados con codegen inline.
+- Subgrafos como métodos.
+- Diff antes de sobrescribir.
+- Nombres duplicados de variables/funciones/eventos.
+- Breakpoints insertados como `Debugger.Break()`.
+- Operadores matemáticos/lógicos con tipo de resultado.
 
-### P1 — control de flujo
+### Parcial
 
-- El cuerpo de bucles usa una ruta antigua que solo inlinea acciones simples.
-- Condiciones o bucles anidados dentro de un bucle pueden romper
-  `break/continue`.
-- `while` generado no tiene límite de iteraciones.
-- No hay `return` tipado validado contra el tipo de la función.
-- No hay variables locales por función.
+- Pines por entrada: hay pines semánticos para `amount`, `message`, `component`, `property`, `radius` e `interval`, pero no para cualquier entrada de cualquier nodo.
+- Auto-cast: cubre número/entero/booleano/texto; no toda la matriz.
+- Pruebas de codegen compilado: hay prueba de compilación, pero no de todos los grafos posibles.
+- Runtime `NodeGraph` y script generado siguen usando estados distintos (`GameState` vs `_vars`).
 
-### P1 — datos y tipos
+## Limitaciones vigentes
 
-- Los pines de datos solo alimentan `amount` o una propiedad concreta.
-- No hay operadores matemáticos/lógicos como nodos; solo expresiones de texto.
+### Datos y tipos
+
+- Los pines son semánticos por acción; no existe un pin universal para cualquier entrada de cualquier nodo.
 - No hay arrays, listas ni structs.
-- El auto-cast es básico y no cubre todas las combinaciones.
-- La validación de tipos solo cubre argumentos de llamadas.
-
-### P2 — editor
-
-- Subgrafos no se traducen al script generado.
-- No hay breakpoints en el código generado.
-- No hay vista previa del diff del script antes de sobrescribir.
-- No hay validación de nombres duplicados de variables/eventos/funciones.
+- El auto-cast es básico y no cubre toda la matriz.
+- Las expresiones compuestas muy anidadas pueden quedar como tipo desconocido.
 - El parser de argumentos no entiende lambdas.
+
+### Runtime
+
+- `NodeGraph` usa `GameState` y el script generado usa campos `_var_*`/`_vars`; no comparten estado.
+- Las acciones Checkpoint/OpenDoor/Spawn dependen de componentes de gameplay eliminados; radio e intervalo se ejecutan, pero no tienen efecto visible.
+
+### Pruebas
+
+- Hay una prueba de compilación real, pero no cubre todos los grafos posibles.
+- Faltan pruebas de integración de UI y de ejecución en juego.
+
+## Limitaciones resueltas
+
+- `SetVariable`/`AddVariable` usan `Expression`.
+- Parámetros y variables visibles en `ExpressionEvaluator`.
+- Eventos personalizados inline con parámetros.
+- Variables tipadas con valor inicial.
+- Compilación antes de guardar.
+- `while` con límite configurable.
+- `Return` validado contra tipo de función.
+- Variables locales por función.
+- Bucles y condiciones anidados.
+- Subgrafos en codegen.
+- Diff antes de sobrescribir.
+- Nombres duplicados de variables/funciones/eventos.
+- Breakpoints en el código generado.
+- Operadores con tipo de resultado.
 
 ## Criterios de aceptación
 
@@ -60,33 +83,44 @@ flujo, datos tipados y traducción fiable a C#.
 7. Las variables respetan tipo y valor inicial.
 8. Pruebas de codegen compilan el resultado, no solo comparan strings.
 
+## Cumplimiento
+
+- **1. Parcial:** hay compilación real de un grafo simple; faltan casos con variables y parámetros.
+- **2. Sí:** funciones con condición, bucle y return generan código.
+- **3. Sí:** eventos personalizados inline con parámetros.
+- **4. Sí:** `SetVariable`/`AddVariable` usan la expresión.
+- **5. Sí:** se compila antes de guardar y se bloquea si falla.
+- **6. Sí:** guard configurable en `while`.
+- **7. Sí:** variables con tipo y valor inicial.
+- **8. Parcial:** hay una prueba de compilación real, no una por cada grafo.
+
 ## Tareas
 
 ### Fase A — codegen fiable
-- [ ] Usar `Expression` en `SetVariable`/`AddVariable`.
-- [ ] Contexto de expresiones con parámetros y variables.
-- [ ] Eventos personalizados inline con parámetros.
-- [ ] Variables tipadas e inicializadas.
-- [ ] Compilar el script generado antes de guardar.
+- [x] Usar `Expression` en `SetVariable`/`AddVariable`.
+- [x] Contexto de expresiones con parámetros y variables.
+- [x] Eventos personalizados inline con parámetros.
+- [x] Variables tipadas e inicializadas.
+- [x] Compilar el script generado antes de guardar.
 
 ### Fase B — control de flujo
-- [ ] Unificar todo el cuerpo en `EmitInlineChain`.
-- [ ] Condiciones y bucles anidados.
-- [ ] Guard de iteraciones en `while`.
-- [ ] Validar `return` contra tipo de retorno.
-- [ ] Variables locales.
+- [x] Unificar todo el cuerpo en `EmitInlineChain`.
+- [x] Condiciones y bucles anidados.
+- [x] Guard de iteraciones en `while`.
+- [x] Validar `return` contra tipo de retorno.
+- [x] Variables locales.
 
 ### Fase C — datos
-- [ ] Pines por cualquier entrada de nodo.
-- [ ] Nodos de operadores.
+- [~] Pines por cualquier entrada de nodo (semánticos por acción, no universales).
+- [x] Nodos de operadores.
 - [ ] Arrays/listas/structs.
 - [ ] Auto-cast completo.
 
 ### Fase D — editor
-- [ ] Subgrafos en codegen.
-- [ ] Preview/diff del script.
-- [ ] Nombres duplicados.
-- [ ] Breakpoints de código.
+- [x] Subgrafos en codegen.
+- [x] Preview/diff del script.
+- [x] Nombres duplicados.
+- [x] Breakpoints de código.
 
 ## Pruebas mínimas
 
