@@ -6,6 +6,7 @@ namespace Ollin.Core.Scripting;
 /// <summary>Genera un script C# editable a partir de un NodeGraph.</summary>
 public static class GraphCodeGenerator
 {
+    private static HashSet<string>? _currentLocals;
     public static string Generate(NodeGraph graph, string className = "GraphScript")
     {
         var sb = new StringBuilder();
@@ -161,11 +162,15 @@ public static class GraphCodeGenerator
         sb.AppendLine();
         sb.AppendLine($"    private {returnType} Func_{SafeName(node.FunctionName, "Funcion")}({parameters})");
         sb.AppendLine("    {");
+        var localDeclarations = LocalDeclarations(node);
+        foreach (var declaration in localDeclarations) sb.AppendLine("        " + declaration);
+        _currentLocals = LocalNames(node);
         var functionLocals = LocalsInitializer(graph, node);
         if (functionLocals.Length > 0) sb.AppendLine("        " + functionLocals);
         EmitInlineChain(sb, graph, node.Next is { } bodyId ? Find(graph, bodyId) : null, 2, insideFunction: true, useLocals: true);
         sb.AppendLine("        return default;");
         sb.AppendLine("    }");
+        _currentLocals = null;
     }
 
     private static string RewriteVariables(NodeGraph graph, string expression)
@@ -199,6 +204,22 @@ public static class GraphCodeGenerator
         var parts = value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         return parts.Length >= 2 ? $"new Vector2({parts[0]}f, {parts[1]}f)" : "new Vector2(0f, 0f)";
     }
+    private static HashSet<string> LocalNames(GraphNode function) => function.LocalVariableText
+        .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+        .Select(item => SafeName(item.Split(':', '=')[0].Trim(), "local"))
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+    private static IEnumerable<string> LocalDeclarations(GraphNode function)
+    {
+        foreach (var item in function.LocalVariableText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+        {
+            var parts = item.Split(':', '=');
+            var name = SafeName(parts[0].Trim(), "local");
+            var type = parts.Length > 1 ? TypeName(parts[1].Trim()) : "float";
+            var value = parts.Length > 2 ? parts[2].Trim() : (type == "string" ? "\"\"" : type == "bool" ? "false" : type == "Vector2" ? "new Vector2(0f, 0f)" : "0f");
+            yield return $"{type} {name} = {value};";
+        }
+    }
     private static string LocalsInitializer(NodeGraph graph, GraphNode definition)
     {
         var entries = new List<string>();
@@ -208,6 +229,8 @@ public static class GraphCodeGenerator
             var name = SafeName(parameter.Split(':', StringSplitOptions.TrimEntries)[0], "arg");
             if (used.Add(name)) entries.Add($"[\"{name}\"] = {name}");
         }
+        foreach (var local in LocalNames(definition))
+            if (used.Add(local)) entries.Add($"[\"{local}\"] = {local}");
         foreach (var variable in graph.Variables)
         {
             var name = SafeName(variable.Name, "variable");
@@ -353,7 +376,8 @@ public static class GraphCodeGenerator
     {
         var target = string.IsNullOrWhiteSpace(node.TargetName) ? "null" : $"Find(\"{Escape(node.TargetName)}\")";
         var variable = FindVariable(graph, node.VariableName);
-        var variableField = variable is null ? $"_vars[\"{Escape(node.VariableName)}\"]" : VarField(variable);
+        var localField = _currentLocals?.Contains(node.VariableName) == true ? SafeName(node.VariableName, "local") : null;
+        var variableField = localField ?? (variable is null ? $"_vars[\"{Escape(node.VariableName)}\"]" : VarField(variable));
         switch (node.Action)
         {
             case ActionKind.Message:

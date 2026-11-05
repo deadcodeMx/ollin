@@ -1,16 +1,17 @@
-## Ollin Beta 6.252.0 — campos de acción
+## Ollin Beta 6.253.0 — variables locales
 
 ### Añadido
 
-- ActionExecutor con radio, intervalo y umbral.
-- Codegen de los tres campos.
-- Inspector Radio/Intervalo/Umbral.
-- Pines de campo.
+- Variables locales por función.
+- Tipo y valor inicial.
+- Contexto local de expresiones.
+- Acciones que modifican locales.
+- Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 155/155 pruebas.
-- Instalador 6.252.0.
+- 156/156 pruebas.
+- Instalador 6.253.0.
 
-## [6.251.0] — 2026-11-05
+## [6.252.0] — 2026-11-05

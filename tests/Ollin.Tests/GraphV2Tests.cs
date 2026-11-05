@@ -352,4 +352,21 @@ public sealed class GraphV2Tests
         var issues = GraphValidator.Validate(graph, scene);
         Assert.Contains(issues, issue => issue.IsError && issue.Message.Contains("Return"));
     }
+
+    [Fact]
+    public void LasVariablesLocalesSeDeclaranYUsan()
+    {
+        var graph = new NodeGraph();
+        var function = graph.AddNode(GraphNodeKind.Function, 0, 0);
+        function.FunctionName = "Local";
+        function.LocalVariableText = "temp:Number=7";
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "temp";
+        action.Expression = "temp + 1";
+        function.Next = action.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("float temp = 7;", code);
+        Assert.Contains("temp = temp + 1;", code);
+    }
 }

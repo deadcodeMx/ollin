@@ -148,6 +148,7 @@ public sealed class GraphNode
     public string FunctionName { get; set; } = "MiFuncion";
     public GraphPinType ReturnType { get; set; } = GraphPinType.Number;
     public string ReturnExpression { get; set; } = "0";
+    public string LocalVariableText { get; set; } = string.Empty;
 
     public float GroupWidth { get; set; } = 280f;
 
