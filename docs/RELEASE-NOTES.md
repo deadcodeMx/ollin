@@ -1,16 +1,17 @@
-## Ollin Beta 6.255.0 — operadores
+## Ollin Beta 6.256.0 — pines semánticos
 
 ### Añadido
 
-- Nodo Operador aritmético.
-- Comparaciones, Y/O/No.
-- Salida de dato.
-- Prueba.
+- Pines por acción según su semántica.
+- Mensaje por dato.
+- Componente/propiedad por dato.
+- Cantidad por dato.
+- Prueba de mensaje.
 
 ### Verificación
 
 - Build 0 errores.
-- 158/158 pruebas.
-- Instalador 6.255.0.
+- 159/159 pruebas.
+- Instalador 6.256.0.
 
-## [6.254.0] — 2026-11-05
+## [6.255.0] — 2026-11-05

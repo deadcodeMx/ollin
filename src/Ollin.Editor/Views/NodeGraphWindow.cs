@@ -1868,7 +1868,14 @@ public sealed class NodeGraphWindow : Window
     {
         var button = new Button { Content = "← Dato", FontSize = 10, Padding = new Thickness(6, 2) };
         var flyout = new MenuFlyout();
-        foreach (var field in new[] { "amount", "threshold", "radius", "interval" })
+        var fields = node.Action switch
+        {
+            ActionKind.Message or ActionKind.Win => new[] { "message" },
+            ActionKind.SetComponentProperty => new[] { "amount", "message", "component", "property" },
+            ActionKind.Damage or ActionKind.Heal => new[] { "amount" },
+            _ => new[] { "amount" },
+        };
+        foreach (var field in fields)
         {
             var item = new MenuItem { Header = field };
             var fieldName = field;

@@ -425,7 +425,7 @@ public static class GraphCodeGenerator
         switch (node.Action)
         {
             case ActionKind.Message:
-                sb.AppendLine($"        Debug(\"{Escape(node.Message)}\");");
+                sb.AppendLine($"        Debug({FieldText(graph, node, "message", node.Message)});");
                 break;
             case ActionKind.Activate:
                 sb.AppendLine($"        if ({target} is {{ }} activate) activate.Active = true;");
@@ -448,9 +448,9 @@ public static class GraphCodeGenerator
                 break;
             default:
                 if (VectorOf(graph, node) is { } vector)
-                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", 0f, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\", {vector}, {node.Radius:0.###}f, {node.Interval:0.###}f, {node.Threshold:0.###}f);");
+                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", {FieldText(graph, node, "message", node.Message)}, \"player\", 0f, {FieldText(graph, node, "component", node.ComponentName)}, {FieldText(graph, node, "property", node.PropertyName)}, {vector}, {node.Radius:0.###}f, {node.Interval:0.###}f, {node.Threshold:0.###}f);");
                 else
-                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", \"{Escape(node.Message)}\", \"player\", {ValueOf(graph, node)}, \"{Escape(node.ComponentName)}\", \"{Escape(node.PropertyName)}\", default, {node.Radius:0.###}f, {node.Interval:0.###}f, {node.Threshold:0.###}f);");
+                    sb.AppendLine($"        ActionExecutor.Execute(Scene!, ActionKind.{node.Action}, \"{Escape(node.TargetName)}\", {FieldText(graph, node, "message", node.Message)}, \"player\", {ValueOf(graph, node)}, {FieldText(graph, node, "component", node.ComponentName)}, {FieldText(graph, node, "property", node.PropertyName)}, default, {node.Radius:0.###}f, {node.Interval:0.###}f, {node.Threshold:0.###}f);");
                 break;
         }
     }
@@ -468,6 +468,15 @@ public static class GraphCodeGenerator
         var parts = source.Value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length < 2) return null;
         return $"new Vector2({parts[0]}f, {parts[1]}f)";
+    }
+    private static string FieldText(NodeGraph graph, GraphNode node, string port, string fallback)
+    {
+        if (graph.DataLinkTo(node.Id, port) is { } link && graph.Find(link.SourceNodeId) is { } source)
+        {
+            if (source.Kind == GraphNodeKind.Value && source.ValueKind == GraphValueKind.Text) return $"\"{Escape(source.Value)}\"";
+            if (source.Kind == GraphNodeKind.CallFunction) return $"Func_{SafeName(source.FunctionName, "Funcion")}({source.ArgumentsText})";
+        }
+        return $"\"{Escape(fallback)}\"";
     }
     private static string FieldNumber(NodeGraph graph, GraphNode node, string port, float fallback)
     {

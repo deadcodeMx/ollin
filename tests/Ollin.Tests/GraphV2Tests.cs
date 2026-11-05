@@ -405,4 +405,20 @@ public sealed class GraphV2Tests
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("(2 + 3)", code);
     }
+
+    [Fact]
+    public void ElPinDeMensajeCambiaElTextoDeLaAccion()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var message = graph.AddNode(GraphNodeKind.Value, 0, 100);
+        message.ValueKind = GraphValueKind.Text;
+        message.Value = "Hola desde dato";
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.Message;
+        start.Next = action.Id;
+        graph.AddDataLink(message.Id, action.Id, "message", GraphPinType.Text);
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("Hola desde dato", code);
+    }
 }
