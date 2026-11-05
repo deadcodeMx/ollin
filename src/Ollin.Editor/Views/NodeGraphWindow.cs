@@ -206,6 +206,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Llamar evento", () => AddNode(GraphNodeKind.CallEvent, GraphEventKind.OnStart));
         AddPalette(panel, "Función", () => AddNode(GraphNodeKind.Function, GraphEventKind.OnStart));
         AddPalette(panel, "Llamar función", () => AddNode(GraphNodeKind.CallFunction, GraphEventKind.OnStart));
+        AddPalette(panel, "Operador", () => AddNode(GraphNodeKind.Operator, GraphEventKind.OnStart));
         AddPalette(panel, "Break", () => AddNode(GraphNodeKind.Break, GraphEventKind.OnStart));
         AddPalette(panel, "Continue", () => AddNode(GraphNodeKind.Continue, GraphEventKind.OnStart));
         AddPalette(panel, "Return", () => AddNode(GraphNodeKind.Return, GraphEventKind.OnStart));
@@ -2679,6 +2680,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         GraphNodeKind.CallEvent => "LLAMAR EVENTO",
         GraphNodeKind.Function => "FUNCIÓN",
         GraphNodeKind.CallFunction => "LLAMAR FUNCIÓN",
+        GraphNodeKind.Operator => "OPERADOR",
         GraphNodeKind.Break => "BREAK",
         GraphNodeKind.Continue => "CONTINUE",
         GraphNodeKind.Return => "RETURN",

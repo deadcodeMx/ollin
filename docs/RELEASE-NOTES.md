@@ -1,16 +1,16 @@
-## Ollin Beta 6.254.0 — subgrafos en codegen
+## Ollin Beta 6.255.0 — operadores
 
 ### Añadido
 
-- Subgrafos como métodos.
-- Llamada desde nodo Subgrafo.
-- Subgrafos anidados.
+- Nodo Operador aritmético.
+- Comparaciones, Y/O/No.
+- Salida de dato.
 - Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 157/157 pruebas.
-- Instalador 6.254.0.
+- 158/158 pruebas.
+- Instalador 6.255.0.
 
-## [6.253.0] — 2026-11-05
+## [6.254.0] — 2026-11-05

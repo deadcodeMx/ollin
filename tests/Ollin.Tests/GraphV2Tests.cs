@@ -387,4 +387,22 @@ public sealed class GraphV2Tests
         Assert.Contains("private void Sub_Hijo()", code);
         Assert.Contains("Sub_Hijo();", code);
     }
+
+    [Fact]
+    public void LosOperadoresSeUsanComoDato()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var op = graph.AddNode(GraphNodeKind.Operator, 0, 100);
+        op.OperatorKind = GraphOperatorKind.Add;
+        op.LeftExpression = "2";
+        op.RightExpression = "3";
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "x";
+        start.Next = action.Id;
+        graph.AddDataLink(op.Id, action.Id, "amount", GraphPinType.Number);
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("(2 + 3)", code);
+    }
 }

@@ -13,6 +13,7 @@ public enum GraphNodeKind
     CallEvent,
     Function,
     CallFunction,
+    Operator,
     Break,
     Continue,
     Return,
@@ -57,6 +58,22 @@ public enum GraphPinType
 }
 
 /// <summary>Enlace de datos entre la salida de un nodo y la entrada de otro.</summary>
+/// <summary>Operador puro del grafo.</summary>
+public enum GraphOperatorKind
+{
+    Add,
+    Subtract,
+    Multiply,
+    Divide,
+    Modulo,
+    Equal,
+    NotEqual,
+    Greater,
+    Less,
+    And,
+    Or,
+    Not,
+}
 /// <summary>Tipo de bucle del grafo.</summary>
 public enum GraphLoopKind
 {
@@ -149,6 +166,9 @@ public sealed class GraphNode
     public GraphPinType ReturnType { get; set; } = GraphPinType.Number;
     public string ReturnExpression { get; set; } = "0";
     public string LocalVariableText { get; set; } = string.Empty;
+    public GraphOperatorKind OperatorKind { get; set; } = GraphOperatorKind.Add;
+    public string LeftExpression { get; set; } = "0";
+    public string RightExpression { get; set; } = "0";
 
     public float GroupWidth { get; set; } = 280f;
 

@@ -191,6 +191,27 @@ public static class GraphCodeGenerator
         _currentLocals = null;
     }
 
+    private static string OperatorExpression(NodeGraph graph, GraphNode node)
+    {
+        var left = RewriteVariables(graph, node.LeftExpression);
+        var right = RewriteVariables(graph, node.RightExpression);
+        return node.OperatorKind switch
+        {
+            GraphOperatorKind.Add => $"({left} + {right})",
+            GraphOperatorKind.Subtract => $"({left} - {right})",
+            GraphOperatorKind.Multiply => $"({left} * {right})",
+            GraphOperatorKind.Divide => $"({left} / {right})",
+            GraphOperatorKind.Modulo => $"({left} % {right})",
+            GraphOperatorKind.Equal => $"({left} == {right})",
+            GraphOperatorKind.NotEqual => $"({left} != {right})",
+            GraphOperatorKind.Greater => $"({left} > {right})",
+            GraphOperatorKind.Less => $"({left} < {right})",
+            GraphOperatorKind.And => $"({left} && {right})",
+            GraphOperatorKind.Or => $"({left} || {right})",
+            GraphOperatorKind.Not => $"(!({left}))",
+            _ => "0",
+        };
+    }
     private static string RewriteVariables(NodeGraph graph, string expression)
     {
         var result = expression;
@@ -475,6 +496,7 @@ public static class GraphCodeGenerator
         if ((graph.DataLinkTo(node.Id, port) ?? graph.DataLinkTo(node.Id, "amount")) is { } link && graph.Find(link.SourceNodeId) is { } source)
         {
             if (source is { Kind: GraphNodeKind.CallFunction }) return $"Func_{SafeName(source.FunctionName, "Funcion")}({source.ArgumentsText})";
+            if (source is { Kind: GraphNodeKind.Operator }) return OperatorExpression(graph, source);
             if (source is not { Kind: GraphNodeKind.Value } value) return node.Amount.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
             return value.ValueKind switch
             {
