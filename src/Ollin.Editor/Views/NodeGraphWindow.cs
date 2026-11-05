@@ -515,11 +515,13 @@ public sealed class NodeGraphWindow : Window
                 name.LostFocus += (_, _) => { variable.Name = name.Text?.Trim() ?? "variable"; MarkChanged(); };
                 var type = new ComboBox { ItemsSource = Enum.GetNames<GraphPinType>(), SelectedItem = variable.Type.ToString(), Margin = new Thickness(4, 0) };
                 type.SelectionChanged += (_, _) => { if (type.SelectedItem is string value && Enum.TryParse<GraphPinType>(value, out var parsed)) { variable.Type = parsed; MarkChanged(); } };
-                var extra = new TextBox { Text = variable.Type == GraphPinType.Struct ? variable.StructName : variable.ElementType.ToString(), Watermark = "elem/struct" };
+                var extra = new TextBox { Text = variable.Type == GraphPinType.Struct ? variable.StructName : variable.ElementType == GraphPinType.Struct ? "Struct:" + variable.StructName : variable.ElementType.ToString(), Watermark = "elem/struct" };
                 extra.LostFocus += (_, _) =>
                 {
-                    if (variable.Type == GraphPinType.Struct) variable.StructName = extra.Text?.Trim() ?? string.Empty;
-                    else if (Enum.TryParse<GraphPinType>(extra.Text?.Trim(), true, out var element)) variable.ElementType = element;
+                    var extraText = extra.Text?.Trim() ?? string.Empty;
+                    if (variable.Type == GraphPinType.Struct) variable.StructName = extraText;
+                    else if (extraText.StartsWith("Struct:", StringComparison.OrdinalIgnoreCase)) { variable.ElementType = GraphPinType.Struct; variable.StructName = extraText[7..]; }
+                    else if (Enum.TryParse<GraphPinType>(extraText, true, out var element)) variable.ElementType = element;
                     MarkChanged();
                 };
                 var value = new TextBox { Text = variable.DefaultValue, Watermark = "valor inicial" };

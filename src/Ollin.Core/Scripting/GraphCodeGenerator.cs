@@ -329,7 +329,7 @@ public static class GraphCodeGenerator
 
     private static string VarType(GraphVariable variable) => variable.Type switch
     {
-        GraphPinType.List => $"List<{TypeName(variable.ElementType.ToString())}>",
+        GraphPinType.List => variable.ElementType == GraphPinType.Struct ? $"List<Struct_{SafeName(variable.StructName, "Struct")}>" : $"List<{TypeName(variable.ElementType.ToString())}>",
         GraphPinType.Struct => "Struct_" + SafeName(variable.StructName, "Struct"),
         _ => TypeName(variable.Type.ToString()),
     };
@@ -340,7 +340,7 @@ public static class GraphCodeGenerator
         GraphPinType.Boolean => variable.DefaultValue is "true" or "True" or "1" ? "true" : "false",
         GraphPinType.Integer => int.TryParse(variable.DefaultValue, out var integer) ? integer.ToString() : "0",
         GraphPinType.Vector2 => VectorDefault(variable.DefaultValue),
-        GraphPinType.List => ListDefault(variable),
+        GraphPinType.List => ListDefault(variable, graph),
         GraphPinType.Struct => StructDefault(variable, graph),
         _ => float.TryParse(variable.DefaultValue, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var number) ? number.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + "f" : "0f",
     };
@@ -355,42 +355,58 @@ public static class GraphCodeGenerator
             {
                 var parts = field.Split(':', '=');
                 var name = SafeName(parts[0].Trim(), "Field");
-                var type = parts.Length > 1 ? TypeName(parts[1].Trim()) : "float";
+                var type = parts.Length > 2 && parts[1].Trim().Equals("Struct", StringComparison.OrdinalIgnoreCase)
+                    ? "Struct_" + SafeName(parts[2].Trim(), "Struct")
+                    : parts.Length > 1 ? TypeName(parts[1].Trim()) : "float";
                 sb.AppendLine($"        public {type} {name};");
             }
             sb.AppendLine("    }");
         }
     }
 
-    private static string ListDefault(GraphVariable variable)
+    private static string ListDefault(GraphVariable variable, NodeGraph graph)
     {
+        var element = VarType(variable).Replace("List<", "").TrimEnd('>');
         var text = variable.DefaultValue.Trim().Trim('[', ']');
-        var element = TypeName(variable.ElementType.ToString());
-        var values = text.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
-            .Select(value => Literal(element, value));
-        return $"new List<{element}> {{ {string.Join(", ", values)} }}";
+        var separator = variable.ElementType == GraphPinType.Struct ? ';' : ',';
+        var values = text.Split(separator, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .Select(value => variable.ElementType == GraphPinType.Struct
+                ? StructInitializer(variable.StructName, value, graph)
+                : Literal(element, value));
+        return $"new {VarType(variable)} {{ {string.Join(", ", values)} }}";
     }
 
-    private static string StructDefault(GraphVariable variable, NodeGraph graph)
+    private static string StructInitializer(string structName, string text, NodeGraph graph)
     {
-        var type = "Struct_" + SafeName(variable.StructName, "Struct");
-        var structure = graph.Structs.FirstOrDefault(item => item.Name.Equals(variable.StructName, StringComparison.OrdinalIgnoreCase));
+        var type = "Struct_" + SafeName(structName, "Struct");
+        var structure = graph.Structs.FirstOrDefault(item => item.Name.Equals(structName, StringComparison.OrdinalIgnoreCase));
         if (structure is null) return $"new {type}()";
-        var values = new List<string>();
-        var assignments = variable.DefaultValue.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+        var assignments = text.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
             .Select(item => item.Split('=', 2, StringSplitOptions.TrimEntries))
             .Where(parts => parts.Length == 2)
             .ToDictionary(parts => parts[0], parts => parts[1], StringComparer.OrdinalIgnoreCase);
+        var values = new List<string>();
         foreach (var field in structure.FieldText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
         {
-            var parts = field.Split(':', '=');
+            var parts = field.Split(':', '=', StringSplitOptions.TrimEntries);
             var name = SafeName(parts[0].Trim(), "Field");
-            var value = assignments.GetValueOrDefault(name, parts.Length > 2 ? parts[2] : "0");
-            values.Add($"{name} = {value}");
+            var isStruct = parts.Length > 2 && parts[1].Equals("Struct", StringComparison.OrdinalIgnoreCase);
+            var value = assignments.GetValueOrDefault(name, parts.Length > 3 ? parts[3] : null);
+            if (isStruct) values.Add($"{name} = {value ?? $"new Struct_{SafeName(parts[2], "Struct")}()"}");
+            else values.Add($"{name} = {value ?? (parts.Length > 2 ? parts[2] : DefaultLiteral(parts.Length > 1 ? parts[1] : "Number"))}");
         }
         return $"new {type} {{ {string.Join(", ", values)} }}";
     }
-
+    private static string StructDefault(GraphVariable variable, NodeGraph graph) =>
+        StructInitializer(variable.StructName, variable.DefaultValue, graph);
+    private static string DefaultLiteral(string type) => type.ToLowerInvariant() switch
+    {
+        "text" or "string" => "\"\"",
+        "boolean" or "bool" => "false",
+        "vector2" => "new Vector2(0f, 0f)",
+        "integer" or "int" => "0",
+        _ => "0f",
+    };
     private static string Literal(string type, string value) => type switch
     {
         "string" => $"\"{Escape(value)}\"",

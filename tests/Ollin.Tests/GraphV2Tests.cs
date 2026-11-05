@@ -758,4 +758,19 @@ public sealed class GraphV2Tests
             System.IO.File.Delete(path);
         }
     }
+
+    [Fact]
+    public void CompilaListaDeStructsYStructAnidado()
+    {
+        var graph = new NodeGraph();
+        graph.Structs.Add(new GraphStruct { Name = "Punto", FieldText = "X:Number=0,Y:Number=0" });
+        graph.Structs.Add(new GraphStruct { Name = "Entidad", FieldText = "Pos:Struct:Punto,Nombre:Text" });
+        graph.Variables.Add(new GraphVariable { Name = "ruta", Type = GraphPinType.List, ElementType = GraphPinType.Struct, StructName = "Punto", DefaultValue = "X=1,Y=2;X=3,Y=4" });
+        graph.Variables.Add(new GraphVariable { Name = "entidad", Type = GraphPinType.Struct, StructName = "Entidad" });
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("List<Struct_Punto>", code);
+        Assert.Contains("Struct_Punto", code);
+        Assert.Contains("Struct_Entidad", code);
+        AssertGeneratedCompiles(graph);
+    }
 }
