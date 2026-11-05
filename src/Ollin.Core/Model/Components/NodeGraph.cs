@@ -37,6 +37,8 @@ public enum GraphEventKind
     OnInteract,
     OnPlayerDeath,
     OnSignal,
+    OnCharacterLanded,
+    OnCharacterJumped,
 }
 
 public enum GraphConditionKind

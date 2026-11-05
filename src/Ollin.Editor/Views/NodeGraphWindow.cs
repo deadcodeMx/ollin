@@ -184,6 +184,8 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Evento: pulsar E", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnInteract));
         AddPalette(panel, "Evento: morir", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnPlayerDeath));
         AddPalette(panel, "Evento: al recibir señal", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnSignal));
+        AddPalette(panel, "Evento: al aterrizar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnCharacterLanded));
+        AddPalette(panel, "Evento: al saltar", () => AddNode(GraphNodeKind.Event, GraphEventKind.OnCharacterJumped));
         AddSection(panel, "CONDICIONES");
         AddPalette(panel, "Condición: expresión", () => AddCondition(GraphConditionKind.Expression));
         AddSection(panel, "ACCIONES");
@@ -193,6 +195,9 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: crear entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Instantiate));
         AddPalette(panel, "Acción: emitir señal", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.EmitSignal));
         AddPalette(panel, "Acción: consultar área", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.QueryArea));
+        AddPalette(panel, "Personaje: saltar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.CharacterJump));
+        AddPalette(panel, "Personaje: velocidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.CharacterSetSpeed));
+        AddPalette(panel, "Personaje: gravedad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.CharacterSetGravity));
         AddPalette(panel, "Acción: esperar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Wait));
         AddPalette(panel, "Acción: cargar escena", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.LoadScene));
         AddPalette(panel, "Acción: destruir entidad", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Destroy));

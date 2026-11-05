@@ -30,6 +30,8 @@ public static class GraphCodeGenerator
         }
 
         var events = graph.Nodes.Where(n => n.Kind == GraphNodeKind.Event).ToList();
+        var characterEvents = events.Where(item => item.Event is GraphEventKind.OnCharacterLanded or GraphEventKind.OnCharacterJumped).ToList();
+        if (characterEvents.Count > 0) sb.AppendLine("    private CharacterBody2D? _characterBody;");
         foreach (var node in events)
         {
             switch (node.Event)
@@ -42,11 +44,23 @@ public static class GraphCodeGenerator
                     {
                         sb.AppendLine($"        _signal_{Short(signalEvent.Id)} = SignalBus.Subscribe(\"{Escape(signalEvent.SignalName)}\", _ => {MethodName(signalEvent)}());");
                     }
+                    if (characterEvents.Count > 0)
+                    {
+                        sb.AppendLine("        _characterBody = Get<CharacterBody2D>();");
+                        sb.AppendLine("        if (_characterBody is not null)");
+                        sb.AppendLine("        {");
+                        foreach (var characterEvent in characterEvents)
+                            sb.AppendLine($"            _characterBody.{CharacterEventName(characterEvent.Event)} += {MethodName(characterEvent)};");
+                        sb.AppendLine("        }");
+                    }
                     sb.AppendLine($"        {MethodName(node)}();");
                     sb.AppendLine("    }");
                     break;
                 case GraphEventKind.OnSignal:
                     sb.AppendLine($"    private IDisposable? _signal_{Short(node.Id)};");
+                    break;
+                case GraphEventKind.OnCharacterLanded:
+                case GraphEventKind.OnCharacterJumped:
                     break;
                 case GraphEventKind.OnTimer:
                     sb.AppendLine($"    private float _timer_{Short(node.Id)};");
@@ -80,21 +94,38 @@ public static class GraphCodeGenerator
         {
             EmitCustomEvent(sb, graph, custom, emitted);
         }
-        if (events.All(item => item.Event != GraphEventKind.OnStart) && events.Any(item => item.Event == GraphEventKind.OnSignal))
+        if (events.All(item => item.Event != GraphEventKind.OnStart) && (events.Any(item => item.Event == GraphEventKind.OnSignal) || characterEvents.Count > 0))
         {
             sb.AppendLine("    public override void OnStart()");
             sb.AppendLine("    {");
             sb.AppendLine("        SyncVariables();");
             foreach (var signalEvent in events.Where(item => item.Event == GraphEventKind.OnSignal))
                 sb.AppendLine($"        _signal_{Short(signalEvent.Id)} = SignalBus.Subscribe(\"{Escape(signalEvent.SignalName)}\", _ => {MethodName(signalEvent)}());");
+            if (characterEvents.Count > 0)
+            {
+                sb.AppendLine("        _characterBody = Get<CharacterBody2D>();");
+                sb.AppendLine("        if (_characterBody is not null)");
+                sb.AppendLine("        {");
+                foreach (var characterEvent in characterEvents)
+                    sb.AppendLine($"            _characterBody.{CharacterEventName(characterEvent.Event)} += {MethodName(characterEvent)};");
+                sb.AppendLine("        }");
+            }
             sb.AppendLine("    }");
         }
         var signalEvents = events.Where(item => item.Event == GraphEventKind.OnSignal).ToList();
-        if (signalEvents.Count > 0)
+        if (signalEvents.Count > 0 || characterEvents.Count > 0)
         {
             sb.AppendLine("    public override void OnDestroy()");
             sb.AppendLine("    {");
             foreach (var signalEvent in signalEvents) sb.AppendLine($"        _signal_{Short(signalEvent.Id)}?.Dispose();");
+            if (characterEvents.Count > 0)
+            {
+                sb.AppendLine("        if (_characterBody is not null)");
+                sb.AppendLine("        {");
+                foreach (var characterEvent in characterEvents)
+                    sb.AppendLine($"            _characterBody.{CharacterEventName(characterEvent.Event)} -= {MethodName(characterEvent)};");
+                sb.AppendLine("        }");
+            }
             sb.AppendLine("    }");
         }        EmitStateSync(sb, graph);
         foreach (var node in events)
@@ -200,6 +231,8 @@ public static class GraphCodeGenerator
             }
         }
     }
+
+    private static string CharacterEventName(GraphEventKind kind) => kind == GraphEventKind.OnCharacterJumped ? "Jumped" : "Landed";
 
     private static string ConditionExpression(GraphNode node, bool useLocals = false, NodeGraph? graph = null)
     {
@@ -617,7 +650,15 @@ public static class GraphCodeGenerator
             case ActionKind.Teleport:
                 sb.AppendLine($"        if ({target} is {{ }} point) Position = Scene!.GetWorldPosition(point);");
                 break;
-            case ActionKind.QueryArea:
+            case ActionKind.CharacterJump:
+                sb.AppendLine("        Get<CharacterBody2D>()?.Jump();");
+                break;
+            case ActionKind.CharacterSetSpeed:
+                sb.AppendLine($"        if (Get<CharacterBody2D>() is {{ }} speedBody) speedBody.MoveSpeed = {ValueOf(graph, node)};");
+                break;
+            case ActionKind.CharacterSetGravity:
+                sb.AppendLine($"        if (Get<CharacterBody2D>() is {{ }} gravityBody) gravityBody.Gravity = {ValueOf(graph, node)};");
+                break;            case ActionKind.QueryArea:
             {
                 var center = string.IsNullOrWhiteSpace(node.TargetName) ? "Find(\"player\")" : target;
                 var guard = $"__area_{Short(node.Id)}";

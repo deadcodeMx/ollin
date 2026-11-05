@@ -988,7 +988,7 @@ public sealed class {className} : OllinScript
 {{
     private CharacterBody2D? _body;
 
-    public override void OnStart() => _body = GetComponent<CharacterBody2D>();
+    public override void OnStart() => _body = Get<CharacterBody2D>();
 
     public override void OnUpdate(float deltaTime)
     {{

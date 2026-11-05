@@ -828,4 +828,25 @@ public sealed class GraphV2Tests
             Ollin.Core.Scenes.SceneLoadQueue.TryTake(out _);
         }
     }
+
+    [Fact]
+    public void ElPersonajeSeExponeAlGrafo()
+    {
+        var graph = new NodeGraph();
+        var landed = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        landed.Event = GraphEventKind.OnCharacterLanded;
+        var jump = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        jump.Action = ActionKind.CharacterJump;
+        landed.Next = jump.Id;
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 200);
+        var speed = graph.AddNode(GraphNodeKind.Action, 200, 200);
+        speed.Action = ActionKind.CharacterSetSpeed;
+        speed.Amount = 8f;
+        start.Next = speed.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("_characterBody.Landed += ", code);
+        Assert.Contains("Jump();", code);
+        Assert.Contains("MoveSpeed = 8", code);
+        AssertGeneratedCompiles(graph);
+    }
 }

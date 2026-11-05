@@ -759,6 +759,7 @@
                     <StackPanel IsVisible="{Binding Selected.HasCharacterBody}" Spacing="5">
                       <TextBlock Classes="section" Text="PERSONAJE" />
                       <Button Classes="tool accent" Content="Crear script de personaje" Click="OnCreateCharacterScript" HorizontalAlignment="Stretch" />
+                      <Button Classes="tool" Content="Abrir grafo de personaje" Click="OnOpenGraph" HorizontalAlignment="Stretch" />
                       <Grid ColumnDefinitions="96,*" Margin="0,1">
                         <TextBlock Text="Velocidad" VerticalAlignment="Center" Classes="hint" />
                         <NumericUpDown Grid.Column="1" Value="{Binding Selected.CharacterMoveSpeed, Mode=TwoWay}" Increment="0.5" Minimum="0" FormatString="0.##" />

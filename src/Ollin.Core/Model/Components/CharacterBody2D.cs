@@ -50,6 +50,9 @@ public sealed class CharacterBody2D : Component, ITickable
 
     [JsonIgnore] public bool WasGrounded { get; private set; }
 
+    public event Action? Jumped;
+    public event Action? Landed;
+
     private float _coyote;
     private float _buffer;
     private bool _jumpHeld;
@@ -153,6 +156,7 @@ public sealed class CharacterBody2D : Component, ITickable
         if (_buffer > 0f && _coyote > 0f)
         {
             velocity.Y = MathF.Max(0f, JumpSpeed);
+            Jumped?.Invoke();
             _buffer = 0f;
             _coyote = 0f;
             IsGrounded = false;
@@ -174,7 +178,12 @@ public sealed class CharacterBody2D : Component, ITickable
         _jumpHeld = jumpDown;
 
         body.Velocity = velocity;
+
+        if (IsGrounded && !WasGrounded) Landed?.Invoke();
     }
+
+    /// <summary>Pide un salto en el siguiente cuadro, respetando el buffer.</summary>
+    public void Jump() => _buffer = MathF.Max(0.001f, JumpBuffer);
 
     private void SnapToFloor()
     {

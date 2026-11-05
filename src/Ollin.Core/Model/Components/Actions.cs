@@ -27,6 +27,9 @@ public enum ActionKind
     QueryArea,
     Wait,
     LoadScene,
+    CharacterJump,
+    CharacterSetSpeed,
+    CharacterSetGravity,
 }
 
 /// <summary>Puente por reflexión para que el grafo y las expresiones no dependan de sistemas RPG.</summary>
@@ -72,6 +75,15 @@ public static class ActionExecutor
                 if (!string.IsNullOrWhiteSpace(propertyName)) Ollin.Core.Saves.GameStateHost.Current?.SetNumber(propertyName, count);
                 break;
             }
+            case ActionKind.CharacterJump:
+                if ((target ?? FindPlayer(scene, playerTag))?.GetComponent<CharacterBody2D>() is { } jumper) jumper.Jump();
+                break;
+            case ActionKind.CharacterSetSpeed:
+                if ((target ?? FindPlayer(scene, playerTag))?.GetComponent<CharacterBody2D>() is { } speedBody) speedBody.MoveSpeed = amount;
+                break;
+            case ActionKind.CharacterSetGravity:
+                if ((target ?? FindPlayer(scene, playerTag))?.GetComponent<CharacterBody2D>() is { } gravityBody) gravityBody.Gravity = amount;
+                break;
             case ActionKind.EmitSignal:
                 Ollin.Core.Scripting.SignalBus.Emit(message, target);
                 break;

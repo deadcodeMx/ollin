@@ -14,7 +14,7 @@ de trabajo existente.
 | # | Feedback | Estado |
 |---|---|---|
 | 1 | BoxCollider se veía circular y faltaban formas | **Hecho**: caja real de 4 esquinas, cilindro y cono |
-| 2 | CharacterBody no genera código | **Parcial**: botón “Crear script de personaje” con esqueleto C# |
+| 2 | CharacterBody no genera código | **Hecho**: script C# y grafo con eventos/acciones de personaje |
 | 3 | Segundo viewport con la cámara | **Hecho**: selector, ocultar/mostrar, ventana independiente y placeholder |
 | 4 | Clic derecho en jerarquía | **Hecho**: espacio vacío y entidad, con componentes por categoría |
 | 5 | Añadir componente desde inspector | **Verificado**: el botón ya abre la lista por categorías |
@@ -58,6 +58,7 @@ de trabajo existente.
 10. Drag-and-drop de texturas/scripts al inspector.
 11. Idioma español oficial e inglés opcional.
 12. Tema claro legible en jerarquía, inspector y consola.
+13. Grafo de personaje con saltar, velocidad y gravedad.
 
 ## Pruebas
 
