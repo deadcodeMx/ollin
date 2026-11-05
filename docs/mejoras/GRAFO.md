@@ -9,7 +9,7 @@
 Que el grafo sea una forma real de programar: variables, parámetros, control de
 flujo, datos tipados y traducción fiable a C#.
 
-## Estado a 6.263.0
+## Estado a 6.268.0
 
 ### Cumplido
 
@@ -61,15 +61,15 @@ los defina.
 ### Datos y tipos
 
 - Los pines son semánticos por acción; no existe un pin universal para cualquier entrada de cualquier nodo.
-- No hay arrays, listas ni structs.
+- Listas y structs existen; faltan listas de structs y structs anidados.
 - El auto-cast es básico y no cubre toda la matriz.
 - Las expresiones compuestas muy anidadas pueden quedar como tipo desconocido.
 - El parser de argumentos no entiende lambdas.
 
 ### Runtime
 
-- `NodeGraph` usa `GameState` y el script generado usa campos `_var_*`/`_vars`; no comparten estado.
-- Las acciones heredadas `Checkpoint`, `OpenDoor` y `Spawn` dependen de componentes eliminados. **No se reimplementan**: se retiran del roadmap por ser acciones cerradas.
+- La sincronización de estado es inicial y al escribir; no hay escucha continua de cambios externos.
+- Las acciones heredadas `Checkpoint`, `OpenDoor` y `Spawn` siguen en la paleta; deben ocultarse cuando las primitivas las sustituyan.
 
 ### Pruebas
 
@@ -93,6 +93,10 @@ los defina.
 - Breakpoints en el código generado.
 - Operadores con tipo de resultado.
 - Sincronización inicial de variables con `GameState`.
+- Listas y structs con valores iniciales.
+- Pin universal de expresión.
+- Pruebas de compilación por caso.
+- Primitiva Crear entidad.
 
 ## Criterios de aceptación
 
@@ -107,14 +111,14 @@ los defina.
 
 ## Cumplimiento
 
-- **1. Parcial:** hay compilación real de un grafo simple; faltan casos con variables y parámetros.
+- **1. Sí:** hay compilación real de variables, parámetros, funciones, subgrafos y eventos.
 - **2. Sí:** funciones con condición, bucle y return generan código.
 - **3. Sí:** eventos personalizados inline con parámetros.
 - **4. Sí:** `SetVariable`/`AddVariable` usan la expresión.
 - **5. Sí:** se compila antes de guardar y se bloquea si falla.
 - **6. Sí:** guard configurable en `while`.
 - **7. Sí:** variables con tipo y valor inicial.
-- **8. Parcial:** hay una prueba de compilación real, no una por cada grafo.
+- **8. Sí:** cada caso tiene prueba de compilación real con Roslyn.
 
 ## Tareas
 
@@ -135,7 +139,7 @@ los defina.
 ### Fase C — datos
 - [~] Pines por cualquier entrada de nodo (semánticos por acción, no universales).
 - [x] Nodos de operadores.
-- [ ] Arrays/listas/structs.
+- [x] Listas y structs.
 - [ ] Auto-cast completo.
 
 ### Fase D — editor
@@ -152,6 +156,16 @@ los defina.
 - Variables de texto/bool/Vector2.
 - `while` con límite.
 
+## Qué sigue
+
+1. **Destruir entidad**.
+2. **Emitir señal/evento** genérico.
+3. **Consultar área** con radio y filtro.
+4. **Temporizador** de espera/repetir.
+5. **Cargar escena**.
+6. Ocultar de la paleta `Spawn`, `OpenDoor` y `Checkpoint`.
+7. Listas de structs y structs anidados.
+8. Auto-cast completo.
 ## Dependencias
 
 - `Ollin.Core.Scripting` (codegen y parser).
