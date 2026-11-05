@@ -83,8 +83,8 @@ public static class GraphCodeGenerator
             var condition = node.Condition switch
             {
                 GraphConditionKind.Always => "true",
-                GraphConditionKind.HasItem => $"Find(\"{Escape(node.TargetName)}\")?.GetComponent<Inventory>()?.Has(\"{Escape(node.ItemId)}\") == true",
-                GraphConditionKind.HealthBelow => $"Find(\"{Escape(node.TargetName)}\")?.GetComponent<Health>()?.Current <= {node.Threshold:0.###}f",
+                GraphConditionKind.HasItem => $"GameplayReflection.HasItem(Find(\"{Escape(node.TargetName)}\"), \"{Escape(node.ItemId)}\")",
+                GraphConditionKind.HealthBelow => $"GameplayReflection.HealthBelow(Find(\"{Escape(node.TargetName)}\"), {node.Threshold:0.###}f)",
                 GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(node.Expression)}\", new ExpressionContext {{ Player = Find(\"player\") }})",
                 _ => "true",
             };
@@ -97,6 +97,10 @@ public static class GraphCodeGenerator
             sb.AppendLine("        {");
             if (node.FalseNext is { } f) sb.AppendLine($"            {MethodName(Find(graph, f))}();");
             sb.AppendLine("        }");
+        }
+        else if (node.Kind == GraphNodeKind.Reroute)
+        {
+            if (node.Next is { } rerouteNext) sb.AppendLine($"        {MethodName(Find(graph, rerouteNext))}();");
         }
         else if (node.Kind == GraphNodeKind.Action)
         {

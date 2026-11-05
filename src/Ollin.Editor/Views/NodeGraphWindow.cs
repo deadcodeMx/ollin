@@ -184,6 +184,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Acción: dañar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Damage));
         AddPalette(panel, "Acción: curar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Heal));
         AddPalette(panel, "Acción: teletransportar", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.Teleport));
+        AddPalette(panel, "Reroute (paso)", () => AddNode(GraphNodeKind.Reroute, GraphEventKind.OnStart));
         AddPalette(panel, "Comentario", AddComment);
         AddPalette(panel, "Grupo", AddGroup);
 
@@ -842,6 +843,7 @@ public sealed class NodeGraphWindow : Window
             ("Acción: fijar variable", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.SetVariable)),
             ("Acción: sumar variable", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.AddVariable)),
             ("Acción: alternar flag", () => AddNode(GraphNodeKind.Action, GraphEventKind.OnStart, ActionKind.ToggleFlag)),
+            ("Reroute (paso)", () => AddNode(GraphNodeKind.Reroute, GraphEventKind.OnStart)),
             ("Comentario", AddComment),
             ("Grupo", AddGroup),
         };
@@ -1443,6 +1445,7 @@ public sealed class NodeGraphWindow : Window
             GraphNodeKind.Event => "#F2A93B",
             GraphNodeKind.Condition => "#5B9CE0",
             GraphNodeKind.Comment => "#93A4BC",
+            GraphNodeKind.Reroute => "#9B8CFF",
             _ => "#47B8A8",
         };
 
@@ -2197,6 +2200,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         GraphNodeKind.Event => "EVENTO",
         GraphNodeKind.Condition => "CONDICIÓN",
         GraphNodeKind.Comment => "COMENTARIO",
+        GraphNodeKind.Reroute => "REROUTE",
         GraphNodeKind.Group => "GRUPO",
         _ => "ACCIÓN",
     };

@@ -10,6 +10,7 @@ public enum GraphNodeKind
     Event,
     Condition,
     Action,
+    Reroute,
     Comment,
     Group,
 }
