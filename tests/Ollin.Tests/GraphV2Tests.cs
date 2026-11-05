@@ -1,3 +1,4 @@
+using Ollin.Scripting;
 using System.Numerics;
 using Ollin.Core.Model.Components;
 using Ollin.Core.Scripting;
@@ -286,5 +287,18 @@ public sealed class GraphV2Tests
         Assert.Contains("private float _var_contador = 5f;", code);
         Assert.Contains("private string _var_nombre = \"hola\";", code);
         Assert.Contains("_var_contador = _var_contador + 1;", code);
+    }
+
+    [Fact]
+    public void ElCodigoGeneradoCompila()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.Message;
+        start.Next = action.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        var result = ScriptCompiler.Compile(new[] { ("generated.cs", code) });
+        Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
     }
 }

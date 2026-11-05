@@ -1,17 +1,16 @@
-## Ollin Beta 6.247.0 — variables tipadas
+## Ollin Beta 6.248.0 — compilar antes de guardar
 
 ### Añadido
 
-- Variables con tipo y valor inicial.
-- Campos `_var_*`.
-- Expresiones reescriben variables.
-- Contexto local tipado.
-- Prueba Number/Text.
+- Compilación real del script generado.
+- Bloqueo de sobrescritura si hay errores.
+- Diálogo de errores de compilación.
+- Prueba de compilación del codegen.
 
 ### Verificación
 
 - Build 0 errores.
-- 151/151 pruebas.
-- Instalador 6.247.0.
+- 152/152 pruebas.
+- Instalador 6.248.0.
 
-## [6.246.0] — 2026-11-05
+## [6.247.0] — 2026-11-05

@@ -460,6 +460,32 @@ public sealed class NodeGraphWindow : Window
         return dock;
     }
 
+    private void ShowCompilationErrors(IEnumerable<Ollin.Scripting.ScriptDiagnostic> errors)
+    {
+        var text = string.Join(Environment.NewLine, errors.Take(12).Select(error => error.Text));
+        var window = new Window
+        {
+            Title = "Errores del script generado",
+            Width = 760,
+            Height = 520,
+            Background = new SolidColorBrush(Color.Parse("#0A0A0C")),
+            Foreground = new SolidColorBrush(Color.Parse("#F2EEF7")),
+            Content = new ScrollViewer
+            {
+                Content = new TextBox
+                {
+                    Text = text,
+                    IsReadOnly = true,
+                    AcceptsReturn = true,
+                    FontFamily = new Avalonia.Media.FontFamily("Consolas"),
+                    Background = new SolidColorBrush(Color.Parse("#0F0F14")),
+                    Foreground = new SolidColorBrush(Color.Parse("#F2EEF7")),
+                    Margin = new Thickness(16),
+                },
+            },
+        };
+        window.ShowDialog(this);
+    }
     private void ShowVariables()
     {
         var window = new Window
