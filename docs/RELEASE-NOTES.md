@@ -1,15 +1,16 @@
-## Ollin Beta 6.228.0 — pines por propiedad
+## Ollin Beta 6.229.0 — túneles tipados
 
 ### Añadido
 
-- Pines por propiedad del componente.
-- Conexión directa desde nodo Valor.
-- Codegen usa el puerto con el nombre de la propiedad.
+- Pin de datos de entrada/salida en túneles.
+- Tipo de túnel editable.
+- Propagación de datos por túnel en codegen.
+- Prueba de túnel tipado.
 
 ### Verificación
 
 - Build 0 errores.
-- 140/140 pruebas.
-- Instalador 6.228.0 instalado.
+- 141/141 pruebas.
+- Instalador 6.229.0 instalado.
 
-## [6.227.0] — 2026-11-05
+## [6.228.0] — 2026-11-05

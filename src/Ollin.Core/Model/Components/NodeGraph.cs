@@ -110,6 +110,7 @@ public sealed class GraphNode
     public string SubgraphName { get; set; } = string.Empty;
     public string ComponentName { get; set; } = string.Empty;
     public string PropertyName { get; set; } = string.Empty;
+    public GraphPinType TunnelType { get; set; } = GraphPinType.Number;
 
     public float GroupWidth { get; set; } = 280f;
 

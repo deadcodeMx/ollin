@@ -1630,7 +1630,7 @@ public sealed class NodeGraphWindow : Window
         return button;
     }
 
-    private Button DataInButton(GraphNode node)
+    private Button DataInButton(GraphNode node, string port = "amount")
     {
         var button = new Button { Content = "← Dato", FontSize = 10, Padding = new Thickness(6, 2) };
         button.Click += (_, _) =>
@@ -1643,7 +1643,7 @@ public sealed class NodeGraphWindow : Window
                 GraphValueKind.Text => GraphPinType.Text,
                 _ => GraphPinType.Number,
             };
-            _graph.AddDataLink(_dataSource.Id, node.Id, "amount", type);
+            _graph.AddDataLink(_dataSource.Id, node.Id, port, type);
             _dataSource = null;
             MarkChanged();
             Render();

@@ -120,5 +120,25 @@ public sealed class GraphV2Tests
         Assert.Equal("Grafo principal", graph.Name);
         Assert.Equal("amount", graph.DataLinks[0].TargetPort);
     }
-}
 
+    [Fact]
+    public void ElTunelPropagaElValorAlCodegen()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var value = graph.AddNode(GraphNodeKind.Value, 0, 0);
+        value.Value = "9";
+        var input = graph.AddNode(GraphNodeKind.TunnelIn, 100, 0);
+        var output = graph.AddNode(GraphNodeKind.TunnelOut, 200, 0);
+        var action = graph.AddNode(GraphNodeKind.Action, 300, 0);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "x";
+        start.Next = action.Id;
+        graph.AddDataLink(value.Id, input.Id, "value", GraphPinType.Number);
+        graph.AddDataLink(output.Id, action.Id, "amount", GraphPinType.Number);
+        graph.AddDataLink(input.Id, output.Id, "value", GraphPinType.Number);
+
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("9", code);
+    }
+}
