@@ -58,4 +58,28 @@ public sealed class GraphV2Tests
         Assert.True(graph.RemoveSubgraph("PUERTA"));
         Assert.Empty(graph.Subgraphs);
     }
+
+    [Fact]
+    public void ElSubgrafoSeEjecutaYElLimiteEvitaBucles()
+    {
+        var scene = new Scene();
+        var rootEntity = scene.Create("Raiz", Vector2.Zero);
+        var target = scene.Create("Objetivo", Vector2.Zero);
+        target.Active = false;
+        var root = rootEntity.AddComponent(new NodeGraph());
+        var start = root.AddNode(GraphNodeKind.Event, 0, 0);
+        var call = root.AddNode(GraphNodeKind.Subgraph, 200, 0);
+        call.SubgraphName = "Hijo";
+        start.Next = call.Id;
+        var child = root.AddSubgraph("Hijo");
+        var childEvent = child.AddNode(GraphNodeKind.Event, 0, 0);
+        var activate = child.AddNode(GraphNodeKind.Action, 200, 0);
+        activate.Action = ActionKind.Activate;
+        activate.TargetName = "Objetivo";
+        childEvent.Next = activate.Id;
+
+        root.RunFirst(scene, null);
+        Assert.True(target.Active);
+    }
 }
+

@@ -178,6 +178,8 @@ public sealed class GraphNode
 public sealed class NodeGraph : Component, ITickable
 {
     public string Name { get; set; } = "Grafo principal";
+    [ThreadStatic] private static int _subgraphDepth;
+    public const int MaxSubgraphDepth = 16;
     public List<GraphNode> Nodes { get; set; } = new();
     public List<GraphDataLink> DataLinks { get; set; } = new();
     public List<NodeGraph> Subgraphs { get; set; } = new();
@@ -365,7 +367,17 @@ public sealed class NodeGraph : Component, ITickable
 
             Guid? next;
 
-            if (node.Kind == GraphNodeKind.Condition)
+            if (node.Kind == GraphNodeKind.Subgraph)
+            {
+                if (FindSubgraph(node.SubgraphName) is { } subgraph && _subgraphDepth < MaxSubgraphDepth)
+                {
+                    _subgraphDepth++;
+                    try { subgraph.RunFirst(scene, player); }
+                    finally { _subgraphDepth--; }
+                }
+                next = Link(node, "next");
+            }
+            else if (node.Kind == GraphNodeKind.Condition)
             {
                 next = ConditionMet(node, player) ? Link(node, "true") : Link(node, "false");
             }
@@ -400,6 +412,12 @@ public sealed class NodeGraph : Component, ITickable
         DebugCursor = null;
     }
 
+    /// <summary>Ejecuta el primer evento del grafo; se usa para subgrafos.</summary>
+    public void RunFirst(Scenes.Scene scene, Entity? player)
+    {
+        var start = Nodes.FirstOrDefault(node => node.Kind == GraphNodeKind.Event && node.Next is not null)?.Next;
+        if (start is not null) Execute(scene, player, start);
+    }
     /// <summary>Avanza un nodo desde el breakpoint actual.</summary>
     public bool StepOnce(Scenes.Scene scene, Entity? player)
     {

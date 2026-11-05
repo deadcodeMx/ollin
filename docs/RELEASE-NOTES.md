@@ -1,23 +1,19 @@
-## Ollin Beta 6.222.0 — base de subgrafos
+## Ollin Beta 6.223.0 — subgrafos ejecutables
 
 ### Añadido
 
-- Modelo de subgrafos por grafo.
-- Pestañas de grafos y subgrafos.
-- Breadcrumb entidad/grafo.
-- Nodo Subgrafo con nombre editable.
-- Prueba de creación, búsqueda y borrado de subgrafos.
+- Ejecución recursiva de subgrafos.
+- Límite de profundidad 16.
+- Prueba de ejecución de subgrafo.
 
 ### Pendiente
 
-- Túneles de entrada/salida.
-- Ejecución recursiva del subgrafo.
-- Pines de datos a cualquier campo.
+- Túneles de entrada/salida con pines.
 
 ### Verificación
 
 - Build 0 errores.
-- 137/137 pruebas.
-- Instalador 6.222.0 instalado.
+- 138/138 pruebas.
+- Instalador 6.223.0 instalado.
 
-## [6.221.0] — 2026-11-05
+## [6.222.0] — 2026-11-05
