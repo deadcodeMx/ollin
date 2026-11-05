@@ -499,4 +499,22 @@ public sealed class GraphV2Tests
         Assert.Contains(issues, issue => issue.IsError && issue.Message.Contains("Función duplicada"));
         Assert.Contains(issues, issue => issue.IsError && issue.Message.Contains("Evento duplicado"));
     }
+
+    [Fact]
+    public void ElScriptSincronizaVariablesConGameState()
+    {
+        var graph = new NodeGraph();
+        graph.Variables.Add(new GraphVariable { Name = "contador", Type = GraphPinType.Number, DefaultValue = "5" });
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var action = graph.AddNode(GraphNodeKind.Action, 200, 0);
+        action.Action = ActionKind.SetVariable;
+        action.VariableName = "contador";
+        action.Expression = "6";
+        start.Next = action.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("SyncVariables()", code);
+        Assert.Contains("GameStateHost.Current?.SetNumber", code);
+        var result = ScriptCompiler.Compile(new[] { ("sync.cs", code) });
+        Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
+    }
 }

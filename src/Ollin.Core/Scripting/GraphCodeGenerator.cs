@@ -15,6 +15,7 @@ public static class GraphCodeGenerator
         sb.AppendLine("using System.Numerics;");
         sb.AppendLine("using Ollin.Core.Model.Components;");
         sb.AppendLine("using Ollin.Scripting;");
+        sb.AppendLine("using Ollin.Core.Saves;");
         sb.AppendLine();
         sb.AppendLine($"public sealed class {className} : OllinScript");
         sb.AppendLine("{");
@@ -31,7 +32,11 @@ public static class GraphCodeGenerator
             switch (node.Event)
             {
                 case GraphEventKind.OnStart:
-                    sb.AppendLine("    public override void OnStart() => " + MethodName(node) + "();");
+                    sb.AppendLine("    public override void OnStart()");
+                    sb.AppendLine("    {");
+                    sb.AppendLine("        SyncVariables();");
+                    sb.AppendLine($"        {MethodName(node)}();");
+                    sb.AppendLine("    }");
                     break;
                 case GraphEventKind.OnTimer:
                     sb.AppendLine($"    private float _timer_{Short(node.Id)};");
@@ -65,6 +70,7 @@ public static class GraphCodeGenerator
         {
             EmitCustomEvent(sb, graph, custom, emitted);
         }
+        EmitStateSync(sb, graph);
         foreach (var node in events)
         {
             EmitChain(sb, graph, node, emitted);
@@ -166,6 +172,41 @@ public static class GraphCodeGenerator
         GraphConditionKind.Expression => $"ExpressionEvaluator.EvaluateBool(\"{Escape(node.Expression)}\", new ExpressionContext {{ Player = Find(\"player\"){(useLocals ? ", Locals = __locals" : string.Empty)} }})",
         _ => "true",
     };
+    private static void EmitStateSync(StringBuilder sb, NodeGraph graph)
+    {
+
+        sb.AppendLine();
+        sb.AppendLine("    private void SyncVariables()");
+        sb.AppendLine("    {");
+        sb.AppendLine("        if (GameStateHost.Current is not { } state) return;");
+        foreach (var variable in graph.Variables)
+        {
+            var name = Escape(variable.Name);
+            var field = VarField(variable);
+            var line = variable.Type switch
+            {
+                GraphPinType.Boolean => $"        if (state.Has(\"{name}\")) {field} = state.GetFlag(\"{name}\", {field});",
+                GraphPinType.Text => $"        if (state.Has(\"{name}\")) {field} = state.Get(\"{name}\") ?? {field};",
+                GraphPinType.Integer => $"        if (state.Has(\"{name}\")) {field} = (int)state.GetNumber(\"{name}\", {field});",
+                GraphPinType.Number => $"        if (state.Has(\"{name}\")) {field} = state.GetNumber(\"{name}\", {field});",
+                _ => null,
+            };
+            if (line is not null) sb.AppendLine(line);
+        }
+        sb.AppendLine("    }");
+    }
+
+    private static string StateWrite(NodeGraph graph, string variableName, string field)
+    {
+        var variable = FindVariable(graph, variableName);
+        var name = Escape(variableName);
+        return variable?.Type switch
+        {
+            GraphPinType.Boolean => $" GameStateHost.Current?.SetFlag(\"{name}\", {field});",
+            GraphPinType.Text => $" GameStateHost.Current?.Set(\"{name}\", {field});",
+            _ => $" GameStateHost.Current?.SetNumber(\"{name}\", {field});",
+        };
+    }
     private static void EmitSubgraph(StringBuilder sb, NodeGraph subgraph, HashSet<string> emitted)
     {
         var name = "Sub_" + SafeName(subgraph.Name, "Subgrafo");
@@ -444,13 +485,13 @@ public static class GraphCodeGenerator
                 sb.AppendLine($"        if ({target} is {{ }} point) Position = Scene!.GetWorldPosition(point);");
                 break;
             case ActionKind.SetVariable:
-                sb.AppendLine($"        {variableField} = {ValueOrExpression(graph, node)};");
+                sb.AppendLine($"        {variableField} = {ValueOrExpression(graph, node)};{StateWrite(graph, node.VariableName, variableField)}");
                 break;
             case ActionKind.AddVariable:
-                sb.AppendLine($"        {variableField} += {ValueOrExpression(graph, node)};");
+                sb.AppendLine($"        {variableField} += {ValueOrExpression(graph, node)};{StateWrite(graph, node.VariableName, variableField)}");
                 break;
             case ActionKind.ToggleFlag:
-                if (variable?.Type == GraphPinType.Boolean) sb.AppendLine($"        {variableField} = !{variableField};");
+                if (variable?.Type == GraphPinType.Boolean) sb.AppendLine($"        {variableField} = !{variableField};{StateWrite(graph, node.VariableName, variableField)}");
                 else sb.AppendLine($"        {variableField} = {variableField} > 0f ? 0f : 1f;");
                 break;
             default:

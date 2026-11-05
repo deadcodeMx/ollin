@@ -1,16 +1,16 @@
-## Ollin Beta 6.263.0 — duplicados de funciones/eventos
+## Ollin Beta 6.264.0 — estado compartido
 
 ### Añadido
 
-- Funciones duplicadas.
-- Eventos duplicados.
-- Llamadas sin definición.
-- Prueba.
+- Variables sincronizadas con GameState.
+- OnStart restaura valores.
+- Set/Add/Toggle escriben al estado.
+- Prueba de compilación y sincronización.
 
 ### Verificación
 
 - Build 0 errores.
-- 164/164 pruebas.
-- Instalador 6.263.0.
+- 165/165 pruebas.
+- Instalador 6.264.0.
 
-## [6.262.0] — 2026-11-05
+## [6.263.0] — 2026-11-05
