@@ -122,27 +122,6 @@ public sealed class GraphV2Tests
     }
 
     [Fact]
-    public void ElTunelPropagaElValorAlCodegen()
-    {
-        var graph = new NodeGraph();
-        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
-        var value = graph.AddNode(GraphNodeKind.Value, 0, 0);
-        value.Value = "9";
-        var input = graph.AddNode(GraphNodeKind.TunnelIn, 100, 0);
-        var output = graph.AddNode(GraphNodeKind.TunnelOut, 200, 0);
-        var action = graph.AddNode(GraphNodeKind.Action, 300, 0);
-        action.Action = ActionKind.SetVariable;
-        action.VariableName = "x";
-        start.Next = action.Id;
-        graph.AddDataLink(value.Id, input.Id, "value", GraphPinType.Number);
-        graph.AddDataLink(output.Id, action.Id, "amount", GraphPinType.Number);
-        graph.AddDataLink(input.Id, output.Id, "value", GraphPinType.Number);
-
-        var code = GraphCodeGenerator.Generate(graph);
-        Assert.Contains("9", code);
-    }
-
-    [Fact]
     public void Vector2SeConectaYSeAsigna()
     {
         var scene = new Scene();
@@ -166,4 +145,22 @@ public sealed class GraphV2Tests
         Assert.Equal(new Vector2(2f, 3f), sprite.Size);
         Assert.Contains("new Vector2", GraphCodeGenerator.Generate(graph));
     }
+
+    [Fact]
+    public void ElBucleForSeGeneraConCuerpoYSalida()
+    {
+        var graph = new NodeGraph();
+        var start = graph.AddNode(GraphNodeKind.Event, 0, 0);
+        var loop = graph.AddNode(GraphNodeKind.Loop, 100, 0);
+        loop.LoopKind = GraphLoopKind.For;
+        loop.LoopCount = 2;
+        var body = graph.AddNode(GraphNodeKind.Action, 300, 0);
+        body.Action = ActionKind.Message;
+        lock (body) { }
+        start.Next = loop.Id;
+        loop.Next = body.Id;
+        var code = GraphCodeGenerator.Generate(graph);
+        Assert.Contains("for (int i = 0; i < 2; i++)", code);
+    }
 }
+

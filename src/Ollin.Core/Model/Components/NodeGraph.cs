@@ -13,6 +13,7 @@ public enum GraphNodeKind
     Action,
     Value,
     Subgraph,
+    Loop,
     TunnelIn,
     TunnelOut,
     Reroute,
@@ -49,6 +50,13 @@ public enum GraphPinType
 }
 
 /// <summary>Enlace de datos entre la salida de un nodo y la entrada de otro.</summary>
+/// <summary>Tipo de bucle del grafo.</summary>
+public enum GraphLoopKind
+{
+    For,
+    While,
+    ForEach,
+}
 /// <summary>Variable definida por el usuario del grafo.</summary>
 public sealed class GraphVariable
 {
@@ -120,6 +128,12 @@ public sealed class GraphNode
     public string ComponentName { get; set; } = string.Empty;
     public string PropertyName { get; set; } = string.Empty;
     public GraphPinType TunnelType { get; set; } = GraphPinType.Number;
+    public GraphLoopKind LoopKind { get; set; } = GraphLoopKind.For;
+    public string LoopVariable { get; set; } = "i";
+    public int LoopCount { get; set; } = 3;
+    public string LoopExpression { get; set; } = "i < 3";
+    public string LoopCollection { get; set; } = "items";
+    public Guid? LoopAfter { get; set; }
 
     public float GroupWidth { get; set; } = 280f;
 

@@ -55,6 +55,7 @@ public sealed class NodeGraphWindow : Window
     private GraphNode? _selected;
     private GraphNode? _linkSource;
     private GraphNode? _dataSource;
+    private string? _linkPort;
     private bool _linkTrue = true;
     private Border? _dragCard;
     private GraphNode? _dragNode;
@@ -201,6 +202,7 @@ public sealed class NodeGraphWindow : Window
         AddPalette(panel, "Valor: booleano", () => AddValue(GraphValueKind.Boolean));
         AddPalette(panel, "Valor: texto", () => AddValue(GraphValueKind.Text));
         AddPalette(panel, "Valor: Vector2", () => AddValue(GraphValueKind.Vector2));
+        AddPalette(panel, "Bucle", () => AddNode(GraphNodeKind.Loop, GraphEventKind.OnStart));
         AddPalette(panel, "Subgrafo", () => AddNode(GraphNodeKind.Subgraph, GraphEventKind.OnStart));
         AddPalette(panel, "Túnel entrada", () => AddNode(GraphNodeKind.TunnelIn, GraphEventKind.OnStart));
         AddPalette(panel, "Túnel salida", () => AddNode(GraphNodeKind.TunnelOut, GraphEventKind.OnStart));
@@ -1795,7 +1797,7 @@ public sealed class NodeGraphWindow : Window
         };
         return button;
     }
-    private Button PortButton(string text, GraphNode node, bool trueBranch)
+    private Button PortButton(string text, GraphNode node, bool trueBranch, string? port = null)
     {
         var button = new Button
         {
@@ -1807,12 +1809,14 @@ public sealed class NodeGraphWindow : Window
         {
             _linkSource = node;
             _linkTrue = trueBranch;
+            _linkPort = port;
+            _status.Text = port == "after" ? "Selecciona el nodo que sigue al bucle." : port == "body" ? "Selecciona el cuerpo del bucle." : "Selecciona el nodo destino.";
             _selected = node;
             _selectedIds.Clear();
             _selectedIds.Add(node.Id);
             Render();
         };
-        var portName = node.Kind == GraphNodeKind.Condition ? (trueBranch ? "true" : "false") : "next";
+        var portName = port ?? (node.Kind == GraphNodeKind.Condition ? (trueBranch ? "true" : "false") : "next");
         if (node.DisabledPorts.Contains(portName)) button.Content = text + " (off)";
         button.ContextMenu = ConnectionMenu(node.Id, portName);
         return button;
@@ -2019,11 +2023,16 @@ public sealed class NodeGraphWindow : Window
                 if (_linkTrue) _linkSource.TrueNext = node.Id;
                 else _linkSource.FalseNext = node.Id;
             }
+            else if (_linkSource.Kind == GraphNodeKind.Loop && _linkPort == "after")
+            {
+                _linkSource.LoopAfter = node.Id;
+            }
             else
             {
                 _linkSource.Next = node.Id;
                 _linkSource.DisabledPorts.Remove("next");
             }
+            _linkPort = null;
 
             _linkSource = null;
             _selected = node;
@@ -2510,6 +2519,7 @@ if (_nodeCards.TryGetValue(id, out var selectedCard))
         GraphNodeKind.Reroute => "REROUTE",
         GraphNodeKind.Value => "VALOR",
         GraphNodeKind.Subgraph => "SUBRAFO",
+        GraphNodeKind.Loop => "BUCLE",
         GraphNodeKind.TunnelIn => "TÚNEL ENTRADA",
         GraphNodeKind.TunnelOut => "TÚNEL SALIDA",
         GraphNodeKind.Group => "GRUPO",

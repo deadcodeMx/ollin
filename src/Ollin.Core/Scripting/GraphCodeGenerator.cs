@@ -64,7 +64,12 @@ public static class GraphCodeGenerator
         while (node is not null && emitted.Add(node.Id))
         {
             EmitNode(sb, graph, node);
-            node = node.Next is { } next ? Find(graph, next) : null;
+            if (node.Kind == GraphNodeKind.Loop)
+            {
+                if (node.Next is { } body) EmitChain(sb, graph, Find(graph, body), emitted);
+                node = node.LoopAfter is { } after ? Find(graph, after) : null;
+            }
+            else node = node.Next is { } next ? Find(graph, next) : null;
         }
     }
 
@@ -97,6 +102,21 @@ public static class GraphCodeGenerator
             sb.AppendLine("        {");
             if (node.FalseNext is { } f) sb.AppendLine($"            {MethodName(Find(graph, f))}();");
             sb.AppendLine("        }");
+        }
+        else if (node.Kind == GraphNodeKind.Loop)
+        {
+            var variable = string.IsNullOrWhiteSpace(node.LoopVariable) ? "i" : node.LoopVariable;
+            var header = node.LoopKind switch
+            {
+                GraphLoopKind.While => $"while ({node.LoopExpression})",
+                GraphLoopKind.ForEach => $"foreach (var {variable} in {node.LoopCollection})",
+                _ => $"for (int {variable} = 0; {variable} < {node.LoopCount}; {variable}++)",
+            };
+            sb.AppendLine($"        {header}");
+            sb.AppendLine("        {");
+            if (node.Next is { } body) sb.AppendLine($"            {MethodName(Find(graph, body))}();");
+            sb.AppendLine("        }");
+            if (node.LoopAfter is { } after) sb.AppendLine($"        {MethodName(Find(graph, after))}();");
         }
         else if (node.Kind == GraphNodeKind.Reroute)
         {

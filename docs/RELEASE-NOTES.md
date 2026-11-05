@@ -1,17 +1,17 @@
-## Ollin Beta 6.236.0 — variables propias
+## Ollin Beta 6.237.0 — bucles
 
 ### Añadido
 
-- Variables del grafo: nombre, tipo y valor inicial.
-- Editor Vars.
-- Selector de variable en acciones.
-- Condiciones por expresión.
-- Eliminadas condiciones preestablecidas de objeto/vida.
+- Nodo Bucle: For, While, ForEach.
+- Puertos Cuerpo y Después.
+- Inspector de bucle.
+- Codegen `for`, `while`, `foreach`.
+- Prueba de bucle.
 
 ### Verificación
 
 - Build 0 errores.
 - 142/142 pruebas.
-- Instalador 6.236.0.
+- Instalador 6.237.0.
 
-## [6.235.0] — 2026-11-05
+## [6.236.0] — 2026-11-05
