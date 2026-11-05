@@ -241,10 +241,37 @@ public static class GraphValidator
         }
 
         ValidateReturns(graph, issues);
+        ValidateDuplicateVariables(graph, issues);
         DetectCycles(graph, issues);
         return issues;
     }
 
+    private static void ValidateDuplicateVariables(NodeGraph graph, List<GraphIssue> issues)
+    {
+        var globals = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var variable in graph.Variables)
+        {
+            if (!globals.Add(variable.Name))
+                issues.Add(new GraphIssue(null, $"Variable global duplicada: «{variable.Name}».", true));
+        }
+
+        foreach (var function in graph.Nodes.Where(node => node.Kind == GraphNodeKind.Function))
+        {
+            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var parameter in function.ParameterText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+            {
+                var name = parameter.Split(':', StringSplitOptions.TrimEntries)[0];
+                if (!names.Add(name))
+                    issues.Add(new GraphIssue(function, $"Parámetro duplicado en {function.FunctionName}: «{name}».", true));
+            }
+            foreach (var local in function.LocalVariableText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+            {
+                var name = local.Split(':', '=', StringSplitOptions.TrimEntries)[0];
+                if (!names.Add(name))
+                    issues.Add(new GraphIssue(function, $"Variable local duplicada o igual a un parámetro en {function.FunctionName}: «{name}».", true));
+            }
+        }
+    }
     private static void ValidateReturns(NodeGraph graph, List<GraphIssue> issues)
     {
         var visitedReturns = new HashSet<Guid>();

@@ -421,4 +421,18 @@ public sealed class GraphV2Tests
         var code = GraphCodeGenerator.Generate(graph);
         Assert.Contains("Hola desde dato", code);
     }
+
+    [Fact]
+    public void LasVariablesLocalesDuplicadasSeDetectan()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Grafo", Vector2.Zero);
+        var graph = entity.AddComponent(new NodeGraph());
+        var function = graph.AddNode(GraphNodeKind.Function, 0, 0);
+        function.FunctionName = "Duplicada";
+        function.ParameterText = "x:Number";
+        function.LocalVariableText = "x:Number=1";
+        var issues = GraphValidator.Validate(graph, scene);
+        Assert.Contains(issues, issue => issue.IsError && issue.Message.Contains("duplicada"));
+    }
 }
