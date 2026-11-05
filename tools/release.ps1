@@ -20,7 +20,7 @@ try {
     $version = $Matches[1]
     if ($version -notmatch '^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$') { throw 'La version no cumple SemVer: ' + $version }
     $tagVersion = 'v' + $version
-    if (git tag -l $tagVersion) { throw 'El tag ' + $tagVersion + ' ya existe. Sube la version antes de publicar.' }
+    if ($Publish -and (git tag -l $tagVersion)) { throw 'El tag ' + $tagVersion + ' ya existe. Sube la version antes de publicar.' }
     $suffix = if ($version -match '-') { '' } else { '-beta' }
     $installer = 'dist/installer/Ollin-Setup-' + $version + $suffix + '.exe'
 
