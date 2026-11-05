@@ -242,10 +242,40 @@ public static class GraphValidator
 
         ValidateReturns(graph, issues);
         ValidateDuplicateVariables(graph, issues);
+        ValidateDuplicateDefinitions(graph, issues);
         DetectCycles(graph, issues);
         return issues;
     }
 
+    private static void ValidateDuplicateDefinitions(NodeGraph graph, List<GraphIssue> issues)
+    {
+        var functions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var function in graph.Nodes.Where(node => node.Kind == GraphNodeKind.Function))
+        {
+            if (string.IsNullOrWhiteSpace(function.FunctionName))
+                issues.Add(new GraphIssue(function, "Función sin nombre.", true));
+            else if (!functions.Add(function.FunctionName))
+                issues.Add(new GraphIssue(function, $"Función duplicada: «{function.FunctionName}».", true));
+        }
+
+        var events = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var custom in graph.Nodes.Where(node => node.Kind == GraphNodeKind.CustomEvent))
+        {
+            if (string.IsNullOrWhiteSpace(custom.CustomEventName))
+                issues.Add(new GraphIssue(custom, "Evento personalizado sin nombre.", true));
+            else if (!events.Add(custom.CustomEventName))
+                issues.Add(new GraphIssue(custom, $"Evento duplicado: «{custom.CustomEventName}».", true));
+        }
+
+        foreach (var call in graph.Nodes.Where(node => node.Kind is GraphNodeKind.CallFunction or GraphNodeKind.CallEvent))
+        {
+            var exists = call.Kind == GraphNodeKind.CallFunction
+                ? graph.Nodes.Any(node => node.Kind == GraphNodeKind.Function && node.FunctionName.Equals(call.FunctionName, StringComparison.OrdinalIgnoreCase))
+                : graph.Nodes.Any(node => node.Kind == GraphNodeKind.CustomEvent && node.CustomEventName.Equals(call.CustomEventName, StringComparison.OrdinalIgnoreCase));
+            if (!exists)
+                issues.Add(new GraphIssue(call, $"Llamada a {call.FunctionName}{call.CustomEventName} sin definición.", true));
+        }
+    }
     private static void ValidateDuplicateVariables(NodeGraph graph, List<GraphIssue> issues)
     {
         var globals = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

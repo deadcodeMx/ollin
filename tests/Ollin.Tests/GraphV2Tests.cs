@@ -480,4 +480,23 @@ public sealed class GraphV2Tests
         var issues = GraphValidator.Validate(graph, scene);
         Assert.DoesNotContain(issues, issue => issue.IsError && issue.Message.Contains("Return"));
     }
+
+    [Fact]
+    public void LasFuncionesYEventosDuplicadosSeDetectan()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Grafo", Vector2.Zero);
+        var graph = entity.AddComponent(new NodeGraph());
+        var first = graph.AddNode(GraphNodeKind.Function, 0, 0);
+        first.FunctionName = "Doble";
+        var second = graph.AddNode(GraphNodeKind.Function, 0, 100);
+        second.FunctionName = "Doble";
+        var eventOne = graph.AddNode(GraphNodeKind.CustomEvent, 0, 200);
+        eventOne.CustomEventName = "Algo";
+        var eventTwo = graph.AddNode(GraphNodeKind.CustomEvent, 0, 300);
+        eventTwo.CustomEventName = "Algo";
+        var issues = GraphValidator.Validate(graph, scene);
+        Assert.Contains(issues, issue => issue.IsError && issue.Message.Contains("Función duplicada"));
+        Assert.Contains(issues, issue => issue.IsError && issue.Message.Contains("Evento duplicado"));
+    }
 }

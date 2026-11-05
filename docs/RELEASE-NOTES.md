@@ -1,15 +1,16 @@
-## Ollin Beta 6.262.0 — Return compuesto
+## Ollin Beta 6.263.0 — duplicados de funciones/eventos
 
 ### Añadido
 
-- Inferencia de comparaciones/lógica.
-- Texto, Vector2, min/max.
+- Funciones duplicadas.
+- Eventos duplicados.
+- Llamadas sin definición.
 - Prueba.
 
 ### Verificación
 
 - Build 0 errores.
-- 163/163 pruebas.
-- Instalador 6.262.0.
+- 164/164 pruebas.
+- Instalador 6.263.0.
 
-## [6.261.0] — 2026-11-05
+## [6.262.0] — 2026-11-05
