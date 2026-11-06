@@ -68,6 +68,59 @@ public sealed class TileSetTests
     }
 
     [Fact]
+    public void AutotileUsaMascaraDeVecinosYTerreno()
+    {
+        var layer = new TileMapLayer
+        {
+            Width = 3, Height = 3, Autotile = true,
+            Tiles = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            TileSet = new TileSet
+            {
+                Tiles = new()
+                {
+                    new TileDefinition
+                    {
+                        Id = 0, Terrain = "pasto",
+                        AutotileVariants = new() { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 },
+                    },
+                },
+            },
+        };
+
+        var mask = layer.AutotileMask(1, 1);
+        Assert.Equal(15, mask);
+        Assert.Equal(25, layer.DisplayTileAt(1, 1));
+        Assert.Equal(25, layer.TileSet!.ResolveTerrain("pasto", 15));
+        Assert.Equal(-1, layer.TileSet!.ResolveTerrain("piedra", 15));
+    }
+
+    [Fact]
+    public void PintadoPorLotesRellenaRectangulosYMapa()
+    {
+        var layer = new TileMapLayer { Width = 5, Height = 4, Tiles = Enumerable.Repeat(-1, 20).ToArray() };
+
+        layer.PaintRect(1, 1, 2, 2, 3);
+        Assert.Equal(3, layer.TileAt(1, 1));
+        Assert.Equal(3, layer.TileAt(2, 2));
+        Assert.Equal(-1, layer.TileAt(0, 0));
+
+        layer.Fill(7);
+        Assert.All(layer.Tiles, tile => Assert.Equal(7, tile));
+    }
+
+    [Fact]
+    public void MapaGrandeAceptaPintadoPorLotes()
+    {
+        var layer = new TileMapLayer { Width = 256, Height = 256, TileSize = 1f };
+        layer.PaintRect(32, 48, 96, 64, 4);
+
+        Assert.Equal(4, layer.TileAt(32, 48));
+        Assert.Equal(4, layer.TileAt(127, 111));
+        Assert.Equal(-1, layer.TileAt(0, 0));
+        Assert.Equal(256 * 256, layer.Tiles.Length);
+    }
+
+    [Fact]
     public void NavegacionYObstruccionPorTile()
     {
         var layer = new TileMapLayer

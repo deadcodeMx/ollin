@@ -1,22 +1,21 @@
-# Ollin 7.0.0-beta.11 — UI estilo Control
+# Ollin 7.0.0-beta.12 — tilemap y autotile
 
-## UI Canvas
+## Tilemap
 
-- Layout libre, vertical, horizontal y grid.
-- Anclas con márgenes por lado.
-- Contenedores anidados con padding y gap.
-- Foco visible y navegación con Tab / Shift+Tab.
-- Activación con Enter.
-- Tooltips, listas y scroll.
-- Acciones de UI emitidas como señal `ui.<acción>` a scripts.
-- Editor visual con jerarquía, layout, márgenes, foco y tooltip.
+- Autotile por máscara de vecinos N/E/S/O.
+- Resolución de variantes por terreno.
+- Colisión por tile, one-way y pendientes.
+- Capas múltiples y Y-sort.
+- Pintado por lotes: `PaintRect`, `Fill`, `CopyTilesFrom`.
+- Editor de tileset con terreno, variantes, navegación, sombras y pendientes.
+- Prueba de mapa 256×256.
 
 ## Verificación
 
 - Build: 0 errores.
-- Pruebas: 202/202.
-- Instalador: `Ollin-Setup-7.0.0-beta.11.exe`.
+- Pruebas: 205/205.
+- Instalador: `Ollin-Setup-7.0.0-beta.12.exe`.
 
 ## Nota
 
-Con esta beta se cierra la etapa de UI estilo Control.
+Con esta beta se cierra la etapa de Tilemap y autotile.

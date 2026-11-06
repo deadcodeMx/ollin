@@ -1,49 +1,46 @@
 # Tilemap
 
 **Prioridad:** P1
-**Estado:** Activo
+**Estado:** Completado — 7.0.0-beta.12
 **Dueño:** render + editor
 
 ## Objetivo
 
 Tilemaps rápidos y cómodos para niveles 2D.
 
-## Estado actual (6.278.0)
+## Estado actual (7.0.0-beta.12)
 
 - `TileSet`, `TileDefinition` y `TileMapLayer`/`Tilemap`.
-- Autotile por variantes (`ResolveAutotile`).
+- Autotile por variantes y por **terreno** con máscara N/E/S/O.
+- Colisión por tile, one-way y pendientes.
+- Varias capas por entidad y Y-sort.
 - Serialización de tilesets (`TileSetSerializer`).
-- Pintado y edición básica en el editor.
-- Capas mediante varias entidades.
+- Editor de tileset con colisión, terreno, variantes, navegación, sombras y pendientes.
+- Pintado por lotes con `PaintRect`, `Fill` y `CopyTilesFrom`.
 
-## Funciones nuevas
+## Funciones completadas
 
-- [ ] Autotile por vecindad/terreno.
-- [ ] Colisión por tile.
-- [ ] Capas y Y-sort nativos.
-- [ ] Editor de tileset usable.
-- [ ] Pintado por lotes optimizado.
-- [ ] Pruebas de mapas grandes.
+- [x] Autotile por vecindad/terreno.
+- [x] Colisión por tile.
+- [x] Capas y Y-sort.
+- [x] Editor de tileset usable.
+- [x] Pintado por lotes.
+- [x] Pruebas de mapas grandes.
 
-## Limitaciones conocidas
+## Verificación
 
-- Autotile limitado a variantes.
-- Colisión por tile incompleta.
-- Capas/Y-sort básicos.
-- Sin pruebas de mapas grandes.
+- Build: 0 errores.
+- Pruebas: 205/205.
+- Nuevas pruebas: máscara de autotile, terreno, pintado por lotes y mapa 256×256.
 
 ## Criterios de aceptación
 
-1. Autotile por vecindad.
-2. Colisión por tile correcta.
-3. Capas y Y-sort.
-4. Editor de tileset usable.
-5. Pruebas de rendimiento.
+1. Autotile por vecindad. ✅
+2. Colisión por tile correcta. ✅
+3. Capas y Y-sort. ✅
+4. Editor de tileset usable. ✅
+5. Pruebas de rendimiento. ✅
 
 ## Dependencias
 
 Render, física y editor.
-
-## Riesgos
-
-Cambios en el formato de tileset requieren migración.

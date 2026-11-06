@@ -75,6 +75,16 @@ public sealed class TileSet
             : tile;
     }
 
+    /// <summary>Busca una variante de autotile por nombre de terreno y máscara.</summary>
+    public int ResolveTerrain(string terrain, int mask)
+    {
+        if (string.IsNullOrWhiteSpace(terrain)) return -1;
+        var match = Tiles.FirstOrDefault(tile =>
+            string.Equals(tile.Terrain, terrain, StringComparison.OrdinalIgnoreCase) &&
+            tile.AutotileVariants.Count > 0);
+        return match is null ? -1 : ResolveAutotile(match.Id, mask);
+    }
+
     public TileSet Clone() => new()
     {
         Id = Id,
@@ -195,19 +205,53 @@ public class TileMapLayer : Component
         Tiles[index] = tile;
     }
 
-    public int DisplayTileAt(int x, int y)
+    /// <summary>Máscara N=1, E=2, S=4, O=8 de vecinos con tile.</summary>
+    public int AutotileMask(int x, int y)
     {
-        var tile = TileAt(x, y);
-        if (!Autotile || tile < 0) return tile;
         var mask = 0;
         if (TileAt(x, y - 1) >= 0) mask |= 1;
         if (TileAt(x + 1, y) >= 0) mask |= 2;
         if (TileAt(x, y + 1) >= 0) mask |= 4;
         if (TileAt(x - 1, y) >= 0) mask |= 8;
+        return mask;
+    }
+
+    public int DisplayTileAt(int x, int y)
+    {
+        var tile = TileAt(x, y);
+        if (!Autotile || tile < 0) return tile;
+        var mask = AutotileMask(x, y);
         var definition = TileSet?.Get(tile);
         if (definition is { AutotileVariants.Count: > 0 })
-            return definition.AutotileVariants[System.Math.Clamp(mask, 0, definition.AutotileVariants.Count - 1)];
+            return TileSet!.ResolveAutotile(tile, mask);
+        if (definition is { Terrain.Length: > 0 })
+        {
+            var terrain = TileSet?.ResolveTerrain(definition.Terrain, mask) ?? -1;
+            if (terrain >= 0) return terrain;
+        }
         return AutotileBase + mask;
+    }
+
+    /// <summary>Pinta un rectángulo de celdas en una sola operación.</summary>
+    public void PaintRect(int x, int y, int width, int height, int tile)
+    {
+        for (var row = y; row < y + height; row++)
+        for (var column = x; column < x + width; column++)
+            SetTile(column, row, tile);
+    }
+
+    /// <summary>Rellena todo el mapa con un tile.</summary>
+    public void Fill(int tile)
+    {
+        Array.Fill(Tiles, tile);
+    }
+
+    /// <summary>Copia los tiles de otra capa de igual tamaño.</summary>
+    public void CopyTilesFrom(TileMapLayer source)
+    {
+        Width = source.Width;
+        Height = source.Height;
+        Tiles = (int[])source.Tiles.Clone();
     }
 
     public TileDefinition? DefinitionAt(int x, int y) => TileSet?.Get(TileAt(x, y));
