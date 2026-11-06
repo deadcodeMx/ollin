@@ -17,6 +17,9 @@
 - El grafo de personaje expone saltar, aterrizar, velocidad y gravedad.
 
 ## Interfaz
+- Forma del sprite (cuadrado, cilindro, cono) actualizada en el render.
+- Paneo del Scene View con Alt+arrastrar o botón central.
+- Drag-and-drop de archivos hacia el inspector y el viewport.
 
 - Menús de entidad por categorías.
 - Tema claro revisado.
