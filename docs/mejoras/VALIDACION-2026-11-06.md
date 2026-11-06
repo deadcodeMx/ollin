@@ -73,3 +73,32 @@ La primera pasada deja el motor y el juego en estado jugable y exportable. Queda
 2. Recogida de las tres monedas y balance del nivel.
 3. Menú de inicio si se considera necesario.
 4. Repetir la matriz en la siguiente beta.
+
+---
+
+## Segunda pasada (7.0.0-beta.18)
+
+### Integrado en el nivel
+
+- Animación por sprites en jugador y merodeador.
+- Autotile real con TileSet, terreno y variantes.
+- Música ambiental con `AudioSource`.
+- Vida y monedas cargadas/guardadas con `Save`.
+- UI Canvas con panel, botón, tooltip y lista con scroll.
+- Exportación y reproductor comprobados.
+
+### Resultado
+
+- Movimiento, salto, enemigo y HUD: correctos.
+- Autotile: el suelo cambia de variante y colisiona.
+- Animación de sprites: cuadros avanzando.
+- Meta y fin de nivel: correctos.
+- Música: el reproductor arranca sin errores; falta validación auditiva.
+- UI Canvas: el HUD y los mensajes aparecen, pero el canvas de panel/lista
+  todavía no se dibuja en el reproductor exportado. Queda como hueco pendiente.
+
+### Huecos pendientes
+
+1. Visibilidad del `UiCanvas` en el reproductor exportado.
+2. Recogida manual de las tres monedas.
+3. Guardado/carga en varias ranuras.
