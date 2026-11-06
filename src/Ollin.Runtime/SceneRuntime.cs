@@ -484,6 +484,7 @@ public sealed class SceneRuntime
         for (var step = 0; step < physicsSteps; step++)
         {
             _physics.Step(_scene, _scripts, physicsDelta);
+            _joints.Step(_scene, physicsDelta);
         }
         UpdateCoroutines(dt);
         UpdateCameraFollow(dt);

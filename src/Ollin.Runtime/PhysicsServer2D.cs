@@ -27,7 +27,7 @@ public sealed class PhysicsServer2D
             {
                 if (!other.Active || other.Id == entity.Id) continue;
                 if (other.GetComponent<Collider2D>() is not { Enabled: true } collider) continue;
-                if ((area.Mask & (1 << System.Math.Clamp(collider.Layer, 0, 31))) == 0) continue;
+                if (!area.CanCollideWith(collider)) continue;
                 if (area.IgnoreTags.Any(tag => other.Tags.Contains(tag))) continue;
                 var otherBounds = Bounds(scene, other, collider);
                 if (Overlaps(areaBounds, otherBounds)) current.Add(other.Id);

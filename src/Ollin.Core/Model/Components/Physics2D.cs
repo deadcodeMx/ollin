@@ -31,6 +31,14 @@ public abstract class Collider2D : Component
     /// <summary>Plataforma de un solo sentido: solo colisiona desde arriba.</summary>
     public bool OneWay { get; set; }
 
+    /// <summary>Comprueba capas y máscaras en ambos sentidos.</summary>
+    public bool CanCollideWith(Collider2D other)
+    {
+        var a = System.Math.Clamp(Layer, 0, 31);
+        var b = System.Math.Clamp(other.Layer, 0, 31);
+        return (Mask & (1 << b)) != 0 && (other.Mask & (1 << a)) != 0;
+    }
+
     /// <summary>Esquinas en mundo. La física usa su caja envolvente.</summary>
     public abstract Vector2[] GetWorldCorners(Matrix4x4 world);
 }

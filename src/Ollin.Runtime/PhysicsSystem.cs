@@ -2,6 +2,7 @@ using System.Numerics;
 using Ollin.Core.Diagnostics;
 using Ollin.Core.Model;
 using Ollin.Core.Model.Components;
+using Ollin.Core.Physics;
 using Ollin.Core.Scenes;
 using Ollin.Scripting;
 
@@ -21,6 +22,7 @@ internal sealed class PhysicsSystem
     public void Step(Scene scene, IReadOnlyList<OllinScript> scripts, float deltaTime)
     {
         var bodies = new List<(Entity Entity, Collider2D Collider, Rigidbody2D? Body)>();
+        var previousPositions = new Dictionary<Guid, Vector2>();
 
         foreach (var characterEntity in scene.Entities)
         {
@@ -43,10 +45,37 @@ internal sealed class PhysicsSystem
             var body = entity.GetComponent<Rigidbody2D>();
             if (body is { Enabled: true, IsStatic: false } && body.Velocity != Vector2.Zero)
             {
+                previousPositions[entity.Id] = entity.Transform.Position;
                 entity.Transform.Position += body.Velocity * deltaTime;
             }
 
             bodies.Add((entity, collider, body));
+        }
+
+        // CCD: evita que un cuerpo rápido atraviese un collider entre dos pasos.
+        foreach (var body in bodies)
+        {
+            if (body.Body is not { Enabled: true, IsStatic: false, ContinuousCollision: true } rigidbody) continue;
+            if (!previousPositions.TryGetValue(body.Entity.Id, out var previous)) continue;
+
+            var displacement = body.Entity.Transform.Position - previous;
+            var distance = displacement.Length();
+            if (distance < 0.0001f) continue;
+
+            var direction = displacement / distance;
+            var hit = PhysicsQuery.Raycast(
+                scene, previous, direction, distance,
+                layerMask: body.Collider.Mask,
+                ignore: body.Entity,
+                includeTriggers: false,
+                filter: other => other.GetComponent<Collider2D>() is { } otherCollider &&
+                                 body.Collider.CanCollideWith(otherCollider));
+
+            if (hit is { } contact && contact.Distance < distance)
+            {
+                body.Entity.Transform.Position = previous + direction * MathF.Max(0f, contact.Distance - 0.01f);
+                rigidbody.Velocity = Vector2.Zero;
+            }
         }
 
         var current = new HashSet<(Guid A, Guid B)>();
@@ -63,9 +92,7 @@ internal sealed class PhysicsSystem
                     continue;
                 }
 
-                var layerA = Math.Clamp(a.Collider.Layer, 0, 31);
-                var layerB = Math.Clamp(b.Collider.Layer, 0, 31);
-                if ((a.Collider.Mask & (1 << layerB)) == 0 || (b.Collider.Mask & (1 << layerA)) == 0)
+                if (!a.Collider.CanCollideWith(b.Collider))
                 {
                     continue;
                 }

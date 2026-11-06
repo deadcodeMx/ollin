@@ -37,6 +37,30 @@ internal sealed class JointSystem
                         entity.Transform.Position += delta - Vector2.Normalize(delta) * pin.Distance;
                     break;
                 }
+                case DistanceJoint2D distanceJoint:
+                {
+                    var length = delta.Length();
+                    if (length > 0.0001f)
+                    {
+                        var direction = delta / length;
+                        entity.Transform.Position += direction * (length - distanceJoint.Distance);
+                        var radial = Vector2.Dot(body.Velocity, direction);
+                        body.Velocity -= direction * radial;
+                    }
+                    break;
+                }
+                case RopeJoint2D rope:
+                {
+                    var length = delta.Length();
+                    if (length > rope.MaxDistance)
+                    {
+                        var direction = delta / length;
+                        entity.Transform.Position += direction * (length - rope.MaxDistance);
+                        var radial = Vector2.Dot(body.Velocity, direction);
+                        if (radial < 0f) body.Velocity -= direction * radial;
+                    }
+                    break;
+                }
             }
         }
     }
