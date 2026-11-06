@@ -24,7 +24,7 @@ Ollin es **gratis y de código abierto (MIT)**: puedes usarlo, modificarlo y dis
 ![Avalonia](https://img.shields.io/badge/Avalonia-11.3-8B44AC)
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
 ![Roslyn](https://img.shields.io/badge/Roslyn-4.11-2E7D32)
-![Pruebas](https://img.shields.io/badge/pruebas-188%2F188-47B8A8)
+![Pruebas](https://img.shields.io/badge/pruebas-189%2F189-47B8A8)
 ![Ciclo](https://img.shields.io/badge/ciclo-7.0.0--beta.7-7B2CFF)
 
 ![Editor de Ollin](docs/images/editor.png)

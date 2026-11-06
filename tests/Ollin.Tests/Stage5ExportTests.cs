@@ -54,4 +54,33 @@ public class GameExporterTests
             }
         }
     }
+
+    [Fact]
+    public void ExportaTodasLasEscenasDelProyecto()
+    {
+        var root = Path.Combine(AppContext.BaseDirectory, "export-tests", Guid.NewGuid().ToString("N"));
+        var template = Path.Combine(root, "player");
+        var output = Path.Combine(root, "out");
+        Directory.CreateDirectory(template);
+        File.WriteAllText(Path.Combine(template, "Ollin.Player.exe"), "fake");
+
+        try
+        {
+            var project = ProjectService.Create(root, "Juego Multi Escena", template: ProjectTemplate.Platformer);
+            var secondPath = Path.Combine(project.ScenesFolder, "nivel-2.ollin.json");
+            Ollin.Core.Serialization.SceneSerializer.Save(new Ollin.Core.Scenes.Scene { Name = "Nivel 2" }, secondPath);
+
+            var target = GameExporter.Export(project, output, template);
+            var package = File.ReadAllBytes(Path.Combine(target, "game.pak"));
+            var extract = Path.Combine(root, "extract");
+            var (manifest, _) = GamePackage.Extract(package, extract);
+
+            Assert.Contains("scenes/nivel-2.ollin.json", manifest.Scenes);
+            Assert.True(File.Exists(Path.Combine(extract, "scenes", "nivel-2.ollin.json")));
+        }
+        finally
+        {
+            if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+        }
+    }
 }

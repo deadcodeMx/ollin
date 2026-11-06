@@ -10,6 +10,9 @@ public sealed class GameManifest
 
     public string StartScene { get; set; } = "scenes/inicio.ollin.json";
 
+    /// <summary>Todas las escenas del proyecto, no solo la inicial.</summary>
+    public List<string> Scenes { get; set; } = new();
+
     public string OllinVersion { get; set; } = "0.0.0";
 
     /// <summary>Muestra la pantalla de inicio con el logo de Ollin.</summary>
@@ -58,6 +61,18 @@ public static class GameExporter
             Splash = splash,
             Watermark = watermark,
         };
+
+        manifest.Scenes = Directory.Exists(project.ScenesFolder)
+            ? Directory.EnumerateFiles(project.ScenesFolder, "*.json", SearchOption.AllDirectories)
+                .Select(path => Path.GetRelativePath(project.RootPath, path).Replace('\\', '/'))
+                .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                .ToList()
+            : new List<string>();
+
+        if (manifest.Scenes.Count == 0)
+        {
+            manifest.Scenes.Add(manifest.StartScene.Replace('\\', '/'));
+        }
 
         var package = GamePackage.Create(project, manifest, scriptsImage);
         var missing = GamePackage.Verify(package, manifest, scriptsImage is { Length: > 0 });

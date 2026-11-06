@@ -20,6 +20,7 @@
 - Forma del sprite (cuadrado, cilindro, cono) actualizada en el render.
 - Paneo del Scene View con Alt+arrastrar o botón central.
 - Drag-and-drop de archivos hacia el inspector y el viewport.
+- Exportación de todas las escenas del proyecto, no solo la inicial.
 
 - Menús de entidad por categorías.
 - Tema claro revisado.

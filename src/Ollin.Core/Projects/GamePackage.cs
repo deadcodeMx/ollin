@@ -122,6 +122,11 @@ public static class GamePackage
         Require(ProjectService.FileName);
         Require(manifest.StartScene.Replace('\\', '/'));
 
+        foreach (var scene in manifest.Scenes)
+        {
+            Require(scene.Replace('\\', '/'));
+        }
+
         if (expectsScripts)
         {
             Require("game.dll");
