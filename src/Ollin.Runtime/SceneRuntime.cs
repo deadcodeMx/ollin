@@ -91,8 +91,8 @@ public sealed class SceneRuntime
     public void Play(Scene scene, ScriptWorkspace? scripts = null)
     {
         _scene = scene;
-        _scriptsWorkspace = scripts;
         _snapshot = SceneSerializer.Serialize(scene);
+        _scriptsWorkspace = scripts;
         IsPlaying = true;
         IsPaused = false;
         Elapsed = 0f;

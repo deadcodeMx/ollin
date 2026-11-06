@@ -446,6 +446,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     public bool IsPlaying => _runtime.IsPlaying;
 
+    /// <summary>Escena que está ejecutando el runtime (copia de la escena editada).</summary>
+    public Ollin.Core.Scenes.Scene GameScene => _runtime.CurrentScene ?? Scene;
+
     /// <summary>Se dispara al entrar o salir de Play.</summary>
     public event Action<bool>? PlayStateChanged;
 

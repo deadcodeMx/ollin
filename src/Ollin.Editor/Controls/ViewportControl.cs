@@ -252,14 +252,15 @@ public sealed class ViewportControl : OpenGlControlBase
     private void RenderCameraPreview(int width, int height)
     {
         if (_viewModel is null) return;
-        var cameraEntity = PreviewCameraId is { } id ? _viewModel.Scene.Find(id) : _viewModel.Scene.Entities.FirstOrDefault(entity => entity.Active && entity.GetComponent<Camera2D>() is { Enabled: true });
-        if (cameraEntity?.GetComponent<Camera2D>() is not { Enabled: true }) cameraEntity = _viewModel.Scene.Entities.FirstOrDefault(entity => entity.Active && entity.GetComponent<Camera2D>() is { Enabled: true });
+        var scene = _viewModel.GameScene;
+        var cameraEntity = PreviewCameraId is { } id ? scene.Find(id) : scene.Entities.FirstOrDefault(entity => entity.Active && entity.GetComponent<Camera2D>() is { Enabled: true });
+        if (cameraEntity?.GetComponent<Camera2D>() is not { Enabled: true }) cameraEntity = scene.Entities.FirstOrDefault(entity => entity.Active && entity.GetComponent<Camera2D>() is { Enabled: true });
         if (cameraEntity?.GetComponent<Camera2D>() is not { } source) return;
         var camera = (Camera2D)source.CloneFor(cameraEntity);
         camera.Viewport = new Vector4(0f, 0f, 1f, 1f);
         _renderer?.RenderFrame(
-            _viewModel.Scene,
-            _viewModel.Scene.GetWorldPosition(cameraEntity),
+            scene,
+            scene.GetWorldPosition(cameraEntity),
             camera,
             width,
             height,
