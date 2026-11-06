@@ -94,6 +94,62 @@ public sealed class CanvasAnimationUiTests
     }
 
     [Fact]
+    public void FsmConservaTransicionesYParametros()
+    {
+        var fsm = new AnimationStateMachine
+        {
+            States = new() { new AnimationClip2D { Name = "idle" }, new AnimationClip2D { Name = "run" } },
+            Transitions = new() { new AnimationTransition2D { From = "idle", To = "run", Parameter = "speed", Threshold = 0.5f } },
+            Parameters = new() { ["speed"] = 1f },
+        };
+
+        var copy = (AnimationStateMachine)fsm.CloneFor(new Entity());
+
+        Assert.Single(copy.Transitions);
+        Assert.Equal("run", copy.Transitions[0].To);
+        Assert.Equal(1f, copy.Parameters["speed"]);
+    }
+
+    [Fact]
+    public void SkeletonAnimatorAplicaAngulosYEventos()
+    {
+        var scene = new Scene();
+        var entity = scene.Create("Rig", Vector2.Zero);
+        var skeleton = entity.AddComponent(new Skeleton2D());
+        var animator = entity.AddComponent(new SkeletonAnimator2D
+        {
+            PlayOnStart = "wave",
+            Clips = new()
+            {
+                new SkeletonClip2D
+                {
+                    Name = "wave", Duration = 1f,
+                    Tracks = new()
+                    {
+                        new SkeletonBoneTrack2D
+                        {
+                            Bone = 1,
+                            Keys = new()
+                            {
+                                new AnimationKeyframe { Time = 0f, Number = 0f },
+                                new AnimationKeyframe { Time = 0.5f, Number = 90f, Text = "hit" },
+                                new AnimationKeyframe { Time = 1f, Number = 0f },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        var fired = false;
+        animator.Event += name => fired = name == "hit";
+
+        animator.OnUpdate(0.5f);
+
+        Assert.InRange(skeleton.Bones[1].Angle, 85f, 95f);
+        Assert.True(fired);
+    }
+
+    [Fact]
     public void UiCanvasAplanaContenedoresAnidadosYConservaTooltip()
     {
         var canvas = new UiCanvas();

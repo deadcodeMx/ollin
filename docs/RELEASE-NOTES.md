@@ -1,21 +1,21 @@
-# Ollin 7.0.0-beta.12 — tilemap y autotile
+# Ollin 7.0.0-beta.13 — animación y esqueletos
 
-## Tilemap
+## Animación
 
-- Autotile por máscara de vecinos N/E/S/O.
-- Resolución de variantes por terreno.
-- Colisión por tile, one-way y pendientes.
-- Capas múltiples y Y-sort.
-- Pintado por lotes: `PaintRect`, `Fill`, `CopyTilesFrom`.
-- Editor de tileset con terreno, variantes, navegación, sombras y pendientes.
-- Prueba de mapa 256×256.
+- Timeline con curvas, easing y tangentes Hermite.
+- Eventos de frame y audio.
+- Blend tree de clips.
+- `SkeletonAnimator2D` con clips de huesos y eventos.
+- Skinning de cuatro huesos con pesos.
+- FSM con transiciones por parámetro.
+- Editor visual de timeline y FSM.
 
 ## Verificación
 
 - Build: 0 errores.
-- Pruebas: 205/205.
-- Instalador: `Ollin-Setup-7.0.0-beta.12.exe`.
+- Pruebas: 207/207.
+- Instalador: `Ollin-Setup-7.0.0-beta.13.exe`.
 
 ## Nota
 
-Con esta beta se cierra la etapa de Tilemap y autotile.
+Con esta beta se cierra la etapa de Animación y esqueletos.

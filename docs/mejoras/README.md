@@ -34,7 +34,7 @@ verificables.
 | [GUARDADO.md](GUARDADO.md) | Guardado y estado | P1 | Activo |
 | [DIALOGOS.md](DIALOGOS.md) | Diálogos | P1 | Activo |
 | [RENDER.md](RENDER.md) | Render 2D | P1 | Activo |
-| [ANIMACION.md](ANIMACION.md) | Animación y esqueletos | P1 | Activo |
+| [ANIMACION.md](ANIMACION.md) | Animación y esqueletos | P1 | Completado beta13 |
 | [AUDIO.md](AUDIO.md) | Audio 2D y Linux | P1 | Activo |
 | [EDITOR.md](EDITOR.md) | Editor, undo y flujo | P1 | Activo |
 | [RENDIMIENTO.md](RENDIMIENTO.md) | Render, batching y pruebas | P1 | Activo |

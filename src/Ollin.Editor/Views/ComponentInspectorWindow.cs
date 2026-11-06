@@ -61,6 +61,29 @@ public sealed class ComponentInspectorView : UserControl
             {
                 panel.Children.Add(Editor(component, property));
             }
+            if (component is AnimationStateMachine fsm)
+            {
+                var actions = new WrapPanel { Margin = new Thickness(0, 4, 0, 0) };
+                var openFsm = new Button { Content = "Abrir FSM visual", Margin = new Thickness(0, 0, 6, 4) };
+                openFsm.Click += async (_, _) =>
+                {
+                    var window = new AnimationStateMachineWindow(fsm);
+                    if (TopLevel.GetTopLevel(this) is Window owner) await window.ShowDialog<bool>(owner);
+                    else window.Show();
+                    if (window.Result is { } result)
+                    {
+                        fsm.States = result.States;
+                        fsm.Transitions = result.Transitions;
+                        fsm.DefaultState = result.DefaultState;
+                        _viewModel.MarkDirty("componente");
+                        _viewModel.RequestRedraw();
+                        Rebuild();
+                    }
+                };
+                actions.Children.Add(openFsm);
+                panel.Children.Add(actions);
+            }
+
             if (component is ScriptComponent scriptComponent)
             {
                 var actions = new WrapPanel { Margin = new Thickness(0, 4, 0, 0) };

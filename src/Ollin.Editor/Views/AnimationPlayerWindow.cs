@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Ollin.Core.Model.Components;
+using Ollin.Editor.Controls;
 
 namespace Ollin.Editor.Views;
 
@@ -30,6 +31,7 @@ public sealed class AnimationPlayerWindow : Window
     private readonly ComboBox _keyEasing;
     private readonly NumericUpDown _outX, _outY, _inX, _inY;
     private int _clipIndex, _trackIndex, _keyIndex = -1;
+    private readonly AnimationTimelinePreview _preview = new() { Height = 140 };
 
     public AnimationPlayerWindow(AnimationPlayer2D player)
     {
@@ -78,6 +80,7 @@ public sealed class AnimationPlayerWindow : Window
             {
                 new TextBlock { Text = "Editor de animación", FontSize = 20, FontWeight = FontWeight.Bold, Foreground = new SolidColorBrush(Color.Parse("#F2A93B")) },
                 new TextBlock { Text = "Clips → tracks → keyframes. Propiedades: position, rotation, scale, frame, audio.", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
+                _preview,
                 new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { new StackPanel { Spacing = 4, Children = { _clips, addClip } }, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Nombre", _clipName), Row("Duración", _duration), _loop } } } },
                 new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { new StackPanel { Spacing = 4, Children = { _tracks, addTrack } }, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Propiedad", _trackProperty), new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { addKey, remove } } } } } },
                 new Grid { ColumnDefinitions = new ColumnDefinitions("220,*"), Children = { _keys, new StackPanel { Margin = new Thickness(12, 0, 0, 0), Spacing = 4, Children = { Row("Tiempo", _keyTime), Row("Valor X", _keyX), Row("Valor Y", _keyY), Row("Número", _keyNumber), Row("Texto", _keyText), Row("Easing", _keyEasing), Row("Salida X", _outX), Row("Salida Y", _outY), Row("Entrada X", _inX), Row("Entrada Y", _inY) } } } },
@@ -134,6 +137,7 @@ public sealed class AnimationPlayerWindow : Window
             _clipName.Text = clip.Name; _duration.Value = (decimal)clip.Duration; _loop.IsChecked = clip.Loop;
         }
         RebuildTracks();
+        _preview.Clip = Clip;
         if (_trackLabels.Count > 0) _tracks.SelectedIndex = 0;
     }
 
@@ -208,6 +212,7 @@ public sealed class AnimationPlayerWindow : Window
         RebuildClips();
         RebuildTracks();
         RebuildKeys();
+        _preview.Clip = Clip;
         Result = _draft;
     }
 }

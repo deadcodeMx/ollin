@@ -2,6 +2,15 @@ using System.Text.Json.Serialization;
 
 namespace Ollin.Core.Model.Components;
 
+/// <summary>Transición automática por parámetro numérico.</summary>
+public sealed class AnimationTransition2D
+{
+    public string From { get; set; } = string.Empty;
+    public string To { get; set; } = string.Empty;
+    public string Parameter { get; set; } = "speed";
+    public float Threshold { get; set; }
+}
+
 /// <summary>Clip de una máquina de estados de animación.</summary>
 public sealed class AnimationClip2D
 {
@@ -27,6 +36,9 @@ public sealed class AnimationStateMachine : Component, ITickable
     };
 
     public string DefaultState { get; set; } = "idle";
+
+    public List<AnimationTransition2D> Transitions { get; set; } = new();
+    public Dictionary<string, float> Parameters { get; set; } = new();
 
     [JsonIgnore] public string CurrentState { get; private set; } = string.Empty;
 
@@ -60,6 +72,11 @@ public sealed class AnimationStateMachine : Component, ITickable
             Fps = state.Fps, Loop = state.Loop, Speed = state.Speed,
         }).ToList(),
         DefaultState = DefaultState,
+        Transitions = Transitions.Select(item => new AnimationTransition2D
+        {
+            From = item.From, To = item.To, Parameter = item.Parameter, Threshold = item.Threshold,
+        }).ToList(),
+        Parameters = new Dictionary<string, float>(Parameters),
         Owner = newOwner,
     };
 }
