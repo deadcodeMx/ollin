@@ -38,8 +38,22 @@ public sealed class NewProjectWindow : Window
         Background = new SolidColorBrush(Color.Parse("#121722"));
         Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
 
-        _name = new TextBox { Text = "MiJuego", Watermark = "Nombre del proyecto" };
-        _folder = new TextBox { Text = suggested };
+        _name = new TextBox
+        {
+            Text = "Mi Juego",
+            Watermark = null,
+            MinHeight = 32,
+            VerticalContentAlignment = VerticalAlignment.Center,
+        };
+        _folder = new TextBox
+        {
+            Text = suggested,
+            Watermark = null,
+            FontSize = 11.5,
+            MinHeight = 32,
+            VerticalContentAlignment = VerticalAlignment.Center,
+        };
+        ToolTip.SetTip(_folder, suggested);
         _mode = new ComboBox
         {
             ItemsSource = new[]
@@ -58,7 +72,22 @@ public sealed class NewProjectWindow : Window
             HorizontalAlignment = HorizontalAlignment.Stretch,
             IsEnabled = false,
         };
-        _mode.SelectionChanged += (_, _) => _genre.IsEnabled = _mode.SelectedIndex == 1;
+        var genrePanel = new StackPanel
+        {
+            Spacing = 6,
+            IsVisible = false,
+            Children =
+            {
+                new TextBlock { Text = "Género", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
+                _genre,
+            },
+        };
+        _mode.SelectionChanged += (_, _) =>
+        {
+            var byGenre = _mode.SelectedIndex == 1;
+            _genre.IsEnabled = byGenre;
+            genrePanel.IsVisible = byGenre;
+        };
 
         _error = new TextBlock
         {
@@ -68,7 +97,13 @@ public sealed class NewProjectWindow : Window
             IsVisible = false,
         };
 
-        var browse = new Button { Content = "Examinar…", Margin = new Thickness(8, 0, 0, 0) };
+        var browse = new Button
+        {
+            Content = "Examinar…",
+            Margin = new Thickness(8, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        Grid.SetColumn(browse, 1);
         browse.Click += async (_, _) =>
         {
             var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
@@ -92,10 +127,10 @@ public sealed class NewProjectWindow : Window
         var cancel = new Button { Content = "Cancelar" };
         cancel.Click += (_, _) => Close(null);
 
-        Content = new StackPanel
+        var fields = new StackPanel
         {
-            Margin = new Thickness(24),
-            Spacing = 10,
+            Margin = new Thickness(24, 20, 24, 12),
+            Spacing = 8,
             Children =
             {
                 new TextBlock
@@ -114,8 +149,7 @@ public sealed class NewProjectWindow : Window
                 },
                 new TextBlock { Text = "Modo", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _mode,
-                new TextBlock { Text = "Género (solo modo por género)", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
-                _genre,
+                genrePanel,
                 new TextBlock { Text = "Nombre", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _name,
                 new TextBlock { Text = "Carpeta", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
@@ -125,25 +159,30 @@ public sealed class NewProjectWindow : Window
                     Children = { _folder, browse },
                 },
                 _error,
-                new StackPanel
-                {
-                    Orientation = Orientation.Horizontal,
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    Spacing = 8,
-                    Margin = new Thickness(0, 10, 0, 0),
-                    Children = { cancel, create },
-                },
             },
         };
 
-        var panel = Content as Control;
-        Content = null;
-        Content = new ScrollViewer
+        var actions = new StackPanel
         {
-            Content = panel,
+            Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Spacing = 8,
+            Margin = new Thickness(24, 0, 24, 20),
+            Children = { cancel, create },
+        };
+
+        var scroll = new ScrollViewer
+        {
+            Content = fields,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
         };
+
+        var root = new Grid { RowDefinitions = new RowDefinitions("*,Auto") };
+        root.Children.Add(scroll);
+        Grid.SetRow(actions, 1);
+        root.Children.Add(actions);
+        Content = root;
     }
 
     private void Accept()
