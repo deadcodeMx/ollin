@@ -1,19 +1,20 @@
 # Juego de validación
 
 **Prioridad:** P1
-**Estado:** Activo
+**Estado:** Siguiente bloque — pendiente
 **Dueño:** QA + diseño
 
 ## Objetivo
 
 Validar el motor con un juego 2D completo y pequeño.
 
-## Estado actual (6.278.0)
+## Estado actual (7.0.0-beta.9)
 
-- Existe `samples/JardinOllin`.
+- El proyecto de ejemplo `samples/JardinOllin` se eliminó; el usuario creará su propio proyecto.
 - El editor puede crear, guardar, reproducir y exportar.
 - Hay grafo, física, UI, audio, guardado y scripts.
-- No hay juego terminado de principio a fin.
+- Física 2D cerrada en `7.0.0-beta.9` con 198 pruebas.
+- Todavía no hay un juego terminado de principio a fin.
 
 ## Alcance del juego
 

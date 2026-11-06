@@ -1,45 +1,52 @@
 # Física 2D
 
 **Prioridad:** P1
-**Estado:** Activo
+**Estado:** Completado — 7.0.0-beta.9
 **Dueño:** runtime
 
 ## Objetivo
 
 Física estable para plataformas, top-down y puzzles.
 
-## Estado actual (6.278.0)
+## Estado actual (7.0.0-beta.9)
 
 - `Physics2D`, `CharacterBody2D`, `Joints2D`.
-- `PhysicsQuery` con `Raycast` y `BoxCast`.
-- `PhysicsServer2D` y `PhysicsSystem`.
+- `PhysicsQuery` con `Raycast`, `RaycastAll`, `OverlapCircle`, `OverlapBox`, `BoxCast` y `ShapeCast`.
+- `PhysicsServer2D` para sensores y `PhysicsSystem` para contactos.
 - Triggers y cuerpos estáticos/dinámicos.
-- Capas y máscaras básicas.
+- Capas y máscaras bidireccionales.
+- Broadphase por rejilla espacial.
+- CCD por barrido y subpasos adaptativos.
 
-## Funciones nuevas
+## Funciones completadas
 
-- [ ] Colisionador de polígono y borde pulido.
-- [ ] Máscaras por capa completas y documentadas.
-- [ ] CCD para cuerpos rápidos.
-- [ ] Joints avanzados.
-- [ ] Overlap y shape cast con filtros.
-- [ ] Pruebas de estrés y cuerpos rápidos.
+- [x] Colisionador de polígono y borde.
+- [x] Máscaras por capa completas y documentadas.
+- [x] CCD para cuerpos rápidos.
+- [x] Joints avanzados (`DistanceJoint2D`, `RopeJoint2D`, solver de impulsos).
+- [x] Overlap y shape cast con filtros.
+- [x] Pruebas de colisión, triggers y velocidad alta.
 
-## Limitaciones conocidas
+## Limitaciones resueltas
 
-- CCD no probado en casos límite.
-- Triggers pueden fallar con cuerpos muy rápidos.
-- Joints avanzados incompletos.
-- Faltan filtros completos en consultas.
-- Sin pruebas de estrés.
+- El borde contra círculo usa distancia exacta al segmento.
+- Los triggers respetan capas y máscaras en ambos sentidos.
+- Los joints se ejecutan en cada subpaso con corrección de posición.
+- Las consultas filtran por capa, triggers, entidad y máscara.
 
 ## Criterios de aceptación
 
-1. Capas/máscaras completas.
-2. CCD sin atravesar paredes.
-3. Joints estables.
-4. Raycast/overlap/shape cast con filtros.
-5. Pruebas de colisión, triggers y velocidad alta.
+1. Capas/máscaras completas. ✅
+2. CCD sin atravesar paredes. ✅
+3. Joints estables. ✅
+4. Raycast/overlap/shape cast con filtros. ✅
+5. Pruebas de colisión, triggers y velocidad alta. ✅
+
+## Verificación
+
+- Build: 0 errores.
+- Pruebas: 198/198.
+- Documentación: [FISICA-2D](../FISICA-2D.md).
 
 ## Dependencias
 

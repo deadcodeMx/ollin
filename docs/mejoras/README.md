@@ -25,9 +25,9 @@ verificables.
 | Documento | Área | Prioridad | Estado |
 |---|---|---|---|
 | [GRAFO.md](GRAFO.md) | Grafo visual / codegen | P0 | Completado 6.278 |
-| [FEEDBACK-UI.md](FEEDBACK-UI.md) | Feedback de usuarios de la interfaz | P0 | En curso |
+| [FEEDBACK-UI.md](FEEDBACK-UI.md) | Feedback de usuarios de la interfaz | P0 | Completado |
 | [SCRIPTING.md](SCRIPTING.md) | API de scripting | P1 | Activo |
-| [FISICA.md](FISICA.md) | Física 2D | P1 | Activo |
+| [FISICA.md](FISICA.md) | Física 2D | P1 | Completado beta9 |
 | [UI.md](UI.md) | UI Canvas / editor | P1 | Activo |
 | [TILEMAP.md](TILEMAP.md) | Tilemap y autotile | P1 | Activo |
 | [PREFABS.md](PREFABS.md) | Prefabs y blueprints | P1 | Activo |
@@ -40,16 +40,16 @@ verificables.
 | [RENDIMIENTO.md](RENDIMIENTO.md) | Render, batching y pruebas | P1 | Activo |
 | [RED.md](RED.md) | Multijugador y RPC | P2 | Activo |
 | [LINUX.md](LINUX.md) | Linux real y empaquetado | P1 | Activo |
-| [JUEGO-VALIDACION.md](JUEGO-VALIDACION.md) | Juego de validación | P1 | Activo |
+| [JUEGO-VALIDACION.md](JUEGO-VALIDACION.md) | Juego de validación | P1 | Siguiente |
 
 ## Orden recomendado
 
-1. **Juego de validación**: revela qué falta de verdad.
-2. **Física y UI**: lo que más bloquea jugabilidad.
+1. **Juego de validación**: revela qué falta de verdad. Es el siguiente bloque.
+2. **UI**: lo que más bloquea jugabilidad tras física.
 3. **Tilemap, animación y audio**.
 4. **Editor y rendimiento**.
 5. **Red y Linux**.
-6. **Cierre de 7.0.0-beta.1**.
+6. **Cierre de la beta**.
 
 El grafo ya está cerrado como bloque; sus límites viven en `GRAFO.md` y no se
 reabren sin una función nueva concreta.
