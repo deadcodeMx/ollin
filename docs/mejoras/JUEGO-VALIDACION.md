@@ -54,6 +54,41 @@ Validar el motor con un juego 2D completo y pequeño.
 3. Exportado y probado.
 4. Documento de huecos encontrados.
 
+## Preparación de la validación
+
+- [x] Física 2D cerrada en `7.0.0-beta.9`.
+- [x] Documentación de áreas actualizada.
+- [x] Proyecto de ejemplo eliminado; se usará el proyecto del usuario.
+- [ ] Recibir ruta del proyecto y controles.
+- [ ] Primera pasada jugable.
+- [ ] Informe de huecos.
+
+## Matriz de validación
+
+| Área | Prueba | Criterio |
+|---|---|---|
+| Arranque | Abrir proyecto, escena y reproducir | Sin errores en consola |
+| Menú | Inicio, pausa, continuar y salir | Navegable con teclado/ratón |
+| Nivel | Tilemap, colisiones y límites | Jugable sin atravesar geometría |
+| Cámara | Seguimiento y encuadre | Estable, sin saltos |
+| Física | Saltos, rampas, one-way y triggers | Sin bloqueos ni túneles |
+| Enemigos | Patrulla, detección y daño | Comportamiento repetible |
+| UI | HUD, salud, mensajes y pausa | Legible y sin solapamientos |
+| Audio | Música y efectos | Sin cortes ni saturación |
+| Guardado | Guardar, cerrar y cargar | Estado consistente |
+| Exportación | Exportar y ejecutar fuera del editor | Cámara, input y escenas correctos |
+| Rendimiento | Nivel completo | FPS estable y sin fugas |
+
+## Informe de huecos
+
+Cada hueco se anotará con:
+
+1. Área y pasos para reproducir.
+2. Resultado esperado y resultado real.
+3. Impacto (bloquea / molesto / pulido).
+4. Archivo o API afectada.
+5. Prueba o corrección propuesta.
+
 ## Dependencias
 
 Todas las áreas anteriores.
