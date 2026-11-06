@@ -2,7 +2,6 @@
 
 - [Guía de beta 6.213 (PDF)](docs/guia-beta/GUIA-BETA-Ollin-6.213.pdf)
 - [Guía en HTML](docs/guia-beta/GUIA-BETA.html)
-- [Proyecto de ejemplo Jardín de Ollin](samples/JardinOllin)
 - [Mejoras futuras del motor](docs/mejoras/README.md)
 - [Política de versionado](docs/VERSIONADO.md)
 
