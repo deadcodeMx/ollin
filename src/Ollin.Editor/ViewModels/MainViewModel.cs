@@ -507,7 +507,7 @@ public sealed partial class MainViewModel : ObservableObject
     public bool IsPaused => _runtime.IsPaused;
 
     /// <summary>Mientras se reproduce no se edita la escena.</summary>
-    public bool CanEdit => !_runtime.IsPlaying;
+    public bool CanEdit => true;
 
     public string PlayStateText => !IsPlaying ? "Detenido" : IsPaused ? "Pausado" : "Reproduciendo";
 

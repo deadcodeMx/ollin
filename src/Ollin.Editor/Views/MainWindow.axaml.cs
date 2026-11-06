@@ -463,7 +463,11 @@ public partial class MainWindow : Window
 
         if (Environment.GetCommandLineArgs().Any(arg => arg.Equals("--play", StringComparison.OrdinalIgnoreCase)))
         {
-            Avalonia.Threading.Dispatcher.UIThread.Post(vm.StartPlayback, Avalonia.Threading.DispatcherPriority.Background);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                vm.StartPlayback();
+                OpenGameWindow();
+            }, Avalonia.Threading.DispatcherPriority.Background);
         }
 
         if (Environment.GetCommandLineArgs().Any(arg => arg.Equals("--graph", StringComparison.OrdinalIgnoreCase)))
@@ -879,7 +883,13 @@ public partial class MainWindow : Window
     }
     // ---------- Modo juego ----------
 
-    private void OnPlay(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.TogglePlay();
+    private void OnPlay(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel is not { } vm) return;
+        var wasPlaying = vm.IsPlaying;
+        vm.TogglePlay();
+        if (!wasPlaying && vm.IsPlaying) OpenGameWindow();
+    }
 
     private void OnPause(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.TogglePause();
 
@@ -1408,14 +1418,14 @@ public partial class MainWindow : Window
 
         if (_gameWindow is { IsVisible: true })
         {
-            _gameWindow.Activate();
+            _gameWindow.FocusGame();
             return;
         }
 
         _gameWindow = new GameWindow(ViewModel);
         _gameWindow.Closed += (_, _) => _gameWindow = null;
         _gameWindow.Show();
-        _gameWindow.Activate();
+        _gameWindow.FocusGame();
     }
 
     private void OnResumeMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ResumeFromMenu();

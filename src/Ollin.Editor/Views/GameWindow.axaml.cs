@@ -27,10 +27,25 @@ public sealed partial class GameWindow : Window
         GameHost.Viewport.GameView = true;
         GameHost.Viewport.GameInputEnabled = true;
         GameHost.Viewport.FreezeWhenPlaying = false;
+        Opened += (_, _) => FocusGame();
+        Activated += (_, _) => FocusGame();
+    }
+
+    public void FocusGame()
+    {
+        Activate();
+        GameHost.Focus();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
+        if (DataContext is MainViewModel { IsPlaying: true } && KeyMapping.ToKeyCode(e.Key) is { } playKey)
+        {
+            InputState.SetKey(playKey, true);
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key == Key.F11)
         {
             WindowState = WindowState == WindowState.FullScreen ? WindowState.Normal : WindowState.FullScreen;
@@ -46,5 +61,16 @@ public sealed partial class GameWindow : Window
         }
 
         base.OnKeyDown(e);
+    }
+
+    protected override void OnKeyUp(KeyEventArgs e)
+    {
+        if (DataContext is MainViewModel { IsPlaying: true } && KeyMapping.ToKeyCode(e.Key) is { } playKey)
+        {
+            InputState.SetKey(playKey, false);
+            e.Handled = true;
+        }
+
+        base.OnKeyUp(e);
     }
 }

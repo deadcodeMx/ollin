@@ -474,7 +474,7 @@ public sealed class ViewportControl : OpenGlControlBase
     /// <summary>Detecta qué parte del gizmo hay bajo el puntero (mover, rotar o escalar).</summary>
     public GizmoHandle HitGizmo(Point position)
     {
-        if (_viewModel?.Selected is null || _viewModel.IsPlaying)
+        if (_viewModel?.Selected is null)
         {
             return GizmoHandle.None;
         }
