@@ -80,12 +80,10 @@ internal sealed class PhysicsSystem
 
         var current = new HashSet<(Guid A, Guid B)>();
 
-        for (var i = 0; i < bodies.Count; i++)
+        foreach (var (i, j) in BroadPhase(bodies, scene))
         {
-            for (var j = i + 1; j < bodies.Count; j++)
-            {
-                var a = bodies[i];
-                var b = bodies[j];
+            var a = bodies[i];
+            var b = bodies[j];
 
                 if (a.Body is { IsStatic: true } && b.Body is { IsStatic: true })
                 {
@@ -154,7 +152,6 @@ internal sealed class PhysicsSystem
                 var platformDeltaB = a.Entity.GetComponent<MovingPlatform2D>()?.DeltaThisFrame ?? Vector2.Zero;
                 a.Entity.GetComponent<CharacterBody2D>()?.RegisterContact(normal, b.Entity);
                 b.Entity.GetComponent<CharacterBody2D>()?.RegisterContact(-normal, a.Entity);
-            }
         }
 
         // Colisión contra celdas sólidas de todas las capas de tilemap.
@@ -269,6 +266,72 @@ internal sealed class PhysicsSystem
 
         _overlapping.Clear();
         _overlapping.UnionWith(current);
+    }
+
+    /// <summary>
+    /// Broadphase por rejilla espacial: solo compara cuerpos que comparten celda.
+    /// Reduce de O(n²) a los pares cercanos.
+    /// </summary>
+    private static List<(int A, int B)> BroadPhase(
+        List<(Entity Entity, Collider2D Collider, Rigidbody2D? Body)> bodies,
+        Scene scene)
+    {
+        const float cellSize = 2f;
+        var cells = new Dictionary<(int X, int Y), List<int>>();
+        var bounds = new (Vector2 Min, Vector2 Max)[bodies.Count];
+        var oversized = new List<int>();
+
+        for (var i = 0; i < bodies.Count; i++)
+        {
+            GetBounds(scene, bodies[i].Entity, bodies[i].Collider, out var min, out var max);
+            bounds[i] = (min, max);
+            var minX = (int)MathF.Floor(min.X / cellSize);
+            var maxX = (int)MathF.Floor(max.X / cellSize);
+            var minY = (int)MathF.Floor(min.Y / cellSize);
+            var maxY = (int)MathF.Floor(max.Y / cellSize);
+            if (maxX - minX > 64 || maxY - minY > 64)
+            {
+                oversized.Add(i);
+                continue;
+            }
+
+            for (var x = minX; x <= maxX; x++)
+            for (var y = minY; y <= maxY; y++)
+            {
+                if (!cells.TryGetValue((x, y), out var list))
+                {
+                    list = new List<int>();
+                    cells[(x, y)] = list;
+                }
+                list.Add(i);
+            }
+        }
+
+        var pairs = new List<(int A, int B)>();
+        var seen = new HashSet<(int A, int B)>();
+
+        // Un collider enorme no se indexa; se compara contra todos para no perder pares.
+        foreach (var i in oversized)
+        for (var j = 0; j < bodies.Count; j++)
+        {
+            if (i == j) continue;
+            var a = System.Math.Min(i, j);
+            var b = System.Math.Max(i, j);
+            if (seen.Add((a, b))) pairs.Add((a, b));
+        }
+
+        foreach (var list in cells.Values)
+        {
+            for (var i = 0; i < list.Count; i++)
+            for (var j = i + 1; j < list.Count; j++)
+            {
+                var a = System.Math.Min(list[i], list[j]);
+                var b = System.Math.Max(list[i], list[j]);
+                if (seen.Add((a, b))) pairs.Add((a, b));
+            }
+        }
+
+        return pairs;
     }
 
     private static void Push(

@@ -137,6 +137,27 @@ public sealed class PhysicsAdvancedTests
     }
 
     [Fact]
+    public void EdgeColliderDetieneUnCirculoSinUsarSuCajaEnvolvente()
+    {
+        var scene = new Scene();
+        var ground = scene.Create("Borde", Vector2.Zero);
+        ground.AddComponent(new EdgeCollider2D
+        {
+            Points = new List<Vector2> { new(-10f, 0f), new(10f, 0f) },
+            Thickness = 0.1f,
+        });
+        var ball = scene.Create("Bola", new Vector2(0f, 1.5f));
+        ball.AddComponent(new CircleCollider2D { Radius = 0.5f });
+        ball.AddComponent(new Rigidbody2D { Velocity = new Vector2(0f, -10f) });
+
+        var runtime = new SceneRuntime();
+        runtime.Play(scene);
+        runtime.Tick(0.1f);
+
+        Assert.True(ball.Transform.Position.Y >= 0.5f);
+    }
+
+    [Fact]
     public void CcdEvitaAtravesarUnMuroConVelocidadAlta()
     {
         var scene = new Scene();

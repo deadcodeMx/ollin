@@ -20,6 +20,18 @@ internal static class CollisionMath
         var circleA = a as CircleCollider2D;
         var circleB = b as CircleCollider2D;
 
+        if (a is EdgeCollider2D edgeA && circleB is not null)
+        {
+            return EdgeCircle(edgeA, worldA, Vector2.Transform(circleB.Offset, worldB),
+                MathF.Max(0.01f, circleB.Radius), edgeIsFirst: true, out normal, out depth);
+        }
+
+        if (b is EdgeCollider2D edgeB && circleA is not null)
+        {
+            return EdgeCircle(edgeB, worldB, Vector2.Transform(circleA.Offset, worldA),
+                MathF.Max(0.01f, circleA.Radius), edgeIsFirst: false, out normal, out depth);
+        }
+
         if (circleA is not null && circleB is not null)
         {
             var centerA = Vector2.Transform(circleA.Offset, worldA);
@@ -52,6 +64,52 @@ internal static class CollisionMath
         var polyA = Polygon(a, worldA);
         var polyB = Polygon(b, worldB);
         return PolygonPolygon(polyA, polyB, out normal, out depth);
+    }
+
+    private static bool EdgeCircle(
+        EdgeCollider2D edge,
+        Matrix4x4 world,
+        Vector2 center,
+        float radius,
+        bool edgeIsFirst,
+        out Vector2 normal,
+        out float depth)
+    {
+        normal = Vector2.Zero;
+        depth = 0f;
+        if (edge.Points.Count < 2) return false;
+
+        var points = edge.GetWorldCorners(world);
+        var half = MathF.Max(0.01f, edge.Thickness) * 0.5f;
+        var bestDistance = float.MaxValue;
+        var bestPoint = Vector2.Zero;
+        var bestDirection = Vector2.UnitY;
+
+        for (var i = 0; i + 1 < points.Length; i++)
+        {
+            var a = points[i];
+            var b = points[(i + 1) % points.Length];
+            var segment = b - a;
+            var lengthSquared = segment.LengthSquared();
+            if (lengthSquared < 0.000001f) continue;
+            var t = Math.Clamp(Vector2.Dot(center - a, segment) / lengthSquared, 0f, 1f);
+            var closest = a + segment * t;
+            var distance = Vector2.Distance(center, closest);
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestPoint = closest;
+                bestDirection = new Vector2(-segment.Y, segment.X) / MathF.Sqrt(lengthSquared);
+            }
+        }
+
+        if (bestDistance > radius + half) return false;
+        depth = radius + half - bestDistance;
+        var towardEdge = bestDistance < 0.0001f
+            ? bestDirection
+            : Vector2.Normalize(bestPoint - center);
+        normal = edgeIsFirst ? towardEdge : -towardEdge;
+        return depth > 0f;
     }
 
     private static bool CirclePolygon(Vector2 center, float radius, IReadOnlyList<Vector2> polygon,

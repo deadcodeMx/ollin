@@ -84,8 +84,10 @@ var cast = PhysicsQuery.ShapeCast(scene, center, size, direction, distance);
 - Los triggers no bloquean el movimiento.
 - Las capas y máscaras se respetan en ambos sentidos.
 
-## Límites conocidos
+## Fase amplia y estabilidad
 
-- La fase amplia sigue usando AABB; los polígonos se resuelven con SAT en la fase estrecha.
-- `EdgeCollider2D` se aproxima con un contorno de grosor.
-- Los joints son resoluciones de posición/velocidad, no un solver de impulsos completo.
+- Broadphase por **rejilla espacial**; los colliders enormes caen a comparación completa.
+- Fase estrecha SAT para polígonos y cápsulas.
+- `EdgeCollider2D` contra círculo usa la distancia exacta al segmento, no su caja envolvente.
+- Joints con **solver de impulsos iterativo** (8 iteraciones) y corrección de posición.
+- CCD por barrido y subpasos adaptativos.

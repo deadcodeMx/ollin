@@ -1,40 +1,27 @@
-# Ollin 7.0.0-beta.8 — física 2D avanzada
+# Ollin 7.0.0-beta.9 — cierre de física 2D
 
-## Colliders
+## Broadphase espacial
 
-- Polígonos convexos y cadenas de bordes con grosor.
-- Círculo, cápsula, cilindro y cono.
-- Sensores `Area2D` con entrada/salida estable.
+- Rejilla espacial en lugar de comparar todos los pares.
+- Los colliders de gran tamaño se comparan contra todos para no perder colisiones.
 
-## Capas y máscaras
+## EdgeCollider2D exacto
 
-- Filtrado bidireccional en simulación y consultas.
-- `CanCollideWith` centraliza la regla.
+- Colisión círculo-borde por distancia real al segmento.
+- Ya no depende de la caja envolvente del contorno.
 
-## Joints
+## Joints con impulsos
 
-- `DistanceJoint2D` y `RopeJoint2D`.
-- Resolución de joints en cada subpaso de física.
-- Corregida la integración: los joints ya se ejecutan en el runtime.
-
-## CCD
-
-- Barrido de cuerpos rápidos contra colliders compatibles.
-- Subpasos adaptativos según la velocidad máxima.
-
-## Consultas
-
-- `Raycast` y `RaycastAll`.
-- `OverlapCircle` y `OverlapBox`.
-- `ShapeCast` / `BoxCast`.
-- Filtros por capa, triggers, entidad ignorada y etiquetas.
+- Solver iterativo de 8 iteraciones.
+- Corrección de posición y velocidad.
+- `DistanceJoint2D`, `RopeJoint2D`, `SpringJoint2D` y `PinJoint2D`.
 
 ## Verificación
 
 - Build: 0 errores.
-- Pruebas: 197/197.
-- Instalador: `Ollin-Setup-7.0.0-beta.8.exe`.
+- Pruebas: 198/198.
+- Instalador: `Ollin-Setup-7.0.0-beta.9.exe`.
 
 ## Nota
 
-Release incremental del bloque de física. La base sigue siendo el ciclo 7.0.0.
+Con esto se cierran los límites documentados de la etapa de física 2D.
