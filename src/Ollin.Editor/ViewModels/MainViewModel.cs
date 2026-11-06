@@ -1653,18 +1653,7 @@ public sealed class {className} : OllinScript
     public Entity? GetCameraEntity() =>
         Scene.Entities.FirstOrDefault(e => e.GetComponent<Camera2D>() is { IsMain: true });
 
-    private void MoveCamera(Vector2 worldPosition)
-    {
-        var cameraEntity = GetCameraEntity();
-        if (cameraEntity is not null)
-        {
-            cameraEntity.Transform.Position = worldPosition;
-        }
-        else
-        {
-            _editorCameraPosition = worldPosition;
-        }
-    }
+    private void MoveCamera(Vector2 worldPosition) => _editorCameraPosition = worldPosition;
 
     private void RebuildTree()
     {

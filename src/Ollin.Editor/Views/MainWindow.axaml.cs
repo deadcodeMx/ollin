@@ -1525,8 +1525,9 @@ public partial class MainWindow : Window
         ViewportHost.AddHandler(DragDrop.DragOverEvent, OnViewportDragOver);
         ViewportHost.AddHandler(DragDrop.DropEvent, OnViewportDrop);
 
-        FileTree.AddHandler(PointerPressedEvent, OnFileTreePointerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-        FileTree.AddHandler(PointerMovedEvent, OnFileTreePointerMoved, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+        FileTree.AddHandler(PointerPressedEvent, OnFileTreePointerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel, handledEventsToo: true);
+        FileTree.AddHandler(PointerMovedEvent, OnFileTreePointerMoved, Avalonia.Interactivity.RoutingStrategies.Tunnel, handledEventsToo: true);
+        FileTree.AddHandler(PointerReleasedEvent, (_, _) => _fileDragArmed = false, Avalonia.Interactivity.RoutingStrategies.Tunnel, handledEventsToo: true);
 
         DragDrop.SetAllowDrop(Inspector2DHost, true);
         Inspector2DHost.AddHandler(DragDrop.DragOverEvent, OnInspectorDragOver);

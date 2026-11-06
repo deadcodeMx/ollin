@@ -534,6 +534,12 @@ public sealed class Renderer2D : IDisposable
             var tint = sprite.Tint;
             if (item is not null) tint *= item.EffectiveModulate;
 
+            if (sprite.Shape != SpriteShape2D.Quad)
+            {
+                DrawSpriteShape(sprite, world, tint);
+                continue;
+            }
+
             // Recorte de animación; en modo edición se usa el cuadro inicial del animador.
             var frame = sprite.FrameRect;
             if (frame.Z <= 0f && entity.GetComponent<SpriteAnimator>() is { Enabled: true } animator)

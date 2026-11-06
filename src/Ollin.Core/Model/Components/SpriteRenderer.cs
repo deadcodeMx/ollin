@@ -60,6 +60,7 @@ public sealed class SpriteRenderer : Component
         TexturePath = TexturePath,
         Tint = Tint,
         Size = Size,
+        Shape = Shape,
         Origin = Origin,
         FrameRect = FrameRect,
         SortingOrder = SortingOrder,

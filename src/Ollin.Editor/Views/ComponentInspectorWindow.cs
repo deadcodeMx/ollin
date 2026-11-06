@@ -203,6 +203,7 @@ public sealed class ComponentInspectorView : UserControl
             if (Equals(property.GetValue(component), value)) return;
             property.SetValue(component, value);
             _viewModel.MarkDirty("inspector");
+            _viewModel.RequestRedraw();
         }
         catch { }
     }
