@@ -40,6 +40,8 @@ public partial class MainWindow : Window
     private readonly List<(Control Control, string Property)> _physicsSections = new();
     private StackPanel? _scriptHost;
     private GameWindow? _gameWindow;
+    private Avalonia.Threading.DispatcherTimer? _playLayoutTimer;
+    private bool _playLayoutState;
     private CompletionWindow? _completionWindow;
 
     public MainWindow()
@@ -414,19 +416,30 @@ public partial class MainWindow : Window
         }
 
         ViewportHost.Viewport.ViewModel = vm;
-        ViewportHost.Viewport.FreezeWhenPlaying = true;
+        ViewportHost.Viewport.FreezeWhenPlaying = false;
+        ViewportHost.Viewport.GameInputEnabled = false;
         Ollin.Editor.Localization.Localization.Apply(this, vm.Settings.Language);
         CameraPreview.ViewModel = vm;
+
         ShowFileFolder(null);
         CameraPreview.CameraPreview = true;
         RefreshCameraPreviewCameras();
+        UpdatePlayLayout(vm.IsPlaying);
+        GameCameraView.CameraPreview = true;
+        CameraPreview.CameraPreview = true;
         _componentInspector = new ComponentInspectorView(vm);
         Inspector2DHost.Content = _componentInspector;
         _componentInspector.ShowEntity(vm.Selected?.Entity);
+        vm.PlayStateChanged += playing =>
+        {
+            CameraPreviewPanel.IsVisible = !playing;
+            if (playing) OpenGameWindow(); else _gameWindow?.Close();
+        };
         vm.ComponentsChanged += RefreshPhysicsSections;
         vm.ComponentsChanged += RefreshScriptSections;
         vm.PropertyChanged += (_, args) =>
         {
+            if (args.PropertyName == nameof(ViewModels.MainViewModel.IsPlaying)) UpdatePlayLayout(vm.IsPlaying);
             if (args.PropertyName == nameof(ViewModels.MainViewModel.Selected))
             {
                 RefreshPhysicsSections();
@@ -640,6 +653,27 @@ public partial class MainWindow : Window
     {
         ViewportHost.Viewport.GizmoMode = mode;
         if (ViewModel is { } vm) vm.StatusMessage = $"Gizmo: {mode}";
+    }
+    private void UpdatePlayLayout(bool playing)
+    {
+        // El Scene View permanece visible y editable; el juego va en su propia ventana.
+        ViewportHost.IsVisible = true;
+        GameCameraView.IsVisible = playing;
+        CameraPreviewPanel.IsVisible = !playing;
+        CameraPreviewHeader.IsVisible = !playing;
+        CameraPreviewPanel.Width = playing ? double.NaN : 340;
+        CameraPreviewPanel.Height = playing ? double.NaN : 230;
+        CameraPreviewPanel.HorizontalAlignment = playing ? HorizontalAlignment.Stretch : HorizontalAlignment.Right;
+        CameraPreviewPanel.VerticalAlignment = playing ? VerticalAlignment.Stretch : VerticalAlignment.Bottom;
+        CameraPreviewPanel.Margin = playing ? new Thickness(0) : new Thickness(0, 0, 12, 12);
+        if (playing)
+        {
+            if (_gameWindow is not { IsVisible: true }) OpenGameWindow();
+        }
+        else
+        {
+            _gameWindow?.Close();
+        }
     }
     private void OnToggleCameraPreview(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
@@ -1381,6 +1415,7 @@ public partial class MainWindow : Window
         _gameWindow = new GameWindow(ViewModel);
         _gameWindow.Closed += (_, _) => _gameWindow = null;
         _gameWindow.Show();
+        _gameWindow.Activate();
     }
 
     private void OnResumeMenu(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => ViewModel?.ResumeFromMenu();

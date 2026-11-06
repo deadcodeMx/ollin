@@ -23,7 +23,7 @@ namespace Ollin.Editor.ViewModels;
 public sealed partial class MainViewModel : ObservableObject
 {
     private readonly Camera2D _fallbackCamera = new();
-    private Vector2 _fallbackCameraPosition;
+    private Vector2 _editorCameraPosition;
     private Scene _scene = new();
     private EntityNode? _selected;
     private readonly List<EntityNode> _selection = new();
@@ -428,7 +428,8 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     /// <summary>Cámara activa: la de la escena o una de respaldo si no existe.</summary>
-    public Camera2D ActiveCamera => Scene.GetMainCamera() ?? _fallbackCamera;
+    /// <summary>Cámara interna del editor. No es una entidad ni aparece en la jerarquía.</summary>
+    public Camera2D ActiveCamera => _fallbackCamera;
 
     public bool Is2DMode => true;
 
@@ -437,13 +438,16 @@ public sealed partial class MainViewModel : ObservableObject
         get
         {
             var cameraEntity = GetCameraEntity();
-            return cameraEntity is null ? _fallbackCameraPosition : Scene.GetWorldPosition(cameraEntity);
+            return _editorCameraPosition;
         }
     }
 
     // ---------- Modo juego (etapa 2) ----------
 
     public bool IsPlaying => _runtime.IsPlaying;
+
+    /// <summary>Se dispara al entrar o salir de Play.</summary>
+    public event Action<bool>? PlayStateChanged;
 
     private bool _isDialogueActive;
     private string _dialogueSpeaker = string.Empty;
@@ -1655,7 +1659,7 @@ public sealed class {className} : OllinScript
         }
         else
         {
-            _fallbackCameraPosition = worldPosition;
+            _editorCameraPosition = worldPosition;
         }
     }
 

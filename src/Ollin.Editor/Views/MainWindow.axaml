@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="using:Ollin.Editor.Controls"
+        xmlns:conv="using:Avalonia.Data.Converters"
         xmlns:ae="using:AvaloniaEdit"
         mc:Ignorable="d"
         x:Class="Ollin.Editor.Views.MainWindow"
@@ -418,18 +419,12 @@
               <!-- Viewport -->
               <Grid IsVisible="{Binding IsSceneActive}">
                 <controls:ViewportSurface x:Name="ViewportHost" />
-                <Border IsVisible="{Binding IsPlaying}" Background="#CC0B0D12" ZIndex="5">
-                  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
-                    <TextBlock Text="MODO JUEGO" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource Ollin.Accent}" HorizontalAlignment="Center" />
-                    <TextBlock Text="La escena se está ejecutando en la vista de cámara." Foreground="{DynamicResource Ollin.Text}" HorizontalAlignment="Center" />
-                    <Button Classes="accent" Content="Abrir ventana de juego" Click="OnOpenGameWindow" HorizontalAlignment="Center" />
-                  </StackPanel>
-                </Border>
+                <controls:ViewportControl x:Name="GameCameraView" CameraPreview="True" IsVisible="False" IsHitTestVisible="False" ZIndex="10" />
                 <Border x:Name="CameraPreviewPanel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="340" Height="230"
                         Margin="0,0,12,12" Background="{DynamicResource Ollin.Panel}"
                         BorderBrush="{DynamicResource Ollin.Border}" BorderThickness="1" CornerRadius="7">
                   <Grid RowDefinitions="Auto,*">
-                    <Grid ColumnDefinitions="*,120,Auto,Auto" Margin="8,5,6,3">
+                    <Grid x:Name="CameraPreviewHeader" ColumnDefinitions="*,120,Auto,Auto" Margin="8,5,6,3">
                       <TextBlock Text="VISTA DE CÁMARA" Classes="section" VerticalAlignment="Center" />
                       <ComboBox x:Name="CameraPreviewSelector" Grid.Column="1" FontSize="10.5" MinWidth="100"
                                 SelectionChanged="OnCameraPreviewSelectionChanged" ToolTip.Tip="Cámara a mostrar" />
@@ -437,7 +432,7 @@
                       <Button Grid.Column="3" Classes="tool" Content="⧉" Padding="6,2" Click="OnPopOutCameraPreview" ToolTip.Tip="Abrir en ventana" />
                     </Grid>
                     <Grid Grid.Row="1">
-                      <controls:ViewportControl x:Name="CameraPreview" IsHitTestVisible="False" />
+                      <controls:ViewportControl x:Name="CameraPreview" CameraPreview="True" IsHitTestVisible="False" />
                       <TextBlock x:Name="CameraPreviewEmpty" Text="Sin cámara 2D activa" HorizontalAlignment="Center"
                                  VerticalAlignment="Center" Foreground="{DynamicResource Ollin.TextDim}" />
                     </Grid>

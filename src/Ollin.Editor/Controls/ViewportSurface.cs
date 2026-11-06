@@ -47,7 +47,7 @@ public sealed class ViewportSurface : Border
         var point = e.GetCurrentPoint(this);
         var position = point.Position;
 
-        if (Viewport.ViewModel is { IsPlaying: true })
+        if (Viewport.ViewModel is { IsPlaying: true } && Viewport.GameInputEnabled)
         {
             Viewport.UpdatePointerInput(position);
             Viewport.UpdateMouseButton(0, point.Properties.IsLeftButtonPressed);
@@ -174,7 +174,7 @@ public sealed class ViewportSurface : Border
     {
         base.OnPointerMoved(e);
 
-        if (Viewport.ViewModel is { IsPlaying: true })
+        if (Viewport.ViewModel is { IsPlaying: true } && Viewport.GameInputEnabled)
         {
             var current = e.GetCurrentPoint(this);
             Viewport.UpdatePointerInput(current.Position);
@@ -226,7 +226,7 @@ public sealed class ViewportSurface : Border
     {
         base.OnPointerReleased(e);
 
-        if (Viewport.ViewModel is { IsPlaying: true })
+        if (Viewport.ViewModel is { IsPlaying: true } && Viewport.GameInputEnabled)
         {
             Viewport.UpdateMouseButton(0, false);
             Viewport.UpdateMouseButton(1, false);
@@ -279,7 +279,7 @@ public sealed class ViewportSurface : Border
     {
         base.OnPointerWheelChanged(e);
 
-        if (Viewport.ViewModel is { IsPlaying: true })
+        if (Viewport.ViewModel is { IsPlaying: true } && Viewport.GameInputEnabled)
         {
             e.Handled = true;
             return;

@@ -53,8 +53,10 @@ public sealed class ViewportControl : OpenGlControlBase
     /// <summary>Ajuste de posición 2D a la rejilla.</summary>
     /// <summary>Renderiza la vista de la primera cámara 2D activa, sin gizmos ni rejilla.</summary>
     public bool CameraPreview { get; set; }
+    public bool GameView { get; set; }
     public Guid? PreviewCameraId { get; set; }
     public bool FreezeWhenPlaying { get; set; }
+    public bool GameInputEnabled { get; set; } = true;
     public GizmoMode GizmoMode { get; set; } = GizmoMode.All;
 
     public bool Snap2D { get; set; }
@@ -439,7 +441,7 @@ public sealed class ViewportControl : OpenGlControlBase
     /// <summary>Alimenta la posición del ratón para los scripts (solo durante la reproducción).</summary>
     public void UpdatePointerInput(Point position)
     {
-        if (_viewModel?.IsPlaying != true || FreezeWhenPlaying)
+        if (_viewModel?.IsPlaying != true || FreezeWhenPlaying || !GameInputEnabled)
         {
             return;
         }
@@ -454,7 +456,7 @@ public sealed class ViewportControl : OpenGlControlBase
     /// <summary>Alimenta el estado de un botón del ratón para los scripts.</summary>
     public void UpdateMouseButton(int button, bool down)
     {
-        if (_viewModel?.IsPlaying == true && !FreezeWhenPlaying)
+        if (_viewModel?.IsPlaying == true && !FreezeWhenPlaying && GameInputEnabled)
         {
             InputState.SetMouseButton(button, down);
         }
