@@ -30,6 +30,7 @@ public sealed class PlayerWindow : Window
     private readonly ViewportSurface _surface;
     private readonly Grid _splash;
     private readonly Grid _pauseOverlay;
+    private readonly Grid _uiOverlay = new() { IsHitTestVisible = true };
     private bool _started;
     private bool _paused;
     private TextBlock? _saveStatus;
@@ -86,6 +87,7 @@ public sealed class PlayerWindow : Window
 
         var content = new Grid();
         content.Children.Add(_surface);
+        content.Children.Add(_uiOverlay);
         content.Children.Add(new PlayerHud { DataContext = _viewModel });
         var pauseButton = new Button
         {
@@ -137,6 +139,68 @@ public sealed class PlayerWindow : Window
         }
     }
 
+    private void RebuildUiOverlay()
+    {
+        _uiOverlay.Children.Clear();
+        foreach (var view in _viewModel.UiElements)
+        {
+            var border = new Border
+            {
+                HorizontalAlignment = view.HorizontalAlignment,
+                VerticalAlignment = view.VerticalAlignment,
+                Margin = view.Margin,
+                Width = view.Width,
+                Height = view.Height,
+                Background = view.Brush,
+                BorderBrush = view.FocusBorder,
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(6),
+                Padding = new Thickness(6),
+                IsVisible = view.Visible,
+            };
+            ToolTip.SetTip(border, view.Tooltip);
+            if (view.IsButton)
+            {
+                border.Child = new Button
+                {
+                    Content = view.Text,
+                    Command = view.Command,
+                    Foreground = view.TextBrush,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                };
+            }
+            else if (view.IsList)
+            {
+                border.Child = new ScrollViewer
+                {
+                    Content = new TextBlock
+                    {
+                        Text = view.ListText,
+                        FontSize = view.FontSize,
+                        FontFamily = view.FontFamily,
+                        Foreground = view.TextBrush,
+                        TextWrapping = TextWrapping.Wrap,
+                    },
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    IsEnabled = view.IsScrollable,
+                };
+            }
+            else
+            {
+                border.Child = new TextBlock
+                {
+                    Text = view.Text,
+                    FontSize = view.FontSize,
+                    FontFamily = view.FontFamily,
+                    Foreground = view.TextBrush,
+                    TextWrapping = TextWrapping.Wrap,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+            }
+            _uiOverlay.Children.Add(border);
+        }
+    }
     private Grid BuildSplash()
     {
         var grid = new Grid { Background = new SolidColorBrush(Color.Parse("#0B0D12")) };
@@ -223,6 +287,8 @@ public sealed class PlayerWindow : Window
         _started = true;
         _splash.IsVisible = false;
         _viewModel.StartPlayback();
+        _viewModel.RefreshUi();
+        RebuildUiOverlay();
         Activate();
         _surface.Focus();
         _autosaveTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };

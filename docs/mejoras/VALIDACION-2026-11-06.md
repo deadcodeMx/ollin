@@ -94,11 +94,9 @@ La primera pasada deja el motor y el juego en estado jugable y exportable. Queda
 - Animación de sprites: cuadros avanzando.
 - Meta y fin de nivel: correctos.
 - Música: el reproductor arranca sin errores; falta validación auditiva.
-- UI Canvas: el HUD y los mensajes aparecen, pero el canvas de panel/lista
-  todavía no se dibuja en el reproductor exportado. Queda como hueco pendiente.
+- UI Canvas: panel, botón, tooltip y lista se dibujan en el reproductor exportado.
 
 ### Huecos pendientes
 
-1. Visibilidad del `UiCanvas` en el reproductor exportado.
-2. Recogida manual de las tres monedas.
-3. Guardado/carga en varias ranuras.
+1. Recogida manual de las tres monedas.
+2. Guardado/carga en varias ranuras (la persistencia de vida/monedas ya está conectada).

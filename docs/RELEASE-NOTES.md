@@ -6,7 +6,7 @@
 - Autotile con terreno y variantes en el suelo.
 - Música ambiental.
 - Vida y monedas persistentes en `Save`.
-- UI Canvas con panel, botón, tooltip y lista con scroll (visibilidad en reproductor pendiente).
+- UI Canvas con panel, botón, tooltip y lista con scroll visible en el reproductor.
 - Exportación y reproductor verificados.
 
 ## Correcciones

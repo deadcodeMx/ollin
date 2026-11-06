@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Ollin.Core.Model;
+using Ollin.Core.Model.Components;
 using Ollin.Scripting;
 
 public sealed class Jugador : OllinScript
