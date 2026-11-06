@@ -1,17 +1,19 @@
 # Ollin 7.0.0-beta.7 — cierre de feedback UI
 
-## Juego y editor separados
+## Scene View y Game View separados
 
-- El viewport del editor se congela durante la reproducción y no recibe input del juego.
-- Se muestra el overlay **MODO JUEGO**.
-- El juego se ejecuta en la ventana de cámara.
-- La vista de cámara no dibuja rejilla, selección, gizmos ni ayudas de depuración.
-- La ventana de juego se abre al reproducir y se cierra al detener.
+- El Scene View conserva la cámara interna del editor.
+- La cámara del editor no aparece en la jerarquía.
+- El Game View se abre en una ventana independiente (`Ollin — Juego`).
+- El Game View renderiza solo la cámara de la escena: sin rejilla, gizmos, selección ni ayudas de edición.
+- La ventana de juego recibe foco, teclado y ratón automáticamente.
+- El Scene View permite seleccionar y editar durante la reproducción.
+- El input del juego no se envía desde el viewport del editor.
 
 ## Scripts
 
 - `Dictionary<,>` disponible globalmente en scripts antiguos.
-- Corregido `GraphScript.cs` de ejemplo.
+- `GraphScript.cs` de ejemplo corregido.
 - El grafo de personaje expone saltar, aterrizar, velocidad y gravedad.
 
 ## Interfaz
@@ -21,11 +23,13 @@
 - Panel de archivos con árbol/cuadrícula.
 - Drag-and-drop al inspector.
 - Vista de cámara con selector y ventana.
+- Cámara y juego separados como en Unity.
 
 ## Verificación
 
 - Build: 0 errores.
 - Pruebas: 188/188.
+- Input del juego verificado en la ventana `Ollin — Juego`.
 - Instalador: `Ollin-Setup-7.0.0-beta.7.exe`.
 
 ## Nota
