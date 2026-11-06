@@ -1,7 +1,7 @@
 # Juego de validación
 
 **Prioridad:** P1
-**Estado:** Siguiente bloque — pendiente
+**Estado:** Primera pasada cerrada — 7.0.0-beta.10
 **Dueño:** QA + diseño
 
 ## Objetivo
