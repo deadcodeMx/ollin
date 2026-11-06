@@ -45,6 +45,33 @@
       </ItemsControl.ItemTemplate>
     </ItemsControl>
 
+    <ItemsControl IsVisible="{Binding IsUiVisible}" ItemsSource="{Binding UiElements}">
+      <ItemsControl.ItemsPanel><ItemsPanelTemplate><Grid /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Border HorizontalAlignment="{Binding HorizontalAlignment}" VerticalAlignment="{Binding VerticalAlignment}"
+                  Margin="{Binding Margin}" Width="{Binding Width}" Height="{Binding Height}"
+                  Background="#CC151922" BorderBrush="{Binding FocusBorder}" BorderThickness="1" CornerRadius="6"
+                  IsVisible="{Binding Visible}" Padding="6" AutomationProperties.Name="{Binding AccessibilityLabel}"
+                  ToolTip.Tip="{Binding Tooltip}">
+            <Grid>
+              <ScrollViewer IsVisible="{Binding IsList}" IsEnabled="{Binding IsScrollable}"
+                            VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding ListText}" FontSize="{Binding FontSize}" FontFamily="{Binding FontFamily}"
+                           Foreground="{Binding TextBrush}" TextWrapping="Wrap" />
+              </ScrollViewer>
+              <Button Content="{Binding Text}" Command="{Binding Command}" Foreground="{Binding TextBrush}" IsVisible="{Binding IsButton}"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+              <TextBlock Text="{Binding Text}" IsVisible="{Binding IsLabel}" FontSize="{Binding FontSize}"
+                         FontFamily="{Binding FontFamily}" Foreground="{Binding TextBrush}"
+                         TextWrapping="Wrap" VerticalAlignment="Center" />
+              <ProgressBar Minimum="0" Maximum="1" Value="{Binding Value}" Height="12" IsVisible="{Binding IsBar}" />
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
     <Border IsVisible="{Binding IsGameOverVisible}" Background="#CC05070B" IsHitTestVisible="False">
       <Border Background="#151922" BorderBrush="#E05B5B" BorderThickness="1"
               CornerRadius="10" Padding="28" Width="340"

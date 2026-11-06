@@ -633,6 +633,7 @@ public sealed partial class MainViewModel : ObservableObject
             _runtime.Tick(delta);
             UpdateRuntimeOverlay();
             RefreshHud();
+            RefreshUi();
             OnPropertyChanged(nameof(ElapsedText));
             RequestRedraw();
         };
