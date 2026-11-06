@@ -94,6 +94,59 @@ public sealed class CanvasAnimationUiTests
     }
 
     [Fact]
+    public void UiCanvasAplanaContenedoresAnidadosYConservaTooltip()
+    {
+        var canvas = new UiCanvas();
+        canvas.Elements.Add(new UiElement
+        {
+            Id = "menu", Kind = UiElementKind.Container, X = 100, Y = 50,
+            Layout = UiLayout.Vertical, Padding = 10, Gap = 4,
+        });
+        canvas.Elements.Add(new UiElement
+        {
+            Id = "grupo", Kind = UiElementKind.Container, ParentId = "menu",
+            X = 0, Y = 0, Height = 30, Layout = UiLayout.Vertical, Padding = 5, Gap = 2,
+        });
+        canvas.Elements.Add(new UiElement
+        {
+            Id = "boton", Kind = UiElementKind.Button, ParentId = "grupo",
+            X = 0, Y = 0, Height = 20, Tooltip = "Abrir opciones",
+        });
+
+        var flat = canvas.Flatten();
+        var button = flat.Single(element => element.Id == "boton");
+
+        Assert.Equal(115f, button.X);
+        Assert.Equal(65f, button.Y);
+        Assert.Equal("Abrir opciones", ((UiCanvas)canvas.CloneFor(new Entity())).Elements[2].Tooltip);
+    }
+
+    [Fact]
+    public void UiCanvasLayoutGridColocaEnFilasYColumnas()
+    {
+        var canvas = new UiCanvas();
+        canvas.Elements.Add(new UiElement
+        {
+            Id = "grid", Kind = UiElementKind.Container, X = 100, Y = 50,
+            Layout = UiLayout.Grid, GridColumns = 2, Padding = 0, Gap = 4,
+        });
+        for (var i = 1; i <= 3; i++)
+            canvas.Elements.Add(new UiElement
+            {
+                Id = $"b{i}", Kind = UiElementKind.Button, ParentId = "grid",
+                Width = 20, Height = 20,
+            });
+
+        var flat = canvas.Flatten();
+        Assert.Equal(100f, flat[1].X);
+        Assert.Equal(50f, flat[1].Y);
+        Assert.Equal(124f, flat[2].X);
+        Assert.Equal(50f, flat[2].Y);
+        Assert.Equal(100f, flat[3].X);
+        Assert.Equal(74f, flat[3].Y);
+    }
+
+    [Fact]
     public void AnimacionDisparaEventosYAplicaEasing()
     {
         var scene = new Scene();

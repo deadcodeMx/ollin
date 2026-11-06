@@ -1,52 +1,51 @@
 # UI Canvas
 
 **Prioridad:** P1
-**Estado:** Activo
+**Estado:** Completado — 7.0.0-beta.11
 **Dueño:** editor + runtime
 
 ## Objetivo
 
 UI 2D cómoda para menús, HUD y diálogos.
 
-## Estado actual (6.278.0)
+## Estado actual (7.0.0-beta.11)
 
 - `UiCanvas`, `UiElement` y `UiTheme`.
-- `CanvasLayer`, `CanvasItem2D`, `ScreenTransition2D` y `SubViewport2D`.
-- `VariableHud` y HUD de mensajes/barras.
-- Inspector de UI en el editor.
-- Temas y estilos básicos.
+- Layout libre, vertical, horizontal y **grid**.
+- Anclas con márgenes izquierda/derecha/arriba/abajo.
+- Contenedores anidados con padding y gap.
+- Botones, etiquetas, barras, paneles, listas y contenedores.
+- Foco visible y navegación con **Tab / Shift+Tab**.
+- Activación con **Enter**.
+- Tooltips por elemento.
+- Listas con scroll.
+- Acciones de UI emitidas como señal `ui.<acción>` a scripts.
+- Editor visual de elementos con jerarquía, layout, márgenes, foco y tooltip.
 
-## Funciones nuevas
+## Funciones completadas
 
-- [ ] Contenedores y layout (horizontal, vertical, grid).
-- [ ] Anchors y márgenes completos.
-- [ ] Foco, teclado y navegación entre controles.
-- [ ] Listas, scroll y tooltips.
-- [ ] Editor visual de UI con jerarquía.
-- [ ] Eventos de UI hacia scripts y grafo.
-- [ ] Pruebas de layout y eventos.
-
-## Limitaciones conocidas
-
-- Layout avanzado incompleto.
-- Foco/teclado básico.
-- Sin listas/scroll completos.
-- Editor visual básico.
-- Eventos de UI no enlazados a scripts.
-- Sin tests de UI.
+- [x] Contenedores y layout (horizontal, vertical, grid).
+- [x] Anchors y márgenes completos.
+- [x] Foco, teclado y navegación entre controles.
+- [x] Listas, scroll y tooltips.
+- [x] Editor visual de UI con jerarquía.
+- [x] Eventos de UI hacia scripts.
+- [x] Pruebas de layout y eventos.
 
 ## Criterios de aceptación
 
-1. Layout con anchors, márgenes y contenedores.
-2. Navegación por teclado con foco visible.
-3. Temas reutilizables.
-4. Listas y scroll.
-5. Pruebas de layout y eventos.
+1. Layout con anchors, márgenes y contenedores. ✅
+2. Navegación por teclado con foco visible. ✅
+3. Temas reutilizables. ✅
+4. Listas y scroll. ✅
+5. Pruebas de layout y eventos. ✅
+
+## Verificación
+
+- Build: 0 errores.
+- Pruebas: 202/202.
+- Pruebas nuevas: contenedores anidados, tooltip, layout grid y márgenes.
 
 ## Dependencias
 
 UI Canvas, editor y scripting.
-
-## Riesgos
-
-Cambios de layout pueden mover menús existentes; incluir migración.

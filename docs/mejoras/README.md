@@ -28,7 +28,7 @@ verificables.
 | [FEEDBACK-UI.md](FEEDBACK-UI.md) | Feedback de usuarios de la interfaz | P0 | Completado |
 | [SCRIPTING.md](SCRIPTING.md) | API de scripting | P1 | Activo |
 | [FISICA.md](FISICA.md) | Física 2D | P1 | Completado beta9 |
-| [UI.md](UI.md) | UI Canvas / editor | P1 | Activo |
+| [UI.md](UI.md) | UI Canvas / editor | P1 | Completado beta11 |
 | [TILEMAP.md](TILEMAP.md) | Tilemap y autotile | P1 | Activo |
 | [PREFABS.md](PREFABS.md) | Prefabs y blueprints | P1 | Activo |
 | [GUARDADO.md](GUARDADO.md) | Guardado y estado | P1 | Activo |

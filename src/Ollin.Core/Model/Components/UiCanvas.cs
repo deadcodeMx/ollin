@@ -25,6 +25,7 @@ public enum UiLayout
     Free,
     Vertical,
     Horizontal,
+    Grid,
 }
 
 public sealed class UiTheme
@@ -63,6 +64,18 @@ public sealed class UiElement
     public UiLayout Layout { get; set; } = UiLayout.Free;
     public float Gap { get; set; } = 6f;
     public float Padding { get; set; } = 8f;
+
+    /// <summary>Columnas cuando Layout es Grid.</summary>
+    public int GridColumns { get; set; } = 2;
+
+    /// <summary>Margen derecho cuando el anclaje es a la derecha.</summary>
+    public float MarginRight { get; set; }
+
+    /// <summary>Margen inferior cuando el anclaje es abajo.</summary>
+    public float MarginBottom { get; set; }
+
+    /// <summary>Texto de ayuda al pasar el cursor.</summary>
+    public string Tooltip { get; set; } = string.Empty;
 }
 
 /// <summary>Canvas de UI en pantalla, independiente del mundo y la cámara.</summary>
@@ -85,32 +98,56 @@ public sealed class UiCanvas : Component
     public List<UiElement> Flatten()
     {
         var result = new List<UiElement>();
-        foreach (var element in Elements)
-        {
-            var copy = new UiElement
-            {
-                Id = element.Id, Kind = element.Kind, Text = element.Text, Anchor = element.Anchor,
-                X = element.X, Y = element.Y, Width = element.Width, Height = element.Height,
-                FontSize = element.FontSize, FontFamily = element.FontFamily, Color = element.Color, Visible = element.Visible,
-                Action = element.Action, Value = element.Value, Max = element.Max,
-                ParentId = element.ParentId, Layout = element.Layout, Gap = element.Gap, Padding = element.Padding,
-                Focusable = element.Focusable, AccessibilityLabel = element.AccessibilityLabel,
-                Items = new List<string>(element.Items), Scrollable = element.Scrollable,
-            };
-            if (!string.IsNullOrWhiteSpace(element.ParentId) && Elements.FirstOrDefault(parent => parent.Id == element.ParentId) is { } parent)
-            {
-                copy.X += parent.X + parent.Padding;
-                copy.Y += parent.Y + parent.Padding;
-                var siblings = Elements.Where(item => item.ParentId == parent.Id).ToList();
-                var index = siblings.IndexOf(element);
-                var offset = index * (parent.Layout == UiLayout.Horizontal ? element.Width + parent.Gap : element.Height + parent.Gap);
-                if (parent.Layout == UiLayout.Vertical) copy.Y += offset;
-                if (parent.Layout == UiLayout.Horizontal) copy.X += offset;
-                if (!parent.Visible) copy.Visible = false;
-            }
-            result.Add(copy);
-        }
+        var roots = Elements.Where(element => string.IsNullOrWhiteSpace(element.ParentId) ||
+            Elements.All(candidate => candidate.Id != element.ParentId)).ToList();
+
+        foreach (var root in roots)
+            Layout(root, 0f, 0f, true, 0, result);
+
         return result;
+    }
+
+    private void Layout(UiElement element, float parentX, float parentY, bool parentVisible, int index, List<UiElement> result)
+    {
+        var parent = Elements.FirstOrDefault(candidate => candidate.Id == element.ParentId);
+        var offsetX = parent is null ? 0f : parent.Padding;
+        var offsetY = parent is null ? 0f : parent.Padding;
+        if (parent is not null)
+        {
+            var siblings = Elements.Where(candidate => candidate.ParentId == parent.Id).ToList();
+            var siblingIndex = System.Math.Max(0, siblings.IndexOf(element));
+            if (parent.Layout == UiLayout.Vertical)
+                offsetY += siblingIndex * (element.Height + parent.Gap);
+            else if (parent.Layout == UiLayout.Horizontal)
+                offsetX += siblingIndex * (element.Width + parent.Gap);
+            else if (parent.Layout == UiLayout.Grid)
+            {
+                var columns = System.Math.Max(1, parent.GridColumns);
+                offsetX += siblingIndex % columns * (element.Width + parent.Gap);
+                offsetY += siblingIndex / columns * (element.Height + parent.Gap);
+            }
+        }
+
+        var copy = new UiElement
+        {
+            Id = element.Id, Kind = element.Kind, Text = element.Text, Anchor = element.Anchor,
+            X = parentX + element.X + offsetX,
+            Y = parentY + element.Y + offsetY,
+            Width = element.Width, Height = element.Height,
+            FontSize = element.FontSize, FontFamily = element.FontFamily, Color = element.Color,
+            Visible = element.Visible && parentVisible,
+            Action = element.Action, Value = element.Value, Max = element.Max,
+            ParentId = element.ParentId, Layout = element.Layout, Gap = element.Gap, Padding = element.Padding,
+            GridColumns = element.GridColumns,
+            Focusable = element.Focusable, AccessibilityLabel = element.AccessibilityLabel,
+            Items = new List<string>(element.Items), Scrollable = element.Scrollable,
+            MarginRight = element.MarginRight, MarginBottom = element.MarginBottom, Tooltip = element.Tooltip,
+        };
+        result.Add(copy);
+
+        var children = Elements.Where(candidate => candidate.ParentId == element.Id).ToList();
+        for (var i = 0; i < children.Count; i++)
+            Layout(children[i], copy.X, copy.Y, copy.Visible, i, result);
     }
 
     public override Component CloneFor(Entity newOwner) => new UiCanvas
@@ -124,8 +161,10 @@ public sealed class UiCanvas : Component
             Width = element.Width, Height = element.Height, FontSize = element.FontSize, FontFamily = element.FontFamily, Color = element.Color,
             Visible = element.Visible, Action = element.Action, Value = element.Value, Max = element.Max,
             ParentId = element.ParentId, Layout = element.Layout, Gap = element.Gap, Padding = element.Padding,
+            GridColumns = element.GridColumns,
             Focusable = element.Focusable, AccessibilityLabel = element.AccessibilityLabel,
             Items = new List<string>(element.Items), Scrollable = element.Scrollable,
+            MarginRight = element.MarginRight, MarginBottom = element.MarginBottom, Tooltip = element.Tooltip,
         }).ToList(),
         Owner = newOwner,
     };

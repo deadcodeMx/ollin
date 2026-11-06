@@ -92,6 +92,10 @@ public sealed class UiElementView
         Focusable = element.Focusable || element.Kind == Ollin.Core.Model.Components.UiElementKind.Button;
         AccessibilityLabel = string.IsNullOrWhiteSpace(element.AccessibilityLabel) ? element.Text : element.AccessibilityLabel;
         ListText = string.Join(Environment.NewLine, element.Items);
+        IsScrollable = element.Scrollable;
+        Tooltip = element.Tooltip;
+        MarginRight = element.MarginRight;
+        MarginBottom = element.MarginBottom;
         Value = element.Max <= 0 ? 0 : System.Math.Clamp(element.Value / element.Max, 0, 1);
         Command = new UiActionCommand(() => invoke(element.Action ?? element.Id));
         Brush = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(
@@ -128,13 +132,27 @@ public sealed class UiElementView
         Ollin.Core.Model.Components.UiAnchor.BottomLeft or Ollin.Core.Model.Components.UiAnchor.BottomCenter or Ollin.Core.Model.Components.UiAnchor.BottomRight => Avalonia.Layout.VerticalAlignment.Bottom,
         _ => Avalonia.Layout.VerticalAlignment.Top,
     };
-    public Avalonia.Thickness Margin => new Avalonia.Thickness(X, Y, 0, 0);
+    public float MarginRight { get; }
+    public float MarginBottom { get; }
+    public string Tooltip { get; }
+    public Avalonia.Thickness Margin
+    {
+        get
+        {
+            var left = HorizontalAlignment == Avalonia.Layout.HorizontalAlignment.Right ? 0f : X;
+            var right = HorizontalAlignment == Avalonia.Layout.HorizontalAlignment.Right ? X + MarginRight : 0f;
+            var top = VerticalAlignment == Avalonia.Layout.VerticalAlignment.Bottom ? 0f : Y;
+            var bottom = VerticalAlignment == Avalonia.Layout.VerticalAlignment.Bottom ? Y + MarginBottom : 0f;
+            return new Avalonia.Thickness(left, top, right, bottom);
+        }
+    }
     public bool Visible { get; }
     public string Action { get; }
     public bool Focusable { get; }
     public string AccessibilityLabel { get; }
     public string ListText { get; }
     public bool IsList => Kind == Ollin.Core.Model.Components.UiElementKind.List;
+    public bool IsScrollable { get; }
     public bool IsFocused { get; set; }
     public double Value { get; }
     public System.Windows.Input.ICommand Command { get; }

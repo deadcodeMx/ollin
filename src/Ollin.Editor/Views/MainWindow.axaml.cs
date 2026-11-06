@@ -2278,6 +2278,20 @@ public partial class MainWindow : Window
                 return;
             }
 
+            if (vm.IsUiVisible && e.Key == Key.Tab)
+            {
+                vm.FocusUi(e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? -1 : 1);
+                e.Handled = true;
+                return;
+            }
+
+            if (vm.IsUiVisible && e.Key == Key.Enter)
+            {
+                vm.ActivateFocusedUi();
+                e.Handled = true;
+                return;
+            }
+
             if (KeyMapping.ToKeyCode(e.Key) is { } playKey)
             {
                 InputState.SetKey(playKey, true);

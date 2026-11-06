@@ -599,6 +599,20 @@ public sealed class PlayerWindow : Window
             return;
         }
 
+        if (_viewModel.IsUiVisible && e.Key == Key.Tab)
+        {
+            _viewModel.FocusUi(e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? -1 : 1);
+            e.Handled = true;
+            return;
+        }
+
+        if (_viewModel.IsUiVisible && e.Key == Key.Enter)
+        {
+            _viewModel.ActivateFocusedUi();
+            e.Handled = true;
+            return;
+        }
+
         if (_started && KeyMapping.ToKeyCode(e.Key) is { } code)
         {
             InputState.SetKey(code, true);

@@ -1,27 +1,22 @@
-# Ollin 7.0.0-beta.10 — juego de validación
+# Ollin 7.0.0-beta.11 — UI estilo Control
 
-## Juego de validación
+## UI Canvas
 
-- Proyecto jugable en `samples/ValidacionOllin`.
-- Nivel, cámara, física, enemigo, monedas, meta, HUD, pausa y audio.
-- Exportación y ejecución del reproductor verificadas.
-
-## Correcciones de motor
-
-- `System` disponible globalmente en scripts (`MathF`, `Random`, etc.).
-- Orden de render entre tilemaps y sprites por `SortingOrder`.
-- HUD de scripts visible también en el Game View del editor.
-- Meta del nivel ajustada al alcance del jugador.
-- `rootEntities` ya no se serializa duplicando entidades.
-- HUD del Game View y orden de render verificados en beta10.
+- Layout libre, vertical, horizontal y grid.
+- Anclas con márgenes por lado.
+- Contenedores anidados con padding y gap.
+- Foco visible y navegación con Tab / Shift+Tab.
+- Activación con Enter.
+- Tooltips, listas y scroll.
+- Acciones de UI emitidas como señal `ui.<acción>` a scripts.
+- Editor visual con jerarquía, layout, márgenes, foco y tooltip.
 
 ## Verificación
 
 - Build: 0 errores.
-- Pruebas: 200/200.
-- Informe: `docs/mejoras/VALIDACION-2026-11-06.md`.
-- Instalador: `Ollin-Setup-7.0.0-beta.10.exe`.
+- Pruebas: 202/202.
+- Instalador: `Ollin-Setup-7.0.0-beta.11.exe`.
 
 ## Nota
 
-Con esta beta se cierra la primera pasada del juego de validación.
+Con esta beta se cierra la etapa de UI estilo Control.

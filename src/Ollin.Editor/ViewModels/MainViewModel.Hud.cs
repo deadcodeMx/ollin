@@ -210,6 +210,7 @@ public sealed partial class MainViewModel
     public void InvokeUiAction(string action)
     {
         _runtime.GameState.SetFlag($"ui.{action}", true);
+        Ollin.Scripting.ScriptSignals.Emit($"ui.{action}", null);
         StatusMessage = $"UI: {action}";
     }
 

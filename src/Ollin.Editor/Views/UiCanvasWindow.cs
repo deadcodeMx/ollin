@@ -20,13 +20,17 @@ public sealed class UiCanvasWindow : Window
     private readonly TextBox _text;
     private readonly NumericUpDown _x, _y, _w, _h, _font;
     private readonly TextBox _action;
-    private readonly CheckBox _visible;
+    private readonly TextBox _tooltip;
+    private readonly TextBox _parent;
+    private readonly ComboBox _layout;
+    private readonly NumericUpDown _gap, _padding, _marginRight, _marginBottom, _gridColumns;
+    private readonly CheckBox _visible, _focusable, _scrollable;
     private int _selected = -1;
 
     public UiCanvasWindow(UiCanvas canvas)
     {
         _draft = (UiCanvas)canvas.CloneFor(new Entity());
-        Title = "Editor de UI"; Width = 720; Height = 600; MinWidth = 600; MinHeight = 460;
+        Title = "Editor de UI"; Width = 720; Height = 760; MinWidth = 600; MinHeight = 560;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         Background = new SolidColorBrush(Color.Parse("#121722"));
         Foreground = new SolidColorBrush(Color.Parse("#E6ECF7"));
@@ -39,7 +43,13 @@ public sealed class UiCanvasWindow : Window
         _text = new TextBox { Watermark = "texto" };
         _x = Number(); _y = Number(); _w = Number(220); _h = Number(36); _font = Number(14);
         _action = new TextBox { Watermark = "acción / flag" };
+        _tooltip = new TextBox { Watermark = "tooltip" };
+        _parent = new TextBox { Watermark = "id del contenedor" };
+        _layout = new ComboBox { ItemsSource = Enum.GetValues<UiLayout>(), SelectedIndex = 0 };
+        _gap = Number(6); _padding = Number(8); _marginRight = Number(); _marginBottom = Number(); _gridColumns = Number(2);
         _visible = new CheckBox { Content = "Visible", IsChecked = true };
+        _focusable = new CheckBox { Content = "Enfocable con teclado" };
+        _scrollable = new CheckBox { Content = "Lista con scroll", IsChecked = true };
 
         var add = new Button { Content = "+ Elemento" };
         add.Click += (_, _) => Add();
@@ -70,7 +80,9 @@ public sealed class UiCanvasWindow : Window
                             {
                                 Row("Id", _id), Row("Texto", _text), Row("Tipo", _kind), Row("Anclaje", _anchor),
                                 Row("X", _x), Row("Y", _y), Row("Ancho", _w), Row("Alto", _h), Row("Fuente", _font),
-                                Row("Acción", _action), _visible,
+                                Row("Margen der.", _marginRight), Row("Margen inf.", _marginBottom),
+                                Row("Contenedor", _parent), Row("Layout", _layout), Row("Columnas", _gridColumns), Row("Gap", _gap), Row("Padding", _padding),
+                                Row("Tooltip", _tooltip), Row("Acción", _action), _visible, _focusable, _scrollable,
                             },
                         },
                     },
@@ -109,7 +121,11 @@ public sealed class UiCanvasWindow : Window
         if (Selected is not { } element) return;
         _id.Text = element.Id; _text.Text = element.Text; _kind.SelectedItem = element.Kind; _anchor.SelectedItem = element.Anchor;
         _x.Value = (decimal)element.X; _y.Value = (decimal)element.Y; _w.Value = (decimal)element.Width; _h.Value = (decimal)element.Height;
-        _font.Value = (decimal)element.FontSize; _action.Text = element.Action ?? string.Empty; _visible.IsChecked = element.Visible;
+        _font.Value = (decimal)element.FontSize; _action.Text = element.Action ?? string.Empty;
+        _tooltip.Text = element.Tooltip; _parent.Text = element.ParentId;
+        _layout.SelectedItem = element.Layout; _gap.Value = (decimal)element.Gap; _padding.Value = (decimal)element.Padding;
+        _marginRight.Value = (decimal)element.MarginRight; _marginBottom.Value = (decimal)element.MarginBottom; _gridColumns.Value = (decimal)element.GridColumns;
+        _visible.IsChecked = element.Visible; _focusable.IsChecked = element.Focusable; _scrollable.IsChecked = element.Scrollable;
     }
 
     private void Add()
@@ -142,6 +158,16 @@ public sealed class UiCanvasWindow : Window
         element.FontSize = MathF.Max(6f, (float)(_font.Value ?? 14m));
         element.Action = string.IsNullOrWhiteSpace(_action.Text) ? null : _action.Text;
         element.Visible = _visible.IsChecked == true;
+        element.Tooltip = _tooltip.Text ?? string.Empty;
+        element.ParentId = _parent.Text ?? string.Empty;
+        if (_layout.SelectedItem is UiLayout layout) element.Layout = layout;
+        element.Gap = (float)(_gap.Value ?? 6m);
+        element.Padding = (float)(_padding.Value ?? 8m);
+        element.MarginRight = (float)(_marginRight.Value ?? 0m);
+        element.MarginBottom = (float)(_marginBottom.Value ?? 0m);
+        element.GridColumns = (int)(_gridColumns.Value ?? 2m);
+        element.Focusable = _focusable.IsChecked == true;
+        element.Scrollable = _scrollable.IsChecked == true;
         Rebuild();
     }
 }
