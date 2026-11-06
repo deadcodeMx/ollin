@@ -4,7 +4,7 @@
 
 - Última versión legacy: **6.278.0**.
 - Esa versión queda congelada como cierre del ciclo 6.x.
-- La beta consolidada actual es **7.0.0-beta.13**.
+- La beta consolidada actual es **7.0.0-beta.15**.
 - No se publica una release por cada cambio pequeño.
 
 ## Esquema
@@ -79,6 +79,8 @@ v7.0.0-beta.10
 v7.0.0-beta.11
 v7.0.0-beta.12
 v7.0.0-beta.13
+v7.0.0-beta.14
+v7.0.0-beta.15
 ```
 
 Se eliminaron **246 releases** y **167 tags**. El corte se debe a que se habían
