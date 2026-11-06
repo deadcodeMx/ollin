@@ -126,10 +126,7 @@ public sealed partial class LauncherWindow : Window
             var project = ProjectService.Create(
                 result.ParentFolder,
                 result.Name,
-                Directory.Exists(templateAssets) ? templateAssets : null,
-                result.Template,
-                result.ContentMode,
-                result.Genre);
+                Directory.Exists(templateAssets) ? templateAssets : null);
 
             OpenEditor(project.ProjectFile);
         }

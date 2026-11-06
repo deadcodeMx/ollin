@@ -8,20 +8,13 @@ using Ollin.Core.Projects;
 namespace Ollin.Editor.Views;
 
 /// <summary>Resultado del diálogo de proyecto nuevo.</summary>
-public sealed record NewProjectResult(
-    string Name,
-    string ParentFolder,
-    ProjectTemplate Template,
-    ProjectContentMode ContentMode,
-    ProjectGenre Genre);
+public sealed record NewProjectResult(string Name, string ParentFolder);
 
 /// <summary>Diálogo para crear un proyecto con su propia carpeta.</summary>
 public sealed class NewProjectWindow : Window
 {
     private readonly TextBox _name;
     private readonly TextBox _folder;
-    private readonly ComboBox _mode;
-    private readonly ComboBox _genre;
     private readonly TextBlock _error;
 
     public NewProjectWindow()
@@ -54,40 +47,6 @@ public sealed class NewProjectWindow : Window
             VerticalContentAlignment = VerticalAlignment.Center,
         };
         ToolTip.SetTip(_folder, suggested);
-        _mode = new ComboBox
-        {
-            ItemsSource = new[]
-            {
-                "Vacío — solo componentes esenciales",
-                "Por género — con componentes recomendados",
-                "Completo — todos los componentes",
-            },
-            SelectedIndex = 0,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-        };
-        _genre = new ComboBox
-        {
-            ItemsSource = new[] { "Plataformas", "Top-down / RPG", "Terror", "Shooter", "Puzzle" },
-            SelectedIndex = 0,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            IsEnabled = false,
-        };
-        var genrePanel = new StackPanel
-        {
-            Spacing = 6,
-            IsVisible = false,
-            Children =
-            {
-                new TextBlock { Text = "Género", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
-                _genre,
-            },
-        };
-        _mode.SelectionChanged += (_, _) =>
-        {
-            var byGenre = _mode.SelectedIndex == 1;
-            _genre.IsEnabled = byGenre;
-            genrePanel.IsVisible = byGenre;
-        };
 
         _error = new TextBlock
         {
@@ -142,14 +101,11 @@ public sealed class NewProjectWindow : Window
                 },
                 new TextBlock
                 {
-                    Text = "Elige cuánta ayuda quieres: componentes mínimos para programar o un conjunto guiado por género.",
+                    Text = "Proyecto vacío con lo esencial: escena, cámara, jugador y un script para empezar.",
                     FontSize = 11.5,
                     TextWrapping = TextWrapping.Wrap,
                     Foreground = new SolidColorBrush(Color.Parse("#93A4BC")),
                 },
-                new TextBlock { Text = "Modo", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
-                _mode,
-                genrePanel,
                 new TextBlock { Text = "Nombre", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
                 _name,
                 new TextBlock { Text = "Carpeta", FontSize = 11, Foreground = new SolidColorBrush(Color.Parse("#93A4BC")) },
@@ -203,31 +159,7 @@ public sealed class NewProjectWindow : Window
             return;
         }
 
-        var mode = _mode.SelectedIndex switch
-        {
-            1 => ProjectContentMode.Genre,
-            2 => ProjectContentMode.Full,
-            _ => ProjectContentMode.Empty,
-        };
-        var genre = mode == ProjectContentMode.Genre
-            ? _genre.SelectedIndex switch
-            {
-                1 => ProjectGenre.TopDown,
-                2 => ProjectGenre.Horror,
-                3 => ProjectGenre.Shooter,
-                4 => ProjectGenre.Puzzle,
-                _ => ProjectGenre.Platformer,
-            }
-            : ProjectGenre.None;
-
-        var template = genre switch
-        {
-            ProjectGenre.Platformer => ProjectTemplate.Platformer,
-            ProjectGenre.Horror => ProjectTemplate.Horror,
-            _ => ProjectTemplate.Empty,
-        };
-
-        Close(new NewProjectResult(name!, folder!, template, mode, genre));
+        Close(new NewProjectResult(name!, folder!));
     }
 
     private void ShowError(string message)

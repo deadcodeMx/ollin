@@ -1307,19 +1307,6 @@ public partial class MainWindow : Window
 
     // ---------- Proyectos ----------
 
-    private void OnProjectContentMode(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (sender is not MenuItem { Tag: string tag } || ViewModel?.Project is null) return;
-        if (!Enum.TryParse<Ollin.Core.Projects.ProjectContentMode>(tag, out var mode)) return;
-        ViewModel.Project.ContentMode = mode;
-        Ollin.Core.Projects.ProjectService.Save(ViewModel.Project);
-        ViewModel.StatusMessage = mode switch
-        {
-            Ollin.Core.Projects.ProjectContentMode.Empty => "Modo vacío: solo componentes esenciales",
-            Ollin.Core.Projects.ProjectContentMode.Genre => "Modo por género: componentes recomendados",
-            _ => "Modo completo: todos los componentes",
-        };
-    }
     private async void OnNewProject(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ViewModel is null)
@@ -1332,7 +1319,7 @@ public partial class MainWindow : Window
 
         if (result is not null)
         {
-            ViewModel.CreateProject(result.ParentFolder, result.Name, result.Template, result.ContentMode, result.Genre);
+            ViewModel.CreateProject(result.ParentFolder, result.Name);
         }
     }
 
@@ -1747,40 +1734,7 @@ public partial class MainWindow : Window
     {
         var project = ViewModel?.Project;
         if (project is null || project.ContentMode == Ollin.Core.Projects.ProjectContentMode.Full) return true;
-        if (project.ContentMode == Ollin.Core.Projects.ProjectContentMode.Empty)
-            return kind is "sprite" or "collider" or "rigidbody" or "camera" or "script";
-
-        var allowed = project.Genre switch
-        {
-            Ollin.Core.Projects.ProjectGenre.Platformer => new[]
-            {
-                "character", "sprite", "animator", "collider", "rigidbody", "camera", "tilemap",
-                "audio", "particles", "trail", "checkpoint2d", "hitbox", "hurtbox", "knockback2d",
-                "weapon2d", "transition", "script",
-            },
-            Ollin.Core.Projects.ProjectGenre.TopDown => new[]
-            {
-                "sprite", "animator", "collider", "rigidbody", "camera", "interactable", "inventory",
-                "equipment", "questlog", "audio", "particles", "ai", "hitbox", "hurtbox", "knockback2d",
-                "checkpoint2d", "transition", "script",
-            },
-            Ollin.Core.Projects.ProjectGenre.Horror => new[]
-            {
-                "sprite", "animator", "collider", "camera", "light", "audio", "interactable",
-                "inventory", "ai", "trigger", "particles", "checkpoint2d", "transition", "script",
-            },
-            Ollin.Core.Projects.ProjectGenre.Shooter => new[]
-            {
-                "sprite", "animator", "collider", "rigidbody", "camera", "weapon2d", "hitbox",
-                "hurtbox", "knockback2d", "health", "particles", "trail", "ai", "transition", "script",
-            },
-            Ollin.Core.Projects.ProjectGenre.Puzzle => new[]
-            {
-                "sprite", "animator", "collider", "interactable", "inventory", "audio", "transition", "script",
-            },
-            _ => Array.Empty<string>(),
-        };
-        return allowed.Contains(kind);
+        return kind is "sprite" or "collider" or "rigidbody" or "camera" or "script";
     }
     private Button BuildAddComponentButton()
     {

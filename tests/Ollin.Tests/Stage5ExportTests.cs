@@ -19,7 +19,7 @@ public class GameExporterTests
 
         try
         {
-            var project = ProjectService.Create(root, "Juego Test", template: ProjectTemplate.Platformer);
+            var project = ProjectService.Create(root, "Juego Test");
             var scripts = new byte[] { 1, 2, 3, 4 };
             var target = GameExporter.Export(project, output, template, scripts);
 
@@ -66,7 +66,7 @@ public class GameExporterTests
 
         try
         {
-            var project = ProjectService.Create(root, "Juego Multi Escena", template: ProjectTemplate.Platformer);
+            var project = ProjectService.Create(root, "Juego Multi Escena");
             var secondPath = Path.Combine(project.ScenesFolder, "nivel-2.ollin.json");
             Ollin.Core.Serialization.SceneSerializer.Save(new Ollin.Core.Scenes.Scene { Name = "Nivel 2" }, secondPath);
 

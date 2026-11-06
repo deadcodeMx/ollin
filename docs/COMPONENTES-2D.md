@@ -235,7 +235,7 @@ Prioridades:
 | Rollback | Lucha/online |
 | ECS | Mundos grandes |
 
-## Cobertura por género
+## Cobertura por tipo de juego
 
 | Género | P0 | P1 clave | P2 clave |
 |---|---|---|---|

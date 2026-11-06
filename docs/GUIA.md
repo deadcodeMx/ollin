@@ -40,12 +40,10 @@ editor se abre después de elegir un proyecto.
 
 `Archivo → Nuevo proyecto…` (o el botón del escritorio de bienvenida).
 
-- **Modo de contenido**:
-  - **Vacío**: solo aparecen los componentes esenciales que no se pueden hacer
-    fácilmente con scripts: Sprite, Collider, Rigidbody, Cámara y Script.
-  - **Por género**: sugiere componentes según el género (Plataformas, Top-down/RPG,
-    Terror, Shooter o Puzzle) y crea una escena inicial acorde.
-  - **Completo**: todos los componentes, para usuarios avanzados.
+- Los proyectos nuevos se crean en **modo vacío**: solo aparecen los componentes
+  esenciales que no se pueden hacer fácilmente con scripts: Sprite, Collider,
+  Rigidbody, Cámara y Script. La escena inicial incluye cámara, jugador y un
+  script vacío.
 - **Nombre**: se usa también como nombre de la carpeta (los espacios pasan a `_`).
 - **Carpeta**: dónde se creará. El diálogo tiene desplazamiento si la pantalla es
   pequeña y valida que la carpeta no esté ocupada.
