@@ -15,7 +15,8 @@ public sealed class Scene
 
     public List<Entity> Entities { get; set; } = new();
 
-    /// <summary>Entidades sin padre.</summary>
+    /// <summary>Entidades sin padre. Calculada; no se serializa.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
     public IEnumerable<Entity> RootEntities =>
         Entities.Where(e => e.ParentId is null || Find(e.ParentId.Value) is null);
 

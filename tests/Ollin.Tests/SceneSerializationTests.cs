@@ -10,6 +10,17 @@ namespace Ollin.Tests;
 public class SceneSerializationTests
 {
     [Fact]
+    public void NoSerializaLaListaCalculadaDeRaices()
+    {
+        var scene = DefaultScene.Create();
+        var json = SceneSerializer.Serialize(scene);
+
+        Assert.DoesNotContain("rootEntities", json);
+        var loaded = SceneSerializer.Deserialize(json);
+        Assert.Equal(scene.Entities.Count, loaded.Entities.Count);
+    }
+
+    [Fact]
     public void RoundtripConservaEntidadesYComponentes()
     {
         var scene = DefaultScene.Create();

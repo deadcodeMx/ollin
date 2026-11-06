@@ -54,7 +54,13 @@ El HUD de scripts solo aparecía en el ejecutable exportado.
 
 - **Corregido:** el Game View del editor muestra barras, etiquetas, mensajes y fin de partida.
 
-### 5. Sin menú inicial
+### 5. `rootEntities` duplicaba las raíces
+El serializador guardaba una segunda lista de entidades raíz dentro de `scene`.
+
+- **Corregido:** `RootEntities` es calculada y lleva `[JsonIgnore]`.
+- **Prueba:** `NoSerializaLaListaCalculadaDeRaices`.
+
+### 6. Sin menú inicial
 El juego arranca directamente en el nivel; el menú disponible es el de pausa.
 
 - **Pendiente:** decidir si el juego de validación necesita un menú de inicio o si la pantalla de pausa es suficiente.
