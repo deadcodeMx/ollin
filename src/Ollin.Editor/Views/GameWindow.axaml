@@ -9,6 +9,54 @@
         WindowStartupLocation="CenterScreen">
   <Grid>
     <controls:ViewportSurface x:Name="GameHost" />
+
+    <StackPanel IsVisible="{Binding IsHudVisible}" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="18,48,0,0" Spacing="8" Width="240" IsHitTestVisible="False">
+      <ItemsControl ItemsSource="{Binding HudBars}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Spacing="2" Margin="0,0,0,4">
+              <TextBlock Text="{Binding Name}" FontSize="11" Foreground="#E7EAF0" />
+              <ProgressBar Minimum="0" Maximum="1" Value="{Binding Fraction}" Height="9"
+                           Foreground="{Binding Brush}" Background="#5510131A" />
+              <TextBlock Text="{Binding ValueText}" FontSize="10" Foreground="#AAB4C4"
+                         HorizontalAlignment="Right" />
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <ItemsControl ItemsSource="{Binding HudLabels}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Display}" FontSize="12" Foreground="#E7EAF0" TextWrapping="Wrap" MaxWidth="300" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+
+    <ItemsControl IsVisible="{Binding IsHudVisible}" ItemsSource="{Binding HudMessages}"
+                  HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,40,0,0" IsHitTestVisible="False">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Border Background="#CC10131A" CornerRadius="5" Padding="11,6" Margin="0,2">
+            <TextBlock Text="{Binding Text}" FontSize="13" Foreground="{Binding TextBrush}" />
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <Border IsVisible="{Binding IsGameOverVisible}" Background="#CC05070B" IsHitTestVisible="False">
+      <Border Background="#151922" BorderBrush="#E05B5B" BorderThickness="1"
+              CornerRadius="10" Padding="28" Width="340"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel Spacing="10">
+          <TextBlock Text="Fin del juego" FontSize="22" FontWeight="Bold" Foreground="#E05B5B" />
+          <TextBlock Text="{Binding GameOverText}" TextWrapping="Wrap" Foreground="#E7EAF0" />
+          <TextBlock Text="Detén la reproducción para volver al editor" FontSize="10" Foreground="#8B94A7" />
+        </StackPanel>
+      </Border>
+    </Border>
+
     <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"
             Background="#B305070B" CornerRadius="4" Padding="8,4" IsHitTestVisible="False">
       <TextBlock Text="Ventana de juego · F11 pantalla completa · Esc para salir de pantalla completa"

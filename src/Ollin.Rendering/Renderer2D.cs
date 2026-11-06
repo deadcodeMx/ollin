@@ -192,9 +192,19 @@ public sealed class Renderer2D : IDisposable
             DrawGrid(camera, cameraPosition, width, height);
         }
 
+        var tilemapOrders = scene.Entities
+            .Where(entity => entity.Active)
+            .SelectMany(entity => entity.GetComponents<TileMapLayer>())
+            .Where(map => map.Enabled && map.Visible && !map.YSort)
+            .Select(map => map.SortingOrder)
+            .ToList();
+        var splitSprites = tilemapOrders.Count > 0;
+        var tilemapMin = splitSprites ? tilemapOrders.Min() : int.MinValue;
+
+        if (splitSprites) DrawSprites(scene, cameraPosition, sprite => sprite.SortingOrder < tilemapMin);
         DrawTilemaps(scene);
         var hasYSort = scene.Entities.Any(entity => entity.Active && entity.GetComponents<TileMapLayer>().Any(map => map.YSort && map.Visible));
-        if (hasYSort) DrawYSorted(scene, cameraPosition); else DrawSprites(scene, cameraPosition);
+        if (hasYSort) DrawYSorted(scene, cameraPosition); else DrawSprites(scene, cameraPosition, splitSprites ? sprite => sprite.SortingOrder >= tilemapMin : null);
         DrawDebugDraw(camera, height);
 
         if (showHelpers)
@@ -519,12 +529,13 @@ public sealed class Renderer2D : IDisposable
             _batch.DrawTriangle(null, center, a, b, tint);
         }
     }
-    private void DrawSprites(Scene scene, Vector2 cameraPosition)
+    private void DrawSprites(Scene scene, Vector2 cameraPosition, Func<SpriteRenderer, bool>? filter = null)
     {
         _renderServer.Submit(scene);
         var drawables = _renderServer.Sprites;
         foreach (var (entity, sprite, _, item) in drawables)
         {
+            if (filter is not null && !filter(sprite)) continue;
             var world = scene.GetWorldMatrix(entity);
             var parallax = ParallaxOffset(cameraPosition, sprite.Parallax);
             world.M41 += parallax.X;

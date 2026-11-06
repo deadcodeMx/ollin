@@ -1,12 +1,63 @@
 {
   "formatVersion": 1,
-  "savedAt": "2026-11-06T11:03:09.416486-07:00",
+  "savedAt": "2026-11-06T11:10:57.7069087-07:00",
   "engine": "Ollin",
   "scene": {
     "name": "Nivel 1",
     "entities": [
       {
-        "id": "7e083277-03cb-47df-8444-b1646aee1ebc",
+        "id": "db72dca4-1c21-4285-9b5e-12a4463520fa",
+        "name": "Fondo",
+        "active": true,
+        "tags": [],
+        "transform": {
+          "position": [
+            8,
+            4
+          ],
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ]
+        },
+        "components": [
+          {
+            "$type": "sprite",
+            "texturePath": "assets/textures/wall.png",
+            "tint": [
+              0.1,
+              0.12,
+              0.22,
+              1
+            ],
+            "size": [
+              50,
+              30
+            ],
+            "shape": "Quad",
+            "origin": [
+              0.5,
+              0.5
+            ],
+            "frameRect": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "sortingOrder": -30,
+            "flipX": false,
+            "flipY": false,
+            "visible": true,
+            "blendMode": "Normal",
+            "parallax": 1,
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "ce82ea82-a155-4912-adba-73b2f66d1de2",
         "name": "Suelo",
         "active": true,
         "tags": [],
@@ -148,7 +199,7 @@
         ]
       },
       {
-        "id": "3747ddaf-c467-4ae0-b938-319cd2635cc0",
+        "id": "32f1c756-6fdc-4d8e-bfa4-cea083591819",
         "name": "Camara",
         "active": true,
         "tags": [],
@@ -208,7 +259,7 @@
         ]
       },
       {
-        "id": "dcc82d80-22e4-4e75-b79f-4f4cdedd23ed",
+        "id": "966ebf40-22cc-467b-98ba-5aa65c644954",
         "name": "Jugador",
         "active": true,
         "tags": [
@@ -317,7 +368,7 @@
         ]
       },
       {
-        "id": "1f83596c-f362-465e-8f90-3b5a9f3ffc6c",
+        "id": "67a1f229-49db-42ce-b0e9-354aa0733924",
         "name": "Merodeador",
         "active": true,
         "tags": [
@@ -411,7 +462,7 @@
         ]
       },
       {
-        "id": "2a9fac39-3764-44d5-8ba3-0ca0e295aa74",
+        "id": "1a390e02-ae57-41d0-a185-aacc71bf9669",
         "name": "Plataforma A",
         "active": true,
         "tags": [],
@@ -482,7 +533,7 @@
         ]
       },
       {
-        "id": "d3bb1cdc-a0a0-4516-8ff7-bf414bdba72d",
+        "id": "884a0899-e476-4345-86ff-f64efce23f1c",
         "name": "Plataforma B",
         "active": true,
         "tags": [],
@@ -553,7 +604,7 @@
         ]
       },
       {
-        "id": "9b65ceba-fa8e-45c0-962d-0e11d3b9a075",
+        "id": "9d5d553d-10bd-4dd6-92fd-6738bea1f6c5",
         "name": "Plataforma C",
         "active": true,
         "tags": [],
@@ -624,7 +675,7 @@
         ]
       },
       {
-        "id": "25693633-01eb-467e-8902-efc7aebd6042",
+        "id": "c07a79e1-c492-4407-8952-a53316dd39a5",
         "name": "Muro izquierdo",
         "active": true,
         "tags": [],
@@ -695,7 +746,7 @@
         ]
       },
       {
-        "id": "1b9e6a65-bf05-404c-b373-bf5962a9d77b",
+        "id": "9be53d81-ee8c-42f9-b854-2c5e1de106d6",
         "name": "Muro derecho",
         "active": true,
         "tags": [],
@@ -766,7 +817,7 @@
         ]
       },
       {
-        "id": "1741355e-c365-493d-8dd4-2284eff1d5b4",
+        "id": "3e2de0d6-2944-471c-8f1c-aa696d306406",
         "name": "Moneda 1",
         "active": true,
         "tags": [
@@ -839,7 +890,7 @@
         ]
       },
       {
-        "id": "aa0117a9-8e24-4556-adbb-5807bef69715",
+        "id": "d08b9923-2fb1-41dd-aaa4-b800b92bbf08",
         "name": "Moneda 2",
         "active": true,
         "tags": [
@@ -912,7 +963,7 @@
         ]
       },
       {
-        "id": "efebb18b-dd6e-49fb-bb20-a3ba3ffd4afc",
+        "id": "94fc3297-0362-4531-b108-1de155bade89",
         "name": "Moneda 3",
         "active": true,
         "tags": [
@@ -985,7 +1036,7 @@
         ]
       },
       {
-        "id": "8bfc2373-ba92-400b-8b07-5b8dc8fb7d16",
+        "id": "fd01dc01-7de7-445d-9fe3-8f8d6fc6f5c3",
         "name": "Meta",
         "active": true,
         "tags": [
@@ -1059,7 +1110,58 @@
     ],
     "rootEntities": [
       {
-        "id": "7e083277-03cb-47df-8444-b1646aee1ebc",
+        "id": "db72dca4-1c21-4285-9b5e-12a4463520fa",
+        "name": "Fondo",
+        "active": true,
+        "tags": [],
+        "transform": {
+          "position": [
+            8,
+            4
+          ],
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ]
+        },
+        "components": [
+          {
+            "$type": "sprite",
+            "texturePath": "assets/textures/wall.png",
+            "tint": [
+              0.1,
+              0.12,
+              0.22,
+              1
+            ],
+            "size": [
+              50,
+              30
+            ],
+            "shape": "Quad",
+            "origin": [
+              0.5,
+              0.5
+            ],
+            "frameRect": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "sortingOrder": -30,
+            "flipX": false,
+            "flipY": false,
+            "visible": true,
+            "blendMode": "Normal",
+            "parallax": 1,
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "ce82ea82-a155-4912-adba-73b2f66d1de2",
         "name": "Suelo",
         "active": true,
         "tags": [],
@@ -1201,7 +1303,7 @@
         ]
       },
       {
-        "id": "3747ddaf-c467-4ae0-b938-319cd2635cc0",
+        "id": "32f1c756-6fdc-4d8e-bfa4-cea083591819",
         "name": "Camara",
         "active": true,
         "tags": [],
@@ -1261,7 +1363,7 @@
         ]
       },
       {
-        "id": "dcc82d80-22e4-4e75-b79f-4f4cdedd23ed",
+        "id": "966ebf40-22cc-467b-98ba-5aa65c644954",
         "name": "Jugador",
         "active": true,
         "tags": [
@@ -1370,7 +1472,7 @@
         ]
       },
       {
-        "id": "1f83596c-f362-465e-8f90-3b5a9f3ffc6c",
+        "id": "67a1f229-49db-42ce-b0e9-354aa0733924",
         "name": "Merodeador",
         "active": true,
         "tags": [
@@ -1464,7 +1566,7 @@
         ]
       },
       {
-        "id": "2a9fac39-3764-44d5-8ba3-0ca0e295aa74",
+        "id": "1a390e02-ae57-41d0-a185-aacc71bf9669",
         "name": "Plataforma A",
         "active": true,
         "tags": [],
@@ -1535,7 +1637,7 @@
         ]
       },
       {
-        "id": "d3bb1cdc-a0a0-4516-8ff7-bf414bdba72d",
+        "id": "884a0899-e476-4345-86ff-f64efce23f1c",
         "name": "Plataforma B",
         "active": true,
         "tags": [],
@@ -1606,7 +1708,7 @@
         ]
       },
       {
-        "id": "9b65ceba-fa8e-45c0-962d-0e11d3b9a075",
+        "id": "9d5d553d-10bd-4dd6-92fd-6738bea1f6c5",
         "name": "Plataforma C",
         "active": true,
         "tags": [],
@@ -1677,7 +1779,7 @@
         ]
       },
       {
-        "id": "25693633-01eb-467e-8902-efc7aebd6042",
+        "id": "c07a79e1-c492-4407-8952-a53316dd39a5",
         "name": "Muro izquierdo",
         "active": true,
         "tags": [],
@@ -1748,7 +1850,7 @@
         ]
       },
       {
-        "id": "1b9e6a65-bf05-404c-b373-bf5962a9d77b",
+        "id": "9be53d81-ee8c-42f9-b854-2c5e1de106d6",
         "name": "Muro derecho",
         "active": true,
         "tags": [],
@@ -1819,7 +1921,7 @@
         ]
       },
       {
-        "id": "1741355e-c365-493d-8dd4-2284eff1d5b4",
+        "id": "3e2de0d6-2944-471c-8f1c-aa696d306406",
         "name": "Moneda 1",
         "active": true,
         "tags": [
@@ -1892,7 +1994,7 @@
         ]
       },
       {
-        "id": "aa0117a9-8e24-4556-adbb-5807bef69715",
+        "id": "d08b9923-2fb1-41dd-aaa4-b800b92bbf08",
         "name": "Moneda 2",
         "active": true,
         "tags": [
@@ -1965,7 +2067,7 @@
         ]
       },
       {
-        "id": "efebb18b-dd6e-49fb-bb20-a3ba3ffd4afc",
+        "id": "94fc3297-0362-4531-b108-1de155bade89",
         "name": "Moneda 3",
         "active": true,
         "tags": [
@@ -2038,7 +2140,7 @@
         ]
       },
       {
-        "id": "8bfc2373-ba92-400b-8b07-5b8dc8fb7d16",
+        "id": "fd01dc01-7de7-445d-9fe3-8f8d6fc6f5c3",
         "name": "Meta",
         "active": true,
         "tags": [

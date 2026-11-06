@@ -1,27 +1,25 @@
-# Ollin 7.0.0-beta.9 — cierre de física 2D
+# Ollin 7.0.0-beta.10 — juego de validación
 
-## Broadphase espacial
+## Juego de validación
 
-- Rejilla espacial en lugar de comparar todos los pares.
-- Los colliders de gran tamaño se comparan contra todos para no perder colisiones.
+- Proyecto jugable en `samples/ValidacionOllin`.
+- Nivel, cámara, física, enemigo, monedas, meta, HUD, pausa y audio.
+- Exportación y ejecución del reproductor verificadas.
 
-## EdgeCollider2D exacto
+## Correcciones de motor
 
-- Colisión círculo-borde por distancia real al segmento.
-- Ya no depende de la caja envolvente del contorno.
-
-## Joints con impulsos
-
-- Solver iterativo de 8 iteraciones.
-- Corrección de posición y velocidad.
-- `DistanceJoint2D`, `RopeJoint2D`, `SpringJoint2D` y `PinJoint2D`.
+- `System` disponible globalmente en scripts (`MathF`, `Random`, etc.).
+- Orden de render entre tilemaps y sprites por `SortingOrder`.
+- HUD de scripts visible también en el Game View del editor.
+- Meta del nivel ajustada al alcance del jugador.
 
 ## Verificación
 
 - Build: 0 errores.
-- Pruebas: 198/198.
-- Instalador: `Ollin-Setup-7.0.0-beta.9.exe`.
+- Pruebas: 199/199.
+- Informe: `docs/mejoras/VALIDACION-2026-11-06.md`.
+- Instalador: `Ollin-Setup-7.0.0-beta.10.exe`.
 
 ## Nota
 
-Con esto se cierran los límites documentados de la etapa de física 2D.
+Con esta beta se cierra la primera pasada del juego de validación.
