@@ -1,24 +1,33 @@
-# Ollin 7.0.0-beta.6 — español/inglés
+# Ollin 7.0.0-beta.7 — cierre de feedback UI
 
-## Añadido
+## Juego y editor separados
 
-- Idioma español oficial e inglés opcional.
-- Menú Ver → Idioma.
-- Persistencia del idioma en `editor.json`.
-- Traducción runtime de menús, botones, pestañas, etiquetas y tooltips conocidos.
+- El viewport del editor se congela durante la reproducción y no recibe input del juego.
+- Se muestra el overlay **MODO JUEGO**.
+- El juego se ejecuta en la ventana de cámara.
+- La vista de cámara no dibuja rejilla, selección, gizmos ni ayudas de depuración.
+- La ventana de juego se abre al reproducir y se cierra al detener.
 
-## Feedback cubierto
+## Scripts
 
-- Punto 8: traducción al inglés, con español como oficial.
+- `Dictionary<,>` disponible globalmente en scripts antiguos.
+- Corregido `GraphScript.cs` de ejemplo.
+- El grafo de personaje expone saltar, aterrizar, velocidad y gravedad.
+
+## Interfaz
+
+- Menús de entidad por categorías.
+- Tema claro revisado.
+- Panel de archivos con árbol/cuadrícula.
+- Drag-and-drop al inspector.
+- Vista de cámara con selector y ventana.
 
 ## Verificación
 
 - Build: 0 errores.
-- Pruebas: 186/186.
-- Instalador: `Ollin-Setup-7.0.0-beta.6.exe`.
+- Pruebas: 188/188.
+- Instalador: `Ollin-Setup-7.0.0-beta.7.exe`.
 
-## Pendiente general
+## Nota
 
-- Revisión visual del tema claro.
-- Menú de jerarquía de entidad por categorías.
-- Script de personaje editable desde el grafo.
+Esta release consolida el bloque de feedback. No habrá releases intermedias hasta el siguiente bloque.
