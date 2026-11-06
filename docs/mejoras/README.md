@@ -35,11 +35,11 @@ verificables.
 | [DIALOGOS.md](DIALOGOS.md) | Diálogos | P1 | Activo |
 | [RENDER.md](RENDER.md) | Render 2D | P1 | Activo |
 | [ANIMACION.md](ANIMACION.md) | Animación y esqueletos | P1 | Completado beta13 |
-| [AUDIO.md](AUDIO.md) | Audio 2D y Linux | P1 | Activo |
+| [AUDIO.md](AUDIO.md) | Audio 2D y Linux | P1 | Completado Windows beta14 |
 | [EDITOR.md](EDITOR.md) | Editor, undo y flujo | P1 | Activo |
 | [RENDIMIENTO.md](RENDIMIENTO.md) | Render, batching y pruebas | P1 | Activo |
 | [RED.md](RED.md) | Multijugador y RPC | P2 | Activo |
-| [LINUX.md](LINUX.md) | Linux real y empaquetado | P1 | Activo |
+| [LINUX.md](LINUX.md) | Linux real y empaquetado | P1 | Paquete beta14, hardware pendiente |
 | [JUEGO-VALIDACION.md](JUEGO-VALIDACION.md) | Juego de validación | P1 | Cerrado beta10 |
 | [VALIDACION-2026-11-06.md](VALIDACION-2026-11-06.md) | Informe de la primera pasada | P1 | En curso |
 

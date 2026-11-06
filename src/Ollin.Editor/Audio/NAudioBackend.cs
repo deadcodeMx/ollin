@@ -59,7 +59,7 @@ public sealed class NAudioBackend : IAudioBackend, IDisposable
             }
 
             var reader = new AudioFileReader(absolutePath);
-            reader.Volume = volume * CoreAudio.MasterVolume;
+            reader.Volume = volume;
 
             var output = new WaveOutEvent { DesiredLatency = 120 };
             var panning = new PanningSampleProvider(reader.ToSampleProvider()) { Pan = 0f };
@@ -142,7 +142,7 @@ public sealed class NAudioBackend : IAudioBackend, IDisposable
         {
             if (_playbacks.TryGetValue(handle, out var playback))
             {
-                playback.Reader.Volume = volume * CoreAudio.MasterVolume;
+                playback.Reader.Volume = volume;
             }
         }
     }
@@ -167,7 +167,7 @@ public sealed class NAudioBackend : IAudioBackend, IDisposable
                     return;
                 }
 
-                start = playback.Reader.Volume / System.Math.Max(0.0001f, CoreAudio.MasterVolume);
+                start = playback.Reader.Volume;
             }
 
             var steps = System.Math.Max(1, (int)(seconds * 20));

@@ -25,16 +25,16 @@ Ollin es **gratis y de código abierto (MIT)**: puedes usarlo, modificarlo y dis
 ![Avalonia](https://img.shields.io/badge/Avalonia-11.3-8B44AC)
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
 ![Roslyn](https://img.shields.io/badge/Roslyn-4.11-2E7D32)
-![Pruebas](https://img.shields.io/badge/pruebas-207%2F207-47B8A8)
-![Ciclo](https://img.shields.io/badge/ciclo-7.0.0--beta.13-7B2CFF)
+![Pruebas](https://img.shields.io/badge/pruebas-209%2F209-47B8A8)
+![Ciclo](https://img.shields.io/badge/ciclo-7.0.0--beta.14-7B2CFF)
 
 ![Editor de Ollin](docs/images/editor.png)
 
 ## Descargas
 
-- **Última beta**: [Ollin-Setup-7.0.0-beta.13.exe](https://github.com/deadcodeMx/ollin/releases/tag/v7.0.0-beta.13)
+- **Última beta**: [Ollin-Setup-7.0.0-beta.14.exe](https://github.com/deadcodeMx/ollin/releases/tag/v7.0.0-beta.14)
 - **Últimas 10 versiones**: [Releases del proyecto](https://github.com/deadcodeMx/ollin/releases)
-- **Ciclo actual**: 7.0.0-beta.13 (ver [versionado](docs/VERSIONADO.md))
+- **Ciclo actual**: 7.0.0-beta.14 (ver [versionado](docs/VERSIONADO.md))
 - **Guía completa de uso**: [docs/GUIA.md](docs/GUIA.md)
 
 Cada hito del motor se publica como *release* con su instalador y sus notas. No se publica una versión por cada cambio pequeño. El

@@ -22,6 +22,7 @@ public sealed class LinuxAudioBackend : IAudioBackend
     private readonly object _gate = new();
     private readonly string? _player;
     private readonly SilentAudioBackend _fallback = new();
+    private int _musicHandle = -1;
     private int _nextHandle = 1;
 
     public LinuxAudioBackend()
@@ -58,10 +59,16 @@ public sealed class LinuxAudioBackend : IAudioBackend
         if (_player is null) return _fallback.Play(absolutePath, volume, loop, channel);
         lock (_gate)
         {
+            if (channel == AudioChannel.Music && _musicHandle >= 0)
+            {
+                StopLocked(_musicHandle);
+                _musicHandle = -1;
+            }
             var handle = _nextHandle++;
             var playback = Start(absolutePath, volume, loop, channel, handle);
             if (playback is null) return _fallback.Play(absolutePath, volume, loop, channel);
             _playbacks[handle] = playback;
+            if (channel == AudioChannel.Music) _musicHandle = handle;
             return handle;
         }
     }
@@ -82,6 +89,8 @@ public sealed class LinuxAudioBackend : IAudioBackend
                 info.ArgumentList.Add("-autoexit");
                 info.ArgumentList.Add("-loglevel");
                 info.ArgumentList.Add("quiet");
+                info.ArgumentList.Add("-volume");
+                info.ArgumentList.Add(((int)(volume * 100)).ToString());
             }
             info.ArgumentList.Add(path);
 
@@ -106,12 +115,18 @@ public sealed class LinuxAudioBackend : IAudioBackend
         }
     }
 
+    private void StopLocked(int handle)
+    {
+        if (!_playbacks.Remove(handle, out var playback)) return;
+        if (handle == _musicHandle) _musicHandle = -1;
+        Kill(playback.Process);
+    }
+
     public void Stop(int handle)
     {
         lock (_gate)
         {
-            if (!_playbacks.Remove(handle, out var playback)) return;
-            Kill(playback.Process);
+            StopLocked(handle);
         }
     }
 
@@ -121,6 +136,7 @@ public sealed class LinuxAudioBackend : IAudioBackend
         {
             foreach (var playback in _playbacks.Values) Kill(playback.Process);
             _playbacks.Clear();
+            _musicHandle = -1;
         }
     }
 
@@ -130,7 +146,7 @@ public sealed class LinuxAudioBackend : IAudioBackend
         process.Dispose();
     }
 
-    public void SetVolume(int handle, float volume) { }
+    public void SetVolume(int handle, float volume) { /* paplay/aplay no permiten volumen por proceso */ }
 
     public void SetPan(int handle, float pan) { }
 
