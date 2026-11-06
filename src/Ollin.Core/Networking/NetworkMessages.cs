@@ -27,3 +27,25 @@ public sealed class NetworkSnapshot
         catch { return null; }
     }
 }
+
+/// <summary>Llamada remota simple, serializada por el mismo transporte UDP.</summary>
+public sealed class NetworkRpc
+{
+    private static readonly JsonSerializerOptions Options = new() { IncludeFields = true };
+    public int PeerId { get; set; }
+    public long Tick { get; set; }
+    public string Method { get; set; } = string.Empty;
+    public string Payload { get; set; } = string.Empty;
+
+    public byte[] ToBytes() => JsonSerializer.SerializeToUtf8Bytes(this, Options);
+
+    public static NetworkRpc? FromBytes(byte[] bytes)
+    {
+        try
+        {
+            var rpc = JsonSerializer.Deserialize<NetworkRpc>(bytes, Options);
+            return string.IsNullOrWhiteSpace(rpc?.Method) ? null : rpc;
+        }
+        catch { return null; }
+    }
+}

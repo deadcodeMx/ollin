@@ -17,7 +17,10 @@ public static class NetworkManager
     public static bool IsRunning => _running;
     public static bool IsHost { get; private set; }
     public static int PeerId => _peerId;
+    public static int BoundPort { get; private set; }
     public static event Action<NetworkSnapshot>? SnapshotReceived;
+    public static event Action<NetworkRpc>? RpcReceived;
+    public static int PeerCount { get { lock (Gate) return Peers.Count; } }
 
     public static bool StartHost(int port)
     {
@@ -25,7 +28,8 @@ public static class NetworkManager
         try
         {
             _udp = new UdpClient(port);
-            _server = new IPEndPoint(IPAddress.Any, port);
+            BoundPort = ((IPEndPoint)_udp.Client.LocalEndPoint!).Port;
+            _server = new IPEndPoint(IPAddress.Any, BoundPort);
             _peerId = 0;
             IsHost = true;
             _running = true;
@@ -72,6 +76,22 @@ public static class NetworkManager
         }
     }
 
+    public static void Rpc(string method, string payload = "")
+    {
+        if (string.IsNullOrWhiteSpace(method)) return;
+        SendRaw(new NetworkRpc { PeerId = _peerId, Tick = Environment.TickCount64, Method = method, Payload = payload }.ToBytes());
+    }
+
+    private static void SendRaw(byte[] bytes)
+    {
+        if (!_running || _udp is null) return;
+        lock (Gate)
+        {
+            if (IsHost) foreach (var peer in Peers) { try { _udp.Send(bytes, bytes.Length, peer); } catch { } }
+            else if (_server is not null) { try { _udp.Send(bytes, bytes.Length, _server); } catch { } }
+        }
+    }
+
     public static void Stop()
     {
         _running = false;
@@ -101,6 +121,20 @@ public static class NetworkManager
                 var bytes = udp.Receive(ref remote);
                 if (remote is null) continue;
                 if (IsHost) lock (Gate) Peers.Add(remote);
+                var rpc = NetworkRpc.FromBytes(bytes);
+                if (rpc is not null)
+                {
+                    RpcReceived?.Invoke(rpc);
+                    if (IsHost)
+                    {
+                        lock (Gate)
+                        {
+                            foreach (var peer in Peers)
+                                if (!peer.Equals(remote)) { try { _udp.Send(bytes, bytes.Length, peer); } catch { } }
+                        }
+                    }
+                    continue;
+                }
                 var snapshot = NetworkSnapshot.FromBytes(bytes);
                 if (snapshot is not null) SnapshotReceived?.Invoke(snapshot);
             }

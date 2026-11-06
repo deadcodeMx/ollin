@@ -1,21 +1,19 @@
-# Ollin 7.0.0-beta.16 — rendimiento y estrés
+# Ollin 7.0.0-beta.17 — multijugador y RPC
 
-## Rendimiento
+## Red
 
-- Pruebas de estrés de 20.000 sprites.
-- Física con 500 cuerpos durante 30 ticks.
-- UI Canvas con 2.000 elementos.
-- Tilemap de 256×256.
-- Profiler de FPS, frame ms, draws y entidades.
-- Suite serializada para medidas estables.
-- Resultados documentados en `docs/mejoras/RENDIMIENTO.md`.
+- RPC con método, payload, peer y tick.
+- Host reenvía RPC a los demás peers.
+- Autoridad básica por propietario.
+- Snapshots e interpolación existentes.
+- Pruebas de serialización y ciclo de host.
 
 ## Verificación
 
 - Build: 0 errores.
-- Pruebas: 213/213.
-- Instalador: `Ollin-Setup-7.0.0-beta.16.exe`.
+- Pruebas: 215/215.
+- Instalador: `Ollin-Setup-7.0.0-beta.17.exe`.
 
-## Nota
+## Límites
 
-Con esta beta se cierra la etapa de Rendimiento y pruebas de estrés.
+Sin predicción/rollback, canales fiables, lobby, reconexión ni prueba de dos procesos.

@@ -76,6 +76,7 @@ internal sealed class NetworkSystem
             if (entity is null) continue;
             var identity = entity.GetComponent<NetworkIdentity>()!;
             if (identity.IsLocal) continue;
+            if (identity.OwnerPeer != 0 && state.Owner != identity.OwnerPeer) continue;
             var sync = entity.GetComponent<NetworkTransform>();
             if (sync is not { Enabled: true }) continue;
             _targets[state.Id] = (state.Position, state.Rotation, state.Scale);
