@@ -4,7 +4,7 @@
 
 - Última versión legacy: **6.278.0**.
 - Esa versión queda congelada como cierre del ciclo 6.x.
-- La beta consolidada actual es **7.0.0-beta.6**.
+- La beta consolidada actual es **7.0.0-beta.7**.
 - No se publica una release por cada cambio pequeño.
 
 ## Esquema
@@ -70,8 +70,9 @@ Ejemplos:
 El **2026-11-05** se consolidaron las betas 7.0.0-beta.1 a beta.5 en **7.0.0-beta.6**. Quedaron 5 releases/tags:
 
 ```text
-v6.275.0 … v6.278.0
+v6.276.0 … v6.278.0
 v7.0.0-beta.6
+v7.0.0-beta.7
 ```
 
 Se eliminaron **246 releases** y **167 tags**. El corte se debe a que se habían
@@ -83,5 +84,5 @@ La versión de desarrollo actual es **7.0.0-beta.6**; las correcciones posterior
 
 1. Cerrar el feedback restante de interfaz en local.
 2. Ejecutar build y 186 pruebas.
-3. Publicar una sola vez como `7.0.0-beta.7` o `rc.1`.
+3. Publicar una sola vez como `7.0.0-rc.1`.
 4. No crear releases intermedias por correcciones.
