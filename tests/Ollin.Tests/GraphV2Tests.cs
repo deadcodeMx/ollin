@@ -849,4 +849,12 @@ public sealed class GraphV2Tests
         Assert.Contains("MoveSpeed = 8", code);
         AssertGeneratedCompiles(graph);
     }
+
+    [Fact]
+    public void LosScriptsAntiguosSinUsingDeDictionaryCompilan()
+    {
+        var code = "public sealed class Viejo { private Dictionary<string, float> valores = new(); }";
+        var result = ScriptCompiler.Compile(new[] { ("Viejo.cs", code) });
+        Assert.True(result.Success, string.Join("\n", result.Diagnostics.Select(d => d.Text)));
+    }
 }

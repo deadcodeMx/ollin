@@ -414,6 +414,7 @@ public partial class MainWindow : Window
         }
 
         ViewportHost.Viewport.ViewModel = vm;
+        ViewportHost.Viewport.FreezeWhenPlaying = true;
         Ollin.Editor.Localization.Localization.Apply(this, vm.Settings.Language);
         CameraPreview.ViewModel = vm;
         ShowFileFolder(null);

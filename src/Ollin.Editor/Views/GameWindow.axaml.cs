@@ -20,6 +20,8 @@ public sealed partial class GameWindow : Window
     {
         DataContext = viewModel;
         GameHost.Viewport.ViewModel = viewModel;
+        GameHost.Viewport.CameraPreview = true;
+        GameHost.Viewport.FreezeWhenPlaying = false;
     }
 
     protected override void OnKeyDown(KeyEventArgs e)

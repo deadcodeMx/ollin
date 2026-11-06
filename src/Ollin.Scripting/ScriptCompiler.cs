@@ -50,6 +50,8 @@ public static class ScriptCompiler
         var parseOptions = new CSharpParseOptions(LanguageVersion.Latest, DocumentationMode.None);
         var trees = new List<SyntaxTree>();
 
+        trees.Add(CSharpSyntaxTree.ParseText("global using System.Collections.Generic;", parseOptions, path: "__OllinGlobalUsings.cs"));
+
         foreach (var (path, source) in sources)
         {
             trees.Add(CSharpSyntaxTree.ParseText(source, parseOptions, path: path));

@@ -54,6 +54,7 @@ de trabajo existente.
 11. Idioma español oficial e inglés opcional.
 12. Tema claro legible en jerarquía, inspector y consola.
 13. Grafo de personaje con saltar, velocidad y gravedad.
+14. Viewport del editor solo para edición; juego en vista de cámara.
 
 ## Pruebas
 
