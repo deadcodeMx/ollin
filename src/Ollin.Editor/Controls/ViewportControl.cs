@@ -222,6 +222,14 @@ public sealed class ViewportControl : OpenGlControlBase
 
             _renderer.ProjectRoot = _viewModel.ProjectRoot;
 
+            if (CameraPreview || GameView)
+            {
+                RenderCameraPreview(width, height);
+                _renderer.ResetViewport(width, height);
+                UpdateStats(width, height);
+                return;
+            }
+
             _renderer.RenderFrame(
                 _viewModel.Scene,
                 _viewModel.CameraPosition,
