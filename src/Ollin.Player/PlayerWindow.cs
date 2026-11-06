@@ -79,6 +79,10 @@ public sealed class PlayerWindow : Window
             VerticalAlignment = VerticalAlignment.Stretch,
         };
         _surface.Viewport.ViewModel = _viewModel;
+        _surface.Viewport.CameraPreview = true;
+        _surface.Viewport.GameView = true;
+        _surface.Viewport.GameInputEnabled = true;
+        _surface.Viewport.FreezeWhenPlaying = false;
 
         var content = new Grid();
         content.Children.Add(_surface);
