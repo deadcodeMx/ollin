@@ -37,7 +37,7 @@ verificables.
 | [ANIMACION.md](ANIMACION.md) | Animación y esqueletos | P1 | Completado beta13 |
 | [AUDIO.md](AUDIO.md) | Audio 2D y Linux | P1 | Completado Windows beta14 |
 | [EDITOR.md](EDITOR.md) | Editor, undo y flujo | P1 | Completado beta15 |
-| [RENDIMIENTO.md](RENDIMIENTO.md) | Render, batching y pruebas | P1 | Activo |
+| [RENDIMIENTO.md](RENDIMIENTO.md) | Render, batching y pruebas | P1 | Completado beta16 |
 | [RED.md](RED.md) | Multijugador y RPC | P2 | Activo |
 | [LINUX.md](LINUX.md) | Linux real y empaquetado | P1 | Paquete beta14, hardware pendiente |
 | [JUEGO-VALIDACION.md](JUEGO-VALIDACION.md) | Juego de validación | P1 | Cerrado beta10 |
