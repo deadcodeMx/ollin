@@ -28,11 +28,26 @@ public sealed class ComponentInspectorView : UserControl
     private readonly MainViewModel _viewModel;
     private Entity? _entity;
     private readonly StackPanel _root = new() { Spacing = 8, Margin = new Thickness(12) };
+    private readonly TextBox _filter = new()
+    {
+        Watermark = "Buscar propiedad…",
+        Margin = new Thickness(12, 8, 12, 0),
+    };
 
     public ComponentInspectorView(MainViewModel viewModel)
     {
         _viewModel = viewModel;
-        Content = new ScrollViewer { Content = _root, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
+        _filter.TextChanged += (_, _) => Rebuild();
+        var scroll = new ScrollViewer
+        {
+            Content = _root,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+        };
+        var dock = new DockPanel();
+        DockPanel.SetDock(_filter, Dock.Top);
+        dock.Children.Add(_filter);
+        dock.Children.Add(scroll);
+        Content = dock;
         Rebuild();
     }
 
@@ -57,10 +72,14 @@ public sealed class ComponentInspectorView : UserControl
         foreach (var component in _entity.Components.ToList())
         {
             var panel = new StackPanel { Spacing = 4 };
-            foreach (var property in Editable(component.GetType()))
+            var query = _filter.Text?.Trim();
+            foreach (var property in Editable(component.GetType())
+                         .Where(property => string.IsNullOrWhiteSpace(query) ||
+                                            property.Name.Contains(query, StringComparison.OrdinalIgnoreCase)))
             {
                 panel.Children.Add(Editor(component, property));
             }
+            if (panel.Children.Count == 0 && !string.IsNullOrWhiteSpace(query)) continue;
             if (component is AnimationStateMachine fsm)
             {
                 var actions = new WrapPanel { Margin = new Thickness(0, 4, 0, 0) };

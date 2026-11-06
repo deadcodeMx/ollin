@@ -51,6 +51,7 @@ public sealed partial class MainViewModel : ObservableObject
     private string? _lastEditKey;
     private DateTime _lastEditTime;
     private bool _restoring;
+    private int _historySuppression;
     private readonly Stopwatch _playClock = new();
     private DispatcherTimer? _playTimer;
     private Vector2 _cameraBeforePlay;
@@ -716,6 +717,19 @@ public sealed partial class MainViewModel : ObservableObject
         RequestRedraw();
     }
 
+    private void WithHistoryGroup(string label, Action action)
+    {
+        _historySuppression++;
+        try
+        {
+            action();
+        }
+        finally
+        {
+            _historySuppression--;
+        }
+        CommitEdit(label);
+    }
     /// <summary>Registra un paso de deshacer con el estado actual de la escena.</summary>
     public void CommitEdit(string label)
     {
@@ -1471,11 +1485,14 @@ public sealed class {className} : OllinScript
     public void ApplyBatchMove()
     {
         if (_selection.Count < 2) return;
-        foreach (var node in _selection)
+        WithHistoryGroup("Mover selección", () =>
         {
-            node.X += BatchOffsetX;
-            node.Y += BatchOffsetY;
-        }
+            foreach (var node in _selection)
+            {
+                node.X += BatchOffsetX;
+                node.Y += BatchOffsetY;
+            }
+        });
         BatchOffsetX = 0m;
         BatchOffsetY = 0m;
         StatusMessage = $"Movidas {_selection.Count} entidades";
@@ -1484,25 +1501,34 @@ public sealed class {className} : OllinScript
     public void ApplyBatchRotation()
     {
         if (_selection.Count < 2) return;
-        foreach (var node in _selection) node.RotationDegrees = BatchRotation;
+        WithHistoryGroup("Rotar selección", () =>
+        {
+            foreach (var node in _selection) node.RotationDegrees = BatchRotation;
+        });
         StatusMessage = $"Rotación aplicada a {_selection.Count} entidades";
     }
 
     public void ApplyBatchScale()
     {
         if (_selection.Count < 2) return;
-        foreach (var node in _selection)
+        WithHistoryGroup("Escalar selección", () =>
         {
-            node.ScaleX = BatchScaleX;
-            node.ScaleY = BatchScaleY;
-        }
+            foreach (var node in _selection)
+            {
+                node.ScaleX = BatchScaleX;
+                node.ScaleY = BatchScaleY;
+            }
+        });
         StatusMessage = $"Escala aplicada a {_selection.Count} entidades";
     }
 
     public void ApplyBatchSorting()
     {
         if (_selection.Count < 2) return;
-        foreach (var node in _selection) node.SortingOrder = BatchSorting;
+        WithHistoryGroup("Ordenar selección", () =>
+        {
+            foreach (var node in _selection) node.SortingOrder = BatchSorting;
+        });
         StatusMessage = $"Orden aplicado a {_selection.Count} entidades";
     }
 
@@ -1518,20 +1544,23 @@ public sealed class {className} : OllinScript
         var centerX = (left + right) / 2m;
         var centerY = (top + bottom) / 2m;
 
-        foreach (var node in _selection)
+        WithHistoryGroup("Alinear selección", () =>
         {
-            var size = bounds[node];
-
-            switch (mode)
+            foreach (var node in _selection)
             {
-                case "left": node.X = left + size.Width / 2m; break;
-                case "right": node.X = right - size.Width / 2m; break;
-                case "centerH": node.X = centerX; break;
-                case "top": node.Y = top - size.Height / 2m; break;
-                case "bottom": node.Y = bottom + size.Height / 2m; break;
-                case "centerV": node.Y = centerY; break;
+                var size = bounds[node];
+
+                switch (mode)
+                {
+                    case "left": node.X = left + size.Width / 2m; break;
+                    case "right": node.X = right - size.Width / 2m; break;
+                    case "centerH": node.X = centerX; break;
+                    case "top": node.Y = top - size.Height / 2m; break;
+                    case "bottom": node.Y = bottom + size.Height / 2m; break;
+                    case "centerV": node.Y = centerY; break;
+                }
             }
-        }
+        });
 
         StatusMessage = $"Alineadas {_selection.Count} entidades";
     }
@@ -1550,19 +1579,22 @@ public sealed class {className} : OllinScript
         var gap = (last - first - total) / (ordered.Count - 1);
         var cursor = first;
 
-        foreach (var (node, size) in ordered.Zip(sizes))
+        WithHistoryGroup("Distribuir selección", () =>
         {
-            if (horizontal)
+            foreach (var (node, size) in ordered.Zip(sizes))
             {
-                node.X = cursor + size.Width / 2m;
-                cursor += size.Width + gap;
+                if (horizontal)
+                {
+                    node.X = cursor + size.Width / 2m;
+                    cursor += size.Width + gap;
+                }
+                else
+                {
+                    node.Y = cursor + size.Height / 2m;
+                    cursor += size.Height + gap;
+                }
             }
-            else
-            {
-                node.Y = cursor + size.Height / 2m;
-                cursor += size.Height + gap;
-            }
-        }
+        });
 
         StatusMessage = $"Distribuidas {_selection.Count} entidades";
     }
@@ -1645,7 +1677,7 @@ public sealed class {className} : OllinScript
         OnPropertyChanged(nameof(Title));
         OnPropertyChanged(nameof(EntityCountText));
 
-        if (!string.IsNullOrEmpty(editKey))
+        if (!string.IsNullOrEmpty(editKey) && _historySuppression == 0)
         {
             CommitEditDebounced($"Editar {editKey}", editKey);
         }
