@@ -214,7 +214,7 @@ public sealed partial class MainViewModel
         StatusMessage = $"UI: {action}";
     }
 
-    private void RefreshUi()
+    public void RefreshUi()
     {
         var canvas = _runtime.PlayerUi;
         var flattened = canvas?.Flatten() ?? new List<UiElement>();

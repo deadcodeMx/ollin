@@ -12,8 +12,10 @@ public sealed class Jugador : OllinScript
 
     public override void OnStart()
     {
+        _health = Save.GetNumber("validacion_vida", 3f);
+        _coins = (int)Save.GetNumber("validacion_monedas", 0f);
         Hud.SetBar("Vida", _health, 3f, new Vector4(0.95f, 0.3f, 0.35f, 1f));
-        Hud.SetLabel("Monedas", "0/3");
+        Hud.SetLabel("Monedas", $"{_coins}/3");
         Hud.Message("Validacion Ollin - A/D mover, Espacio saltar, E interactuar", 4f);
     }
 
@@ -27,6 +29,8 @@ public sealed class Jugador : OllinScript
             _health = 3f;
             _coins = 0;
             _finished = false;
+            Save.SetNumber("validacion_vida", _health);
+            Save.SetNumber("validacion_monedas", 0f);
             Position = new Vector2(1f, 2.2f);
             Hud.SetLabel("Monedas", "0/3");
         }
@@ -45,6 +49,7 @@ public sealed class Jugador : OllinScript
         else if (other.Tags.Contains("enemy") && _invulnerable <= 0f && !_finished)
         {
             _health--;
+            Save.SetNumber("validacion_vida", _health);
             _invulnerable = 1f;
             PlaySound("assets/audio/hit.wav", 0.8f);
             ShakeCamera(0.12f, 0.18f);

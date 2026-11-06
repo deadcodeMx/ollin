@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "savedAt": "2026-11-06T11:22:59.574083-07:00",
+  "savedAt": "2026-11-06T12:16:56.154507-07:00",
   "engine": "Ollin",
   "scene": {
     "name": "Nivel 1",
@@ -87,7 +87,721 @@
             "sortingOrder": -10,
             "visible": true,
             "collides": true,
-            "autotile": false,
+            "tileSet": {
+              "id": "tileset",
+              "name": "Pasto",
+              "texturePath": "assets/sprites/tiles.png",
+              "tileWidth": 32,
+              "tileHeight": 32,
+              "columns": 4,
+              "tiles": [
+                {
+                  "id": 0,
+                  "name": "Pasto 0",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 1,
+                  "name": "Pasto 1",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "Pasto 2",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "Pasto 3",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 4,
+                  "name": "Pasto 4",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 5,
+                  "name": "Pasto 5",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 6,
+                  "name": "Pasto 6",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 7,
+                  "name": "Pasto 7",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 8,
+                  "name": "Pasto 8",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 9,
+                  "name": "Pasto 9",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 10,
+                  "name": "Pasto 10",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 11,
+                  "name": "Pasto 11",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 12,
+                  "name": "Pasto 12",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 13,
+                  "name": "Pasto 13",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 14,
+                  "name": "Pasto 14",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                {
+                  "id": 15,
+                  "name": "Pasto 15",
+                  "region": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "collisionSize": [
+                    1,
+                    1
+                  ],
+                  "collisionOffset": [
+                    0,
+                    0
+                  ],
+                  "oneWay": false,
+                  "slopeNormal": [
+                    0,
+                    0
+                  ],
+                  "terrain": "pasto",
+                  "navigationCost": 0,
+                  "occludes": false,
+                  "autotileVariants": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                }
+              ]
+            },
+            "autotile": true,
             "ySort": false,
             "autotileBase": 0,
             "tiles": [
@@ -364,6 +1078,22 @@
             "className": "Jugador",
             "values": {},
             "enabled": true
+          },
+          {
+            "$type": "animator",
+            "texturePath": "assets/sprites/hero-walk.png",
+            "frameWidth": 32,
+            "frameHeight": 32,
+            "columns": 4,
+            "frameCount": 4,
+            "startFrame": 0,
+            "fps": 8,
+            "loop": true,
+            "playing": true,
+            "speed": 1,
+            "currentFrame": 0,
+            "timeInClip": 0,
+            "enabled": true
           }
         ]
       },
@@ -457,6 +1187,22 @@
             "scriptPath": "scripts/Enemigo.cs",
             "className": "Enemigo",
             "values": {},
+            "enabled": true
+          },
+          {
+            "$type": "animator",
+            "texturePath": "assets/sprites/hero-walk.png",
+            "frameWidth": 32,
+            "frameHeight": 32,
+            "columns": 4,
+            "frameCount": 4,
+            "startFrame": 0,
+            "fps": 6,
+            "loop": true,
+            "playing": true,
+            "speed": 1,
+            "currentFrame": 0,
+            "timeInClip": 0,
             "enabled": true
           }
         ]
@@ -1270,6 +2016,37 @@
                 "tooltip": ""
               }
             ],
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "fc967336-34df-4e13-b242-738d58fc5cf9",
+        "name": "Musica",
+        "active": true,
+        "tags": [],
+        "transform": {
+          "position": [
+            0,
+            0
+          ],
+          "rotation": 0,
+          "scale": [
+            1,
+            1
+          ]
+        },
+        "components": [
+          {
+            "$type": "audio",
+            "clip": "assets/audio/ambient.wav",
+            "volume": 0.35,
+            "loop": true,
+            "playOnStart": true,
+            "music": true,
+            "fadeIn": 0,
+            "spatial": false,
+            "maxDistance": 12,
             "enabled": true
           }
         ]

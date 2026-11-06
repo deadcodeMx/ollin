@@ -1,19 +1,25 @@
-# Ollin 7.0.0-beta.17 — multijugador y RPC
+# Ollin 7.0.0-beta.18 — segunda pasada de validación
 
-## Red
+## Juego de validación
 
-- RPC con método, payload, peer y tick.
-- Host reenvía RPC a los demás peers.
-- Autoridad básica por propietario.
-- Snapshots e interpolación existentes.
-- Pruebas de serialización y ciclo de host.
+- Animación por sprites en jugador y enemigo.
+- Autotile con terreno y variantes en el suelo.
+- Música ambiental.
+- Vida y monedas persistentes en `Save`.
+- UI Canvas con panel, botón, tooltip y lista con scroll.
+- Exportación y reproductor verificados.
+
+## Correcciones
+
+- El canvas de UI se refresca explícitamente al iniciar el reproductor.
+- Autotile y animación integrados en el nivel.
 
 ## Verificación
 
 - Build: 0 errores.
 - Pruebas: 215/215.
-- Instalador: `Ollin-Setup-7.0.0-beta.17.exe`.
+- Instalador: `Ollin-Setup-7.0.0-beta.18.exe`.
 
-## Límites
+## Nota
 
-Sin predicción/rollback, canales fiables, lobby, reconexión ni prueba de dos procesos.
+Segunda pasada del juego de validación; quedan como revisión manual la recogida de las tres monedas y el guardado en varias ranuras.
