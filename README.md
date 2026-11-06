@@ -1,5 +1,7 @@
 # Guía de beta
 
+- [Juego de validación](samples/ValidacionOllin)
+
 - [Guía de beta 6.213 (PDF)](docs/guia-beta/GUIA-BETA-Ollin-6.213.pdf)
 - [Guía en HTML](docs/guia-beta/GUIA-BETA.html)
 - [Mejoras futuras del motor](docs/mejoras/README.md)
@@ -23,7 +25,7 @@ Ollin es **gratis y de código abierto (MIT)**: puedes usarlo, modificarlo y dis
 ![Avalonia](https://img.shields.io/badge/Avalonia-11.3-8B44AC)
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
 ![Roslyn](https://img.shields.io/badge/Roslyn-4.11-2E7D32)
-![Pruebas](https://img.shields.io/badge/pruebas-198%2F198-47B8A8)
+![Pruebas](https://img.shields.io/badge/pruebas-199%2F199-47B8A8)
 ![Ciclo](https://img.shields.io/badge/ciclo-7.0.0--beta.9-7B2CFF)
 
 ![Editor de Ollin](docs/images/editor.png)

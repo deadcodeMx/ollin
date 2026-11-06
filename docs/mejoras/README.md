@@ -40,7 +40,8 @@ verificables.
 | [RENDIMIENTO.md](RENDIMIENTO.md) | Render, batching y pruebas | P1 | Activo |
 | [RED.md](RED.md) | Multijugador y RPC | P2 | Activo |
 | [LINUX.md](LINUX.md) | Linux real y empaquetado | P1 | Activo |
-| [JUEGO-VALIDACION.md](JUEGO-VALIDACION.md) | Juego de validación | P1 | Siguiente |
+| [JUEGO-VALIDACION.md](JUEGO-VALIDACION.md) | Juego de validación | P1 | Primera pasada |
+| [VALIDACION-2026-11-06.md](VALIDACION-2026-11-06.md) | Informe de la primera pasada | P1 | En curso |
 
 ## Orden recomendado
 

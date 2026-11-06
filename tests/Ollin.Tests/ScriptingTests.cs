@@ -148,6 +148,21 @@ public class ScriptingTests
     }
 
     [Fact]
+    public void SystemEstaDisponibleSinUsingExplicito()
+    {
+        const string source = """
+            public sealed class Matematica
+            {
+                public float Absoluto(float valor) => MathF.Abs(valor);
+            }
+            """;
+
+        var compilation = ScriptCompiler.Compile(new[] { ("global.cs", source) });
+
+        Assert.True(compilation.Success, string.Join("\n", compilation.Diagnostics.Select(d => d.Text)));
+    }
+
+    [Fact]
     public void ElCompiladorAceptaFuentesEnMemoria()
     {
         var compilation = ScriptCompiler.Compile(new[] { ("memoria.cs", MoverSource) });

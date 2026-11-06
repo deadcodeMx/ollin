@@ -10,7 +10,7 @@ Validar el motor con un juego 2D completo y pequeño.
 
 ## Estado actual (7.0.0-beta.9)
 
-- El proyecto de ejemplo `samples/JardinOllin` se eliminó; el usuario creará su propio proyecto.
+- Proyecto de validación: `samples/ValidacionOllin`.
 - El editor puede crear, guardar, reproducir y exportar.
 - Hay grafo, física, UI, audio, guardado y scripts.
 - Física 2D cerrada en `7.0.0-beta.9` con 198 pruebas.
@@ -59,9 +59,11 @@ Validar el motor con un juego 2D completo y pequeño.
 - [x] Física 2D cerrada en `7.0.0-beta.9`.
 - [x] Documentación de áreas actualizada.
 - [x] Proyecto de ejemplo eliminado; se usará el proyecto del usuario.
-- [ ] Recibir ruta del proyecto y controles.
-- [ ] Primera pasada jugable.
-- [ ] Informe de huecos.
+- [x] Proyecto creado en `samples/ValidacionOllin`.
+- [x] Primera pasada jugable.
+- [x] Exportación y ejecución del reproductor.
+- [x] Informe inicial: [VALIDACION-2026-11-06.md](VALIDACION-2026-11-06.md).
+- [ ] Verificación completa de guardado/carga y monedas.
 
 ## Matriz de validación
 

@@ -1,0 +1,187 @@
+{
+  "name": "ValidacionOllin",
+  "version": 1,
+  "startScene": "scenes/inicio.ollin.json",
+  "description": null,
+  "contentMode": 1,
+  "inputActions": [
+    {
+      "name": "move_left",
+      "bindings": [
+        {
+          "device": "key",
+          "control": "A",
+          "direction": 1
+        },
+        {
+          "device": "key",
+          "control": "Left",
+          "direction": 1
+        },
+        {
+          "device": "gamepad",
+          "control": "DPadLeft",
+          "direction": 1
+        },
+        {
+          "device": "axis",
+          "control": "LeftStickX",
+          "direction": -1
+        }
+      ]
+    },
+    {
+      "name": "move_right",
+      "bindings": [
+        {
+          "device": "key",
+          "control": "D",
+          "direction": 1
+        },
+        {
+          "device": "key",
+          "control": "Right",
+          "direction": 1
+        },
+        {
+          "device": "gamepad",
+          "control": "DPadRight",
+          "direction": 1
+        },
+        {
+          "device": "axis",
+          "control": "LeftStickX",
+          "direction": 1
+        }
+      ]
+    },
+    {
+      "name": "move_up",
+      "bindings": [
+        {
+          "device": "key",
+          "control": "W",
+          "direction": 1
+        },
+        {
+          "device": "key",
+          "control": "Up",
+          "direction": 1
+        },
+        {
+          "device": "gamepad",
+          "control": "DPadUp",
+          "direction": 1
+        },
+        {
+          "device": "axis",
+          "control": "LeftStickY",
+          "direction": 1
+        }
+      ]
+    },
+    {
+      "name": "move_down",
+      "bindings": [
+        {
+          "device": "key",
+          "control": "S",
+          "direction": 1
+        },
+        {
+          "device": "key",
+          "control": "Down",
+          "direction": 1
+        },
+        {
+          "device": "gamepad",
+          "control": "DPadDown",
+          "direction": 1
+        },
+        {
+          "device": "axis",
+          "control": "LeftStickY",
+          "direction": -1
+        }
+      ]
+    },
+    {
+      "name": "jump",
+      "bindings": [
+        {
+          "device": "key",
+          "control": "Space",
+          "direction": 1
+        },
+        {
+          "device": "key",
+          "control": "W",
+          "direction": 1
+        },
+        {
+          "device": "key",
+          "control": "Up",
+          "direction": 1
+        },
+        {
+          "device": "gamepad",
+          "control": "A",
+          "direction": 1
+        }
+      ]
+    },
+    {
+      "name": "interact",
+      "bindings": [
+        {
+          "device": "key",
+          "control": "E",
+          "direction": 1
+        },
+        {
+          "device": "gamepad",
+          "control": "X",
+          "direction": 1
+        }
+      ]
+    },
+    {
+      "name": "attack",
+      "bindings": [
+        {
+          "device": "key",
+          "control": "LeftControl",
+          "direction": 1
+        },
+        {
+          "device": "gamepad",
+          "control": "X",
+          "direction": 1
+        }
+      ]
+    },
+    {
+      "name": "pause",
+      "bindings": [
+        {
+          "device": "key",
+          "control": "Escape",
+          "direction": 1
+        },
+        {
+          "device": "gamepad",
+          "control": "Start",
+          "direction": 1
+        }
+      ]
+    }
+  ],
+  "inputDeadzone": 0.25,
+  "rootPath": "C:\\Users\\eduar\\OneDrive\\Documentos\\Ollin Projects\\ValidacionOllin",
+  "projectFile": "C:\\Users\\eduar\\OneDrive\\Documentos\\Ollin Projects\\ValidacionOllin\\project.ollin",
+  "scenesFolder": "C:\\Users\\eduar\\OneDrive\\Documentos\\Ollin Projects\\ValidacionOllin\\scenes",
+  "scriptsFolder": "C:\\Users\\eduar\\OneDrive\\Documentos\\Ollin Projects\\ValidacionOllin\\scripts",
+  "assetsFolder": "C:\\Users\\eduar\\OneDrive\\Documentos\\Ollin Projects\\ValidacionOllin\\assets",
+  "prefabsFolder": "C:\\Users\\eduar\\OneDrive\\Documentos\\Ollin Projects\\ValidacionOllin\\prefabs",
+  "startSceneFullPath": "C:\\Users\\eduar\\OneDrive\\Documentos\\Ollin Projects\\ValidacionOllin\\scenes\\inicio.ollin.json"
+}
