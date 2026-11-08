@@ -76,7 +76,7 @@ public sealed partial class MainViewModel : ObservableObject
             Logs.Add(new LogItem(entry));
         }
 
-        LoadScene(DefaultScene.Create(), null);
+        LoadScene(Ollin.Core.Projects.StarterProject.CreateEmptyScene(), null);
         RefreshAssets(logToConsole: false);
 
         if (!initialize)

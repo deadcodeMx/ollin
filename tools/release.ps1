@@ -33,8 +33,6 @@ try {
     dotnet publish 'src/Ollin.Player/Ollin.Player.csproj' -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o 'dist/app/player' -v q --nologo
     if ($LASTEXITCODE -ne 0) { throw 'Fallo la publicacion del reproductor' }
 
-    Copy-Item -Recurse -Force assets 'dist/app'
-    Copy-Item -Recurse -Force scripts 'dist/app'
     Copy-Item -Force README.md, LICENSE, CHANGELOG.md 'dist/app'
     Compress-Archive -Path 'dist/app/*' -DestinationPath 'tools/payload.zip' -Force
 

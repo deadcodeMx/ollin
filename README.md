@@ -1,6 +1,5 @@
 # Guía de beta
 
-- [Juego de validación](samples/ValidacionOllin)
 
 - [Guía de beta 6.213 (PDF)](docs/guia-beta/GUIA-BETA-Ollin-6.213.pdf)
 - [Guía en HTML](docs/guia-beta/GUIA-BETA.html)
@@ -26,15 +25,15 @@ Ollin es **gratis y de código abierto (MIT)**: puedes usarlo, modificarlo y dis
 ![OpenGL](https://img.shields.io/badge/OpenGL-ES%203.0-5586A4)
 ![Roslyn](https://img.shields.io/badge/Roslyn-4.11-2E7D32)
 ![Pruebas](https://img.shields.io/badge/pruebas-215%2F215-47B8A8)
-![Ciclo](https://img.shields.io/badge/ciclo-7.0.0--beta.18-7B2CFF)
+![Ciclo](https://img.shields.io/badge/ciclo-7.0.0--beta.19-7B2CFF)
 
 ![Editor de Ollin](docs/images/editor.png)
 
 ## Descargas
 
-- **Última beta**: [Ollin-Setup-7.0.0-beta.18.exe](https://github.com/deadcodeMx/ollin/releases/tag/v7.0.0-beta.18)
+- **Última beta**: [Ollin-Setup-7.0.0-beta.19.exe](https://github.com/deadcodeMx/ollin/releases/tag/v7.0.0-beta.19)
 - **Últimas 10 versiones**: [Releases del proyecto](https://github.com/deadcodeMx/ollin/releases)
-- **Ciclo actual**: 7.0.0-beta.18 (ver [versionado](docs/VERSIONADO.md))
+- **Ciclo actual**: 7.0.0-beta.19 (ver [versionado](docs/VERSIONADO.md))
 - **Guía completa de uso**: [docs/GUIA.md](docs/GUIA.md)
 
 Cada hito del motor se publica como *release* con su instalador y sus notas. No se publica una versión por cada cambio pequeño. El
@@ -176,7 +175,7 @@ tools/
   Ollin.Setup/       Instalador de Windows (copia, accesos directos y desinstalador)
 tests/
   Ollin.Tests/       Pruebas del núcleo, del runtime y del compilador de scripts
-assets/sprites/      Texturas de ejemplo (héroe, caja, moneda, suelo)
+assets/             Texturas, audio y recursos del usuario
 scripts/             Scripts de usuario en C# (se compilan en memoria)
 docs/                Arquitectura, roadmap y guía de publicación en GitHub
 ```

@@ -361,7 +361,7 @@ Añade un **AudioSource** a una entidad:
 - **Reproducir al iniciar**: suena al pulsar Reproducir.
 - **Canal de música**: corta la música anterior.
 
-Puedes generar o copiar tus `.wav`/`.mp3` en `assets/audio/`. El proyecto de ejemplo
+Puedes generar o copiar tus `.wav`/`.mp3` en `assets/audio/`.
 incluye `jump`, `coin`, `hit` y `ambient`.
 
 ---

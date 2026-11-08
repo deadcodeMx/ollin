@@ -1,25 +1,20 @@
-# Ollin 7.0.0-beta.18 — segunda pasada de validación
+# Ollin 7.0.0-beta.19 — motor limpio para feedback
 
-## Juego de validación
+## Limpieza
 
-- Animación por sprites en jugador y enemigo.
-- Autotile con terreno y variantes en el suelo.
-- Música ambiental.
-- Vida y monedas persistentes en `Save`.
-- UI Canvas con panel, botón, tooltip y lista con scroll visible en el reproductor.
-- Exportación y reproductor verificados.
-
-## Correcciones
-
-- El canvas de UI se refresca explícitamente al iniciar el reproductor.
-- Autotile y animación integrados en el nivel.
+- Retirado el juego de validación del repositorio.
+- Retirados los assets de ejemplo (sprites, audio y texturas).
+- Retirado el script de ejemplo `PlayerBob.cs`.
+- Los proyectos nuevos ya no copian plantillas de assets.
+- Al abrir una carpeta sin proyecto se crea una escena mínima, no la demo.
+- El instalador ya no incluye `assets/` ni `scripts/` de ejemplo.
 
 ## Verificación
 
 - Build: 0 errores.
 - Pruebas: 215/215.
-- Instalador: `Ollin-Setup-7.0.0-beta.18.exe`.
+- Instalador: `Ollin-Setup-7.0.0-beta.19.exe`.
 
 ## Nota
 
-Segunda pasada del juego de validación; quedan como revisión manual la recogida de las tres monedas y el guardado en varias ranuras.
+El motor queda sin contenido de ejemplo para recibir feedback sobre la herramienta base.

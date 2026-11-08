@@ -20,7 +20,6 @@ try {
     dotnet publish 'src/Ollin.Editor/Ollin.Editor.csproj' -c Release -r linux-x64 --self-contained false -o $app -v q --nologo
     if ($LASTEXITCODE -ne 0) { throw 'Fallo la publicacion Linux' }
 
-    Copy-Item -Recurse -Force assets, scripts $app
     Copy-Item -Force README.md, LICENSE, CHANGELOG.md $app
 
     $launcher = @'
