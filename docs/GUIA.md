@@ -4,6 +4,12 @@ Esta guía explica qué es cada parte del editor y cómo usarla para construir u
 prototipo 2D de principio a fin. Está pensada para leerse en orden la primera vez y
 como referencia después.
 
+> **Nota de la beta 19:** el motor ya no incluye proyectos, plantillas ni assets de
+> ejemplo. Los proyectos nuevos empiezan vacíos. Las secciones históricas que
+> mencionan una plantilla o un demo se conservan como referencia, pero el flujo
+> actual es crear una escena desde cero. Los ejemplos prácticos están en las
+> secciones **68** y **69** del final.
+
 ---
 
 ## 1. Qué es Ollin
@@ -440,14 +446,18 @@ discriminador `$type`. Puedes versionarlo con git sin problemas.
 
 ## 19. Flujo recomendado para un prototipo
 
-1. Crea un proyecto con la plantilla **Plataformas**.
-2. Abre `scenes/inicio.ollin.json` (pestaña **Escena**).
-3. Ajusta el **tilemap** del suelo y marca *Colisiona*.
-4. Añade entidades y asígnales sprites desde **Assets**.
-5. Escribe el movimiento en `scripts/Plataformas.cs` (autocompletado con `Ctrl+Espacio`).
-6. Añade **AudioSource** para saltos y monedas.
-7. Guarda la escena, pulsa **Reproducir** y ajusta.
-8. Convierte enemigos u obstáculos en **prefabs** para reutilizarlos.
+1. Crea un **proyecto vacío** y abre `scenes/inicio.ollin.json` (pestaña **Escena**).
+2. Añade un **Tilemap** al suelo, asigna una textura y marca *Colisiona*.
+3. Añade un jugador con **SpriteRenderer**, **BoxCollider**, **Rigidbody2D** y
+   **CharacterBody2D**; ajusta velocidad y salto en el inspector.
+4. Crea un script `Movimiento.cs` y asígnalo con **ScriptComponent** (autocompletado
+   con `Ctrl+Espacio`).
+5. Añade **AudioSource** para saltos y monedas.
+6. Guarda la escena, pulsa **Reproducir** y ajusta.
+7. Convierte enemigos u obstáculos en **prefabs** para reutilizarlos.
+
+No hay una plantilla de plataformas: el proyecto vacío incluye solo la cámara, una
+entidad y un script base.
 
 Con eso tienes el ciclo completo: escena → componentes → scripts → sonido → prueba.
 
@@ -498,9 +508,9 @@ Componentes:
 
 Atajos del flujo:
 
-1. Crea un proyecto con la plantilla **2.5D (pasillo)**.
-2. Pulsa **Reproducir** y muévete con WASD; el ratón mira.
-3. La puerta se abre con **E** al acercarte.
+1. Crea un proyecto vacío y añade **Cámara 3D** + **Controlador FPS** a una entidad.
+2. Añade **Pared 3D** para el pasillo y un **Recogible**/puerta si quieres interacción.
+3. Pulsa **Reproducir** y muévete con WASD; el ratón mira.
 4. Exporta el juego como siempre: el HUD y los diálogos también aparecen.
 
 **Limitaciones de esta primera entrega**: el orden de dibujado es por profundidad
@@ -510,9 +520,8 @@ retro tipo PS1/Doom.
 
 ## 22. Crear un juego 2.5D sin programar
 
-La plantilla **2.5D (pasillo)** es un mini-juego completo sin una línea de código. Los
-comportamientos se añaden desde **clic derecho → Añadir componente** y se ajustan en el
-inspector:
+No hay una plantilla 2.5D incluida. Se construye desde una escena vacía añadiendo los
+componentes desde **clic derecho → Añadir componente** y ajustándolos en el inspector:
 
 | Componente | Para qué sirve |
 | --- | --- |
@@ -526,10 +535,11 @@ inspector:
 
 Flujo típico sin programar:
 
-1. Crea un proyecto con la plantilla **2.5D (pasillo)**.
-2. La cámara ya trae Salud, Arma, Inventario, Reglas y Mensaje.
-3. La **Sombra** trae IA 3D con ataque y Salud; la **Llave** es un Recogible; la
-   **Puerta** pide `llave`.
+1. Crea un proyecto vacío y añade una **Cámara 3D** con **Controlador FPS**.
+2. Añade **Salud**, **Arma**, **Inventario**, **Reglas de juego** y **Mensaje
+   inicial** a la cámara o a una entidad de sistema.
+3. Crea una **Sombra** con IA 3D y Salud, una **Llave** con Recogible y una **Puerta**
+   que pida `llave`.
 4. Ajusta los valores en el inspector, reproduce y exporta.
 
 Para tu propio nivel: coloca cajas 3D, asigna texturas, añade un enemigo con IA 3D +
@@ -665,21 +675,15 @@ También puedes usar `vida`, `vidamax`, `vidas`, `min(...)`, `max(...)`.
 
 Las variables se guardan en la partida; al cargar, los contadores y flags continúan.
 
-## 27. Demo técnico de la etapa 6
+## 27. Del demo técnico a tu propio nivel
 
-La plantilla **Demo técnico 2.5D** es un nivel completo para probar el motor:
+El antiguo **Demo técnico 2.5D** ya no se incluye. Era un nivel de prueba con tres
+armas, enemigos con IA, llave, puerta, checkpoint, lava y contador de bajas.
 
-- Jugador con **tres armas** (pistola, escopeta y rifle), recarga y reaparición.
-- Tres enemigos con IA y navegación A\*: dos Sombras y un **Guardián**.
-- **Llave**, puerta cerrada, **checkpoint**, **lava**, **portal**, **botiquín** y **trigger**.
-- **Contador de bajas** visible en el HUD y variables del grafo.
-- Victoria al eliminar a los tres enemigos; derrota al quedarse sin vidas.
-
-Para crearlo: **Proyecto → Nuevo → Demo técnico 2.5D**. La demo técnica ya no se
-publica como ZIP en las releases; se genera desde el editor.
-
-Controles: **WASD + ratón**, **1/2/3** armas, **R** recargar, **E** interactuar,
-**Esc** pausa.
+Ahora se construye desde una escena vacía. Los componentes siguen disponibles:
+**Salud**, **Arma**, **Recogible**, **Puerta**, **Reglas de juego**, **Mensaje
+inicial** e **IA 3D**. Para ver ejemplos de comportamiento, consulta las secciones
+**68** (C#) y **69** (grafo).
 
 ## 28. Ratón y cámara FPS (0.31.1)
 
@@ -751,8 +755,8 @@ Los nodos con error se marcan en rojo y los avisos en ámbar.
 
 ### Smoke test de interfaz
 `tools/ui-smoke.ps1`:
-1. Ejecuta las 171 pruebas.
-2. Abre el demo en el reproductor.
+1. Ejecuta las 215 pruebas.
+2. Abre tu proyecto en el reproductor.
 3. Envía **Esc** dos veces y comprueba pausa/reanudación.
 4. Abre el editor con `--graph` y verifica que aparezca la ventana del grafo.
 
@@ -1108,3 +1112,316 @@ error de sintaxis.
 - **+ Añadir componente** queda fijo al final del inspector.
 - Componentes disponibles: colisión, trigger, cuerpo físico, cámara 2D,
   animación, tilemap, audio, luz 2D, rotador, oscilador, IA y script.
+---
+
+## 68. Ejemplos de programación en C#
+
+Todos los scripts deben ser `public sealed class` con el **mismo nombre que el archivo**.
+Crea el archivo desde **Archivos → + Script**, o añade un `ScriptComponent` y escribe
+la ruta. La clase base es `OllinScript`.
+
+### 68.1 Movimiento y salto con CharacterBody2D
+
+Añade a la entidad: `SpriteRenderer`, `BoxCollider`, `Rigidbody2D` y
+`CharacterBody2D`. El componente `CharacterBody2D` ya lee A/D, flechas, espacio y los
+mapas de entrada; el script solo necesita reaccionar a eventos propios.
+
+```csharp
+using System;
+using System.Numerics;
+using Ollin.Core.Model.Components;
+using Ollin.Scripting;
+
+public sealed class Movimiento : OllinScript
+{
+    private CharacterBody2D _body = null!;
+
+    public override void OnStart()
+    {
+        _body = Require<CharacterBody2D>();
+    }
+
+    public override void OnUpdate(float deltaTime)
+    {
+        // Salto adicional opcional: Shift + espacio.
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Space))
+        {
+            _body.Jump();
+        }
+
+        // Dash horizontal con E, con tiempo de espera.
+        if (Input.GetKeyDown(KeyCode.E) && _dashCooldown <= 0f)
+        {
+            Get<Rigidbody2D>()!.Velocity = new Vector2(12f, 0f);
+            _dashCooldown = 1.5f;
+        }
+
+        _dashCooldown = MathF.Max(0f, _dashCooldown - deltaTime);
+    }
+
+    private float _dashCooldown;
+}
+```
+
+### 68.2 Moneda recogible con HUD, sonido y guardado
+
+La moneda necesita un `BoxCollider` marcado como **trigger** (o un `Area2D`). El
+jugador debe tener el tag `player`.
+
+```csharp
+using Ollin.Scripting;
+
+public sealed class Moneda : OllinScript
+{
+    public override void OnTriggerEnter(Entity other)
+    {
+        if (!other.Tags.Contains("player"))
+        {
+            return;
+        }
+
+        var coins = (int)Save.GetNumber("monedas", 0f) + 1;
+        Save.SetNumber("monedas", coins);
+        Hud.SetLabel("Monedas", $"{coins}/3");
+        PlaySound("assets/audio/coin.wav", 0.8f);
+        ShowMessage("+1 moneda");
+        Destroy(Entity);
+    }
+}
+```
+
+### 68.3 Puerta que exige una llave
+
+La llave puede ser una moneda especial que hace `Save.SetFlag("tiene_llave", true)`.
+La puerta conserva su estado entre partidas.
+
+```csharp
+using Ollin.Scripting;
+
+public sealed class Puerta : OllinScript
+{
+    public override void OnStart()
+    {
+        if (Save.GetFlag("puerta_abierta"))
+        {
+            Active = false;
+        }
+    }
+
+    public override void OnTriggerEnter(Entity other)
+    {
+        if (!other.Tags.Contains("player"))
+        {
+            return;
+        }
+
+        if (!Save.GetFlag("tiene_llave"))
+        {
+            ShowMessage("Necesitas una llave");
+            return;
+        }
+
+        Save.SetFlag("puerta_abierta", true);
+        Emit("puerta_abierta");
+        PlaySound("assets/audio/open.wav", 0.9f);
+        Active = false;
+    }
+}
+```
+
+### 68.4 Enemigo que persigue al jugador
+
+Añade `NavigationAgent2D` al enemigo y un `NavigationPolygon2D` al nivel.
+
+```csharp
+using System.Numerics;
+using Ollin.Scripting;
+
+public sealed class Perseguidor : OllinScript
+{
+    public override void OnUpdate(float deltaTime)
+    {
+        var player = Find("Jugador");
+        if (player is null)
+        {
+            return;
+        }
+
+        if (DistanceTo(player) < 8f)
+        {
+            MoveTo(player.Transform.Position, 2.5f); // el agente calcula la ruta
+        }
+        else
+        {
+            StopMoving();
+        }
+    }
+}
+```
+
+> `MoveTo` espera un destino de mundo. Actualiza el destino cuando el jugador se
+> mueva; no llames a `MoveTo` cada cuadro con el mismo punto si no hace falta.
+
+### 68.5 Animación y audio según el estado
+
+```csharp
+using Ollin.Core.Model.Components;
+using Ollin.Scripting;
+
+public sealed class AnimacionJugador : OllinScript
+{
+    public override void OnUpdate(float deltaTime)
+    {
+        var body = Get<CharacterBody2D>();
+        if (body is null)
+        {
+            return;
+        }
+
+        if (!body.IsGrounded)
+        {
+            PlayAnimation("salto");
+        }
+        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        {
+            PlayAnimation("correr");
+        }
+        else
+        {
+            PlayAnimation("idle");
+        }
+    }
+}
+```
+
+Los nombres `idle`, `correr` y `salto` deben existir en el `AnimationPlayer2D` de la
+entidad. Si el clip no existe, `PlayAnimation` devuelve `false`.
+
+### 68.6 Botón de UI conectado a un script
+
+El elemento de UI debe tener `Action = "reiniciar"`. Al pulsarlo, Ollin emite la señal
+`ui.reiniciar`.
+
+```csharp
+using Ollin.Scripting;
+
+public sealed class BotonReiniciar : OllinScript
+{
+    public override void OnStart()
+    {
+        Connect("ui.reiniciar", _ =>
+        {
+            Save.SetNumber("monedas", 0f);
+            Hud.SetLabel("Monedas", "0/3");
+            ShowMessage("Partida reiniciada");
+        });
+    }
+}
+```
+
+### 68.7 Buenas prácticas
+
+- Usa `Require<T>()` para componentes obligatorios y `Get<T>()` para opcionales.
+- No busques entidades dentro de bucles muy frecuentes; cachea referencias en
+  `OnStart` cuando sea posible.
+- Guarda en `Save` solo lo que deba persistir; no guardes cada cuadro.
+- Desconecta señales en `OnDestroy` si el script puede destruirse.
+- Si un script no aparece, revisa que la clase sea `public sealed`, que el nombre
+  coincida con el archivo y que `ScriptComponent.ClassName` sea correcto.
+
+---
+
+## 69. Ejemplos de grafo visual
+
+El grafo se abre seleccionando una entidad y pulsando **Grafo** en la barra, o
+añadiendo el componente **Grafo de nodos**. Se compila a C# y se puede validar antes de
+guardar.
+
+### 69.1 Mensaje al iniciar
+
+1. Nodo **Evento → Al iniciar**.
+2. Conecta su salida a **Acción → Mensaje**.
+3. Escribe el texto en el panel derecho, por ejemplo `Bienvenido a mi juego`.
+4. Pulsa **Validar** y **Guardar**.
+
+Flujo:
+
+```text
+[Al iniciar] ──► [Mensaje: "Bienvenido a mi juego"]
+```
+
+### 69.2 Contador y puerta con tres interacciones
+
+Variables: crea `contador` de tipo **Número** con valor inicial `0`.
+
+```text
+[Al iniciar] ──► [Fijar variable: contador = 0]
+
+[Pulsar E] ──► [Sumar variable: contador += 1]
+           ──► [Condición: contador >= 3]
+                 ├─ Sí ──► [Abrir puerta: Puerta]
+                 └─ No ──► [Mensaje: "Faltan interacciones"]
+```
+
+En el nodo **Condición** elige **Expresión** y escribe `contador >= 3`. El nodo
+**Abrir puerta** apunta a la entidad `Puerta`.
+
+### 69.3 Llave, puerta y señal
+
+1. La llave ejecuta **Fijar variable** o **Alternar flag** `tiene_llave = true` al
+   recogerse.
+2. La puerta usa **Condición → Tiene objeto** con `llave`.
+3. En la rama **Sí**, usa **Abrir puerta** y **Emitir señal** `puerta_abierta`.
+4. Otro grafo puede escuchar esa señal con **Evento → Al recibir señal**.
+
+```text
+[Pulsar E] ──► [Condición: tiene("llave")]
+                 ├─ Sí ──► [Abrir puerta] ──► [Emitir señal: puerta_abierta]
+                 └─ No ──► [Mensaje: "Necesitas una llave"]
+```
+
+### 69.4 Generador con temporizador
+
+1. Crea una entidad plantilla llamada `Enemigo` en la escena (puede estar inactiva).
+2. Añade **Evento → Cada cierto tiempo** con intervalo `3`.
+3. Conecta a **Acción → Instanciar**.
+4. En **Objetivo** escribe `Enemigo`; el nodo clona esa entidad en la posición indicada.
+5. Añade una **Condición** opcional para limitar el número de enemigos.
+
+```text
+[Cada 3 s] ──► [Instanciar: Enemigo] ──► [Mensaje: "¡Apareció un enemigo!"]
+```
+
+### 69.5 Función con bucle y retorno
+
+1. Crea una **Función** `ContarHasta` con parámetro `limite` de tipo **Entero**.
+2. Dentro, añade un **Bucle For** de `1` a `limite`.
+3. En el cuerpo, **Sumar variable** `total += i`.
+4. Termina con **Return** `total`.
+5. Desde un evento, usa **Llamar función** `ContarHasta(3)`.
+
+```text
+[Al iniciar] ──► [Llamar función: ContarHasta(3)] ──► [Mensaje: "Listo"]
+```
+
+### 69.6 Depuración del grafo
+
+- **Validar** detecta objetivos inexistentes, expresiones mal escritas y ciclos.
+- **Vista previa** muestra el C# generado antes de guardar.
+- **Breakpoint** en un nodo añade `Debugger.Break()` al código generado.
+- **Paso a paso** resalta el nodo que se está ejecutando.
+- Si el grafo no compila, revisa primero el panel de errores; el botón **Guardar** se
+  bloquea hasta corregirlo.
+
+### 69.7 Cuándo usar script y cuándo grafo
+
+| Situación | Recomendación |
+| --- | --- |
+| Lógica corta de nivel, mensajes, puertas | Grafo |
+| Movimiento, combate o física personalizada | C# |
+| Prototipo rápido sin escribir código | Grafo |
+| API propia, matemáticas complejas o rendimiento | C# |
+| Comunicación entre entidades | Señales del grafo o `Emit`/`Connect` en C# |
+
+Ambos se pueden combinar: un grafo puede emitir una señal que un script escucha, y un
+script puede escribir variables que el grafo lee.
