@@ -40,8 +40,6 @@ verificables.
 | [RENDIMIENTO.md](RENDIMIENTO.md) | Render, batching y pruebas | P1 | Completado beta16 |
 | [RED.md](RED.md) | Multijugador y RPC | P2 | Completado básico beta17 |
 | [LINUX.md](LINUX.md) | Linux real y empaquetado | P1 | Paquete beta14, hardware pendiente |
-| [JUEGO-VALIDACION.md](JUEGO-VALIDACION.md) | Juego de validación | P1 | Cerrado beta10 |
-| [VALIDACION-2026-11-06.md](VALIDACION-2026-11-06.md) | Informe de la primera pasada | P1 | En curso |
 
 ## Orden recomendado
 
